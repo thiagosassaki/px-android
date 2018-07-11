@@ -58,7 +58,7 @@ public class CheckoutPreference implements Serializable {
         differentialPricingId = builder.differentialPricingId;
         conceptAmount = builder.conceptAmount;
         conceptId = builder.conceptId;
-        this.payer = getPayer(builder);
+        payer = getPayer(builder);
         final PaymentPreference paymentPreference = new PaymentPreference();
         paymentPreference.setExcludedPaymentTypeIds(builder.excludedPaymentTypes);
         paymentPreference.setExcludedPaymentMethodIds(builder.excludedPaymentMethods);
@@ -154,6 +154,11 @@ public class CheckoutPreference implements Serializable {
     }
     //endregion support external integrations
 
+    /**
+     * Sum of value * quantity of listed items in a preference.
+     *
+     * @return items total amount
+     */
     public BigDecimal getTotalAmount() {
         return Item.getTotalAmountWith(items);
     }

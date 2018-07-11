@@ -6,8 +6,8 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.components.ActionDispatcher;
-import com.mercadopago.android.px.components.CustomComponent;
 import com.mercadopago.android.px.components.Renderer;
 import com.mercadopago.android.px.components.RendererFactory;
 import com.mercadopago.android.px.components.TermsAndConditionsComponent;
@@ -15,6 +15,7 @@ import com.mercadopago.android.px.review_and_confirm.components.actions.ChangePa
 import com.mercadopago.android.px.review_and_confirm.components.items.ReviewItems;
 import com.mercadopago.android.px.review_and_confirm.components.payment_method.PaymentMethodComponent;
 import com.mercadopago.android.px.review_and_confirm.models.PaymentModel;
+import com.mercadopago.android.px.util.FragmentUtil;
 
 public class ReviewAndConfirmRenderer extends Renderer<ReviewAndConfirmContainer> {
 
@@ -36,19 +37,17 @@ public class ReviewAndConfirmRenderer extends Renderer<ReviewAndConfirmContainer
         }
 
         if (component.props.preferences.hasCustomTopView()) {
-            final CustomComponent topComponent = component.props.preferences.getTopComponent();
-            topComponent.setDispatcher(component.getDispatcher());
-            final Renderer renderer = RendererFactory.create(context, topComponent);
-            renderer.render(linearLayout);
+            FragmentUtil.addFragmentInside(linearLayout,
+                R.id.px_fragmen_container_top,
+                component.props.preferences.getTopFragment());
         }
 
         addPaymentMethod(component.props.paymentModel, component.getDispatcher(), linearLayout);
 
         if (component.props.preferences.hasCustomBottomView()) {
-            final CustomComponent bottomComponent = component.props.preferences.getBottomComponent();
-            bottomComponent.setDispatcher(component.getDispatcher());
-            final Renderer renderer = RendererFactory.create(context, bottomComponent);
-            renderer.render(linearLayout);
+            FragmentUtil.addFragmentInside(linearLayout,
+                R.id.px_fragmen_container_bottom,
+                component.props.preferences.getBottomFragment());
         }
 
         if (component.hasMercadoPagoTermsAndConditions()) {
