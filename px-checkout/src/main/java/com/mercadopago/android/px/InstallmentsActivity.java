@@ -37,7 +37,6 @@ import com.mercadopago.android.px.observers.TimerObserver;
 import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.presenters.InstallmentsPresenter;
 import com.mercadopago.android.px.providers.InstallmentsProviderImpl;
-import com.mercadopago.android.px.services.controllers.CustomServicesHandler;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.tracker.FlowHandler;
 import com.mercadopago.android.px.tracker.MPTrackingContext;
@@ -47,15 +46,15 @@ import com.mercadopago.android.px.uicontrollers.FontCache;
 import com.mercadopago.android.px.uicontrollers.card.CardRepresentationModes;
 import com.mercadopago.android.px.uicontrollers.card.FrontCardView;
 import com.mercadopago.android.px.uicontrollers.installments.InstallmentsReviewView;
-import com.mercadopago.android.px.views.AmountView;
-import com.mercadopago.android.px.views.DiscountDetailDialog;
-import com.mercadopago.android.px.views.InstallmentsActivityView;
-import com.mercadopago.android.px.views.MercadoPagoUI;
 import com.mercadopago.android.px.util.ApiUtil;
 import com.mercadopago.android.px.util.ErrorUtil;
 import com.mercadopago.android.px.util.JsonUtil;
 import com.mercadopago.android.px.util.ScaleUtil;
 import com.mercadopago.android.px.util.ViewUtils;
+import com.mercadopago.android.px.views.AmountView;
+import com.mercadopago.android.px.views.DiscountDetailDialog;
+import com.mercadopago.android.px.views.InstallmentsActivityView;
+import com.mercadopago.android.px.views.MercadoPagoUI;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.List;
@@ -69,8 +68,6 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
     protected String publicKey;
     protected String privateKey;
     protected boolean mActivityActive;
-
-    protected String mDefaultBaseURL;
 
     //View controls
     protected PayerCostsAdapter mPayerCostsAdapter;
@@ -99,7 +96,7 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
     private PaymentSettingRepository configuration;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         final Session session = Session.getSession(this);
@@ -112,8 +109,6 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         getActivityParameters();
         presenter.attachView(this);
         presenter.attachResourcesProvider(new InstallmentsProviderImpl(this, publicKey, privateKey));
-
-        setMerchantInfo();
 
         mActivityActive = true;
         analyzeLowRes();
@@ -151,12 +146,6 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
             JsonUtil.getInstance().fromJson(intent.getStringExtra("paymentPreference"), PaymentPreference.class));
         presenter.setInstallmentsReviewEnabled(intent.getBooleanExtra("installmentsReviewEnabled", true));
         presenter.setPayerEmail(intent.getStringExtra("payerEmail"));
-    }
-
-    private void setMerchantInfo() {
-        if (CustomServicesHandler.getInstance().getServicePreference() != null) {
-            mDefaultBaseURL = CustomServicesHandler.getInstance().getServicePreference().getDefaultBaseURL();
-        }
     }
 
     public void analyzeLowRes() {
