@@ -46,7 +46,6 @@ import com.mercadopago.android.px.plugins.PaymentMethodPluginActivity;
 import com.mercadopago.android.px.plugins.model.PaymentMethodInfo;
 import com.mercadopago.android.px.preferences.FlowPreference;
 import com.mercadopago.android.px.preferences.PaymentPreference;
-import com.mercadopago.android.px.preferences.ServicePreference;
 import com.mercadopago.android.px.presenters.PaymentVaultPresenter;
 import com.mercadopago.android.px.providers.PaymentVaultProviderImpl;
 import com.mercadopago.android.px.services.exceptions.ApiException;
@@ -56,17 +55,16 @@ import com.mercadopago.android.px.uicontrollers.paymentmethodsearch.PaymentMetho
 import com.mercadopago.android.px.uicontrollers.paymentmethodsearch.PaymentMethodSearchOption;
 import com.mercadopago.android.px.uicontrollers.paymentmethodsearch.PaymentMethodSearchViewController;
 import com.mercadopago.android.px.uicontrollers.paymentmethodsearch.PluginPaymentMethodInfo;
-import com.mercadopago.android.px.views.AmountView;
-import com.mercadopago.android.px.views.DiscountDetailDialog;
-import com.mercadopago.android.px.views.PaymentVaultView;
 import com.mercadopago.android.px.util.ApiUtil;
 import com.mercadopago.android.px.util.ErrorUtil;
 import com.mercadopago.android.px.util.JsonUtil;
 import com.mercadopago.android.px.util.ScaleUtil;
+import com.mercadopago.android.px.views.AmountView;
+import com.mercadopago.android.px.views.DiscountDetailDialog;
+import com.mercadopago.android.px.views.PaymentVaultView;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class PaymentVaultActivity extends MercadoPagoBaseActivity
     implements PaymentVaultView, OnDiscountRetrieved, TimerObserver {
@@ -98,11 +96,6 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
 
     protected String mPublicKey;
     protected String mPrivateKey;
-    protected ServicePreference mServicePreference;
-
-    protected String mMerchantBaseUrl;
-    protected String mMerchantGetCustomerUri;
-    protected Map<String, String> mMerchantGetCustomerAdditionalInfo;
 
     private AmountView amountView;
 
@@ -120,7 +113,6 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
 
         getActivityParameters();
         configurePresenter();
-        setMerchantInfo();
         setContentView();
         initializeControls();
         cleanPaymentMethodOptions();
@@ -132,17 +124,7 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
     private void configurePresenter() {
         presenter.attachView(this);
         presenter.attachResourcesProvider(
-            new PaymentVaultProviderImpl(getApplicationContext(), mPublicKey, mPrivateKey, mMerchantBaseUrl,
-                mMerchantGetCustomerUri,
-                mMerchantGetCustomerAdditionalInfo, mEscEnabled));
-    }
-
-    protected void setMerchantInfo() {
-        if (mServicePreference != null) {
-            mMerchantBaseUrl = mServicePreference.getDefaultBaseURL();
-            mMerchantGetCustomerUri = mServicePreference.getGetCustomerURI();
-            mMerchantGetCustomerAdditionalInfo = mServicePreference.getGetCustomerAdditionalInfo();
-        }
+            new PaymentVaultProviderImpl(getApplicationContext(), mPublicKey, mEscEnabled));
     }
 
     protected void setContentView() {
@@ -151,14 +133,11 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
 
     protected void getActivityParameters() {
         final Intent intent = getIntent();
-        final Bundle extras = intent.getExtras();
         final JsonUtil instance = JsonUtil.getInstance();
 
         mShowBankDeals = intent.getBooleanExtra("showBankDeals", true);
         mEscEnabled = intent.getBooleanExtra("escEnabled", false);
         mInstallmentsEnabled = intent.getBooleanExtra("installmentsEnabled", true);
-        mServicePreference =
-            instance.fromJson(intent.getStringExtra("servicePreference"), ServicePreference.class);
         mPublicKey = intent.getStringExtra("merchantPublicKey");
 
         presenter.setInstallmentsReviewEnabled(

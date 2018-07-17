@@ -45,7 +45,6 @@ import com.mercadopago.android.px.paymentresult.components.InstructionsTertiaryI
 import com.mercadopago.android.px.paymentresult.components.InstructionsTertiaryInfoRenderer;
 import com.mercadopago.android.px.paymentresult.components.PaymentResultContainer;
 import com.mercadopago.android.px.preferences.PaymentResultScreenPreference;
-import com.mercadopago.android.px.preferences.ServicePreference;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.tracker.MPTrackingContext;
 import com.mercadopago.android.px.tracking.model.ScreenViewEvent;
@@ -61,7 +60,6 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
 
     public static final String CONGRATS_DISPLAY_BUNDLE = "congratsDisplay";
     public static final String PAYMENT_RESULT_SCREEN_PREFERENCE_BUNDLE = "paymentResultScreenPreference";
-    public static final String SERVICE_PREFERENCE_BUNDLE = "servicePreference";
     public static final String PAYMENT_RESULT_BUNDLE = "paymentResult";
     public static final String AMOUNT_BUNDLE = "amount";
     public static final String SITE_BUNDLE = "site";
@@ -160,8 +158,6 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
         final Site site = JsonUtil.getInstance().fromJson(savedInstanceState.getString(SITE_BUNDLE), Site.class);
         final BigDecimal amount =
             JsonUtil.getInstance().fromJson(savedInstanceState.getString(AMOUNT_BUNDLE), BigDecimal.class);
-        final ServicePreference servicePreference = JsonUtil.getInstance()
-            .fromJson(savedInstanceState.getString(SERVICE_PREFERENCE_BUNDLE), ServicePreference.class);
 
         merchantPublicKey = savedInstanceState.getString(MERCHANT_PUBLIC_KEY_BUNDLE);
         payerAccessToken = savedInstanceState.getString(PAYER_ACCESS_TOKEN_BUNDLE);

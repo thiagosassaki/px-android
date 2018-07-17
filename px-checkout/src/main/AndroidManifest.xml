@@ -12,10 +12,6 @@
 
     <application android:allowBackup="true">
         <activity
-            android:name=".CustomerCardsActivity"
-            android:label="@string/px_title_activity_customer_pms"
-            android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>
-        <activity
             android:name=".PaymentMethodsActivity"
             android:label="@string/px_title_activity_payment_methods"
             android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>

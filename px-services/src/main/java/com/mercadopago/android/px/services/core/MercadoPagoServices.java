@@ -2,6 +2,7 @@ package com.mercadopago.android.px.services.core;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.mercadopago.android.px.model.BankDeal;
 import com.mercadopago.android.px.model.CardToken;
 import com.mercadopago.android.px.model.Customer;
@@ -59,9 +60,9 @@ public class MercadoPagoServices {
     private final String mPrivateKey;
     private final String mProcessingMode;
 
-    public MercadoPagoServices(final Context mContext,
-        final String mPublicKey,
-        final String mPrivateKey) {
+    public MercadoPagoServices(@NonNull final Context mContext,
+        @NonNull final String mPublicKey,
+        @Nullable final String mPrivateKey) {
         this.mContext = mContext;
         this.mPublicKey = mPublicKey;
         this.mPrivateKey = mPrivateKey;

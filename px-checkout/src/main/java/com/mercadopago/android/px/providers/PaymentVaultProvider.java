@@ -23,5 +23,4 @@ public interface PaymentVaultProvider extends ResourcesProvider {
 
     void trackChildrenScreen(@NonNull PaymentMethodSearchItem paymentMethodSearchItem, @NonNull String siteId);
 
-    List<String> getCardsWithEsc();
 }
