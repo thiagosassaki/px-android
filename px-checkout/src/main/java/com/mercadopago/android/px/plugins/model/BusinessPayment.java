@@ -16,40 +16,22 @@ import com.mercadopago.android.px.util.TextUtils;
 @SuppressWarnings("unused")
 public class BusinessPayment implements PluginPayment, Parcelable {
 
-    @Nullable
-    private final String help;
-    @NonNull
-    private final String title;
-
-    @NonNull
-    private final Decorator decorator;
-
+    @NonNull private final String title;
+    @NonNull private final Decorator decorator;
+    @NonNull private final String paymentStatus;
+    @NonNull private final String paymentStatusDetail;
     private final boolean shouldShowPaymentMethod;
     private final int iconId;
 
-    @Nullable
-    private final ExitAction exitActionPrimary;
-    @Nullable
-    private final ExitAction exitActionSecondary;
-    @Nullable
-    private final String statementDescription;
-    @Nullable
-    private final String receiptId;
+    @Nullable private final String help;
+    @Nullable private final ExitAction exitActionPrimary;
+    @Nullable private final ExitAction exitActionSecondary;
+    @Nullable private final String statementDescription;
+    @Nullable private final String receiptId;
+    @Nullable private final String imageUrl;
+    @Nullable private final ExternalFragment topFragment;
+    @Nullable private final ExternalFragment bottomFragment;
 
-    @Nullable
-    private final String imageUrl;
-
-    @NonNull
-    private final String paymentStatus;
-
-    @NonNull
-    private final String paymentStatusDetail;
-
-    @Nullable
-    private final ExternalFragment topFragment;
-
-    @Nullable
-    private final ExternalFragment bottomFragment;
 
     /* default */ BusinessPayment(final Builder builder) {
         help = builder.help;
@@ -130,11 +112,11 @@ public class BusinessPayment implements PluginPayment, Parcelable {
     }
 
     public boolean hasTopFragment() {
-        return topFragment != null;
+        return getTopFragment() != null;
     }
 
     public boolean hasBottomFragment() {
-        return bottomFragment != null;
+        return getBottomFragment() != null;
     }
 
     @NonNull

@@ -147,7 +147,6 @@ public class MercadoPagoCheckout implements Serializable {
         store.setPaymentPlugins(builder.paymentPlugins);
         store.setCheckoutHooks(builder.checkoutHooks);
         store.setDataInitializationTask(builder.dataInitializationTask);
-        store.setCheckoutPreference(builder.checkoutPreference);
     }
 
     private void validate(final int resultCode) throws IllegalStateException {
