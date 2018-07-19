@@ -66,12 +66,6 @@ public class CardVaultPresenterTest {
     }
 
     @Test
-    public void ifInstallmentsEnabledNotSetThenDefaultValueIsTrue() {
-        presenter.initialize();
-        assertTrue(presenter.isInstallmentsEnabled());
-    }
-
-    @Test
     public void ifInstallmentsEnabledAndSavedCardSetThenGetInstallmentsForCard() {
 
         List<Installment> installmentsList = Installments.getInstallmentsList();
@@ -85,20 +79,6 @@ public class CardVaultPresenterTest {
         assertEquals(expectedPayerCosts.size(), mockedPayerCosts.size());
         assertTrue(expectedPayerCosts.size() > 1);
         assertNull(presenter.getPayerCost());
-    }
-
-    @Test
-    public void ifInstallmentsNotEnabledAndSavedCardSetThenDontGetInstallments() {
-
-        List<Installment> installmentsList = Installments.getInstallmentsList();
-        provider.setResponse(installmentsList);
-
-        presenter.setCard(Cards.getCard());
-        presenter.setInstallmentsEnabled(false);
-
-        presenter.initialize();
-
-        assertNull(presenter.getPayerCostList());
     }
 
     @Test
@@ -167,21 +147,6 @@ public class CardVaultPresenterTest {
         presenter.initialize();
 
         assertTrue(mockedView.installmentsFlowStarted);
-    }
-
-    @Test
-    public void ifInstallmentsNotEnabledAndSavedCardSetThenStartSecurityCodeFlow() {
-
-        List<Installment> installmentsList = Installments.getInstallmentsList();
-        provider.setResponse(installmentsList);
-
-        presenter.setCard(Cards.getCard());
-        presenter.setInstallmentsEnabled(false);
-
-        presenter.initialize();
-
-        assertFalse(mockedView.installmentsFlowStarted);
-        assertTrue(mockedView.securityCodeFlowStarted);
     }
 
     @Test
@@ -662,10 +627,6 @@ public class CardVaultPresenterTest {
         //Don't ask for security code
         presenter.setESC("12345678");
 
-        //Disable installments
-        //Don't ask for installments
-        presenter.setInstallmentsEnabled(false);
-
         final Token mockedToken = Tokens.getTokenWithESC();
         //Token response
         provider.setResponse(mockedToken);
@@ -688,10 +649,6 @@ public class CardVaultPresenterTest {
         final Card mockedCard = Cards.getCard();
         mockedCard.setId("12345");
         presenter.setCard(mockedCard);
-
-        //Disable installments
-        //Don't ask for installments
-        presenter.setInstallmentsEnabled(false);
 
         final Token mockedToken = Tokens.getTokenWithESC();
         //Token response

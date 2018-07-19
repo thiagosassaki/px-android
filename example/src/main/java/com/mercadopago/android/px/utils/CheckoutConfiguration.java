@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Sites;
-import com.mercadopago.android.px.preferences.FlowPreference;
+import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.ServicePreference;
 import com.mercadopago.android.px.util.TextUtils;
 import java.util.List;
@@ -16,7 +16,7 @@ public class CheckoutConfiguration {
     private List<Item> items;
     private String payerEmail;
     private String siteId;
-    private FlowPreference flowPreference;
+    private AdvancedConfiguration advancedConfiguration;
     private ServicePreference servicePreference;
 
     @SerializedName(value = "timer")
@@ -58,8 +58,8 @@ public class CheckoutConfiguration {
         return time;
     }
 
-    public FlowPreference getFlowPreference() {
-        return flowPreference;
+    public AdvancedConfiguration getAdvancedConfiguration() {
+        return advancedConfiguration;
     }
 
     public ServicePreference getServicePreference() {

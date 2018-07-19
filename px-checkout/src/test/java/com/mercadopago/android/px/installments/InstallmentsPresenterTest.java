@@ -168,7 +168,6 @@ public class InstallmentsPresenterTest {
         presenter.setPaymentMethod(paymentMethod);
         presenter.setPayerCosts(payerCosts);
         presenter.setIssuer(issuer);
-        presenter.setInstallmentsReviewEnabled(true);
 
         presenter.initialize();
 
@@ -193,7 +192,6 @@ public class InstallmentsPresenterTest {
         presenter.setPaymentMethod(paymentMethod);
         presenter.setPayerCosts(payerCosts);
         presenter.setIssuer(issuer);
-        presenter.setInstallmentsReviewEnabled(true);
 
         presenter.initialize();
 
@@ -216,7 +214,6 @@ public class InstallmentsPresenterTest {
         presenter.setPaymentMethod(paymentMethod);
         presenter.setPayerCosts(payerCosts);
         presenter.setIssuer(issuer);
-        presenter.setInstallmentsReviewEnabled(false);
 
         presenter.initialize();
 
@@ -229,12 +226,13 @@ public class InstallmentsPresenterTest {
     @Test
     public void whenSelectOnInstallmentThenFinishWithPayerCost() {
 
-        List<Installment> installments = Installments.getInstallmentsList();
+        final List<Installment> installments = Installments.getInstallmentsList();
         provider.setResponse(installments);
 
-        PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-        Issuer issuer = Issuers.getIssuerMLA();
-        PaymentPreference paymentPreference = new PaymentPreference();
+        final PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
+        final Issuer issuer = Issuers.getIssuerMLA();
+        final PaymentPreference paymentPreference = new PaymentPreference();
+
         presenter.setPaymentPreference(paymentPreference);
         presenter.setCardInfo(getCardInfo());
         presenter.setPaymentMethod(paymentMethod);
@@ -246,8 +244,8 @@ public class InstallmentsPresenterTest {
 
         assertTrue(mockedView.installmentsShown);
         assertTrue(mockedView.headerShown);
-        assertEquals(installments.get(0).getPayerCosts().get(0), mockedView.selectedPayerCost);
         assertTrue(mockedView.finishWithResult);
+        assertEquals(installments.get(0).getPayerCosts().get(0), mockedView.selectedPayerCost);
     }
 
     @Test
@@ -471,7 +469,7 @@ public class InstallmentsPresenterTest {
             failedResponse = new MercadoPagoError("Default mocked error", false);
         }
 
-        private void setResponse(List<Installment> installments) {
+        void setResponse(List<Installment> installments) {
             shouldFail = false;
             successfulResponse = installments;
         }
@@ -557,28 +555,8 @@ public class InstallmentsPresenterTest {
         }
 
         @Override
-        public void initInstallmentsReviewView(PayerCost payerCost) {
-            this.installmentsReviewViewInitialized = true;
-        }
-
-        @Override
-        public void hideInstallmentsRecyclerView() {
-            this.installmentRecyclerViewShown = false;
-        }
-
-        @Override
         public void showInstallmentsRecyclerView() {
             this.installmentRecyclerViewShown = true;
-        }
-
-        @Override
-        public void hideInstallmentsReviewView() {
-            this.installmentsReviewViewShown = false;
-        }
-
-        @Override
-        public void showInstallmentsReviewView() {
-            this.installmentsReviewViewShown = true;
         }
 
         @Override

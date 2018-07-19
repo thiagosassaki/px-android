@@ -21,9 +21,9 @@ import com.mercadopago.android.px.mvp.TaggedCallback;
 import com.mercadopago.android.px.providers.CardVaultProvider;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.tracking.utils.TrackingUtil;
-import com.mercadopago.android.px.views.CardVaultView;
 import com.mercadopago.android.px.util.ApiUtil;
 import com.mercadopago.android.px.util.TextUtils;
+import com.mercadopago.android.px.views.CardVaultView;
 import java.util.List;
 
 public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultProvider> {
@@ -38,8 +38,6 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
     //Activity parameters
     private PaymentRecovery paymentRecovery;
 
-    private boolean installmentsEnabled;
-    private boolean installmentsReviewEnabled;
     private boolean automaticSelection;
 
     private String merchantBaseUrl;
@@ -66,7 +64,6 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
     public CardVaultPresenter(@NonNull final AmountRepository amountRepository,
         final PaymentSettingRepository configuration) {
         this.configuration = configuration;
-        installmentsEnabled = true;
         this.amountRepository = amountRepository;
     }
 
@@ -84,10 +81,6 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
 
     public void setPaymentRecovery(final PaymentRecovery paymentRecovery) {
         this.paymentRecovery = paymentRecovery;
-    }
-
-    public void setInstallmentsEnabled(final boolean installmentsEnabled) {
-        this.installmentsEnabled = installmentsEnabled;
     }
 
     public void setCard(final Card card) {
@@ -151,14 +144,6 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         }
     }
 
-    public void setInstallmentsReviewEnabled(final boolean installmentReviewEnabled) {
-        installmentsReviewEnabled = installmentReviewEnabled;
-    }
-
-    public Boolean getInstallmentsReviewEnabled() {
-        return installmentsReviewEnabled;
-    }
-
     public CardInfo getCardInfo() {
         return cardInfo;
     }
@@ -196,7 +181,7 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
     }
 
     private void checkStartInstallmentsActivity() {
-        if (isInstallmentsEnabled() && payerCost == null) {
+        if (payerCost == null) {
             installmentsListShown = true;
             askForInstallments();
         } else {
@@ -230,10 +215,6 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         } else {
             checkStartInstallmentsActivity();
         }
-    }
-
-    public boolean isInstallmentsEnabled() {
-        return installmentsEnabled;
     }
 
     public void recoverFromFailure() {
@@ -402,11 +383,7 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         setCardInfo(new CardInfo(getCard()));
         setPaymentMethod(getCard().getPaymentMethod());
         setIssuer(getCard().getIssuer());
-        if (isInstallmentsEnabled()) {
-            getInstallmentsForCardAsync(getCard());
-        } else {
-            askForSecurityCodeWithoutInstallments();
-        }
+        getInstallmentsForCardAsync(getCard());
     }
 
     private void startNewCardFlow() {

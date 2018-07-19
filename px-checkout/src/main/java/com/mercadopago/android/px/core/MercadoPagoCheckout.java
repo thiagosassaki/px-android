@@ -18,8 +18,8 @@ import com.mercadopago.android.px.model.commission.ChargeRule;
 import com.mercadopago.android.px.plugins.DataInitializationTask;
 import com.mercadopago.android.px.plugins.PaymentMethodPlugin;
 import com.mercadopago.android.px.plugins.PaymentProcessor;
+import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.preferences.FlowPreference;
 import com.mercadopago.android.px.preferences.PaymentResultScreenPreference;
 import com.mercadopago.android.px.preferences.ServicePreference;
 import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
@@ -50,7 +50,7 @@ public class MercadoPagoCheckout implements Serializable {
     private final CheckoutPreference checkoutPreference;
 
     @NonNull
-    private final FlowPreference flowPreference;
+    private final AdvancedConfiguration advancedConfiguration;
 
     @Nullable
     private final PaymentResultScreenPreference paymentResultScreenPreference;
@@ -83,7 +83,7 @@ public class MercadoPagoCheckout implements Serializable {
     /* default */ MercadoPagoCheckout(final Builder builder) {
         publicKey = builder.publicKey;
         checkoutPreference = builder.checkoutPreference;
-        flowPreference = builder.flowPreference;
+        advancedConfiguration = builder.advancedConfiguration;
         paymentResultScreenPreference = builder.paymentResultScreenPreference;
         binaryMode = builder.binaryMode;
         discount = builder.discount;
@@ -150,27 +150,12 @@ public class MercadoPagoCheckout implements Serializable {
         store.setCheckoutPreference(builder.checkoutPreference);
     }
 
-    private void validate(final int resultCode) throws IllegalStateException {
-        if (isCheckoutTimerAvailable() && isPaymentDataIntegration(resultCode)) {
-            throw new IllegalStateException("CheckoutTimer is not available with PaymentData integration");
-        }
-    }
-
-    private boolean isCheckoutTimerAvailable() {
-        return flowPreference.isCheckoutTimerEnabled();
-    }
-
-    private boolean isPaymentDataIntegration(final int resultCode) {
-        return resultCode == MercadoPagoCheckout.PAYMENT_DATA_RESULT_CODE;
-    }
-
     private void startForResult(@NonNull final Context context, final int resultCode) {
         CallbackHolder.getInstance().clean();
         startCheckoutActivity(context, resultCode);
     }
 
     private void startCheckoutActivity(@NonNull final Context context, final int resultCode) {
-        validate(resultCode);
         startIntent(context, CheckoutActivity.getIntent(context, resultCode, this));
     }
 
@@ -193,8 +178,8 @@ public class MercadoPagoCheckout implements Serializable {
     }
 
     @NonNull
-    public FlowPreference getFlowPreference() {
-        return flowPreference;
+    public AdvancedConfiguration getAdvancedConfiguration() {
+        return advancedConfiguration;
     }
 
     public boolean isBinaryMode() {
@@ -263,7 +248,7 @@ public class MercadoPagoCheckout implements Serializable {
         Boolean binaryMode = false;
 
         @NonNull
-        FlowPreference flowPreference = new FlowPreference.Builder().build();
+        AdvancedConfiguration advancedConfiguration = new AdvancedConfiguration.Builder().build();
 
         @Nullable
         String privateKey;
@@ -355,8 +340,8 @@ public class MercadoPagoCheckout implements Serializable {
             return this;
         }
 
-        public Builder setFlowPreference(@NonNull final FlowPreference flowPreference) {
-            this.flowPreference = flowPreference;
+        public Builder setAdvancedConfiguration(@NonNull final AdvancedConfiguration advancedConfiguration) {
+            this.advancedConfiguration = advancedConfiguration;
             return this;
         }
 

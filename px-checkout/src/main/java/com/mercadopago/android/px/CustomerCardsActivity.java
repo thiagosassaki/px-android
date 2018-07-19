@@ -21,13 +21,13 @@ import com.mercadopago.android.px.presenters.CustomerCardsPresenter;
 import com.mercadopago.android.px.providers.CustomerCardsProviderImpl;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.uicontrollers.GridSpacingItemDecoration;
-import com.mercadopago.android.px.views.CustomerCardsView;
 import com.mercadopago.android.px.util.ApiUtil;
 import com.mercadopago.android.px.util.ErrorUtil;
 import com.mercadopago.android.px.util.JsonUtil;
 import com.mercadopago.android.px.util.MercadoPagoUtil;
 import com.mercadopago.android.px.util.ScaleUtil;
 import com.mercadopago.android.px.util.ViewUtils;
+import com.mercadopago.android.px.views.CustomerCardsView;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -200,17 +200,17 @@ public class CustomerCardsActivity extends MercadoPagoBaseActivity implements Cu
     }
 
     @Override
-    public void showError(MercadoPagoError error, String requestOrigin) {
+    public void showError(final MercadoPagoError error, final String requestOrigin) {
         if (error.isApiException()) {
             showApiException(error.getApiException(), requestOrigin);
         } else {
-            ErrorUtil.startErrorActivity(this, error, "");
+            ErrorUtil.startErrorActivity(this, error);
         }
     }
 
     @Override
     public void finishWithCardResult(Card card) {
-        Intent returnIntent = new Intent();
+        final Intent returnIntent = new Intent();
         setResult(RESULT_OK, returnIntent);
         returnIntent.putExtra("card", JsonUtil.getInstance().toJson(card));
         finish();
@@ -218,21 +218,21 @@ public class CustomerCardsActivity extends MercadoPagoBaseActivity implements Cu
 
     @Override
     public void onBackPressed() {
-        Intent returnIntent = new Intent();
+        final Intent returnIntent = new Intent();
         setResult(RESULT_CANCELED, returnIntent);
         finish();
     }
 
     @Override
     public void finishWithOkResult() {
-        Intent returnIntent = new Intent();
+        final Intent returnIntent = new Intent();
         setResult(RESULT_OK, returnIntent);
         finish();
     }
 
     public void showApiException(ApiException apiException, String requestOrigin) {
         if (mActivityActive) {
-            ApiUtil.showApiExceptionError(this, apiException, "", requestOrigin);
+            ApiUtil.showApiExceptionError(this, apiException, requestOrigin);
         }
     }
 

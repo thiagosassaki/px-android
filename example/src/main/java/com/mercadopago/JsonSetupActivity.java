@@ -100,7 +100,7 @@ public class JsonSetupActivity extends AppCompatActivity {
             checkoutBuilder = new MercadoPagoCheckout.Builder(mConfiguration.getPublicKey(), preference);
         }
 
-        checkoutBuilder.setFlowPreference(mConfiguration.getFlowPreference());
+        checkoutBuilder.setAdvancedConfiguration(mConfiguration.getAdvancedConfiguration());
         MercadoPagoCheckout checkout = checkoutBuilder.build();
 
         if (mConfiguration.paymentRequired()) {

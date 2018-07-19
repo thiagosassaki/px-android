@@ -1,8 +1,11 @@
 package com.mercadopago.android.px.providers;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
+import com.mercadopago.android.px.internal.di.Session;
+import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CardToken;
 import com.mercadopago.android.px.model.PaymentMethod;
@@ -27,10 +30,13 @@ public class SecurityCodeProviderImpl implements SecurityCodeProvider {
     private static final String PAYMENT_METHOD_NOT_SET = "payment method not set";
     private static final String CARD_INFO_NOT_SET = "card info can't be null";
 
-    public SecurityCodeProviderImpl(Context context, String publicKey, String privateKey, boolean escEnabled) {
+    public SecurityCodeProviderImpl(@NonNull final Context context) {
+        final Session session = Session.getSession(context);
+        final PaymentSettingRepository paymentSettings = session.getConfigurationModule().getPaymentSettings();
         mContext = context;
-        mMercadoPagoServicesAdapter = new MercadoPagoServicesAdapter(context, publicKey, privateKey);
-        mercadoPagoESC = new MercadoPagoESCImpl(context, escEnabled);
+        mMercadoPagoServicesAdapter =
+            new MercadoPagoServicesAdapter(context, paymentSettings.getPublicKey(), paymentSettings.getPrivateKey());
+        mercadoPagoESC = new MercadoPagoESCImpl(context, paymentSettings.getAdvancedConfiguration().isEscEnabled());
     }
 
     @Override

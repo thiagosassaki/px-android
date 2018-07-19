@@ -3,8 +3,8 @@ package com.mercadopago.android.px.internal.repository;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.model.commission.ChargeRule;
+import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.preferences.FlowPreference;
 import java.util.List;
 
 public interface PaymentSettingRepository {
@@ -13,7 +13,7 @@ public interface PaymentSettingRepository {
 
     void configure(@NonNull List<ChargeRule> charges);
 
-    void configure(@NonNull FlowPreference flowPreference);
+    void configure(@NonNull final AdvancedConfiguration advancedConfiguration);
 
     void configure(@NonNull String publicKey);
 
@@ -34,7 +34,7 @@ public interface PaymentSettingRepository {
     String getPublicKey();
 
     @NonNull
-    FlowPreference getFlow();
+    AdvancedConfiguration getAdvancedConfiguration();
 
     @Nullable
     String getPrivateKey();

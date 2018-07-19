@@ -63,7 +63,7 @@ public final class Session extends ApplicationModule
         final PaymentSettingRepository configuration = configurationModule.getPaymentSettings();
         configuration.configure(mercadoPagoCheckout.getMerchantPublicKey());
         configuration.configure(mercadoPagoCheckout.getCharges());
-        configuration.configure(mercadoPagoCheckout.getFlowPreference());
+        configuration.configure(mercadoPagoCheckout.getAdvancedConfiguration());
         configuration.configurePrivateKey(mercadoPagoCheckout.getPrivateKey());
         discountRepository
             .configureDiscountManually(mercadoPagoCheckout.getDiscount(), mercadoPagoCheckout.getCampaign());
@@ -88,7 +88,7 @@ public final class Session extends ApplicationModule
             final PaymentSettingRepository paymentSettings = getConfigurationModule().getPaymentSettings();
             groupsRepository = new GroupsService(getAmountRepository(),
                 paymentSettings,
-                new MercadoPagoESCImpl(getContext(), paymentSettings.getFlow().isESCEnabled()),
+                new MercadoPagoESCImpl(getContext(), paymentSettings.getAdvancedConfiguration().isEscEnabled()),
                 getRetrofitClient().create(CheckoutService.class),
                 LocaleUtil.getLanguage(getContext()),
                 getGroupsCache());

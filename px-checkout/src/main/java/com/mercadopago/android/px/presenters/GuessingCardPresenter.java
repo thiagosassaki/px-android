@@ -27,6 +27,7 @@ import com.mercadopago.android.px.model.Setting;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.mvp.MvpPresenter;
 import com.mercadopago.android.px.mvp.TaggedCallback;
+import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.providers.GuessingCardProvider;
 import com.mercadopago.android.px.services.callbacks.Callback;
@@ -48,6 +49,7 @@ public class GuessingCardPresenter extends MvpPresenter<GuessingCardActivityView
     @NonNull private final AmountRepository amountRepository;
     @NonNull private final UserSelectionRepository userSelectionRepository;
     private final GroupsRepository groupsRepository;
+    private final AdvancedConfiguration advancedConfiguration;
 
     //Card controller
     private PaymentMethodGuessingController mPaymentMethodGuessingController;
@@ -56,7 +58,6 @@ public class GuessingCardPresenter extends MvpPresenter<GuessingCardActivityView
     private FailureRecovery mFailureRecovery;
 
     //Activity parameters
-    private String mPublicKey;
     private PaymentRecovery mPaymentRecovery;
 
     private Identification mIdentification;
@@ -85,27 +86,25 @@ public class GuessingCardPresenter extends MvpPresenter<GuessingCardActivityView
     private List<BankDeal> mBankDealsList;
     private boolean showPaymentTypes;
     private List<PaymentType> mPaymentTypesList;
-    private Boolean mShowBankDeals;
 
     //Discount
-    private String mPayerEmail;
-    private String mPrivateKey;
     private int mCurrentNumberLength;
     private Issuer mIssuer;
 
     public GuessingCardPresenter(@NonNull final AmountRepository amountRepository,
         @NonNull final UserSelectionRepository userSelectionRepository,
-        final GroupsRepository groupsRepository) {
+        final GroupsRepository groupsRepository,
+        final AdvancedConfiguration advancedConfiguration) {
+
         this.amountRepository = amountRepository;
         this.userSelectionRepository = userSelectionRepository;
         this.groupsRepository = groupsRepository;
-        mShowBankDeals = true;
+        this.advancedConfiguration = advancedConfiguration;
         mEraseSpace = true;
     }
 
     public void initialize() {
         try {
-            validateParameters();
             onValidStart();
         } catch (IllegalStateException exception) {
             getView().showError(new MercadoPagoError(exception.getMessage(), false), "");
@@ -114,12 +113,6 @@ public class GuessingCardPresenter extends MvpPresenter<GuessingCardActivityView
 
     private boolean isTimerEnabled() {
         return CheckoutTimer.getInstance().isTimerEnabled();
-    }
-
-    private void validateParameters() throws IllegalStateException {
-        if (mPublicKey == null) {
-            throw new IllegalStateException(getResourcesProvider().getMissingPublicKeyErrorMessage());
-        }
     }
 
     private void onValidStart() {
@@ -144,14 +137,6 @@ public class GuessingCardPresenter extends MvpPresenter<GuessingCardActivityView
 
     public void setFailureRecovery(FailureRecovery failureRecovery) {
         mFailureRecovery = failureRecovery;
-    }
-
-    public String getPublicKey() {
-        return mPublicKey;
-    }
-
-    public void setPublicKey(String publicKey) {
-        mPublicKey = publicKey;
     }
 
     public PaymentRecovery getPaymentRecovery() {
@@ -378,21 +363,13 @@ public class GuessingCardPresenter extends MvpPresenter<GuessingCardActivityView
         }
     }
 
-    public void setPayerEmail(String payerEmail) {
-        mPayerEmail = payerEmail;
-    }
-
-    public String getPayerEmail() {
-        return mPayerEmail;
-    }
-
     private void loadPaymentMethods() {
         getView().showInputContainer();
         initializeGuessingCardNumberController();
     }
 
     public void resolveBankDeals() {
-        if (mShowBankDeals) {
+        if (advancedConfiguration.isBankDealsEnabled()) {
             getBankDealsAsync();
         } else {
             getView().hideBankDeals();
@@ -822,10 +799,6 @@ public class GuessingCardPresenter extends MvpPresenter<GuessingCardActivityView
         }
     }
 
-    public void setShowBankDeals(Boolean showBankDeals) {
-        mShowBankDeals = showBankDeals;
-    }
-
     public boolean isDefaultSpaceErasable() {
 
         if (MPCardMaskUtil.isDefaultSpaceErasable(mCurrentNumberLength)) {
@@ -839,14 +812,6 @@ public class GuessingCardPresenter extends MvpPresenter<GuessingCardActivityView
             return true;
         }
         return false;
-    }
-
-    public void setPrivateKey(String privateKey) {
-        mPrivateKey = privateKey;
-    }
-
-    public String getPrivateKey() {
-        return mPrivateKey;
     }
 
     public void clearSpaceErasableSettings() {

@@ -4,6 +4,8 @@ import android.content.Context;
 import com.mercadopago.android.px.BuildConfig;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
+import com.mercadopago.android.px.internal.di.Session;
+import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.BankDeal;
 import com.mercadopago.android.px.model.CardToken;
 import com.mercadopago.android.px.model.IdentificationType;
@@ -23,10 +25,12 @@ public class GuessingCardProviderImpl implements GuessingCardProvider {
     private final String publicKey;
     private MPTrackingContext trackingContext;
 
-    public GuessingCardProviderImpl(Context context, String publicKey, String privateKey) {
+    public GuessingCardProviderImpl(Context context) {
+        final Session session = Session.getSession(context);
+        final PaymentSettingRepository paymentSettings = session.getConfigurationModule().getPaymentSettings();
+        publicKey = paymentSettings.getPublicKey();
         this.context = context;
-        this.publicKey = publicKey;
-        mercadoPago = new MercadoPagoServicesAdapter(context, publicKey, privateKey);
+        mercadoPago = new MercadoPagoServicesAdapter(context, publicKey, paymentSettings.getPrivateKey());
     }
 
     @Override

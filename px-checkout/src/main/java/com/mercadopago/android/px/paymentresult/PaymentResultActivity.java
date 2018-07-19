@@ -125,7 +125,7 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
 
     @Override
     public void showApiExceptionError(final ApiException exception, final String requestOrigin) {
-        ApiUtil.showApiExceptionError(this, exception, merchantPublicKey, requestOrigin);
+        ApiUtil.showApiExceptionError(this, exception, requestOrigin);
     }
 
     @Override
@@ -133,7 +133,7 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
         if (error != null && error.isApiException()) {
             showApiExceptionError(error.getApiException(), requestOrigin);
         } else {
-            ErrorUtil.startErrorActivity(this, error, merchantPublicKey);
+            ErrorUtil.startErrorActivity(this, error);
         }
     }
 

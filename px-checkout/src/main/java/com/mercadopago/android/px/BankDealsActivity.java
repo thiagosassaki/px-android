@@ -12,6 +12,8 @@ import com.mercadopago.android.px.callbacks.FailureRecovery;
 import com.mercadopago.android.px.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
 import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.internal.di.Session;
+import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.BankDeal;
 import com.mercadopago.android.px.mvp.TaggedCallback;
 import com.mercadopago.android.px.tracker.FlowHandler;
@@ -27,26 +29,26 @@ import java.util.List;
 
 public class BankDealsActivity extends MercadoPagoActivity implements OnSelectedCallback<BankDeal> {
 
-    //Activity parameters
-    protected String mMerchantPublicKey;
-
     // Local vars
     protected MercadoPagoServicesAdapter mMercadoPago;
     protected RecyclerView mRecyclerView;
     protected Toolbar mToolbar;
 
     protected List<BankDeal> mBankDeals;
-    protected String mPayerAccessToken;
 
     @Override
     protected void onValidStart() {
-        trackInitialScreen();
-        mMercadoPago = new MercadoPagoServicesAdapter(getActivity(), mMerchantPublicKey, mPayerAccessToken);
+        final Session session = Session.getSession(this);
+        final PaymentSettingRepository paymentSettings = session.getConfigurationModule().getPaymentSettings();
+
+        mMercadoPago = new MercadoPagoServicesAdapter(getActivity(), paymentSettings.getPublicKey(),
+            paymentSettings.getPrivateKey());
+        trackInitialScreen(paymentSettings.getPublicKey());
         getBankDeals();
     }
 
-    protected void trackInitialScreen() {
-        MPTrackingContext mpTrackingContext = new MPTrackingContext.Builder(this, mMerchantPublicKey)
+    protected void trackInitialScreen(final String publicKey) {
+        MPTrackingContext mpTrackingContext = new MPTrackingContext.Builder(this, publicKey)
             .setVersion(BuildConfig.VERSION_NAME)
             .build();
         ScreenViewEvent event = new ScreenViewEvent.Builder()
@@ -60,7 +62,7 @@ public class BankDealsActivity extends MercadoPagoActivity implements OnSelected
 
     @Override
     protected void onInvalidStart(String message) {
-        ErrorUtil.startErrorActivity(this, message, false, mMerchantPublicKey);
+        ErrorUtil.startErrorActivity(this, message, false);
     }
 
     @Override
@@ -78,8 +80,6 @@ public class BankDealsActivity extends MercadoPagoActivity implements OnSelected
 
     @Override
     protected void getActivityParameters() {
-        mMerchantPublicKey = getIntent().getStringExtra("merchantPublicKey");
-        mPayerAccessToken = getIntent().getStringExtra("payerAccessToken");
         try {
             Type listType = new TypeToken<List<BankDeal>>() {
             }.getType();
@@ -87,6 +87,11 @@ public class BankDealsActivity extends MercadoPagoActivity implements OnSelected
         } catch (Exception ex) {
             mBankDeals = null;
         }
+    }
+
+    @Override
+    protected void validateActivityParameters() throws IllegalStateException {
+
     }
 
     private void initializeToolbar() {
@@ -102,13 +107,6 @@ public class BankDealsActivity extends MercadoPagoActivity implements OnSelected
                 onBackPressed();
             }
         });
-    }
-
-    @Override
-    protected void validateActivityParameters() throws IllegalStateException {
-        if (mMerchantPublicKey == null) {
-            throw new IllegalStateException("public key not set");
-        }
     }
 
     private void getBankDeals() {
@@ -132,7 +130,6 @@ public class BankDealsActivity extends MercadoPagoActivity implements OnSelected
 
                     ApiUtil.showApiExceptionError(getActivity(),
                         error.getApiException(),
-                        mMerchantPublicKey,
                         ApiUtil.RequestOrigin.GET_BANK_DEALS);
                 } else {
                     finishWithCancelResult();

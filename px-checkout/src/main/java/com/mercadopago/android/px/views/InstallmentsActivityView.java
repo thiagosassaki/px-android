@@ -25,15 +25,7 @@ public interface InstallmentsActivityView extends MvpView {
 
     void showHeader();
 
-    void initInstallmentsReviewView(PayerCost payerCost);
-
-    void hideInstallmentsRecyclerView();
-
     void showInstallmentsRecyclerView();
-
-    void hideInstallmentsReviewView();
-
-    void showInstallmentsReviewView();
 
     void warnAboutBankInterests();
 

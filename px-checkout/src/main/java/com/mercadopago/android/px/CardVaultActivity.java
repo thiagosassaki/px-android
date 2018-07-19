@@ -24,45 +24,31 @@ import com.mercadopago.android.px.presenters.CardVaultPresenter;
 import com.mercadopago.android.px.providers.CardVaultProviderImpl;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.tracking.utils.TrackingUtil;
-import com.mercadopago.android.px.views.CardVaultView;
 import com.mercadopago.android.px.util.ApiUtil;
 import com.mercadopago.android.px.util.ErrorUtil;
 import com.mercadopago.android.px.util.JsonUtil;
 import com.mercadopago.android.px.util.ViewUtils;
+import com.mercadopago.android.px.views.CardVaultView;
 import java.lang.reflect.Type;
 import java.util.List;
 
 public class CardVaultActivity extends AppCompatActivity implements CardVaultView {
 
-    private static final String EXTRA_MERCHANT_PUBLIC_KEY = "merchantPublicKey";
-    private static final String EXTRA_SHOW_BANK_DEALS = "showBankDeals";
-    private static final String EXTRA_ESC_ENABLED = "escEnabled";
-
     private static final String EXTRA_CARD = "card";
 
-    //Parameters
-    private String publicKey;
-
-    private Boolean showBankDeals;
-    private Boolean escEnabled;
-
     private CardVaultPresenter presenter;
-    private String privateKey;
 
     private PaymentSettingRepository configuration;
 
     private void configure() {
         final Intent intent = getIntent();
-
-        publicKey = intent.getStringExtra(EXTRA_MERCHANT_PUBLIC_KEY);
-        escEnabled = intent.getBooleanExtra(EXTRA_ESC_ENABLED, false);
-        showBankDeals = intent.getBooleanExtra(EXTRA_SHOW_BANK_DEALS, true);
         final Card card = JsonUtil.getInstance().fromJson(intent.getStringExtra(EXTRA_CARD), Card.class);
         final Session session = Session.getSession(this);
         configuration = session.getConfigurationModule().getPaymentSettings();
-        privateKey = configuration.getCheckoutPreference().getPayer().getAccessToken();
+
         presenter = new CardVaultPresenter(session.getAmountRepository(), configuration);
-        presenter.attachResourcesProvider(new CardVaultProviderImpl(this, publicKey, privateKey, escEnabled));
+        presenter.attachResourcesProvider(
+            new CardVaultProviderImpl(getApplicationContext()));
         presenter.attachView(this);
         presenter.setCard(card);
     }
@@ -124,35 +110,16 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
             .setToken(JsonUtil.getInstance().fromJson(savedInstanceState.getString("token"), Token.class));
         presenter
             .setCardInfo(JsonUtil.getInstance().fromJson(savedInstanceState.getString("cardInfo"), CardInfo.class));
-        presenter.setInstallmentsEnabled(savedInstanceState.getBoolean("installmentsEnabled", false));
-        presenter
-            .setInstallmentsReviewEnabled(savedInstanceState.getBoolean("installmentsReviewEnabled", false));
         presenter.setInstallmentsListShown(savedInstanceState.getBoolean("installmentsListShown", false));
         presenter.setIssuersListShown(savedInstanceState.getBoolean("issuersListShown", false));
     }
 
     private void getActivityParameters() {
         Intent intent = getIntent();
-
-        Boolean installmentsEnabled = intent.getBooleanExtra("installmentsEnabled", true);
-        Boolean installmentsReviewEnabled = intent.getBooleanExtra("installmentsReviewEnabled", true);
         PaymentRecovery paymentRecovery =
             JsonUtil.getInstance().fromJson(intent.getStringExtra("paymentRecovery"), PaymentRecovery.class);
         Boolean automaticSelection = intent.getBooleanExtra("automaticSelection", false);
-
-        List<PaymentMethod> paymentMethods;
-        try {
-            Type listType = new TypeToken<List<PaymentMethod>>() {
-            }.getType();
-            paymentMethods =
-                JsonUtil.getInstance().getGson().fromJson(intent.getStringExtra("paymentMethodList"), listType);
-        } catch (Exception ex) {
-            paymentMethods = null;
-        }
-
-        presenter.setInstallmentsEnabled(installmentsEnabled);
         presenter.setPaymentRecovery(paymentRecovery);
-        presenter.setInstallmentsReviewEnabled(installmentsReviewEnabled);
         presenter.setAutomaticSelection(automaticSelection);
     }
 
@@ -184,14 +151,10 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
     public void startSecurityCodeActivity(String reason) {
         new MercadoPagoComponents.Activities.SecurityCodeActivityBuilder()
             .setActivity(this)
-            .setMerchantPublicKey(publicKey)
-            .setSiteId(configuration.getCheckoutPreference().getSiteId())
             .setPaymentMethod(presenter.getPaymentMethod())
             .setCardInfo(presenter.getCardInfo())
             .setToken(presenter.getToken())
             .setCard(presenter.getCard())
-            .setPayerAccessToken(privateKey)
-            .setESCEnabled(escEnabled)
             .setPaymentRecovery(presenter.getPaymentRecovery())
             .setTrackingReason(reason)
             .startActivity();
@@ -228,16 +191,11 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (presenter != null) {
-            outState.putBoolean("installmentsEnabled", presenter.isInstallmentsEnabled());
-            outState.putBoolean("installmentsReviewEnabled", presenter.getInstallmentsReviewEnabled());
-            outState.putString(EXTRA_MERCHANT_PUBLIC_KEY, publicKey);
             outState.putString(EXTRA_CARD, JsonUtil.getInstance().toJson(presenter.getCard()));
             outState
                 .putString("paymentRecovery", JsonUtil.getInstance().toJson(presenter.getPaymentRecovery()));
-            outState.putBoolean(EXTRA_SHOW_BANK_DEALS, showBankDeals);
             outState.putBoolean("installmentsListShown", presenter.isInstallmentsListShown());
             outState.putBoolean("issuersListShown", presenter.isIssuersListShown());
-            outState.putBoolean(EXTRA_ESC_ENABLED, escEnabled);
 
             if (presenter.getPayerCostList() != null) {
                 outState
@@ -349,8 +307,6 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
     public void startIssuersActivity() {
         new MercadoPagoComponents.Activities.IssuersActivityBuilder()
             .setActivity(this)
-            .setMerchantPublicKey(publicKey)
-            .setPayerAccessToken(privateKey)
             .setPaymentMethod(presenter.getPaymentMethod())
             .setCardInfo(presenter.getCardInfo())
             .setIssuers(presenter.getIssuersList())
@@ -384,10 +340,6 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
             public void run() {
                 new MercadoPagoComponents.Activities.GuessingCardActivityBuilder()
                     .setActivity(context)
-                    .setMerchantPublicKey(publicKey)
-                    .setPayerEmail(configuration.getCheckoutPreference().getPayer().getEmail())
-                    .setPayerAccessToken(privateKey)
-                    .setShowBankDeals(showBankDeals)
                     .setPaymentPreference(configuration.getCheckoutPreference().getPaymentPreference())
                     .setPaymentRecovery(presenter.getPaymentRecovery())
                     .startActivity();
@@ -399,15 +351,10 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
     private void startInstallmentsActivity() {
         new MercadoPagoComponents.Activities.InstallmentsActivityBuilder()
             .setActivity(this)
-            .setMerchantPublicKey(publicKey)
-            .setPayerAccessToken(privateKey)
             .setPaymentMethod(presenter.getPaymentMethod())
-            .setPayerEmail(configuration.getCheckoutPreference().getPayer().getEmail())
             .setIssuer(presenter.getIssuer())
             .setPaymentPreference(configuration.getCheckoutPreference().getPaymentPreference())
             .setSite(configuration.getCheckoutPreference().getSite())
-            .setInstallmentsEnabled(presenter.isInstallmentsEnabled())
-            .setInstallmentsReviewEnabled(presenter.getInstallmentsReviewEnabled())
             .setCardInfo(presenter.getCardInfo())
             .setPayerCosts(presenter.getPayerCostList())
             .startActivity();
@@ -425,7 +372,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
 
     @Override
     public void finishWithResult() {
-        Intent returnIntent = new Intent();
+        final Intent returnIntent = new Intent();
         returnIntent.putExtra("payerCost", JsonUtil.getInstance().toJson(presenter.getPayerCost()));
         returnIntent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(presenter.getPaymentMethod()));
         returnIntent.putExtra("token", JsonUtil.getInstance().toJson(presenter.getToken()));
@@ -437,7 +384,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
 
     @Override
     public void showApiExceptionError(final ApiException exception, final String requestOrigin) {
-        ApiUtil.showApiExceptionError(this, exception, publicKey, requestOrigin);
+        ApiUtil.showApiExceptionError(this, exception, requestOrigin);
     }
 
     @Override
@@ -445,7 +392,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
         if (error != null && error.isApiException()) {
             showApiExceptionError(error.getApiException(), requestOrigin);
         } else {
-            ErrorUtil.startErrorActivity(this, error, publicKey);
+            ErrorUtil.startErrorActivity(this, error);
         }
     }
 }

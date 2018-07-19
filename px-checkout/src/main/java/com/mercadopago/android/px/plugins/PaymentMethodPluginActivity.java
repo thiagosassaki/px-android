@@ -16,6 +16,7 @@ import com.mercadopago.android.px.components.NextAction;
 import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.internal.datasource.PluginService;
 import com.mercadopago.android.px.internal.di.ConfigurationModule;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.di.UserSelectionComponent;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.model.PaymentMethod;
@@ -29,12 +30,8 @@ public class PaymentMethodPluginActivity extends AppCompatActivity implements Ac
     private static final String SCREEN_NAME_CONFIG_PAYMENT_METHOD_PLUGIN = "CONFIG_PAYMENT_METHOD";
     private static final String PUBLIC_KEY = "public_key";
 
-    private String mPublicKey;
-
-    public static Intent getIntent(@NonNull final Context context, @NonNull final String publicKey) {
-        final Intent intent = new Intent(context, PaymentMethodPluginActivity.class);
-        intent.putExtra(PUBLIC_KEY, publicKey);
-        return intent;
+    public static Intent getIntent(@NonNull final Context context) {
+        return new Intent(context, PaymentMethodPluginActivity.class);
     }
 
     ComponentManager componentManager;
@@ -59,9 +56,6 @@ public class PaymentMethodPluginActivity extends AppCompatActivity implements Ac
         final PaymentMethodPlugin plugin = CheckoutStore
             .getInstance().getPaymentMethodPluginById(paymentMethodInfo.getId());
 
-        final Intent intent = getIntent();
-        mPublicKey = intent.getStringExtra(PUBLIC_KEY);
-
         trackScreen(plugin.getId());
 
         final PluginComponent.Props props = new PluginComponent.Props.Builder()
@@ -83,10 +77,9 @@ public class PaymentMethodPluginActivity extends AppCompatActivity implements Ac
     }
 
     private void trackScreen(final String id) {
-
         final String screenName = SCREEN_NAME_CONFIG_PAYMENT_METHOD_PLUGIN + "_" + id;
-
-        final MPTrackingContext mTrackingContext = new MPTrackingContext.Builder(this, mPublicKey)
+        final String publicKey = Session.getSession(this).getConfigurationModule().getPaymentSettings().getPublicKey();
+        final MPTrackingContext mTrackingContext = new MPTrackingContext.Builder(this, publicKey)
             .setVersion(BuildConfig.VERSION_NAME)
             .build();
 
