@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Advanced configuration allows you to configure special behaviour
  * when checkout is running.
  */
-public final class AdvancedConfiguration implements Serializable {
+public class AdvancedConfiguration implements Serializable {
 
     private final boolean bankDealsEnabled;
     private final boolean escEnabled;

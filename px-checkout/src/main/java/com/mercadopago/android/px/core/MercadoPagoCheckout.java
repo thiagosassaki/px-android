@@ -20,6 +20,7 @@ import com.mercadopago.android.px.plugins.PaymentMethodPlugin;
 import com.mercadopago.android.px.plugins.PaymentProcessor;
 import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
+import com.mercadopago.android.px.preferences.FlowPreference;
 import com.mercadopago.android.px.preferences.PaymentResultScreenPreference;
 import com.mercadopago.android.px.preferences.ServicePreference;
 import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
@@ -231,7 +232,8 @@ public class MercadoPagoCheckout implements Serializable {
         return isEmpty(privateKey) ? "" : privateKey;
     }
 
-    public static class Builder {
+    @SuppressWarnings("unused")
+    public static final class Builder {
 
         final String publicKey;
 
@@ -345,20 +347,14 @@ public class MercadoPagoCheckout implements Serializable {
             return this;
         }
 
-        @SuppressWarnings("unused")
-        public Builder setPaymentResultScreenPreference(PaymentResultScreenPreference paymentResultScreenPreference) {
+        public Builder setPaymentResultScreenPreference(
+            @NonNull final PaymentResultScreenPreference paymentResultScreenPreference) {
             this.paymentResultScreenPreference = paymentResultScreenPreference;
             return this;
         }
 
-        @SuppressWarnings("unused")
         @Deprecated
         public Builder setServicePreference(@NonNull final ServicePreference servicePreference) {
-            return this;
-        }
-
-        public Builder setPaymentData(PaymentData paymentData) {
-            this.paymentData = paymentData;
             return this;
         }
 
@@ -371,7 +367,6 @@ public class MercadoPagoCheckout implements Serializable {
          *
          * @return builder
          */
-        @SuppressWarnings("unused")
         public Builder enableBinaryMode() {
             binaryMode = true;
             return this;
@@ -384,25 +379,16 @@ public class MercadoPagoCheckout implements Serializable {
          * @param reviewAndConfirmPreferences the custom preference configuration
          * @return builder to keep operating
          */
-        @SuppressWarnings("unused")
         public Builder setReviewAndConfirmPreferences(final ReviewAndConfirmPreferences reviewAndConfirmPreferences) {
             this.reviewAndConfirmPreferences = reviewAndConfirmPreferences;
             return this;
         }
 
-        @SuppressWarnings("unused")
-        public Builder setPaymentResult(final PaymentResult paymentResult) {
-            this.paymentResult = paymentResult;
-            return this;
-        }
-
-        @SuppressWarnings("unused")
         public Builder setCheckoutHooks(@NonNull final CheckoutHooks checkoutHooks) {
             this.checkoutHooks = checkoutHooks;
             return this;
         }
 
-        @SuppressWarnings("unused")
         public Builder addPaymentMethodPlugin(@NonNull final PaymentMethodPlugin paymentMethodPlugin,
             @NonNull final PaymentProcessor paymentProcessor) {
             paymentMethodPluginList.add(paymentMethodPlugin);
@@ -410,51 +396,14 @@ public class MercadoPagoCheckout implements Serializable {
             return this;
         }
 
-        @SuppressWarnings("unused")
         public Builder setPaymentProcessor(@NonNull final PaymentProcessor paymentProcessor) {
             paymentPlugins.put(PAYMENT_PROCESSOR_KEY, paymentProcessor);
             return this;
         }
 
-        @SuppressWarnings("unused")
         public Builder setDataInitializationTask(@NonNull final DataInitializationTask dataInitializationTask) {
             this.dataInitializationTask = dataInitializationTask;
             return this;
-        }
-
-        @SuppressWarnings("unused")
-        public Builder setCustomLightFont(String lightFontPath, Context context) {
-            this.lightFontPath = lightFontPath;
-            if (lightFontPath != null) {
-                setCustomFont(context, FontCache.CUSTOM_LIGHT_FONT, this.lightFontPath);
-            }
-            return this;
-        }
-
-        @SuppressWarnings("unused")
-        public Builder setCustomRegularFont(String regularFontPath, Context context) {
-            this.regularFontPath = regularFontPath;
-            if (regularFontPath != null) {
-                setCustomFont(context, FontCache.CUSTOM_REGULAR_FONT, this.regularFontPath);
-            }
-            return this;
-        }
-
-        @SuppressWarnings("unused")
-        public Builder setCustomMonoFont(String monoFontPath, Context context) {
-            this.monoFontPath = monoFontPath;
-            if (monoFontPath != null) {
-                setCustomFont(context, FontCache.CUSTOM_MONO_FONT, this.monoFontPath);
-            }
-            return this;
-        }
-
-        private void setCustomFont(Context context, String fontType, String fontPath) {
-            Typeface typeFace;
-            if (!FontCache.hasTypeface(fontType)) {
-                typeFace = Typeface.createFromAsset(context.getAssets(), fontPath);
-                FontCache.setTypeface(fontType, typeFace);
-            }
         }
 
         private boolean hasPaymentDataDiscount() {
@@ -475,6 +424,87 @@ public class MercadoPagoCheckout implements Serializable {
                 throw new IllegalStateException("payment data discount and discount set");
             }
             return new MercadoPagoCheckout(this);
+        }
+
+        /**
+         * @deprecated we will not support this mechanism anymore.
+         * It's replaced with {@link PaymentProcessor}
+         */
+        public Builder setPaymentData(final PaymentData paymentData) {
+            this.paymentData = paymentData;
+            return this;
+        }
+
+        /**
+         * @deprecated we will not support this mechanism anymore.
+         * It's replaced with {@link PaymentProcessor}
+         */
+        @Deprecated
+        public Builder setPaymentResult(final PaymentResult paymentResult) {
+            this.paymentResult = paymentResult;
+            return this;
+        }
+
+        /**
+         * //TODO add new mechanism
+         *
+         * @deprecated we will not support this mechanism anymore.
+         */
+        @Deprecated
+        public Builder setCustomLightFont(final String lightFontPath, final Context context) {
+            this.lightFontPath = lightFontPath;
+            if (lightFontPath != null) {
+                setCustomFont(context, FontCache.CUSTOM_LIGHT_FONT, this.lightFontPath);
+            }
+            return this;
+        }
+
+        /**
+         * //TODO add new mechanism
+         *
+         * @deprecated we will not support this mechanism anymore.
+         */
+        @Deprecated
+        public Builder setCustomRegularFont(final String regularFontPath, final Context context) {
+            this.regularFontPath = regularFontPath;
+            if (regularFontPath != null) {
+                setCustomFont(context, FontCache.CUSTOM_REGULAR_FONT, this.regularFontPath);
+            }
+            return this;
+        }
+
+        /**
+         * //TODO add new mechanism
+         *
+         * @deprecated we will not support this mechanism anymore.
+         */
+        @Deprecated
+        public Builder setCustomMonoFont(final String monoFontPath, final Context context) {
+            this.monoFontPath = monoFontPath;
+            if (monoFontPath != null) {
+                setCustomFont(context, FontCache.CUSTOM_MONO_FONT, this.monoFontPath);
+            }
+            return this;
+        }
+
+        /**
+         * @deprecated we will not support this mechanism anymore.
+         */
+        @Deprecated
+        private void setCustomFont(final Context context, final String fontType, final String fontPath) {
+            final Typeface typeFace;
+            if (!FontCache.hasTypeface(fontType)) {
+                typeFace = Typeface.createFromAsset(context.getAssets(), fontPath);
+                FontCache.setTypeface(fontType, typeFace);
+            }
+        }
+
+        /**
+         * @deprecated new mechanism {@link #setAdvancedConfiguration}
+         */
+        @Deprecated
+        public Builder setFlowPreference(@NonNull final FlowPreference flowPreference) {
+            return this;
         }
     }
 }

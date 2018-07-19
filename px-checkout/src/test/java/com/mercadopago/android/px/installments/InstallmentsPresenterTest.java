@@ -155,38 +155,13 @@ public class InstallmentsPresenterTest {
     }
 
     @Test
-    public void whenIsReviewEnabledThenShowReview() {
+    public void whenInstallmentIsSelectedFinishWithResult() {
 
-        List<PayerCost> payerCosts = PayerCosts.getPayerCostsWithCFT();
+        final List<PayerCost> payerCosts = PayerCosts.getPayerCostsWithCFT();
 
-        PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-        Issuer issuer = Issuers.getIssuerMLA();
-        PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
-
-        presenter.setCardInfo(getCardInfo());
-        presenter.setPaymentMethod(paymentMethod);
-        presenter.setPayerCosts(payerCosts);
-        presenter.setIssuer(issuer);
-
-        presenter.initialize();
-
-        mockedView.simulateInstallmentSelection(0);
-
-        assertFalse(mockedView.installmentRecyclerViewShown);
-        assertTrue(mockedView.installmentsReviewViewShown);
-        assertTrue(mockedView.installmentsReviewViewInitialized);
-    }
-
-    @Test
-    public void whenIsReviewEnabledButIsNotRequiredThenNotShowReview() {
-
-        List<PayerCost> payerCosts = PayerCosts.getPayerCostList();
-
-        PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-        Issuer issuer = Issuers.getIssuerMLA();
-        PaymentPreference paymentPreference = new PaymentPreference();
-
+        final PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
+        final Issuer issuer = Issuers.getIssuerMLA();
+        final PaymentPreference paymentPreference = new PaymentPreference();
         presenter.setPaymentPreference(paymentPreference);
         presenter.setCardInfo(getCardInfo());
         presenter.setPaymentMethod(paymentMethod);
@@ -197,29 +172,6 @@ public class InstallmentsPresenterTest {
 
         mockedView.simulateInstallmentSelection(0);
 
-        assertFalse(mockedView.installmentsReviewViewShown);
-        assertTrue(mockedView.finishWithResult);
-    }
-
-    @Test
-    public void whenIsNotReviewEnabledThenFinishWithResult() {
-
-        List<PayerCost> payerCosts = PayerCosts.getPayerCostsWithCFT();
-
-        PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-        Issuer issuer = Issuers.getIssuerMLA();
-        PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
-        presenter.setCardInfo(getCardInfo());
-        presenter.setPaymentMethod(paymentMethod);
-        presenter.setPayerCosts(payerCosts);
-        presenter.setIssuer(issuer);
-
-        presenter.initialize();
-
-        mockedView.simulateInstallmentSelection(0);
-
-        assertFalse(mockedView.installmentsReviewViewShown);
         assertTrue(mockedView.finishWithResult);
     }
 
@@ -516,8 +468,6 @@ public class InstallmentsPresenterTest {
         private boolean errorShown = false;
         private boolean loadingViewShown = false;
         private boolean installmentRecyclerViewShown = false;
-        private boolean installmentsReviewViewShown = false;
-        private boolean installmentsReviewViewInitialized = false;
         private PayerCost selectedPayerCost;
         private OnSelectedCallback<Integer> installmentSelectionCallback;
         private boolean bankInterestsWarningShown = false;

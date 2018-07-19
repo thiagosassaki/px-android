@@ -82,14 +82,6 @@ public class GuessingCardPresenterTest {
     }
 
     @Test
-    public void ifPublicKeyNotSetThenShowMissingPublicKeyError() {
-
-        presenter.initialize();
-
-        assertEquals(MockedProvider.MISSING_PUBLIC_KEY, mockedView.errorShown.getMessage());
-    }
-
-    @Test
     public void ifPublicKeySetThenCheckValidStart() {
 
         PaymentPreference paymentPreference = new PaymentPreference();

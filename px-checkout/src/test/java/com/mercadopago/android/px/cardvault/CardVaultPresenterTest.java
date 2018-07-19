@@ -612,56 +612,7 @@ public class CardVaultPresenterTest {
         assertTrue(mockedView.animateSlide);
     }
 
-    @Test
-    public void whenDontAskForInstallmentsAndDontAskForSecurityCodeThenCloseFlowWithNoAnimation() {
-        provider.setESCEnabled(true);
-
-        List<Installment> installmentsList = Installments.getInstallmentsList();
-        provider.setResponse(installmentsList);
-
-        final Card mockedCard = Cards.getCard();
-        mockedCard.setId("12345");
-        presenter.setCard(mockedCard);
-
-        //Set ESC to simulate it is saved
-        //Don't ask for security code
-        presenter.setESC("12345678");
-
-        final Token mockedToken = Tokens.getTokenWithESC();
-        //Token response
-        provider.setResponse(mockedToken);
-
-        presenter.initialize();
-
-        assertFalse(mockedView.securityCodeFlowStarted);
-        assertFalse(mockedView.installmentsFlowStarted);
-        assertTrue(mockedView.animateNoAnimation);
-    }
-
-    @Test
-    public void whenDontAskForInstallmentsAndAskSecurityCodeThenCloseFlowWithSlideAnimation() {
-        //Ask for security code
-        provider.setESCEnabled(false);
-
-        final List<Installment> installmentsList = Installments.getInstallmentsList();
-        provider.setResponse(installmentsList);
-
-        final Card mockedCard = Cards.getCard();
-        mockedCard.setId("12345");
-        presenter.setCard(mockedCard);
-
-        final Token mockedToken = Tokens.getTokenWithESC();
-        //Token response
-        provider.setResponse(mockedToken);
-
-        presenter.initialize();
-
-        assertTrue(mockedView.securityCodeFlowStarted);
-        assertFalse(mockedView.installmentsFlowStarted);
-        assertTrue(mockedView.animateSlide);
-    }
-
-    private class MockedProvider implements CardVaultProvider {
+    private static final class MockedProvider implements CardVaultProvider {
 
         private static final String MULTIPLE_INSTALLMENTS = "multiple installments";
         private static final String MISSING_INSTALLMENTS = "missing installments";
@@ -770,7 +721,6 @@ public class CardVaultPresenterTest {
     private class MockedView implements CardVaultView {
 
         private MercadoPagoError errorShown;
-        private List<Installment> installmentsShown;
         private boolean issuerFlowStarted;
         private boolean installmentsFlowStarted;
         private boolean securityCodeFlowStarted;

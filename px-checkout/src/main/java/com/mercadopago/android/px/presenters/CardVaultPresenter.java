@@ -68,10 +68,17 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
     }
 
     public void initialize() {
-        try {
-            onValidStart();
-        } catch (final IllegalStateException exception) {
-            getView().showError(new MercadoPagoError(exception.getMessage(), false), "");
+        installmentsListShown = false;
+        issuersListShown = false;
+        if (viewAttached()) {
+            getView().showProgressLayout();
+        }
+        if (tokenRecoveryAvailable()) {
+            startTokenRecoveryFlow();
+        } else if (savedCardAvailable()) {
+            startSavedCardFlow();
+        } else {
+            startNewCardFlow();
         }
     }
 
@@ -355,21 +362,6 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
 
     public void onResultCancel() {
         getView().cancelCardVault();
-    }
-
-    private void onValidStart() {
-        installmentsListShown = false;
-        issuersListShown = false;
-        if (viewAttached()) {
-            getView().showProgressLayout();
-        }
-        if (tokenRecoveryAvailable()) {
-            startTokenRecoveryFlow();
-        } else if (savedCardAvailable()) {
-            startSavedCardFlow();
-        } else {
-            startNewCardFlow();
-        }
     }
 
     private void startTokenRecoveryFlow() {

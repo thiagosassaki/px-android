@@ -276,7 +276,7 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         mFrontCardView.enableEditingCardNumber();
     }
 
-    private void loadToolbarArrow(Toolbar toolbar) {
+    private void loadToolbarArrow(final Toolbar toolbar) {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -286,14 +286,8 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         if (toolbar != null) {
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    if (isInstallmentsReviewVisible()) {
-                        showInstallmentsRecyclerView();
-                    } else {
-                        Intent returnIntent = new Intent();
-                        setResult(RESULT_CANCELED, returnIntent);
-                        finish();
-                    }
+                public void onClick(final View v) {
+                    onBackPressed();
                 }
             });
         }

@@ -249,8 +249,8 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     }
 
     private void showReviewAndConfirm() {
-        getView().showReviewAndConfirm(isUniquePaymentMethod());
         state.editPaymentMethodFromReviewAndConfirm = false;
+        getView().showReviewAndConfirm(isUniquePaymentMethod());
     }
 
     public boolean isESCEnabled() {
@@ -484,9 +484,7 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     }
 
     public void onReviewAndConfirmCancel() {
-        if (!isUniquePaymentMethod()) {
-            getView().exitCheckout(MercadoPagoCheckout.PAYMENT_METHOD_CHANGED_REQUESTED);
-        } else if (isUniquePaymentMethod()) {
+        if (isUniquePaymentMethod()) {
             getView().cancelCheckout();
         } else {
             state.paymentMethodEdited = true;
