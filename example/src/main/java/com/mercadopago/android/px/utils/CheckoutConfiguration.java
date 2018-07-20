@@ -5,7 +5,6 @@ import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.preferences.FlowPreference;
-import com.mercadopago.android.px.preferences.ServicePreference;
 import com.mercadopago.android.px.util.TextUtils;
 import java.util.List;
 
@@ -17,7 +16,6 @@ public class CheckoutConfiguration {
     private String payerEmail;
     private String siteId;
     private FlowPreference flowPreference;
-    private ServicePreference servicePreference;
 
     @SerializedName(value = "timer")
     private Integer time;
@@ -60,13 +58,5 @@ public class CheckoutConfiguration {
 
     public FlowPreference getFlowPreference() {
         return flowPreference;
-    }
-
-    public ServicePreference getServicePreference() {
-        return servicePreference;
-    }
-
-    public void setServicePreference(ServicePreference servicePreference) {
-        this.servicePreference = servicePreference;
     }
 }

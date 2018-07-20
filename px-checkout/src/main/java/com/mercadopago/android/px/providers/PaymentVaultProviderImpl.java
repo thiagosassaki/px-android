@@ -4,39 +4,25 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.BuildConfig;
 import com.mercadopago.android.px.R;
-import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentMethodSearchItem;
 import com.mercadopago.android.px.tracker.Tracker;
 import com.mercadopago.android.px.tracking.tracker.MPTracker;
 import com.mercadopago.android.px.util.MercadoPagoESC;
 import com.mercadopago.android.px.util.MercadoPagoESCImpl;
-import com.mercadopago.android.px.util.TextUtils;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class PaymentVaultProviderImpl implements PaymentVaultProvider {
 
     private final Context context;
-    private final MercadoPagoServicesAdapter mercadoPago;
-    private final String merchantBaseUrl;
-    private final String merchantGetCustomerUri;
-    private final Map<String, String> merchantGetCustomerAdditionalInfo;
     private final MercadoPagoESC mercadoPagoESC;
     private final String merchantPublicKey;
 
-    public PaymentVaultProviderImpl(final Context context, final String publicKey, final String privateKey,
-        final String merchantBaseUrl,
-        final String merchantGetCustomerUri, final Map<String, String> merchantGetCustomerAdditionalInfo,
+    public PaymentVaultProviderImpl(final Context context, final String publicKey,
         final boolean escEnabled) {
         this.context = context;
-        this.merchantBaseUrl = merchantBaseUrl;
-        this.merchantGetCustomerUri = merchantGetCustomerUri;
-        this.merchantGetCustomerAdditionalInfo = merchantGetCustomerAdditionalInfo;
+
         mercadoPagoESC = new MercadoPagoESCImpl(context, escEnabled);
         merchantPublicKey = publicKey;
-        mercadoPago = new MercadoPagoServicesAdapter(context, publicKey, privateKey);
     }
 
     @Override
@@ -69,10 +55,6 @@ public class PaymentVaultProviderImpl implements PaymentVaultProvider {
         return context.getString(R.string.px_no_payment_methods_found);
     }
 
-    private boolean isMerchantServerCustomerAvailable() {
-        return !TextUtils.isEmpty(merchantBaseUrl) && !TextUtils.isEmpty(merchantGetCustomerUri);
-    }
-
     public void initializeMPTracker(String siteId) {
         MPTracker.getInstance().initTracker(merchantPublicKey, siteId, BuildConfig.VERSION_NAME, context);
     }
@@ -87,10 +69,5 @@ public class PaymentVaultProviderImpl implements PaymentVaultProvider {
         final @NonNull String siteId) {
         initializeMPTracker(siteId);
         Tracker.trackPaymentVaultChildrenScreen(context, merchantPublicKey, paymentMethodSearchItem);
-    }
-
-    @Override
-    public List<String> getCardsWithEsc() {
-        return new ArrayList<>(mercadoPagoESC.getESCCardIds());
     }
 }

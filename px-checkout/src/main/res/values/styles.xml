@@ -78,12 +78,6 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="ThemeMercadoPagoAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="colorAccent">@color/px_blue_button</item>
-        <item name="android:textColorPrimary">@color/px_real_black</item>
-        <item name="android:background">@color/px_white</item>
-    </style>
-
     <style name="MPTransparentActionBar" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:windowActionBarOverlay">true</item>
         <!-- Support library compatibility -->
