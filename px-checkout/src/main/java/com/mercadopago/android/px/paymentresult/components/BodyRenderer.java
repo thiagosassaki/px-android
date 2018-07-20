@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.components.Renderer;
 import com.mercadopago.android.px.components.RendererFactory;
+import com.mercadopago.android.px.util.FragmentUtil;
 
 /**
  * Created by vaserber on 10/23/17.
@@ -23,20 +24,30 @@ public class BodyRenderer extends Renderer<Body> {
         } else if (component.hasBodyError()) {
             RendererFactory.create(context, component.getBodyErrorComponent()).render(bodyViewGroup);
         } else {
+
             if (component.hasReceipt()) {
                 RendererFactory.create(context, component.getReceiptComponent()).render(bodyViewGroup);
             }
+
             if (component.hasTopCustomComponent()) {
-                RendererFactory.create(context, component.getApprovedTopCustomComponent()).render(bodyViewGroup);
+                FragmentUtil.addFragmentInside(bodyViewGroup,
+                    R.id.px_fragmen_container_top,
+                    component.topFragment());
             }
+
             if (component.hasPaymentMethodDescription()) {
                 RendererFactory.create(context, component.getPaymentMethodComponent()).render(bodyViewGroup);
             }
+
             if (component.hasBottomCustomComponent()) {
-                RendererFactory.create(context, component.getApprovedBottomCustomComponent()).render(bodyViewGroup);
+                FragmentUtil.addFragmentInside(bodyViewGroup,
+                    R.id.px_fragmen_container_bottom,
+                    component.bottomFragment());
             }
         }
+
         stretchHeight(bodyViewGroup);
+
         return bodyView;
     }
 }

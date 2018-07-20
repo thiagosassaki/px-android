@@ -21,6 +21,7 @@ import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.services.CheckoutService;
+import com.mercadopago.android.px.services.util.LocaleUtil;
 import com.mercadopago.android.px.util.MercadoPagoESCImpl;
 
 public final class Session extends ApplicationModule
@@ -89,7 +90,7 @@ public final class Session extends ApplicationModule
                 paymentSettings,
                 new MercadoPagoESCImpl(getContext(), paymentSettings.getFlow().isESCEnabled()),
                 getRetrofitClient().create(CheckoutService.class),
-                getLanguage(),
+                LocaleUtil.getLanguage(getContext()),
                 getGroupsCache());
         }
         return groupsRepository;

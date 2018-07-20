@@ -44,8 +44,4 @@ class ApplicationModule implements PreferenceComponent {
     public Retrofit getRetrofitClient() {
         return getDefaultRetrofit(context);
     }
-
-    /* default */ String getLanguage() {
-        return context.getResources().getConfiguration().locale.getLanguage();
-    }
 }

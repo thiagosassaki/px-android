@@ -2,6 +2,7 @@ package com.mercadopago.android.px.review_and_confirm.components;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
+
 import com.mercadopago.android.px.components.Component;
 import com.mercadopago.android.px.components.RendererFactory;
 import com.mercadopago.android.px.model.Summary;
@@ -9,6 +10,7 @@ import com.mercadopago.android.px.model.SummaryDetail;
 import com.mercadopago.android.px.review_and_confirm.SummaryProvider;
 import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
 import com.mercadopago.android.px.review_and_confirm.props.AmountDescriptionProps;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +27,7 @@ public class FullSummary extends Component<SummaryComponent.SummaryProps, Void> 
     }
 
     FullSummary(@NonNull final SummaryComponent.SummaryProps props,
-        @NonNull final SummaryProvider provider) {
+                @NonNull final SummaryProvider provider) {
         super(props);
         this.provider = provider;
     }
@@ -35,11 +37,11 @@ public class FullSummary extends Component<SummaryComponent.SummaryProps, Void> 
 
         for (final SummaryDetail summaryDetail : getSummary().getSummaryDetails()) {
             final AmountDescriptionProps amountDescriptionProps = new AmountDescriptionProps(
-                summaryDetail.getTotalAmount(),
-                summaryDetail.getTitle(),
-                props.summaryModel.currencyId,
-                summaryDetail.getTextColor(),
-                summaryDetail.getSummaryItemType());
+                    summaryDetail.getTotalAmount(),
+                    summaryDetail.getTitle(),
+                    props.summaryModel.currencyId,
+                    summaryDetail.getTextColor(),
+                    summaryDetail.getSummaryItemType());
 
             amountDescriptionList.add(new AmountDescription(amountDescriptionProps));
         }
@@ -55,48 +57,42 @@ public class FullSummary extends Component<SummaryComponent.SummaryProps, Void> 
         // TODO hotfix charges with preferences
         if (isPrefAmountDifferent(props.summaryModel.getCharges()) && reviewAndConfirmPreferences.hasProductAmount()) {
             summaryBuilder.addSummaryProductDetail(reviewAndConfirmPreferences.getProductAmount(), getItemTitle(),
-                provider.getDefaultTextColor())
-
-                .addSummaryShippingDetail(reviewAndConfirmPreferences.getShippingAmount(),
-                    provider.getSummaryShippingTitle(), provider.getDefaultTextColor())
-
-                .addSummaryArrearsDetail(reviewAndConfirmPreferences.getArrearsAmount(),
-                    provider.getSummaryArrearTitle(),
                     provider.getDefaultTextColor())
 
-                .addSummaryTaxesDetail(reviewAndConfirmPreferences.getTaxesAmount(), provider.getSummaryTaxesTitle(),
-                    provider.getDefaultTextColor())
+                    .addSummaryShippingDetail(reviewAndConfirmPreferences.getShippingAmount(),
+                            provider.getSummaryShippingTitle(), provider.getDefaultTextColor())
 
-                .addSummaryDiscountDetail(getDiscountAmount(), provider.getSummaryDiscountsTitle(),
-                    provider.getDiscountTextColor())
+                    .addSummaryArrearsDetail(reviewAndConfirmPreferences.getArrearsAmount(),
+                            provider.getSummaryArrearTitle(),
+                            provider.getDefaultTextColor())
 
-                .setDisclaimerText(reviewAndConfirmPreferences.getDisclaimerText())
-                .setDisclaimerColor(provider.getDisclaimerTextColor());
+                    .addSummaryTaxesDetail(reviewAndConfirmPreferences.getTaxesAmount(), provider.getSummaryTaxesTitle(),
+                            provider.getDefaultTextColor())
+
+                    .addSummaryDiscountDetail(getDiscountAmount(), provider.getSummaryDiscountsTitle(),
+                            provider.getDiscountTextColor())
+
+                    .setDisclaimerText(reviewAndConfirmPreferences.getDisclaimerText())
+                    .setDisclaimerColor(provider.getDisclaimerTextColor());
         } else {
             summaryBuilder.addSummaryProductDetail(props.summaryModel.getItemsAmount(), getItemTitle(),
-                provider.getDefaultTextColor());
-
-            if (isValidAmount(props.summaryModel.getPayerCostTotalAmount()) &&
-                getPayerCostChargesAmount().compareTo(BigDecimal.ZERO) > 0) {
-                summaryBuilder.addSummaryChargeDetail(getPayerCostChargesAmount(), provider.getSummaryChargesTitle(),
                     provider.getDefaultTextColor());
-            }
 
             if (!isEmpty(reviewAndConfirmPreferences.getDisclaimerText())) {
                 summaryBuilder.setDisclaimerText(reviewAndConfirmPreferences.getDisclaimerText())
-                    .setDisclaimerColor(provider.getDisclaimerTextColor());
+                        .setDisclaimerColor(provider.getDisclaimerTextColor());
             }
 
             if (isValidAmount(props.summaryModel.getCouponAmount())) {
                 summaryBuilder.addSummaryDiscountDetail(props.summaryModel.getCouponAmount(),
-                    provider.getSummaryDiscountsTitle(),
-                    provider.getDiscountTextColor());
+                        provider.getSummaryDiscountsTitle(),
+                        provider.getDiscountTextColor());
             }
         }
 
         if (props.summaryModel.hasCharges()) {
             summaryBuilder.addSummaryChargeDetail(props.summaryModel.getCharges(), provider.getSummaryChargesTitle(),
-                provider.getDefaultTextColor());
+                    provider.getDefaultTextColor());
         }
 
         return summaryBuilder.build();
@@ -110,21 +106,6 @@ public class FullSummary extends Component<SummaryComponent.SummaryProps, Void> 
         }
 
         return title;
-    }
-
-    private BigDecimal getPayerCostChargesAmount() {
-        final BigDecimal totalInterestsAmount;
-
-        if (isValidAmount(props.summaryModel.getCouponAmount())) {
-            final BigDecimal totalAmount =
-                props.summaryModel.getAmountToPay().subtract(props.summaryModel.getCouponAmount());
-            totalInterestsAmount = props.summaryModel.getPayerCostTotalAmount().subtract(totalAmount);
-        } else {
-            totalInterestsAmount =
-                props.summaryModel.getPayerCostTotalAmount().subtract(props.summaryModel.getAmountToPay());
-        }
-
-        return totalInterestsAmount;
     }
 
     private BigDecimal getDiscountAmount() {

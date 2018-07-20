@@ -16,7 +16,7 @@ import com.mercadopago.android.px.components.NextAction;
 import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.internal.datasource.PluginService;
 import com.mercadopago.android.px.internal.di.ConfigurationModule;
-import com.mercadopago.android.px.internal.di.UserSelectionComponent;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.plugins.model.PaymentMethodInfo;
@@ -43,7 +43,8 @@ public class PaymentMethodPluginActivity extends AppCompatActivity implements Ac
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final UserSelectionComponent configurationModule = new ConfigurationModule(this);
+        final Session session = Session.getSession(this);
+        final ConfigurationModule configurationModule = session.getConfigurationModule();
         final UserSelectionRepository userSelectionRepository = configurationModule.getUserSelectionRepository();
         final PaymentMethod paymentMethod = userSelectionRepository.getPaymentMethod();
 
@@ -66,7 +67,7 @@ public class PaymentMethodPluginActivity extends AppCompatActivity implements Ac
 
         final PluginComponent.Props props = new PluginComponent.Props.Builder()
             .setData(CheckoutStore.getInstance().getData())
-            .setCheckoutPreference(CheckoutStore.getInstance().getCheckoutPreference())
+            .setCheckoutPreference(configurationModule.getPaymentSettings().getCheckoutPreference())
             .build();
 
         final Component component = plugin.createConfigurationComponent(props, this);

@@ -10,6 +10,7 @@ import com.mercadopago.android.px.plugins.components.SamplePayment;
 
 public class SamplePaymentProcessor extends PaymentProcessor {
 
+    @NonNull
     @Override
     public PluginComponent createPaymentComponent(@NonNull final PluginComponent.Props props,
         @NonNull final Context context) {
