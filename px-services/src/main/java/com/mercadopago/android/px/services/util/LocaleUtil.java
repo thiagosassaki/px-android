@@ -18,11 +18,8 @@ public final class LocaleUtil {
             final LocaleList locales = configuration.getLocales();
             if (!locales.isEmpty()) {
                 return locales.get(0).getLanguage();
-            } else {
-                return configuration.locale.getLanguage();
             }
-        } else {
-            return configuration.locale.getLanguage();
         }
+        return configuration.locale.getLanguage();
     }
 }
