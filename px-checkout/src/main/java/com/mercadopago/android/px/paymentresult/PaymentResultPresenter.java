@@ -10,11 +10,11 @@ import com.mercadopago.android.px.components.RecoverPaymentAction;
 import com.mercadopago.android.px.components.ResultCodeAction;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.Instruction;
 import com.mercadopago.android.px.model.Instructions;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentResult;
-import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.mvp.MvpPresenter;
 import com.mercadopago.android.px.mvp.TaggedCallback;
 import com.mercadopago.android.px.review_and_confirm.components.actions.ChangePaymentMethodAction;
@@ -29,15 +29,17 @@ import java.util.List;
 public class PaymentResultPresenter extends MvpPresenter<PaymentResultPropsView, PaymentResultProvider>
     implements ActionsListener {
     private PaymentResult paymentResult;
-    private Site site;
     private BigDecimal amount;
 
     private final PaymentResultNavigator navigator;
+    private final PaymentSettingRepository paymentSettings;
     private FailureRecovery failureRecovery;
     private boolean initialized = false;
 
-    public PaymentResultPresenter(@NonNull final PaymentResultNavigator navigator) {
+    public PaymentResultPresenter(@NonNull final PaymentResultNavigator navigator,
+        final PaymentSettingRepository paymentSettings) {
         this.navigator = navigator;
+        this.paymentSettings = paymentSettings;
     }
 
     public void initialize() {
@@ -64,8 +66,6 @@ public class PaymentResultPresenter extends MvpPresenter<PaymentResultPropsView,
         } else if (isPaymentMethodOff()) {
             if (!isPaymentIdValid()) {
                 throw new IllegalStateException("payment id is invalid");
-            } else if (!isSiteValid()) {
-                throw new IllegalStateException("site is invalid");
             }
         }
     }
@@ -76,7 +76,8 @@ public class PaymentResultPresenter extends MvpPresenter<PaymentResultPropsView,
         if (hasToAskForInstructions()) {
             showLoading = true;
         }
-        getView().setPropPaymentResult(site.getCurrencyId(), paymentResult, showLoading);
+        getView().setPropPaymentResult(paymentSettings.getCheckoutPreference().getSite().getCurrencyId(), paymentResult,
+            showLoading);
         checkGetInstructions();
     }
 
@@ -152,10 +153,6 @@ public class PaymentResultPresenter extends MvpPresenter<PaymentResultPropsView,
         return paymentResult.getPaymentId() != null;
     }
 
-    private boolean isSiteValid() {
-        return site != null && site.getCurrencyId() != null && !site.getCurrencyId().isEmpty();
-    }
-
     private boolean isPaymentMethodOff() {
         final String paymentStatus = paymentResult.getPaymentStatus();
         final String paymentStatusDetail = paymentResult.getPaymentStatusDetail();
@@ -165,10 +162,6 @@ public class PaymentResultPresenter extends MvpPresenter<PaymentResultPropsView,
 
     public void setPaymentResult(final PaymentResult paymentResult) {
         this.paymentResult = paymentResult;
-    }
-
-    public void setSite(final Site site) {
-        this.site = site;
     }
 
     public void setAmount(final BigDecimal amount) {
@@ -281,10 +274,6 @@ public class PaymentResultPresenter extends MvpPresenter<PaymentResultPropsView,
 
     public PaymentResult getPaymentResult() {
         return paymentResult;
-    }
-
-    public Site getSite() {
-        return site;
     }
 
     public BigDecimal getAmount() {

@@ -13,8 +13,8 @@ import com.mercadopago.android.px.components.RendererFactory;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.core.MercadoPagoComponents;
 import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.model.PaymentResult;
-import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.paymentresult.components.AccreditationComment;
 import com.mercadopago.android.px.paymentresult.components.AccreditationCommentRenderer;
 import com.mercadopago.android.px.paymentresult.components.AccreditationTime;
@@ -56,22 +56,16 @@ import java.math.BigDecimal;
 
 public class PaymentResultActivity extends AppCompatActivity implements PaymentResultNavigator {
 
-    public static final String PAYER_ACCESS_TOKEN_BUNDLE = "merchantPublicKey";
-    public static final String MERCHANT_PUBLIC_KEY_BUNDLE = "payerAccessToken";
 
     public static final String CONGRATS_DISPLAY_BUNDLE = "congratsDisplay";
     public static final String PAYMENT_RESULT_SCREEN_PREFERENCE_BUNDLE = "paymentResultScreenPreference";
     public static final String SERVICE_PREFERENCE_BUNDLE = "servicePreference";
     public static final String PAYMENT_RESULT_BUNDLE = "paymentResult";
     public static final String AMOUNT_BUNDLE = "amount";
-    public static final String SITE_BUNDLE = "site";
 
     private static final String EXTRA_NEXT_ACTION = "nextAction";
 
     private PaymentResultPresenter presenter;
-
-    private String merchantPublicKey;
-    private String payerAccessToken;
     private Integer congratsDisplay;
     private PaymentResultScreenPreference paymentResultScreenPreference;
     private PaymentResultPropsMutator mutator;
@@ -81,12 +75,11 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
         super.onCreate(savedInstanceState);
 
         mutator = new PaymentResultPropsMutator();
-        presenter = new PaymentResultPresenter(this);
+        presenter = new PaymentResultPresenter(this, Session.getSession(this).getConfigurationModule().getPaymentSettings());
 
         getActivityParameters();
 
-        final PaymentResultProvider paymentResultProvider =
-            new PaymentResultProviderImpl(this, merchantPublicKey, payerAccessToken);
+        final PaymentResultProvider paymentResultProvider = new PaymentResultProviderImpl(this);
 
         presenter.attachResourcesProvider(paymentResultProvider);
 
@@ -142,11 +135,8 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
         super.onSaveInstanceState(outState);
         if (presenter != null) {
             outState.putString(PAYMENT_RESULT_BUNDLE, JsonUtil.getInstance().toJson(presenter.getPaymentResult()));
-            outState.putString(SITE_BUNDLE, JsonUtil.getInstance().toJson(presenter.getSite()));
             outState.putString(AMOUNT_BUNDLE, JsonUtil.getInstance().toJson(presenter.getAmount()));
         }
-        outState.putString(MERCHANT_PUBLIC_KEY_BUNDLE, merchantPublicKey);
-        outState.putString(PAYER_ACCESS_TOKEN_BUNDLE, payerAccessToken);
 
         outState.putInt(CONGRATS_DISPLAY_BUNDLE, congratsDisplay);
         outState.putString(PAYMENT_RESULT_SCREEN_PREFERENCE_BUNDLE,
@@ -157,14 +147,11 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
     protected void onRestoreInstanceState(final Bundle savedInstanceState) {
         final PaymentResult paymentResult =
             JsonUtil.getInstance().fromJson(savedInstanceState.getString(PAYMENT_RESULT_BUNDLE), PaymentResult.class);
-        final Site site = JsonUtil.getInstance().fromJson(savedInstanceState.getString(SITE_BUNDLE), Site.class);
+
         final BigDecimal amount =
             JsonUtil.getInstance().fromJson(savedInstanceState.getString(AMOUNT_BUNDLE), BigDecimal.class);
         final ServicePreference servicePreference = JsonUtil.getInstance()
             .fromJson(savedInstanceState.getString(SERVICE_PREFERENCE_BUNDLE), ServicePreference.class);
-
-        merchantPublicKey = savedInstanceState.getString(MERCHANT_PUBLIC_KEY_BUNDLE);
-        payerAccessToken = savedInstanceState.getString(PAYER_ACCESS_TOKEN_BUNDLE);
 
         congratsDisplay = savedInstanceState.getInt(CONGRATS_DISPLAY_BUNDLE, -1);
 
@@ -172,12 +159,12 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
             .fromJson(savedInstanceState.getString(PAYMENT_RESULT_SCREEN_PREFERENCE_BUNDLE),
                 PaymentResultScreenPreference.class);
 
-        presenter = new PaymentResultPresenter(this);
+        presenter = new PaymentResultPresenter(this,
+            Session.getSession(this).getConfigurationModule().getPaymentSettings());
         presenter.setPaymentResult(paymentResult);
-        presenter.setSite(site);
         presenter.setAmount(amount);
 
-        final PaymentResultProvider provider = new PaymentResultProviderImpl(this, merchantPublicKey, payerAccessToken);
+        final PaymentResultProvider provider = new PaymentResultProviderImpl(this);
         presenter.attachResourcesProvider(provider);
 
         super.onRestoreInstanceState(savedInstanceState);
@@ -186,8 +173,6 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
     protected void getActivityParameters() {
 
         Intent intent = getIntent();
-
-        Site site = JsonUtil.getInstance().fromJson(intent.getExtras().getString("site"), Site.class);
         BigDecimal amount = null;
         if (intent.getStringExtra("amount") != null) {
             amount = new BigDecimal(intent.getStringExtra("amount"));
@@ -195,12 +180,9 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
         PaymentResult paymentResult =
             JsonUtil.getInstance().fromJson(intent.getExtras().getString("paymentResult"), PaymentResult.class);
 
-        presenter.setSite(site);
         presenter.setAmount(amount);
         presenter.setPaymentResult(paymentResult);
 
-        merchantPublicKey = intent.getStringExtra("merchantPublicKey");
-        payerAccessToken = intent.getStringExtra("payerAccessToken");
         congratsDisplay = intent.getIntExtra("congratsDisplay", -1);
         paymentResultScreenPreference = JsonUtil.getInstance()
             .fromJson(intent.getExtras().getString("paymentResultScreenPreference"),
@@ -285,7 +267,8 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
 
     @Override
     public void trackScreen(ScreenViewEvent event) {
-        MPTrackingContext mpTrackingContext = new MPTrackingContext.Builder(this, merchantPublicKey)
+        final String publicKey = Session.getSession(this).getConfigurationModule().getPaymentSettings().getPublicKey();
+        MPTrackingContext mpTrackingContext = new MPTrackingContext.Builder(this, publicKey)
             .setVersion(BuildConfig.VERSION_NAME)
             .build();
 

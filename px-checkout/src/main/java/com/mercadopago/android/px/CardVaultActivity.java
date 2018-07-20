@@ -354,7 +354,6 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
             .setPaymentMethod(presenter.getPaymentMethod())
             .setIssuer(presenter.getIssuer())
             .setPaymentPreference(configuration.getCheckoutPreference().getPaymentPreference())
-            .setSite(configuration.getCheckoutPreference().getSite())
             .setCardInfo(presenter.getCardInfo())
             .setPayerCosts(presenter.getPayerCostList())
             .startActivity();

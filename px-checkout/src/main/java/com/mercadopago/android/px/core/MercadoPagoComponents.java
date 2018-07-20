@@ -26,7 +26,6 @@ import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.PaymentType;
-import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.paymentresult.PaymentResultActivity;
 import com.mercadopago.android.px.preferences.PaymentPreference;
@@ -253,7 +252,6 @@ public class MercadoPagoComponents {
 
         public static class InstallmentsActivityBuilder {
             private Activity activity;
-            private Site site;
             private CardInfo cardInfo;
             private List<PayerCost> payerCosts;
             private Issuer issuer;
@@ -262,11 +260,6 @@ public class MercadoPagoComponents {
 
             public InstallmentsActivityBuilder setActivity(Activity activity) {
                 this.activity = activity;
-                return this;
-            }
-
-            public InstallmentsActivityBuilder setSite(Site site) {
-                this.site = site;
                 return this;
             }
 
@@ -299,9 +292,6 @@ public class MercadoPagoComponents {
                 if (activity == null) {
                     throw new IllegalStateException("activity is null");
                 }
-                if (site == null) {
-                    throw new IllegalStateException("site is null");
-                }
                 if (payerCosts == null) {
                     if (issuer == null) {
                         throw new IllegalStateException("issuer is null");
@@ -317,7 +307,6 @@ public class MercadoPagoComponents {
                 final Intent intent = new Intent(activity, InstallmentsActivity.class);
                 intent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(paymentMethod));
                 intent.putExtra("issuer", JsonUtil.getInstance().toJson(issuer));
-                intent.putExtra("site", JsonUtil.getInstance().toJson(site));
                 intent.putExtra("payerCosts", JsonUtil.getInstance().toJson(payerCosts));
                 intent.putExtra("paymentPreference", JsonUtil.getInstance().toJson(paymentPreference));
                 intent.putExtra("cardInfo", JsonUtil.getInstance().toJson(cardInfo));
@@ -476,11 +465,8 @@ public class MercadoPagoComponents {
 
         public static class PaymentResultActivityBuilder {
             private Activity activity;
-            private String merchantPublicKey;
-            private String payerAccessToken;
             private Discount discount;
             private PaymentResult paymentResult;
-            private Site site;
             private BigDecimal amount;
             private PaymentResultScreenPreference paymentResultScreenPreference;
 
@@ -489,23 +475,8 @@ public class MercadoPagoComponents {
                 return this;
             }
 
-            public PaymentResultActivityBuilder setMerchantPublicKey(String merchantPublicKey) {
-                this.merchantPublicKey = merchantPublicKey;
-                return this;
-            }
-
-            public PaymentResultActivityBuilder setPayerAccessToken(String accessToken) {
-                payerAccessToken = accessToken;
-                return this;
-            }
-
             public PaymentResultActivityBuilder setDiscount(Discount discount) {
                 this.discount = discount;
-                return this;
-            }
-
-            public PaymentResultActivityBuilder setSite(Site site) {
-                this.site = site;
                 return this;
             }
 
@@ -532,20 +503,13 @@ public class MercadoPagoComponents {
                 if (paymentResult == null) {
                     throw new IllegalStateException("payment result is null");
                 }
-                if (merchantPublicKey == null) {
-                    throw new IllegalStateException("public key is null");
-                }
-
                 startPaymentResultActivity();
             }
 
             private void startPaymentResultActivity() {
                 final Intent resultIntent = new Intent(activity, PaymentResultActivity.class);
-                resultIntent.putExtra("merchantPublicKey", merchantPublicKey);
-                resultIntent.putExtra("payerAccessToken", payerAccessToken);
                 resultIntent.putExtra("discount", JsonUtil.getInstance().toJson(discount));
                 resultIntent.putExtra("paymentResult", JsonUtil.getInstance().toJson(paymentResult));
-                resultIntent.putExtra("site", JsonUtil.getInstance().toJson(site));
                 resultIntent.putExtra("paymentResultScreenPreference",
                     JsonUtil.getInstance().toJson(paymentResultScreenPreference));
                 if (amount != null) {

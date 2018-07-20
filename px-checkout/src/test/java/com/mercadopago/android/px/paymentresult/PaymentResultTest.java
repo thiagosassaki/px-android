@@ -2,6 +2,7 @@ package com.mercadopago.android.px.paymentresult;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.mocks.PaymentMethods;
 import com.mercadopago.android.px.model.Instruction;
 import com.mercadopago.android.px.model.Instructions;
@@ -10,18 +11,35 @@ import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.mvp.TaggedCallback;
+import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.tracking.model.ScreenViewEvent;
 import java.math.BigDecimal;
 import junit.framework.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.class)
 public class PaymentResultTest {
 
+    @Mock private PaymentSettingRepository paymentSettingRepository;
+    @Mock private CheckoutPreference checkoutPreference;
+    @Before
+    public void setUp(){
+        when(paymentSettingRepository.getCheckoutPreference()).thenReturn(checkoutPreference);
+        when(checkoutPreference.getSite()).thenReturn(Sites.ARGENTINA);
+    }
+    
     @Test
     public void whenPaymentWithCardApprovedThenShowCongrats() {
         MockedNavigator navigator = new MockedNavigator();
-        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator);
+        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator,
+            paymentSettingRepository);
 
         PaymentData paymentData = new PaymentData();
         paymentData.setPaymentMethod(PaymentMethods.getPaymentMethodOnVisa());
@@ -33,7 +51,6 @@ public class PaymentResultTest {
 
         presenter.setPaymentResult(paymentResult);
         presenter.setAmount(new BigDecimal("100"));
-        presenter.setSite(Sites.ARGENTINA);
 
         MockedPropsView mockedView = new MockedPropsView();
         MockedProvider mockedProvider = new MockedProvider();
@@ -50,7 +67,8 @@ public class PaymentResultTest {
     @Test
     public void whenPaymentWithCardRejectedThenShowRejection() {
         MockedNavigator navigator = new MockedNavigator();
-        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator);
+        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator,
+            paymentSettingRepository);
 
         PaymentData paymentData = new PaymentData();
         paymentData.setPaymentMethod(PaymentMethods.getPaymentMethodOnVisa());
@@ -63,7 +81,7 @@ public class PaymentResultTest {
 
         presenter.setPaymentResult(paymentResult);
         presenter.setAmount(new BigDecimal("100"));
-        presenter.setSite(Sites.ARGENTINA);
+        ;
 
         MockedPropsView mockedView = new MockedPropsView();
         MockedProvider mockedProvider = new MockedProvider();
@@ -80,7 +98,8 @@ public class PaymentResultTest {
     @Test
     public void whenCallForAuthNeededThenShowCallForAuthScreen() {
         MockedNavigator navigator = new MockedNavigator();
-        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator);
+        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator,
+            paymentSettingRepository);
 
         PaymentData paymentData = new PaymentData();
         paymentData.setPaymentMethod(PaymentMethods.getPaymentMethodOnVisa());
@@ -93,7 +112,7 @@ public class PaymentResultTest {
 
         presenter.setPaymentResult(paymentResult);
         presenter.setAmount(new BigDecimal("100"));
-        presenter.setSite(Sites.ARGENTINA);
+        ;
 
         MockedPropsView mockedView = new MockedPropsView();
         MockedProvider mockedProvider = new MockedProvider();
@@ -110,7 +129,8 @@ public class PaymentResultTest {
     @Test
     public void whenPaymentOffPendingThenShowInstructions() {
         MockedNavigator navigator = new MockedNavigator();
-        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator);
+        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator,
+            paymentSettingRepository);
 
         PaymentData paymentData = new PaymentData();
         paymentData.setPaymentMethod(PaymentMethods.getPaymentMethodOff());
@@ -123,7 +143,7 @@ public class PaymentResultTest {
 
         presenter.setPaymentResult(paymentResult);
         presenter.setAmount(new BigDecimal("100"));
-        presenter.setSite(Sites.ARGENTINA);
+        ;
 
         MockedPropsView mockedView = new MockedPropsView();
         MockedProvider mockedProvider = new MockedProvider();
@@ -140,7 +160,8 @@ public class PaymentResultTest {
     @Test
     public void whenPaymentOnInProcessThenShowPendingScreen() {
         MockedNavigator navigator = new MockedNavigator();
-        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator);
+        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator,
+            paymentSettingRepository);
 
         PaymentData paymentData = new PaymentData();
         paymentData.setPaymentMethod(PaymentMethods.getPaymentMethodOnVisa());
@@ -152,7 +173,7 @@ public class PaymentResultTest {
 
         presenter.setPaymentResult(paymentResult);
         presenter.setAmount(new BigDecimal("100"));
-        presenter.setSite(Sites.ARGENTINA);
+        ;
 
         MockedPropsView mockedView = new MockedPropsView();
         MockedProvider mockedProvider = new MockedProvider();
@@ -170,7 +191,8 @@ public class PaymentResultTest {
     public void whenPaymentOffRejectedThenShowRejection() {
 
         MockedNavigator navigator = new MockedNavigator();
-        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator);
+        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator,
+            paymentSettingRepository);
 
         PaymentData paymentData = new PaymentData();
         paymentData.setPaymentMethod(PaymentMethods.getPaymentMethodOff());
@@ -182,7 +204,7 @@ public class PaymentResultTest {
 
         presenter.setPaymentResult(paymentResult);
         presenter.setAmount(new BigDecimal("100"));
-        presenter.setSite(Sites.ARGENTINA);
+        ;
 
         MockedPropsView mockedView = new MockedPropsView();
         MockedProvider mockedProvider = new MockedProvider();
@@ -198,7 +220,8 @@ public class PaymentResultTest {
     @Test
     public void whenUnknownStatusThenShowError() {
         MockedNavigator navigator = new MockedNavigator();
-        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator);
+        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator,
+            paymentSettingRepository);
 
         PaymentData paymentData = new PaymentData();
         paymentData.setPaymentMethod(PaymentMethods.getPaymentMethodOnVisa());
@@ -210,7 +233,7 @@ public class PaymentResultTest {
 
         presenter.setPaymentResult(paymentResult);
         presenter.setAmount(new BigDecimal("100"));
-        presenter.setSite(Sites.ARGENTINA);
+        ;
 
         MockedPropsView mockedView = new MockedPropsView();
         MockedProvider mockedProvider = new MockedProvider();
@@ -226,7 +249,8 @@ public class PaymentResultTest {
     @Test
     public void whenPaymentDataIsNullThenShowError() {
         MockedNavigator navigator = new MockedNavigator();
-        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator);
+        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator,
+            paymentSettingRepository);
 
         PaymentData paymentData = new PaymentData();
         paymentData.setPaymentMethod(PaymentMethods.getPaymentMethodOnVisa());
@@ -238,7 +262,7 @@ public class PaymentResultTest {
 
         presenter.setPaymentResult(paymentResult);
         presenter.setAmount(new BigDecimal("100"));
-        presenter.setSite(Sites.ARGENTINA);
+        ;
 
         MockedPropsView mockedView = new MockedPropsView();
         MockedProvider mockedProvider = new MockedProvider();
@@ -254,11 +278,12 @@ public class PaymentResultTest {
     @Test
     public void whenPaymentResultIsNullThenShowError() {
         MockedNavigator navigator = new MockedNavigator();
-        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator);
+        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator,
+            paymentSettingRepository);
 
         presenter.setPaymentResult(null);
         presenter.setAmount(new BigDecimal("100"));
-        presenter.setSite(Sites.ARGENTINA);
+        ;
 
         MockedPropsView mockedView = new MockedPropsView();
         MockedProvider mockedProvider = new MockedProvider();
@@ -274,7 +299,8 @@ public class PaymentResultTest {
     @Test
     public void whenPaymentResultStatusIsNullThenShowError() {
         MockedNavigator navigator = new MockedNavigator();
-        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator);
+        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator,
+            paymentSettingRepository);
 
         PaymentData paymentData = new PaymentData();
         paymentData.setPaymentMethod(PaymentMethods.getPaymentMethodOnVisa());
@@ -286,7 +312,7 @@ public class PaymentResultTest {
 
         presenter.setPaymentResult(paymentResult);
         presenter.setAmount(new BigDecimal("100"));
-        presenter.setSite(Sites.ARGENTINA);
+        ;
 
         MockedPropsView mockedView = new MockedPropsView();
         MockedProvider mockedProvider = new MockedProvider();
