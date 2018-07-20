@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
+import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
 import com.mercadopago.android.px.internal.datasource.AmountService;
 import com.mercadopago.android.px.internal.datasource.DiscountApiService;
 import com.mercadopago.android.px.internal.datasource.DiscountServiceImp;
@@ -88,12 +89,25 @@ public final class Session extends ApplicationModule
             final PaymentSettingRepository paymentSettings = getConfigurationModule().getPaymentSettings();
             groupsRepository = new GroupsService(getAmountRepository(),
                 paymentSettings,
-                new MercadoPagoESCImpl(getContext(), paymentSettings.getAdvancedConfiguration().isEscEnabled()),
+                getMercadoPagoESC(),
                 getRetrofitClient().create(CheckoutService.class),
                 LocaleUtil.getLanguage(getContext()),
                 getGroupsCache());
         }
         return groupsRepository;
+    }
+
+    @NonNull
+    public MercadoPagoESCImpl getMercadoPagoESC() {
+        final PaymentSettingRepository paymentSettings = getConfigurationModule().getPaymentSettings();
+        return new MercadoPagoESCImpl(getContext(), paymentSettings.getAdvancedConfiguration().isEscEnabled());
+    }
+
+    @NonNull
+    public MercadoPagoServicesAdapter getMercadoPagoServiceAdapter() {
+        final PaymentSettingRepository paymentSettings = getConfigurationModule().getPaymentSettings();
+        return new MercadoPagoServicesAdapter(getContext(), paymentSettings.getPublicKey(),
+            paymentSettings.getPrivateKey());
     }
 
     @Override

@@ -1,11 +1,11 @@
 package com.mercadopago.android.px.providers;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
 import com.mercadopago.android.px.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.di.Session;
-import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.Installment;
 import com.mercadopago.android.px.mvp.TaggedCallback;
 import java.math.BigDecimal;
@@ -16,12 +16,9 @@ public class InstallmentsProviderImpl implements InstallmentsProvider {
     private final Context context;
     private final MercadoPagoServicesAdapter mercadoPago;
 
-    public InstallmentsProviderImpl(Context context) {
+    public InstallmentsProviderImpl(@NonNull final Context context) {
         this.context = context;
-        final PaymentSettingRepository paymentSettings =
-            Session.getSession(context).getConfigurationModule().getPaymentSettings();
-        mercadoPago =
-            new MercadoPagoServicesAdapter(context, paymentSettings.getPublicKey(), paymentSettings.getPrivateKey());
+        mercadoPago = Session.getSession(context).getMercadoPagoServiceAdapter();
     }
 
     @Override

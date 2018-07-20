@@ -6,7 +6,6 @@ import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
 import com.mercadopago.android.px.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.di.Session;
-import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.mvp.TaggedCallback;
 import java.util.List;
@@ -22,11 +21,7 @@ public class IssuersProviderImpl implements IssuersProvider {
 
     public IssuersProviderImpl(@NonNull final Context context) {
         this.context = context;
-
-        final PaymentSettingRepository paymentSettings =
-            Session.getSession(context).getConfigurationModule().getPaymentSettings();
-        mercadoPago =
-            new MercadoPagoServicesAdapter(context, paymentSettings.getPublicKey(), paymentSettings.getPrivateKey());
+        mercadoPago = Session.getSession(context).getMercadoPagoServiceAdapter();
     }
 
     @Override

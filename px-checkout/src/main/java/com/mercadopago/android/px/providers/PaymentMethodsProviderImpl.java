@@ -12,9 +12,7 @@ public class PaymentMethodsProviderImpl implements PaymentMethodsProvider {
     private final MercadoPagoServicesAdapter mercadoPago;
 
     public PaymentMethodsProviderImpl(@NonNull final Context context) throws IllegalStateException {
-        final String publicKey =
-            Session.getSession(context).getConfigurationModule().getPaymentSettings().getPublicKey();
-        mercadoPago = new MercadoPagoServicesAdapter(context, publicKey);
+        mercadoPago = Session.getSession(context).getMercadoPagoServiceAdapter();
     }
 
     @Override
