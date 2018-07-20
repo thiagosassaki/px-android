@@ -94,7 +94,6 @@
     <color name="px_summary_top_color">#EEEEEE</color>
 
     <color name="px_background_blue">#009EE3</color>
-    <color name="px_colorPrimary">#009EE3</color>
     <color name="px_color_payer_costs">#999999</color>
     <color name="px_blue_button">#009FDE</color>
     <color name="px_review_gray_background">#F7F7F7</color>
@@ -117,6 +116,9 @@
     <color name="px_red_status_MP">#E5464C</color>
     <color name="px_orange_status_MP">#E5953D</color>
 
+    <!-- Discounts -->
+    <color name="px_discount_coupon">@color/ui_components_primary_color</color>
+
     <!-- One tap -->
     <color name="px_discount_one_tap">#64c574</color>
 
@@ -128,13 +130,14 @@
 
     <!-- Toolbar and status bar default -->
     <color name="px_background">@color/px_main_color</color>
-    <color name="px_status_bar">#008CD6</color>
+    <color name="px_colorPrimary">#009EE3</color>
+    <color name="px_colorPrimaryDark">@color/ui_components_android_color_primary_dark</color>
+    <color name="ui_components_android_color_primary_dark">#008CD6</color>
     <color name="px_toolbar_text">#FFFFFF</color>
 
     <!-- Discount modal and discount description -->
     <color name="px_discount_summary_background">#474747</color>
     <color name="px_discount_description">#39b54a</color>
-    <color name="px_discount_coupon">#3483fa</color>
 
     <!-- Inputs -->
     <color name="px_input">@color/px_main_color</color>
