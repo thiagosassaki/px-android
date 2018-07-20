@@ -1,22 +1,19 @@
 package com.mercadopago.android.px.preferences;
 
+import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import com.mercadopago.android.px.callbacks.CallbackHolder;
 import com.mercadopago.android.px.callbacks.PaymentResultCallback;
-import com.mercadopago.android.px.core.CheckoutStore;
+import com.mercadopago.android.px.model.ExternalFragment;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.paymentresult.model.Badge;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
-/**
- * Created by vaserber on 2/13/17.
- */
-
-public class PaymentResultScreenPreference implements Serializable {
+public final class PaymentResultScreenPreference implements Serializable {
 
     private final Integer titleBackgroundColor;
     private final String approvedTitle;
@@ -24,8 +21,7 @@ public class PaymentResultScreenPreference implements Serializable {
     private final Integer approvedIcon;
     private final String approvedUrlIcon;
     private final String approvedLabelText;
-    @Badge.ApprovedBadges private final
-    String approvedBadge;
+    @Badge.ApprovedBadges private final String approvedBadge;
     private final String pendingTitle;
     private final String pendingSubtitle;
     private final String pendingContentTitle;
@@ -60,10 +56,10 @@ public class PaymentResultScreenPreference implements Serializable {
     private final Integer secondaryCongratsExitResultCode;
     private final Integer secondaryPendingExitResultCode;
     private final Boolean rejectionRetryEnabled;
+    @Nullable private final ExternalFragment topFragment;
+    @Nullable private final ExternalFragment bottomFragment;
 
-    private final Map<String, CustomComponentFactory> approvedCustomComponents;
-
-    private PaymentResultScreenPreference(Builder builder) {
+    PaymentResultScreenPreference(@NonNull final Builder builder) {
         titleBackgroundColor = builder.titleBackgroundColor;
         approvedTitle = builder.approvedTitle;
         approvedSubtitle = builder.approvedSubtitle;
@@ -106,7 +102,26 @@ public class PaymentResultScreenPreference implements Serializable {
         enableApprovedAmount = builder.enableApprovedAmount;
         enableApprovedPaymentMethodInfo = builder.enableApprovedPaymentMethodInfo;
         enableRejectedLabelText = builder.enableRejectedLabelText;
-        approvedCustomComponents = builder.approvedCustomComponents;
+        topFragment = builder.topFragment;
+        bottomFragment = builder.bottomFragment;
+    }
+
+    public boolean hasTopFragment() {
+        return getTopFragment() != null;
+    }
+
+    public boolean hasBottomFragment() {
+        return getBottomFragment() != null;
+    }
+
+    @Nullable
+    public ExternalFragment getTopFragment() {
+        return topFragment;
+    }
+
+    @Nullable
+    public ExternalFragment getBottomFragment() {
+        return bottomFragment;
     }
 
     public boolean hasCustomizedImageIcon(final String status, final String statusDetail) {
@@ -140,22 +155,6 @@ public class PaymentResultScreenPreference implements Serializable {
             return getRejectedIcon();
         }
         return 0;
-    }
-
-    public boolean hasApprovedTopCustomComponent() {
-        return approvedCustomComponents.containsKey(CustomComponentFactory.POSIION_TOP);
-    }
-
-    public boolean hasApprovedBottomCustomComponent() {
-        return approvedCustomComponents.containsKey(CustomComponentFactory.POSIION_BOTTOM);
-    }
-
-    public CustomComponentFactory getApprovedTopCustomComponentFactory() {
-        return approvedCustomComponents.get(CustomComponentFactory.POSIION_TOP);
-    }
-
-    public CustomComponentFactory getApprovedBottomCustomComponentFactory() {
-        return approvedCustomComponents.get(CustomComponentFactory.POSIION_BOTTOM);
     }
 
     public String getApprovedTitle() {
@@ -369,7 +368,8 @@ public class PaymentResultScreenPreference implements Serializable {
         private Integer secondaryPendingExitResultCode;
         private Integer secondaryRejectedExitResultCode;
 
-        private final Map<String, CustomComponentFactory> approvedCustomComponents = new HashMap<>();
+        @Nullable ExternalFragment topFragment;
+        @Nullable ExternalFragment bottomFragment;
 
         public Builder() {
         }
@@ -437,7 +437,6 @@ public class PaymentResultScreenPreference implements Serializable {
         }
 
         //hasta acá
-
         @Deprecated
         public Builder setApprovedSubtitle(String subtitle) {
             approvedSubtitle = subtitle;
@@ -472,15 +471,6 @@ public class PaymentResultScreenPreference implements Serializable {
         @Deprecated
         public Builder setTitleBackgroundColor(@ColorInt Integer titleBackgroundColor) {
             this.titleBackgroundColor = titleBackgroundColor;
-            return this;
-        }
-
-        //
-
-        //body
-        public Builder setApprovedCustomComponentFactory(@NonNull final CustomComponentFactory factory,
-            @NonNull final String position) {
-            approvedCustomComponents.put(position, factory);
             return this;
         }
 
@@ -626,10 +616,34 @@ public class PaymentResultScreenPreference implements Serializable {
             return this;
         }
 
+        @NonNull
         public PaymentResultScreenPreference build() {
-            final PaymentResultScreenPreference paymentResultScreenPreference = new PaymentResultScreenPreference(this);
-            CheckoutStore.getInstance().setPaymentResultScreenPreference(paymentResultScreenPreference);
-            return paymentResultScreenPreference;
+            return new PaymentResultScreenPreference(this);
+        }
+
+        /**
+         * Custom fragment that will appear before payment method description
+         * inside "congrats" result screen.
+         *
+         * @param zClass fragment class
+         * @return builder
+         */
+        public Builder setTopFragment(@NonNull final Class<? extends Fragment> zClass, @Nullable final Bundle args) {
+            topFragment = new ExternalFragment(zClass, args);
+            return this;
+        }
+
+        /**
+         * Custom fragment that will appear after payment method description
+         * inside "congrats" result screen.
+         *
+         * @param zClass fragment class
+         * @return builder
+         */
+        public Builder setBottomFragment(@NonNull final Class<? extends Fragment> zClass,
+            @Nullable final Bundle args) {
+            bottomFragment = new ExternalFragment(zClass, args);
+            return this;
         }
     }
 }

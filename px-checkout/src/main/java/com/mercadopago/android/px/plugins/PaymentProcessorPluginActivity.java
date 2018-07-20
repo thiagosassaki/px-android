@@ -11,7 +11,7 @@ import com.mercadopago.android.px.components.ActionDispatcher;
 import com.mercadopago.android.px.components.ComponentManager;
 import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.internal.di.ConfigurationModule;
-import com.mercadopago.android.px.internal.di.UserSelectionComponent;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentResult;
@@ -41,7 +41,8 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity impl
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final CheckoutStore store = CheckoutStore.getInstance();
-        final UserSelectionComponent configurationModule = new ConfigurationModule(getApplicationContext());
+        final Session session = Session.getSession(getApplicationContext());
+        final ConfigurationModule configurationModule = session.getConfigurationModule();
         final UserSelectionRepository userSelectionRepository = configurationModule.getUserSelectionRepository();
         final PaymentProcessor paymentProcessor =
             store.doesPaymentProcessorSupportPaymentMethodSelected(
@@ -56,7 +57,7 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity impl
         final PluginComponent.Props props = new PluginComponent.Props.Builder()
             .setData(store.getData())
             .setPaymentData(store.getPaymentData())
-            .setCheckoutPreference(store.getCheckoutPreference())
+            .setCheckoutPreference(configurationModule.getPaymentSettings().getCheckoutPreference())
             .build();
 
         final PluginComponent component = paymentProcessor.createPaymentComponent(props, this);

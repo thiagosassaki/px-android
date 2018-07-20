@@ -4,6 +4,7 @@ import com.mercadopago.android.px.components.ActionDispatcher;
 import com.mercadopago.android.px.components.Footer;
 import com.mercadopago.android.px.components.NextAction;
 import com.mercadopago.android.px.components.RecoverPaymentAction;
+import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.mocks.PaymentResults;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.paymentresult.PaymentResultProvider;
@@ -47,7 +48,7 @@ public class FooterContainerTest {
     }
 
     @Test
-    public void whenAskForFooterIsNotNull() throws Exception {
+    public void whenAskForFooterIsNotNull() {
         final PaymentResult paymentResult = PaymentResults.getStatusApprovedPaymentResult();
         final FooterContainer footerContainer = new FooterContainer(
             new FooterContainer.Props(paymentResult), dispatcher, provider);
@@ -76,9 +77,12 @@ public class FooterContainerTest {
     public void testApprovedExitButtonTitle() {
 
         final PaymentResult paymentResult = PaymentResults.getStatusApprovedPaymentResult();
-        new PaymentResultScreenPreference.Builder()
+
+        final PaymentResultScreenPreference preference = new PaymentResultScreenPreference.Builder()
             .setExitButtonTitle(EXIT_TITLE)
             .build();
+
+        CheckoutStore.getInstance().setPaymentResultScreenPreference(preference);
 
         final FooterContainer footerContainer = new FooterContainer(
             new FooterContainer.Props(paymentResult), dispatcher, provider);
@@ -121,6 +125,8 @@ public class FooterContainerTest {
         final FooterContainer footerContainer = new FooterContainer(
             new FooterContainer.Props(paymentResult), dispatcher, provider);
 
+        CheckoutStore.getInstance().setPaymentResultScreenPreference(new PaymentResultScreenPreference.Builder().build());
+
         final Footer.Props props = footerContainer.getFooterProps();
 
         Assert.assertNotNull(props);
@@ -142,6 +148,8 @@ public class FooterContainerTest {
         final FooterContainer footerContainer = new FooterContainer(
             new FooterContainer.Props(paymentResult), dispatcher, provider);
 
+        CheckoutStore.getInstance().setPaymentResultScreenPreference(new PaymentResultScreenPreference.Builder().build());
+
         final Footer.Props props = footerContainer.getFooterProps();
 
         Assert.assertNotNull(props);
@@ -160,9 +168,12 @@ public class FooterContainerTest {
     public void testRejectedDisableSecondaryExitButton() {
 
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedOtherPaymentResult();
-        new PaymentResultScreenPreference.Builder()
+        final PaymentResultScreenPreference preference = new PaymentResultScreenPreference.Builder()
             .disableRejectedSecondaryExitButton()
             .build();
+
+        CheckoutStore.getInstance().setPaymentResultScreenPreference(preference);
+
         final FooterContainer footerContainer = new FooterContainer(
             new FooterContainer.Props(paymentResult), dispatcher, provider);
 

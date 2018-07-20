@@ -15,7 +15,9 @@ public class CustomComponent extends Component<CustomComponent.Props, Void> {
         public final Map<String, Object> data;
         public final CheckoutPreference checkoutPreference;
 
-        public Props(Map<String, Object> data, CheckoutPreference checkoutPreference) {
+        // TODO remove custom component with custom values
+        public Props(@NonNull final Map<String, Object> data,
+            @NonNull final CheckoutPreference checkoutPreference) {
             this.data = data;
             this.checkoutPreference = checkoutPreference;
         }
