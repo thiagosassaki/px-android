@@ -10,8 +10,6 @@ import com.mercadopago.android.px.model.PaymentMethodSearchItem;
 import com.mercadopago.android.px.tracker.Tracker;
 import com.mercadopago.android.px.tracking.tracker.MPTracker;
 import com.mercadopago.android.px.util.MercadoPagoESC;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PaymentVaultProviderImpl implements PaymentVaultProvider {
 
@@ -71,10 +69,5 @@ public class PaymentVaultProviderImpl implements PaymentVaultProvider {
         final @NonNull String siteId) {
         initializeMPTracker(siteId);
         Tracker.trackPaymentVaultChildrenScreen(context, merchantPublicKey, paymentMethodSearchItem);
-    }
-
-    @Override
-    public List<String> getCardsWithEsc() {
-        return new ArrayList<>(mercadoPagoESC.getESCCardIds());
     }
 }

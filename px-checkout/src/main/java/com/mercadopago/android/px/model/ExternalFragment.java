@@ -14,24 +14,24 @@ public class ExternalFragment implements Parcelable {
     @Nullable
     public final Bundle args;
 
-    public ExternalFragment(@NonNull Class<? extends Fragment> zClass, @Nullable final Bundle args) {
-        this.zClassName = zClass.getName();
+    public ExternalFragment(@NonNull final Class<? extends Fragment> zClass, @Nullable final Bundle args) {
+        zClassName = zClass.getName();
         this.args = args;
     }
 
-    protected ExternalFragment(Parcel in) {
+    protected ExternalFragment(final Parcel in) {
         zClassName = in.readString();
         args = in.readBundle(getClass().getClassLoader());
     }
 
     public static final Creator<ExternalFragment> CREATOR = new Creator<ExternalFragment>() {
         @Override
-        public ExternalFragment createFromParcel(Parcel in) {
+        public ExternalFragment createFromParcel(final Parcel in) {
             return new ExternalFragment(in);
         }
 
         @Override
-        public ExternalFragment[] newArray(int size) {
+        public ExternalFragment[] newArray(final int size) {
             return new ExternalFragment[size];
         }
     };

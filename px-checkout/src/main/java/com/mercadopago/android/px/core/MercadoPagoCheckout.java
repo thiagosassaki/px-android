@@ -22,7 +22,6 @@ import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.FlowPreference;
 import com.mercadopago.android.px.preferences.PaymentResultScreenPreference;
-import com.mercadopago.android.px.preferences.ServicePreference;
 import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
 import com.mercadopago.android.px.tracker.FlowHandler;
 import com.mercadopago.android.px.uicontrollers.FontCache;
@@ -148,7 +147,6 @@ public class MercadoPagoCheckout implements Serializable {
         store.setPaymentPlugins(builder.paymentPlugins);
         store.setCheckoutHooks(builder.checkoutHooks);
         store.setDataInitializationTask(builder.dataInitializationTask);
-        store.setCheckoutPreference(builder.checkoutPreference);
     }
 
     private void startForResult(@NonNull final Context context, final int resultCode) {
@@ -350,11 +348,6 @@ public class MercadoPagoCheckout implements Serializable {
         public Builder setPaymentResultScreenPreference(
             @NonNull final PaymentResultScreenPreference paymentResultScreenPreference) {
             this.paymentResultScreenPreference = paymentResultScreenPreference;
-            return this;
-        }
-
-        @Deprecated
-        public Builder setServicePreference(@NonNull final ServicePreference servicePreference) {
             return this;
         }
 

@@ -37,7 +37,6 @@ import com.mercadopago.android.px.observers.TimerObserver;
 import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.presenters.InstallmentsPresenter;
 import com.mercadopago.android.px.providers.InstallmentsProviderImpl;
-import com.mercadopago.android.px.services.controllers.CustomServicesHandler;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.tracker.FlowHandler;
 import com.mercadopago.android.px.tracker.MPTrackingContext;
@@ -66,8 +65,6 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
     //Local vars
     protected boolean mActivityActive;
 
-    protected String mDefaultBaseURL;
-
     //View controls
     protected PayerCostsAdapter mPayerCostsAdapter;
     protected RecyclerView mInstallmentsRecyclerView;
@@ -94,7 +91,7 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
     private PaymentSettingRepository configuration;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         final Session session = Session.getSession(this);
@@ -107,8 +104,6 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         getActivityParameters();
         presenter.attachView(this);
         presenter.attachResourcesProvider(new InstallmentsProviderImpl(this));
-
-        setMerchantInfo();
 
         mActivityActive = true;
         analyzeLowRes();
@@ -141,12 +136,6 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         presenter.setPayerCosts(payerCosts);
         presenter.setPaymentPreference(
             JsonUtil.getInstance().fromJson(intent.getStringExtra("paymentPreference"), PaymentPreference.class));
-    }
-
-    private void setMerchantInfo() {
-        if (CustomServicesHandler.getInstance().getServicePreference() != null) {
-            mDefaultBaseURL = CustomServicesHandler.getInstance().getServicePreference().getDefaultBaseURL();
-        }
     }
 
     public void analyzeLowRes() {

@@ -63,7 +63,6 @@ import com.mercadopago.android.px.observers.TimerObserver;
 import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.presenters.GuessingCardPresenter;
 import com.mercadopago.android.px.providers.GuessingCardProviderImpl;
-import com.mercadopago.android.px.services.controllers.CustomServicesHandler;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.services.exceptions.CardTokenException;
 import com.mercadopago.android.px.tracker.FlowHandler;
@@ -121,7 +120,7 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     //ViewMode
     protected boolean mLowResActive;
     protected GuessingCardPresenter mPresenter;
-    protected String mDefaultBaseURL;
+
     private Activity mActivity;
     //View controls
     private ScrollView mScrollView;
@@ -173,13 +172,12 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     private boolean mActivityActive;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivity = this;
         mActivityActive = true;
         mButtonContainerMustBeShown = true;
         getActivityParameters();
-        setMerchantInfo();
         configurePresenter();
         analizeLowRes();
 
@@ -216,12 +214,6 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     private void configurePresenter() {
         mPresenter.attachView(this);
         mPresenter.attachResourcesProvider(new GuessingCardProviderImpl(this));
-    }
-
-    private void setMerchantInfo() {
-        if (CustomServicesHandler.getInstance().getServicePreference() != null) {
-            mDefaultBaseURL = CustomServicesHandler.getInstance().getServicePreference().getDefaultBaseURL();
-        }
     }
 
     private void getActivityParameters() {

@@ -3,11 +3,11 @@ package com.mercadopago.android.px.paymentresult.components;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.components.ActionDispatcher;
 import com.mercadopago.android.px.components.Component;
-import com.mercadopago.android.px.components.CustomComponent;
 import com.mercadopago.android.px.components.PaymentMethodComponent;
 import com.mercadopago.android.px.components.Receipt;
 import com.mercadopago.android.px.components.TotalAmount;
 import com.mercadopago.android.px.core.CheckoutStore;
+import com.mercadopago.android.px.model.ExternalFragment;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.paymentresult.PaymentResultProvider;
@@ -128,41 +128,23 @@ public class Body extends Component<PaymentResultBodyProps, Void> {
         return new Receipt(new Receipt.ReceiptProps(String.valueOf(props.paymentId)));
     }
 
+    //TODO remove when preferences is removed from singleton checkout store
     public boolean hasTopCustomComponent() {
-        return hasPaymentResultScreenPreference() && CheckoutStore.getInstance()
-            .getPaymentResultScreenPreference().hasApprovedTopCustomComponent();
+        return CheckoutStore.getInstance().getPaymentResultScreenPreference().hasTopFragment();
     }
 
+    //TODO remove when preferences is removed from singleton checkout store
     public boolean hasBottomCustomComponent() {
-        return hasPaymentResultScreenPreference() && CheckoutStore.getInstance()
-            .getPaymentResultScreenPreference().hasApprovedBottomCustomComponent();
+        return CheckoutStore.getInstance().getPaymentResultScreenPreference().hasBottomFragment();
     }
 
-    private boolean hasPaymentResultScreenPreference() {
-        return CheckoutStore.getInstance().getPaymentResultScreenPreference() != null;
+    //TODO remove when preferences is removed from singleton checkout store
+    public ExternalFragment topFragment() {
+        return CheckoutStore.getInstance().getPaymentResultScreenPreference().getTopFragment();
     }
 
-    public CustomComponent getApprovedTopCustomComponent() {
-        final CheckoutStore store = CheckoutStore.getInstance();
-        final CustomComponent.Props props =
-            new CustomComponent.Props(
-                store.getData(),
-                store.getCheckoutPreference()
-            );
-        return store.getPaymentResultScreenPreference()
-            .getApprovedTopCustomComponentFactory()
-            .create(props);
-    }
-
-    public CustomComponent getApprovedBottomCustomComponent() {
-        final CheckoutStore store = CheckoutStore.getInstance();
-        final CustomComponent.Props props =
-            new CustomComponent.Props(
-                store.getData(),
-                store.getCheckoutPreference()
-            );
-        return store.getPaymentResultScreenPreference()
-            .getApprovedBottomCustomComponentFactory()
-            .create(props);
+    //TODO remove when preferences is removed from singleton checkout store
+    public ExternalFragment bottomFragment() {
+        return CheckoutStore.getInstance().getPaymentResultScreenPreference().getBottomFragment();
     }
 }

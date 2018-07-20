@@ -610,11 +610,6 @@ public class PaymentVaultPresenterTest {
             @NonNull String siteId) {
 
         }
-
-        @Override
-        public List<String> getCardsWithEsc() {
-            return new ArrayList<>();
-        }
     }
 
     private static class MockedView implements PaymentVaultView {
