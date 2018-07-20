@@ -358,26 +358,6 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
         selectedSearchItem = mSelectedSearchItem;
     }
 
-    private List<CustomSearchItem> getLimitedCustomOptions(List<CustomSearchItem> customSearchItems,
-        Integer maxSavedCards) {
-        List<CustomSearchItem> limitedItems = new ArrayList<>();
-        if (maxSavedCards != null && maxSavedCards > 0) {
-            int cardsAdded = 0;
-            for (CustomSearchItem customSearchItem : customSearchItems) {
-                if (MercadoPagoUtil.isCard(customSearchItem.getType()) && cardsAdded < maxSavedCards) {
-                    limitedItems.add(customSearchItem);
-                    cardsAdded++;
-                } else if (!MercadoPagoUtil.isCard(customSearchItem.getType())) {
-                    limitedItems.add(customSearchItem);
-                }
-            }
-        } else {
-            limitedItems = customSearchItems;
-        }
-
-        return limitedItems;
-    }
-
     //###Hooks HACKS #######################################################
 
     public void onHookContinue() {
