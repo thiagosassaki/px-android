@@ -6,6 +6,7 @@ import com.mercadopago.android.px.controllers.PaymentMethodGuessingController;
 import com.mercadopago.android.px.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
+import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.Cause;
@@ -21,9 +22,9 @@ import com.mercadopago.android.px.mvp.TaggedCallback;
 import com.mercadopago.android.px.providers.CardVaultProvider;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.tracking.utils.TrackingUtil;
-import com.mercadopago.android.px.views.CardVaultView;
 import com.mercadopago.android.px.util.ApiUtil;
 import com.mercadopago.android.px.util.TextUtils;
+import com.mercadopago.android.px.views.CardVaultView;
 import java.util.List;
 
 public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultProvider> {
@@ -31,6 +32,7 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
     @NonNull
     private final AmountRepository amountRepository;
     private final PaymentSettingRepository configuration;
+    @NonNull private final UserSelectionRepository userSelectionRepository;
 
     private FailureRecovery failureRecovery;
     private String bin;
@@ -64,8 +66,10 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
     private SavedESCCardToken escCardToken;
 
     public CardVaultPresenter(@NonNull final AmountRepository amountRepository,
-        final PaymentSettingRepository configuration) {
+        @NonNull final PaymentSettingRepository configuration,
+        @NonNull final UserSelectionRepository userSelectionRepository) {
         this.configuration = configuration;
+        this.userSelectionRepository = userSelectionRepository;
         installmentsEnabled = true;
         this.amountRepository = amountRepository;
     }
@@ -291,17 +295,19 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
     }
 
     private void resolvePayerCosts(final List<PayerCost> payerCosts) {
-        PayerCost defaultPayerCost =
+        final PayerCost defaultPayerCost =
             configuration.getCheckoutPreference().getPaymentPreference().getDefaultInstallments(payerCosts);
         payerCostsList = payerCosts;
 
         if (defaultPayerCost != null) {
+            userSelectionRepository.select(defaultPayerCost);
             payerCost = defaultPayerCost;
             askForSecurityCodeWithoutInstallments();
         } else if (payerCostsList.isEmpty()) {
             getView()
                 .showError(new MercadoPagoError(getResourcesProvider().getMissingPayerCostsErrorMessage(), false), "");
         } else if (payerCostsList.size() == 1) {
+            userSelectionRepository.select(payerCosts.get(0));
             payerCost = payerCosts.get(0);
             askForSecurityCodeWithoutInstallments();
         } else {

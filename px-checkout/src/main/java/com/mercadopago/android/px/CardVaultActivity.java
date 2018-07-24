@@ -61,7 +61,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
         final Session session = Session.getSession(this);
         configuration = session.getConfigurationModule().getPaymentSettings();
         privateKey = configuration.getCheckoutPreference().getPayer().getAccessToken();
-        presenter = new CardVaultPresenter(session.getAmountRepository(), configuration);
+        presenter = new CardVaultPresenter(session.getAmountRepository(), configuration, session.getConfigurationModule().getUserSelectionRepository());
         presenter.attachResourcesProvider(new CardVaultProviderImpl(this, publicKey, privateKey, escEnabled));
         presenter.attachView(this);
         presenter.setCard(card);

@@ -3,6 +3,7 @@ package com.mercadopago.android.px.cardvault;
 import com.mercadopago.android.px.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
+import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.mocks.Cards;
 import com.mercadopago.android.px.mocks.Installments;
 import com.mercadopago.android.px.mocks.Issuers;
@@ -52,6 +53,8 @@ public class CardVaultPresenterTest {
 
     @Mock private PaymentSettingRepository paymentSettingRepository;
 
+    @Mock private UserSelectionRepository userSelectionRepository;
+
     @Mock private CheckoutPreference checkoutPreference;
 
     @Before
@@ -60,7 +63,7 @@ public class CardVaultPresenterTest {
         when(paymentSettingRepository.getCheckoutPreference()).thenReturn(checkoutPreference);
         when(checkoutPreference.getPaymentPreference()).thenReturn(new PaymentPreference());
         when(amountRepository.getAmountToPay()).thenReturn(new BigDecimal(1000));
-        presenter = new CardVaultPresenter(amountRepository, paymentSettingRepository);
+        presenter = new CardVaultPresenter(amountRepository, paymentSettingRepository, userSelectionRepository);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
     }
