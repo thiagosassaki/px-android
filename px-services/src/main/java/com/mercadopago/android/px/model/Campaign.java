@@ -3,6 +3,8 @@ package com.mercadopago.android.px.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import com.google.gson.annotations.SerializedName;
 import com.mercadopago.android.px.services.util.ParcelableUtil;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -13,15 +15,18 @@ public class Campaign implements Serializable, Parcelable {
     private final String id;
     private final String codeType;
     private final BigDecimal maxCouponAmount;
+    @SerializedName("max_redeem_per_user")
+    private final int maxRedeemPerUser;
 
     private static final String CODE_TYPE_SINGLE = "single";
     private static final String CODE_TYPE_MULTIPLE = "multiple";
     private static final String CODE_TYPE_NONE = "none";
 
-    private Campaign(final Builder builder) {
+    /* default */ Campaign(final Builder builder) {
         id = builder.id;
         maxCouponAmount = builder.maxCouponAmount;
         codeType = builder.codeType;
+        maxRedeemPerUser = builder.maxRedeemPerUser;
     }
 
     @SuppressWarnings("unused")
@@ -55,20 +60,29 @@ public class Campaign implements Serializable, Parcelable {
         return CODE_TYPE_NONE.contains(codeType);
     }
 
-    private Campaign(Parcel in) {
+    public int getMaxRedeemPerUser() {
+        return maxRedeemPerUser;
+    }
+
+    public boolean isOneShotDiscount() {
+        return maxRedeemPerUser == 1;
+    }
+
+    /* default */ Campaign(final Parcel in) {
         id = in.readString();
         maxCouponAmount = ParcelableUtil.getOptionalBigDecimal(in);
         codeType = in.readString();
+        maxRedeemPerUser = in.readInt();
     }
 
     public static final Creator<Campaign> CREATOR = new Creator<Campaign>() {
         @Override
-        public Campaign createFromParcel(Parcel in) {
+        public Campaign createFromParcel(final Parcel in) {
             return new Campaign(in);
         }
 
         @Override
-        public Campaign[] newArray(int size) {
+        public Campaign[] newArray(final int size) {
             return new Campaign[size];
         }
     };
@@ -79,10 +93,11 @@ public class Campaign implements Serializable, Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void writeToParcel(final Parcel dest, final int flags) {
         dest.writeString(id);
         ParcelableUtil.writeOptional(dest, maxCouponAmount);
         dest.writeString(codeType);
+        dest.writeInt(maxRedeemPerUser);
     }
 
     public String getCampaignTermsUrl() {
@@ -90,32 +105,56 @@ public class Campaign implements Serializable, Parcelable {
             .format(Locale.US, "https://api.mercadolibre.com/campaigns/%s/terms_and_conditions?format_type=html", id);
     }
 
-    public static class Builder {
+    @SuppressWarnings("unused")
+    public static final class Builder {
         //region mandatory params
-        private final String id;
+        /* default */ final String id;
         //endregion mandatory params
-        private BigDecimal maxCouponAmount = BigDecimal.ZERO;
-        private String codeType;
+        /* default */ BigDecimal maxCouponAmount = BigDecimal.ZERO;
+        /* default */ String codeType;
+        /* default */ int maxRedeemPerUser = 1;
 
         /**
          * Builder for campaign construction
          *
          * @param id campaign id
          */
-        @SuppressWarnings("unused")
-        public Builder(@NonNull String id) {
+        public Builder(@NonNull final String id) {
             this.id = id;
         }
 
-        @SuppressWarnings("unused")
-        public Campaign.Builder setMaxCouponAmount(final BigDecimal maxCouponAmount) {
+        /**
+         * When the campaign has amount cap per discount you should set it here
+         * to communicate to the user that it exists.
+         *
+         * @param maxCouponAmount amount to be shown in message.
+         * @return builder
+         */
+        public Builder setMaxCouponAmount(final BigDecimal maxCouponAmount) {
             this.maxCouponAmount = maxCouponAmount;
             return this;
         }
 
-        @SuppressWarnings("unused")
-        public Campaign.Builder setCodeType(final String codeType) {
+        /**
+         * Code type describes the kind of discount related with this campaign.
+         *
+         * @param codeType 'single', 'multiple' or null.
+         * @return builder
+         */
+        public Builder setCodeType(@Nullable final String codeType) {
             this.codeType = codeType;
+            return this;
+        }
+
+        /**
+         * This value represents how many times this discount will be applied.
+         * By default this value will be 1.
+         *
+         * @param maxRedeemPerUser amount of times that will apply.
+         * @return builder.
+         */
+        public Builder setMaxRedeemPerUser(final int maxRedeemPerUser) {
+            this.maxRedeemPerUser = maxRedeemPerUser;
             return this;
         }
 
