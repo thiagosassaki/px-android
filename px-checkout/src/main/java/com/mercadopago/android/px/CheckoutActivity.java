@@ -18,7 +18,6 @@ import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentData;
-import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.Token;
@@ -39,15 +38,14 @@ import com.mercadopago.android.px.tracker.MPTrackingContext;
 import com.mercadopago.android.px.tracking.model.ActionEvent;
 import com.mercadopago.android.px.tracking.tracker.MPTracker;
 import com.mercadopago.android.px.tracking.utils.TrackingUtil;
-import com.mercadopago.android.px.viewmodel.CardPaymentModel;
-import com.mercadopago.android.px.viewmodel.CheckoutStateModel;
-import com.mercadopago.android.px.viewmodel.OneTapModel;
-import com.mercadopago.android.px.views.CheckoutView;
 import com.mercadopago.android.px.util.ErrorUtil;
 import com.mercadopago.android.px.util.JsonUtil;
 import com.mercadopago.android.px.util.MercadoPagoESCImpl;
 import com.mercadopago.android.px.util.TextUtils;
 import com.mercadopago.android.px.util.ViewUtils;
+import com.mercadopago.android.px.viewmodel.CheckoutStateModel;
+import com.mercadopago.android.px.viewmodel.OneTapModel;
+import com.mercadopago.android.px.views.CheckoutView;
 import com.squareup.picasso.Picasso;
 import java.math.BigDecimal;
 
@@ -519,18 +517,8 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
     }
 
     @Override
-    public void onOneTapPay(@NonNull final PaymentMethod paymentMethod) {
-        presenter.startPayment(paymentMethod);
-    }
-
-    @Override
     public void finishWithPaymentResult() {
         presenter.exitWithCode(RESULT_OK);
-    }
-
-    @Override
-    public void onOneTapPay(@NonNull final CardPaymentModel cardPaymentModel) {
-        presenter.startCardPayment(cardPaymentModel);
     }
 
     @Override

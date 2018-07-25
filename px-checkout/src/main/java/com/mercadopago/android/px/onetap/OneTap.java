@@ -2,10 +2,8 @@ package com.mercadopago.android.px.onetap;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.model.Card;
-import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.mvp.MvpView;
-import com.mercadopago.android.px.viewmodel.CardPaymentModel;
 import com.mercadopago.android.px.viewmodel.OneTapModel;
 
 public interface OneTap {
@@ -17,10 +15,6 @@ public interface OneTap {
         void changePaymentMethod();
 
         void showCardFlow(@NonNull final OneTapModel oneTapModel, @NonNull final Card card);
-
-        void showPaymentFlow(@NonNull final PaymentMethod oneTapMetadata);
-
-        void showPaymentFlow(@NonNull final CardPaymentModel cardPaymentModel);
 
         void showDetailModal(@NonNull final OneTapModel model);
 

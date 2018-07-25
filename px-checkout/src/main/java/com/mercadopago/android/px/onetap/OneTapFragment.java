@@ -16,13 +16,11 @@ import com.mercadopago.android.px.core.MercadoPagoComponents;
 import com.mercadopago.android.px.internal.datasource.PluginService;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.model.Card;
-import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.onetap.components.OneTapContainer;
 import com.mercadopago.android.px.tracker.Tracker;
-import com.mercadopago.android.px.viewmodel.CardPaymentModel;
-import com.mercadopago.android.px.viewmodel.OneTapModel;
 import com.mercadopago.android.px.util.JsonUtil;
+import com.mercadopago.android.px.viewmodel.OneTapModel;
 import java.math.BigDecimal;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -56,10 +54,6 @@ public class OneTapFragment extends Fragment implements OneTap.View {
         void onOneTapCanceled();
 
         void onChangePaymentMethod();
-
-        void onOneTapPay(@NonNull final PaymentMethod paymentMethod);
-
-        void onOneTapPay(@NonNull final CardPaymentModel cardPaymentModel);
 
         void onOneTapConfirmCardFlow();
 
@@ -96,7 +90,8 @@ public class OneTapFragment extends Fragment implements OneTap.View {
             amountToPay = session.getAmountRepository().getAmountToPay();
             hasDiscount = session.getDiscountRepository().getDiscount() != null;
             final OneTapModel model = (OneTapModel) arguments.getSerializable(ARG_ONE_TAP_MODEL);
-            presenter = new OneTapPresenter(model, new PluginService(view.getContext()));
+            presenter = new OneTapPresenter(model, new PluginService(view.getContext()),
+                );
             configureView(view, presenter, model);
             presenter.attachView(this);
             trackScreen(model);
@@ -161,20 +156,6 @@ public class OneTapFragment extends Fragment implements OneTap.View {
     public void changePaymentMethod() {
         if (callback != null) {
             callback.onChangePaymentMethod();
-        }
-    }
-
-    @Override
-    public void showPaymentFlow(@NonNull final PaymentMethod paymentMethod) {
-        if (callback != null) {
-            callback.onOneTapPay(paymentMethod);
-        }
-    }
-
-    @Override
-    public void showPaymentFlow(@NonNull final CardPaymentModel cardPaymentModel) {
-        if (callback != null) {
-            callback.onOneTapPay(cardPaymentModel);
         }
     }
 

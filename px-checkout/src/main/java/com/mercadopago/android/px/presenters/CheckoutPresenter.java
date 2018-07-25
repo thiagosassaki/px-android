@@ -40,13 +40,12 @@ import com.mercadopago.android.px.providers.CheckoutProvider;
 import com.mercadopago.android.px.services.callbacks.Callback;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.services.exceptions.CheckoutPreferenceException;
-import com.mercadopago.android.px.viewmodel.CardPaymentModel;
-import com.mercadopago.android.px.viewmodel.CheckoutStateModel;
-import com.mercadopago.android.px.viewmodel.OneTapModel;
-import com.mercadopago.android.px.views.CheckoutView;
 import com.mercadopago.android.px.util.ApiUtil;
 import com.mercadopago.android.px.util.JsonUtil;
 import com.mercadopago.android.px.util.TextUtils;
+import com.mercadopago.android.px.viewmodel.CheckoutStateModel;
+import com.mercadopago.android.px.viewmodel.OneTapModel;
+import com.mercadopago.android.px.views.CheckoutView;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
@@ -879,23 +878,6 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
                 getView().transitionOut();
             }
         }
-    }
-
-    public void startCardPayment(@NonNull final CardPaymentModel cardPaymentModel) {
-        state.createdToken = cardPaymentModel.token;
-        state.selectedCard = cardPaymentModel.card;
-        state.selectedIssuer = cardPaymentModel.issuer;
-        userSelectionRepository.select(cardPaymentModel.card.getPaymentMethod());
-        userSelectionRepository.select(cardPaymentModel.payerCost);
-        getView().showProgress();
-        createPayment();
-    }
-
-    public void startPayment(@NonNull final PaymentMethod paymentMethod) {
-        // TODO refactor // see hooks options
-        userSelectionRepository.select(paymentMethod);
-        getView().showProgress();
-        createPayment();
     }
 
     public void confirmCardFlow() {

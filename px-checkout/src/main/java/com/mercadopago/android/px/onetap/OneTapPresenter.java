@@ -1,52 +1,58 @@
 package com.mercadopago.android.px.onetap;
 
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.internal.repository.PluginRepository;
-import com.mercadopago.android.px.model.OneTapMetadata;
-import com.mercadopago.android.px.model.PaymentTypes;
+import com.mercadopago.android.px.internal.repository.PaymentHandler;
+import com.mercadopago.android.px.internal.repository.PaymentRepository;
+import com.mercadopago.android.px.model.Card;
+import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.mvp.MvpPresenter;
 import com.mercadopago.android.px.mvp.ResourcesProvider;
+import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.viewmodel.OneTapModel;
-import com.mercadopago.android.px.viewmodel.mappers.CardMapper;
 import com.mercadopago.android.px.viewmodel.mappers.CardPaymentMapper;
-import com.mercadopago.android.px.viewmodel.mappers.PaymentMethodMapper;
 
 class OneTapPresenter extends MvpPresenter<OneTap.View, ResourcesProvider> implements OneTap.Actions {
 
     @NonNull private final OneTapModel model;
-    @NonNull private final PluginRepository pluginRepository;
+    @NonNull private final PaymentRepository paymentRepository;
 
-    @NonNull private final CardMapper cardMapper;
-    @NonNull private final PaymentMethodMapper paymentMethodMapper;
-
-    /**
-     * Creates a OneTap presenter.
-     *
-     * @param model one tap viewmodel
-     * @param pluginRepository
-     */
     OneTapPresenter(@NonNull final OneTapModel model,
-        @NonNull final PluginRepository pluginRepository) {
+        @NonNull final PaymentRepository paymentRepository) {
         this.model = model;
-        this.pluginRepository = pluginRepository;
-        cardMapper = new CardMapper();
-        paymentMethodMapper = new PaymentMethodMapper();
+        this.paymentRepository = paymentRepository;
     }
 
     @Override
     public void confirmPayment() {
-        final OneTapMetadata oneTapMetadata = model.getPaymentMethods().getOneTapMetadata();
-        final String paymentTypeId = oneTapMetadata.getPaymentTypeId();
-        final String paymentMethodId = oneTapMetadata.getPaymentMethodId();
         getView().trackConfirm(model);
-        if (PaymentTypes.isCardPaymentType(paymentTypeId)) {
-            getView().showCardFlow(model, cardMapper.map(model));
-        } else if (PaymentTypes.isPlugin(paymentTypeId)) {
-            getView().showPaymentFlow(pluginRepository.getPluginAsPaymentMethod(paymentMethodId, paymentTypeId));
-        } else {
-            getView().showPaymentFlow(paymentMethodMapper.map(model.getPaymentMethods()));
-        }
+
+        paymentRepository.doPayment(model, new PaymentHandler() {
+            @Override
+            public void onPaymentError(@NonNull final ApiException error) {
+
+            }
+
+            @Override
+            public void onPaymentSuccess(@NonNull final Payment payment) {
+
+            }
+
+            @Override
+            public void onPaymentMethodRequired() {
+                //TODO no debería pasar.
+            }
+
+            @Override
+            public void onCvvRequired(@NonNull final Card card) {
+                getView().showCardFlow(model, card);
+            }
+
+            @Override
+            public void onCardError() {
+                getView().showCardFlow(model, null);
+            }
+        });
     }
 
     @Override
