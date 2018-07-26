@@ -4,25 +4,25 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.BuildConfig;
 import com.mercadopago.android.px.R;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentMethodSearchItem;
 import com.mercadopago.android.px.tracker.Tracker;
 import com.mercadopago.android.px.tracking.tracker.MPTracker;
 import com.mercadopago.android.px.util.MercadoPagoESC;
-import com.mercadopago.android.px.util.MercadoPagoESCImpl;
 
 public class PaymentVaultProviderImpl implements PaymentVaultProvider {
 
     private final Context context;
+
     private final MercadoPagoESC mercadoPagoESC;
     private final String merchantPublicKey;
 
-    public PaymentVaultProviderImpl(final Context context, final String publicKey,
-        final boolean escEnabled) {
+    public PaymentVaultProviderImpl(final Context context) {
         this.context = context;
-
-        mercadoPagoESC = new MercadoPagoESCImpl(context, escEnabled);
-        merchantPublicKey = publicKey;
+        final Session session = Session.getSession(context);
+        mercadoPagoESC = session.getMercadoPagoESC();
+        merchantPublicKey = session.getConfigurationModule().getPaymentSettings().getPublicKey();
     }
 
     @Override

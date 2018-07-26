@@ -20,7 +20,6 @@ public class PaymentTypesPresenter {
 
     //Activity parameters
     private CardInfo mCardInfo;
-    private String mPublicKey;
 
     //Local vars
     private PaymentMethod mPaymentMethod;
@@ -51,14 +50,6 @@ public class PaymentTypesPresenter {
         mPaymentTypeList = paymentTypeList;
     }
 
-    public String getPublicKey() {
-        return mPublicKey;
-    }
-
-    public void setPublicKey(String publicKey) {
-        mPublicKey = publicKey;
-    }
-
     public boolean isCardInfoAvailable() {
         return mCardInfo != null;
     }
@@ -84,8 +75,6 @@ public class PaymentTypesPresenter {
             mView.onInvalidStart("payment method list is null or empty");
         } else if (mPaymentTypeList == null || mPaymentTypeList.isEmpty()) {
             mView.onInvalidStart("payment types list is null or empty");
-        } else if (mPublicKey == null) {
-            mView.onInvalidStart("public key not set");
         } else {
             mView.onValidStart();
         }

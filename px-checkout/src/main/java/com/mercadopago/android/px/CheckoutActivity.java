@@ -39,15 +39,15 @@ import com.mercadopago.android.px.tracker.MPTrackingContext;
 import com.mercadopago.android.px.tracking.model.ActionEvent;
 import com.mercadopago.android.px.tracking.tracker.MPTracker;
 import com.mercadopago.android.px.tracking.utils.TrackingUtil;
-import com.mercadopago.android.px.viewmodel.CardPaymentModel;
-import com.mercadopago.android.px.viewmodel.CheckoutStateModel;
-import com.mercadopago.android.px.viewmodel.OneTapModel;
-import com.mercadopago.android.px.views.CheckoutView;
 import com.mercadopago.android.px.util.ErrorUtil;
 import com.mercadopago.android.px.util.JsonUtil;
 import com.mercadopago.android.px.util.MercadoPagoESCImpl;
 import com.mercadopago.android.px.util.TextUtils;
 import com.mercadopago.android.px.util.ViewUtils;
+import com.mercadopago.android.px.viewmodel.CardPaymentModel;
+import com.mercadopago.android.px.viewmodel.CheckoutStateModel;
+import com.mercadopago.android.px.viewmodel.OneTapModel;
+import com.mercadopago.android.px.views.CheckoutView;
 import com.squareup.picasso.Picasso;
 import java.math.BigDecimal;
 
@@ -398,12 +398,6 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
         if (isActive()) {
             new MercadoPagoComponents.Activities.PaymentVaultActivityBuilder()
                 .setActivity(this)
-                .setMerchantPublicKey(merchantPublicKey)
-                .setShowBankDeals(presenter.getShowBankDeals())
-                .setMaxSavedCards(presenter.getMaxSavedCardsToShow())
-                .setInstallmentsReviewEnabled(presenter.isInstallmentsReviewScreenEnabled())
-                .setShowAllSavedCardsEnabled(presenter.shouldShowAllSavedCards())
-                .setESCEnabled(presenter.isESCEnabled())
                 .startActivity();
             overrideTransitionIn();
         }
@@ -416,13 +410,9 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
                 : presenter.getCreatedPayment().getTransactionAmount();
 
         new MercadoPagoComponents.Activities.PaymentResultActivityBuilder()
-            .setMerchantPublicKey(merchantPublicKey)
-            .setPayerAccessToken(privateKey)
             .setActivity(this)
             .setPaymentResult(paymentResult)
             .setDiscount(presenter.getDiscount())
-            .setCongratsDisplay(presenter.getCongratsDisplay())
-            .setSite(presenter.getCheckoutPreference().getSite())
             .setPaymentResultScreenPreference(presenter.getPaymentResultScreenPreference())
             .setAmount(amount)
             .startActivity();
@@ -457,12 +447,7 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
         paymentPreference.setDefaultPaymentTypeId(presenter.getSelectedPaymentMethod().getPaymentTypeId());
 
         new MercadoPagoComponents.Activities.CardVaultActivityBuilder()
-            .setMerchantPublicKey(merchantPublicKey)
-            .setInstallmentsEnabled(true)
-            .setInstallmentsReviewEnabled(presenter.isInstallmentsReviewScreenEnabled())
             .setPaymentRecovery(paymentRecovery)
-            .setShowBankDeals(presenter.getShowBankDeals())
-            .setESCEnabled(presenter.isESCEnabled())
             .setCard(presenter.getSelectedCard())
             .startActivity(this, MercadoPagoComponents.Activities.CARD_VAULT_REQUEST_CODE);
         overrideTransitionIn();
@@ -480,7 +465,7 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
 
     @Override
     public void showError(final MercadoPagoError error) {
-        ErrorUtil.startErrorActivity(this, error, merchantPublicKey);
+        ErrorUtil.startErrorActivity(this, error);
     }
 
     @Override

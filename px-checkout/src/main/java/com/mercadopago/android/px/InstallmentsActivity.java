@@ -45,7 +45,6 @@ import com.mercadopago.android.px.tracking.utils.TrackingUtil;
 import com.mercadopago.android.px.uicontrollers.FontCache;
 import com.mercadopago.android.px.uicontrollers.card.CardRepresentationModes;
 import com.mercadopago.android.px.uicontrollers.card.FrontCardView;
-import com.mercadopago.android.px.uicontrollers.installments.InstallmentsReviewView;
 import com.mercadopago.android.px.util.ApiUtil;
 import com.mercadopago.android.px.util.ErrorUtil;
 import com.mercadopago.android.px.util.JsonUtil;
@@ -54,7 +53,6 @@ import com.mercadopago.android.px.util.ViewUtils;
 import com.mercadopago.android.px.views.AmountView;
 import com.mercadopago.android.px.views.DiscountDetailDialog;
 import com.mercadopago.android.px.views.InstallmentsActivityView;
-import com.mercadopago.android.px.views.MercadoPagoUI;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.List;
@@ -65,8 +63,6 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
     protected InstallmentsPresenter presenter;
 
     //Local vars
-    protected String publicKey;
-    protected String privateKey;
     protected boolean mActivityActive;
 
     //View controls
@@ -84,7 +80,6 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
     protected CollapsingToolbarLayout mCollapsingToolbar;
     protected AppBarLayout mAppBar;
     protected FrameLayout mCardContainer;
-    protected FrameLayout mInstallmentsReview;
     protected Toolbar mNormalToolbar;
     protected FrontCardView mFrontCardView;
     protected MPTextView mTimerTextView;
@@ -105,10 +100,10 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         presenter = new InstallmentsPresenter(session.getAmountRepository(), configuration,
             configurationModule.getUserSelectionRepository(),
             session.getDiscountRepository());
-        privateKey = configuration.getCheckoutPreference().getPayer().getAccessToken();
+
         getActivityParameters();
         presenter.attachView(this);
-        presenter.attachResourcesProvider(new InstallmentsProviderImpl(this, publicKey, privateKey));
+        presenter.attachResourcesProvider(new InstallmentsProviderImpl(this));
 
         mActivityActive = true;
         analyzeLowRes();
@@ -120,10 +115,7 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
     }
 
     private void getActivityParameters() {
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-
-        publicKey = intent.getStringExtra("merchantPublicKey");
+        final Intent intent = getIntent();
 
         final PaymentMethod paymentMethod =
             JsonUtil.getInstance().fromJson(intent.getStringExtra("paymentMethod"), PaymentMethod.class);
@@ -134,18 +126,16 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
 
         List<PayerCost> payerCosts;
         try {
-            Type listType = new TypeToken<List<PayerCost>>() {
+            final Type listType = new TypeToken<List<PayerCost>>() {
             }.getType();
             payerCosts = JsonUtil.getInstance().getGson().fromJson(intent.getStringExtra("payerCosts"), listType);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             payerCosts = null;
         }
 
         presenter.setPayerCosts(payerCosts);
         presenter.setPaymentPreference(
             JsonUtil.getInstance().fromJson(intent.getStringExtra("paymentPreference"), PaymentPreference.class));
-        presenter.setInstallmentsReviewEnabled(intent.getBooleanExtra("installmentsReviewEnabled", true));
-        presenter.setPayerEmail(intent.getStringExtra("payerEmail"));
     }
 
     public void analyzeLowRes() {
@@ -183,8 +173,6 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         } else {
             initializeNormalControls();
         }
-
-        mInstallmentsReview = findViewById(R.id.mpsdkInstallmentsReview);
     }
 
     private void initializeLowResControls() {
@@ -218,7 +206,8 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
     }
 
     protected void trackScreen() {
-        MPTrackingContext mTrackingContext = new MPTrackingContext.Builder(this, publicKey)
+        final String publicKey = Session.getSession(this).getConfigurationModule().getPaymentSettings().getPublicKey();
+        final MPTrackingContext mTrackingContext = new MPTrackingContext.Builder(this, publicKey)
             .setVersion(BuildConfig.VERSION_NAME)
             .build();
 
@@ -276,7 +265,7 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         mFrontCardView.enableEditingCardNumber();
     }
 
-    private void loadToolbarArrow(Toolbar toolbar) {
+    private void loadToolbarArrow(final Toolbar toolbar) {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -286,15 +275,8 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         if (toolbar != null) {
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    if (isInstallmentsReviewVisible()) {
-                        hideInstallmentsReviewView();
-                        showInstallmentsRecyclerView();
-                    } else {
-                        Intent returnIntent = new Intent();
-                        setResult(RESULT_CANCELED, returnIntent);
-                        finish();
-                    }
+                public void onClick(final View v) {
+                    onBackPressed();
                 }
             });
         }
@@ -355,13 +337,13 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         if (error.isApiException()) {
             showApiException(error.getApiException(), requestOrigin);
         } else {
-            ErrorUtil.startErrorActivity(this, error, publicKey);
+            ErrorUtil.startErrorActivity(this, error);
         }
     }
 
     public void showApiException(ApiException apiException, String requestOrigin) {
         if (mActivityActive) {
-            ApiUtil.showApiExceptionError(this, apiException, publicKey, requestOrigin);
+            ApiUtil.showApiExceptionError(this, apiException, requestOrigin);
         }
     }
 
@@ -411,19 +393,15 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
 
     @Override
     public void onBackPressed() {
-        if (isInstallmentsReviewVisible()) {
-            hideInstallmentsReviewView();
-            showInstallmentsRecyclerView();
-        } else {
-            final Intent returnIntent = new Intent();
+        showInstallmentsRecyclerView();
+        final Intent returnIntent = new Intent();
             returnIntent.putExtra("backButtonPressed", true);
             setResult(RESULT_CANCELED, returnIntent);
             finish();
-        }
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ErrorUtil.ERROR_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
@@ -439,46 +417,8 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
     }
 
     @Override
-    public void initInstallmentsReviewView(final PayerCost payerCost) {
-        final InstallmentsReviewView installmentsReviewView = new MercadoPagoUI.Views.InstallmentsReviewViewBuilder()
-            .setContext(this)
-            .setCurrencyId(configuration.getCheckoutPreference().getSite().getCurrencyId())
-            .setPayerCost(payerCost)
-            .build();
-
-        installmentsReviewView.inflateInParent(mInstallmentsReview, true);
-        installmentsReviewView.initializeControls();
-        installmentsReviewView.draw();
-        installmentsReviewView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finishWithResult(payerCost);
-            }
-        });
-    }
-
-    @Override
-    public void hideInstallmentsRecyclerView() {
-        mInstallmentsRecyclerView.setVisibility(View.GONE);
-    }
-
-    @Override
     public void showInstallmentsRecyclerView() {
         mInstallmentsRecyclerView.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void showInstallmentsReviewView() {
-        mInstallmentsReview.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideInstallmentsReviewView() {
-        mInstallmentsReview.setVisibility(View.GONE);
-    }
-
-    private Boolean isInstallmentsReviewVisible() {
-        return mInstallmentsReview.getVisibility() == View.VISIBLE;
     }
 
     @Override

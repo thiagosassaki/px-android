@@ -29,9 +29,9 @@ import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.providers.PaymentVaultProvider;
 import com.mercadopago.android.px.services.callbacks.Callback;
 import com.mercadopago.android.px.services.exceptions.ApiException;
+import com.mercadopago.android.px.util.MercadoPagoUtil;
 import com.mercadopago.android.px.views.AmountView;
 import com.mercadopago.android.px.views.PaymentVaultView;
-import com.mercadopago.android.px.util.MercadoPagoUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -48,10 +48,6 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
     @NonNull private final GroupsRepository groupsRepository;
 
     private PaymentMethodSearchItem selectedSearchItem;
-
-    private Boolean installmentsReviewEnabled;
-    private Boolean showAllSavedCardsEnabled = false;
-    private Integer maxSavedCards;
     private PaymentMethodSearchItem resumeItem;
     private boolean skipHook = false;
     private boolean hook1Displayed = false;
@@ -213,13 +209,7 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
 
         if (paymentMethodSearch.hasCustomSearchItems()) {
             final List<CustomSearchItem> shownCustomItems;
-
-            if (showAllSavedCardsEnabled) {
-                shownCustomItems = paymentMethodSearch.getCustomSearchItems();
-            } else {
-                shownCustomItems = getLimitedCustomOptions(paymentMethodSearch.getCustomSearchItems(), maxSavedCards);
-            }
-
+            shownCustomItems = paymentMethodSearch.getCustomSearchItems();
             getView().showCustomOptions(shownCustomItems, getCustomOptionCallback());
         }
 
@@ -366,42 +356,6 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
 
     public void setSelectedSearchItem(PaymentMethodSearchItem mSelectedSearchItem) {
         selectedSearchItem = mSelectedSearchItem;
-    }
-
-    public void setInstallmentsReviewEnabled(Boolean installmentReviewEnabled) {
-        installmentsReviewEnabled = installmentReviewEnabled;
-    }
-
-    public Boolean getInstallmentsReviewEnabled() {
-        return installmentsReviewEnabled;
-    }
-
-    public void setMaxSavedCards(int maxSavedCards) {
-        this.maxSavedCards = maxSavedCards;
-    }
-
-    public void setShowAllSavedCardsEnabled(final boolean showAll) {
-        showAllSavedCardsEnabled = showAll;
-    }
-
-    private List<CustomSearchItem> getLimitedCustomOptions(List<CustomSearchItem> customSearchItems,
-        Integer maxSavedCards) {
-        List<CustomSearchItem> limitedItems = new ArrayList<>();
-        if (maxSavedCards != null && maxSavedCards > 0) {
-            int cardsAdded = 0;
-            for (CustomSearchItem customSearchItem : customSearchItems) {
-                if (MercadoPagoUtil.isCard(customSearchItem.getType()) && cardsAdded < maxSavedCards) {
-                    limitedItems.add(customSearchItem);
-                    cardsAdded++;
-                } else if (!MercadoPagoUtil.isCard(customSearchItem.getType())) {
-                    limitedItems.add(customSearchItem);
-                }
-            }
-        } else {
-            limitedItems = customSearchItems;
-        }
-
-        return limitedItems;
     }
 
     //###Hooks HACKS #######################################################

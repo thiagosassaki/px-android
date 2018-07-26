@@ -40,8 +40,6 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
     //Activity parameters
     private PaymentRecovery paymentRecovery;
 
-    private boolean installmentsEnabled;
-    private boolean installmentsReviewEnabled;
     private boolean automaticSelection;
 
     private String merchantBaseUrl;
@@ -70,15 +68,21 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         @NonNull final UserSelectionRepository userSelectionRepository) {
         this.configuration = configuration;
         this.userSelectionRepository = userSelectionRepository;
-        installmentsEnabled = true;
         this.amountRepository = amountRepository;
     }
 
     public void initialize() {
-        try {
-            onValidStart();
-        } catch (final IllegalStateException exception) {
-            getView().showError(new MercadoPagoError(exception.getMessage(), false), "");
+        installmentsListShown = false;
+        issuersListShown = false;
+        if (viewAttached()) {
+            getView().showProgressLayout();
+        }
+        if (tokenRecoveryAvailable()) {
+            startTokenRecoveryFlow();
+        } else if (savedCardAvailable()) {
+            startSavedCardFlow();
+        } else {
+            startNewCardFlow();
         }
     }
 
@@ -88,10 +92,6 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
 
     public void setPaymentRecovery(final PaymentRecovery paymentRecovery) {
         this.paymentRecovery = paymentRecovery;
-    }
-
-    public void setInstallmentsEnabled(final boolean installmentsEnabled) {
-        this.installmentsEnabled = installmentsEnabled;
     }
 
     public void setCard(final Card card) {
@@ -155,14 +155,6 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         }
     }
 
-    public void setInstallmentsReviewEnabled(final boolean installmentReviewEnabled) {
-        installmentsReviewEnabled = installmentReviewEnabled;
-    }
-
-    public Boolean getInstallmentsReviewEnabled() {
-        return installmentsReviewEnabled;
-    }
-
     public CardInfo getCardInfo() {
         return cardInfo;
     }
@@ -200,7 +192,7 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
     }
 
     private void checkStartInstallmentsActivity() {
-        if (isInstallmentsEnabled() && payerCost == null) {
+        if (payerCost == null) {
             installmentsListShown = true;
             askForInstallments();
         } else {
@@ -234,10 +226,6 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         } else {
             checkStartInstallmentsActivity();
         }
-    }
-
-    public boolean isInstallmentsEnabled() {
-        return installmentsEnabled;
     }
 
     public void recoverFromFailure() {
@@ -382,21 +370,6 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         getView().cancelCardVault();
     }
 
-    private void onValidStart() {
-        installmentsListShown = false;
-        issuersListShown = false;
-        if (viewAttached()) {
-            getView().showProgressLayout();
-        }
-        if (tokenRecoveryAvailable()) {
-            startTokenRecoveryFlow();
-        } else if (savedCardAvailable()) {
-            startSavedCardFlow();
-        } else {
-            startNewCardFlow();
-        }
-    }
-
     private void startTokenRecoveryFlow() {
         setCardInfo(new CardInfo(getPaymentRecovery().getToken()));
         setPaymentMethod(getPaymentRecovery().getPaymentMethod());
@@ -408,11 +381,7 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         setCardInfo(new CardInfo(getCard()));
         setPaymentMethod(getCard().getPaymentMethod());
         setIssuer(getCard().getIssuer());
-        if (isInstallmentsEnabled()) {
-            getInstallmentsForCardAsync(getCard());
-        } else {
-            askForSecurityCodeWithoutInstallments();
-        }
+        getInstallmentsForCardAsync(getCard());
     }
 
     private void startNewCardFlow() {

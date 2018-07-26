@@ -169,8 +169,6 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     //Input Controls
     private String mCurrentEditingEditText;
     private String mCardSideState;
-    private String mPublicKey;
-    private String mPrivateKey;
     private boolean mActivityActive;
 
     @Override
@@ -215,7 +213,7 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
 
     private void configurePresenter() {
         mPresenter.attachView(this);
-        mPresenter.attachResourcesProvider(new GuessingCardProviderImpl(this, mPublicKey, mPrivateKey));
+        mPresenter.attachResourcesProvider(new GuessingCardProviderImpl(this));
     }
 
     private void getActivityParameters() {
@@ -225,9 +223,8 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
         final Session session = Session.getSession(this);
         mPresenter = new GuessingCardPresenter(session.getAmountRepository(),
             session.getConfigurationModule().getUserSelectionRepository(),
-            session.getGroupsRepository());
-        mPublicKey = intent.getStringExtra("merchantPublicKey");
-        mPrivateKey = intent.getStringExtra("payerAccessToken");
+            session.getGroupsRepository(),
+            session.getConfigurationModule().getPaymentSettings().getAdvancedConfiguration());
         PaymentPreference paymentPreference =
             JsonUtil.getInstance().fromJson(intent.getStringExtra("paymentPreference"), PaymentPreference.class);
 
@@ -241,17 +238,11 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
         Identification identification = new Identification();
         boolean identificationNumberRequired = false;
 
-        Boolean showBankDeals = intent.getBooleanExtra("showBankDeals", true);
-
-        mPresenter.setPrivateKey(mPrivateKey);
-        mPresenter.setPublicKey(mPublicKey);
         mPresenter.setToken(token);
-        mPresenter.setShowBankDeals(showBankDeals);
         mPresenter.setIdentification(identification);
         mPresenter.setIdentificationNumberRequired(identificationNumberRequired);
         mPresenter.setPaymentPreference(paymentPreference);
         mPresenter.setPaymentRecovery(paymentRecovery);
-        mPresenter.setPayerEmail(payerEmail);
     }
 
     @Override
@@ -415,13 +406,13 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
         if (error.isApiException()) {
             showApiException(error.getApiException(), requestOrigin);
         } else {
-            ErrorUtil.startErrorActivity(this, error, mPublicKey);
+            ErrorUtil.startErrorActivity(this, error);
         }
     }
 
     public void showApiException(ApiException apiException, String requestOrigin) {
         if (mActivityActive) {
-            ApiUtil.showApiExceptionError(this, apiException, mPublicKey, requestOrigin);
+            ApiUtil.showApiExceptionError(this, apiException, requestOrigin);
         }
     }
 
@@ -831,7 +822,6 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     private void startReviewPaymentMethodsActivity(List<PaymentMethod> supportedPaymentMethods) {
         new MercadoPagoComponents.Activities.ReviewPaymentMethodsActivityBuilder()
             .setActivity(mActivity)
-            .setPublicKey(mPresenter.getPublicKey())
             .setPaymentMethods(supportedPaymentMethods)
             .startActivity();
         overridePendingTransition(R.anim.px_slide_up_activity, R.anim.px_no_change_animation);
@@ -1096,7 +1086,7 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
 
     @Override
     public void showApiExceptionError(ApiException exception, String requestOrigin) {
-        ApiUtil.showApiExceptionError(mActivity, exception, mPresenter.getPublicKey(), requestOrigin);
+        ApiUtil.showApiExceptionError(mActivity, exception, requestOrigin);
     }
 
     @Override
@@ -1543,7 +1533,6 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
         List<PaymentType> paymentTypes = mPresenter.getPaymentTypes();
         new MercadoPagoComponents.Activities.PaymentTypesActivityBuilder()
             .setActivity(mActivity)
-            .setMerchantPublicKey(mPresenter.getPublicKey())
             .setPaymentMethods(paymentMethods)
             .setPaymentTypes(paymentTypes)
             .setCardInfo(new CardInfo(mPresenter.getCardToken()))
@@ -1706,8 +1695,6 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
         if (id == R.id.mpsdkBankDealsText) {
             new MercadoPagoComponents.Activities.BankDealsActivityBuilder()
                 .setActivity(mActivity)
-                .setMerchantPublicKey(mPresenter.getPublicKey())
-                .setPayerAccessToken(mPresenter.getPrivateKey())
                 .setBankDeals(mPresenter.getBankDealsList())
                 .startActivity();
         } else if (id == R.id.mpsdkNextButton) {

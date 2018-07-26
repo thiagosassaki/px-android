@@ -32,7 +32,7 @@ public class OneTapModel implements Serializable {
         final PaymentSettingRepository paymentSettingRepository,
         final ReviewAndConfirmPreferences reviewAndConfirmPreferences) {
         return new OneTapModel(groups,
-            paymentSettingRepository.getFlow().isESCEnabled(),
+            paymentSettingRepository.getAdvancedConfiguration().isEscEnabled(),
             paymentSettingRepository.getPublicKey(),
             reviewAndConfirmPreferences.getCollectorIcon());
     }

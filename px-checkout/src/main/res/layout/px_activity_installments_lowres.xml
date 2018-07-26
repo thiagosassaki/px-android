@@ -39,15 +39,9 @@
                     android:textSize="14dp"
                     android:background="@color/px_background_blue"
                     android:textColor="@color/px_white"
-                    android:id="@+id/mpsdkNoInstallmentsRateTextView"
-                    />
+                    android:id="@+id/mpsdkNoInstallmentsRateTextView"/>
+
             </LinearLayout>
-
-
-            <FrameLayout
-                android:id="@+id/mpsdkInstallmentsReview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
 
             <FrameLayout
                 android:id="@+id/mpsdkRegularLayout"

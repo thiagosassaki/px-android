@@ -34,19 +34,18 @@ import com.mercadopago.android.px.plugins.DataInitializationTask;
 import com.mercadopago.android.px.plugins.model.BusinessPayment;
 import com.mercadopago.android.px.plugins.model.BusinessPaymentModel;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.preferences.FlowPreference;
 import com.mercadopago.android.px.preferences.PaymentResultScreenPreference;
 import com.mercadopago.android.px.providers.CheckoutProvider;
 import com.mercadopago.android.px.services.callbacks.Callback;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.services.exceptions.CheckoutPreferenceException;
+import com.mercadopago.android.px.util.ApiUtil;
+import com.mercadopago.android.px.util.JsonUtil;
+import com.mercadopago.android.px.util.TextUtils;
 import com.mercadopago.android.px.viewmodel.CardPaymentModel;
 import com.mercadopago.android.px.viewmodel.CheckoutStateModel;
 import com.mercadopago.android.px.viewmodel.OneTapModel;
 import com.mercadopago.android.px.views.CheckoutView;
-import com.mercadopago.android.px.util.ApiUtil;
-import com.mercadopago.android.px.util.JsonUtil;
-import com.mercadopago.android.px.util.TextUtils;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
@@ -250,41 +249,12 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     }
 
     private void showReviewAndConfirm() {
-        getView().showReviewAndConfirm(isUniquePaymentMethod());
         state.editPaymentMethodFromReviewAndConfirm = false;
-    }
-
-    private boolean hasToSkipPaymentResultScreen(final PaymentResult paymentResult) {
-        final String status = paymentResult == null ? "" : paymentResult.getPaymentStatus();
-        return shouldSkipResult(status);
-    }
-
-    private boolean shouldSkipResult(final String paymentStatus) {
-        final FlowPreference flowPref = paymentConfiguration.getFlow();
-
-        return !flowPref.isPaymentResultScreenEnabled()
-            || (
-            flowPref.getCongratsDisplayTime() != null &&
-                flowPref.getCongratsDisplayTime() == 0 &&
-                Payment.StatusCodes.STATUS_APPROVED.equals(paymentStatus))
-            || Payment.StatusCodes.STATUS_APPROVED.equals(paymentStatus) &&
-            !flowPref.isPaymentApprovedScreenEnabled()
-            || Payment.StatusCodes.STATUS_REJECTED.equals(paymentStatus) &&
-            !flowPref.isPaymentRejectedScreenEnabled()
-            || Payment.StatusCodes.STATUS_PENDING.equals(paymentStatus) &&
-            !flowPref.isPaymentPendingScreenEnabled();
-    }
-
-    private boolean isReviewAndConfirmEnabled() {
-        return paymentConfiguration.getFlow().isReviewAndConfirmScreenEnabled();
-    }
-
-    public boolean isInstallmentsReviewScreenEnabled() {
-        return paymentConfiguration.getFlow().isInstallmentsReviewScreenEnabled();
+        getView().showReviewAndConfirm(isUniquePaymentMethod());
     }
 
     public boolean isESCEnabled() {
-        return paymentConfiguration.getFlow().isESCEnabled();
+        return paymentConfiguration.getAdvancedConfiguration().isEscEnabled();
     }
 
     public Card getSelectedCard() {
@@ -514,9 +484,7 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     }
 
     public void onReviewAndConfirmCancel() {
-        if (paymentConfiguration.getFlow().shouldExitOnPaymentMethodChange() && !isUniquePaymentMethod()) {
-            getView().exitCheckout(MercadoPagoCheckout.PAYMENT_METHOD_CHANGED_REQUESTED);
-        } else if (isUniquePaymentMethod()) {
+        if (isUniquePaymentMethod()) {
             getView().cancelCheckout();
         } else {
             state.paymentMethodEdited = true;
@@ -717,10 +685,6 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
         return state.paymentResultScreenPreference;
     }
 
-    public Integer getCongratsDisplay() {
-        return paymentConfiguration.getFlow().getCongratsDisplayTime();
-    }
-
     public CheckoutPreference getCheckoutPreference() {
         return paymentConfiguration.getCheckoutPreference();
     }
@@ -734,15 +698,7 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     }
 
     public Boolean getShowBankDeals() {
-        return paymentConfiguration.getFlow().isBankDealsEnabled();
-    }
-
-    public boolean shouldShowAllSavedCards() {
-        return paymentConfiguration.getFlow().isShowAllSavedCardsEnabled();
-    }
-
-    public Integer getMaxSavedCardsToShow() {
-        return paymentConfiguration.getFlow().getMaxSavedCardsToShow();
+        return paymentConfiguration.getAdvancedConfiguration().isBankDealsEnabled();
     }
 
     //### Hooks #####################
@@ -779,11 +735,7 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
 
     public void hook2Continue() {
         state.editPaymentMethodFromReviewAndConfirm = false;
-        if (isReviewAndConfirmEnabled()) {
-            showReviewAndConfirm();
-        } else {
-            resolvePaymentDataResponse();
-        }
+        showReviewAndConfirm();
     }
 
     public void cancelInitialization() {
@@ -799,11 +751,7 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
         if (getResourcesProvider().manageEscForPayment(paymentData, paymentStatus, paymentStatusDetail)) {
             continuePaymentWithoutESC();
         } else {
-            if (hasToSkipPaymentResultScreen(paymentResult)) {
-                finishCheckout();
-            } else {
-                getView().showPaymentResult(paymentResult);
-            }
+            getView().showPaymentResult(paymentResult);
         }
     }
 
@@ -867,17 +815,13 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     }
 
     private void onChangePaymentMethod(final boolean fromReviewAndConfirm) {
-        if (paymentConfiguration.getFlow().shouldExitOnPaymentMethodChange()) {
-            getView().exitCheckout(MercadoPagoCheckout.PAYMENT_METHOD_CHANGED_REQUESTED);
-        } else {
-            //TODO remove when navigation is corrected and works with stack.
-            state.editPaymentMethodFromReviewAndConfirm = fromReviewAndConfirm;
-            state.paymentMethodEdited = true;
-            getView().showPaymentMethodSelection();
-            if (fromReviewAndConfirm) {
-                //Button "change payment method" in R&C
-                getView().transitionOut();
-            }
+        //TODO remove when navigation is corrected and works with stack.
+        state.editPaymentMethodFromReviewAndConfirm = fromReviewAndConfirm;
+        state.paymentMethodEdited = true;
+        getView().showPaymentMethodSelection();
+        if (fromReviewAndConfirm) {
+            //Button "change payment method" in R&C
+            getView().transitionOut();
         }
     }
 

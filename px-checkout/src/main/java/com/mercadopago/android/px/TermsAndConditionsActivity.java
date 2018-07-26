@@ -84,7 +84,7 @@ public class TermsAndConditionsActivity extends MercadoPagoActivity {
 
     @Override
     protected void onInvalidStart(String message) {
-        ErrorUtil.startErrorActivity(this, getString(R.string.px_standard_error_message), message, false, "");
+        ErrorUtil.startErrorActivity(this, getString(R.string.px_standard_error_message), message, false);
     }
 
     private void showMPTermsAndConditions() {

@@ -16,13 +16,12 @@ import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.plugins.components.SampleCustomComponent;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.preferences.FlowPreference;
 import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
 import com.mercadopago.android.px.tracking.listeners.TracksListener;
 import com.mercadopago.android.px.tracking.tracker.MPTracker;
-import com.mercadopago.example.R;
 import com.mercadopago.android.px.util.JsonUtil;
 import com.mercadopago.android.px.util.ViewUtils;
+import com.mercadopago.example.R;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -110,8 +109,7 @@ public final class ExamplesUtils {
             }
         }
 
-        return createBase(builder.build())
-            .setFlowPreference(new FlowPreference.Builder().exitOnPaymentMethodChange().build());
+        return createBase(builder.build());
     }
 
     @NonNull

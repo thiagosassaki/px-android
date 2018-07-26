@@ -17,6 +17,7 @@ import com.mercadopago.android.px.controllers.CheckoutTimer;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.customviews.MPTextView;
 import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.listeners.RecyclerItemClickListener;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.Issuer;
@@ -32,11 +33,11 @@ import com.mercadopago.android.px.tracking.utils.TrackingUtil;
 import com.mercadopago.android.px.uicontrollers.FontCache;
 import com.mercadopago.android.px.uicontrollers.card.CardRepresentationModes;
 import com.mercadopago.android.px.uicontrollers.card.FrontCardView;
-import com.mercadopago.android.px.views.IssuersActivityView;
 import com.mercadopago.android.px.util.ApiUtil;
 import com.mercadopago.android.px.util.ErrorUtil;
 import com.mercadopago.android.px.util.JsonUtil;
 import com.mercadopago.android.px.util.ScaleUtil;
+import com.mercadopago.android.px.views.IssuersActivityView;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -50,8 +51,6 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
 
     // Local vars
     protected boolean mActivityActive;
-    protected String mPublicKey;
-    protected String mPrivateKey;
 
     protected IssuersAdapter mIssuersAdapter;
     protected RecyclerView mIssuersRecyclerView;
@@ -79,7 +78,7 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
         getActivityParameters();
 
         mPresenter.attachView(this);
-        mPresenter.attachResourcesProvider(new IssuersProviderImpl(this, mPublicKey, mPrivateKey));
+        mPresenter.attachResourcesProvider(new IssuersProviderImpl(this));
 
         mActivityActive = true;
 
@@ -96,15 +95,12 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
     }
 
     private void getActivityParameters() {
-        mPublicKey = getIntent().getStringExtra("merchantPublicKey");
-        mPrivateKey = getIntent().getStringExtra("payerAccessToken");
-
         List<Issuer> issuers;
         try {
-            Type listType = new TypeToken<List<Issuer>>() {
+            final Type listType = new TypeToken<List<Issuer>>() {
             }.getType();
             issuers = JsonUtil.getInstance().getGson().fromJson(getIntent().getStringExtra("issuers"), listType);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             issuers = null;
         }
 
@@ -182,7 +178,8 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
     }
 
     protected void trackScreen() {
-        MPTrackingContext mpTrackingContext = new MPTrackingContext.Builder(this, mPublicKey)
+        final String publicKey = Session.getSession(this).getConfigurationModule().getPaymentSettings().getPublicKey();
+        MPTrackingContext mpTrackingContext = new MPTrackingContext.Builder(this, publicKey)
             .setVersion(BuildConfig.VERSION_NAME)
             .build();
 
@@ -304,13 +301,13 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
         if (error.isApiException()) {
             showApiException(error.getApiException(), requestOrigin);
         } else {
-            ErrorUtil.startErrorActivity(this, error, mPublicKey);
+            ErrorUtil.startErrorActivity(this, error);
         }
     }
 
     public void showApiException(ApiException apiException, String requestOrigin) {
         if (mActivityActive) {
-            ApiUtil.showApiExceptionError(this, apiException, mPublicKey, requestOrigin);
+            ApiUtil.showApiExceptionError(this, apiException, requestOrigin);
         }
     }
 

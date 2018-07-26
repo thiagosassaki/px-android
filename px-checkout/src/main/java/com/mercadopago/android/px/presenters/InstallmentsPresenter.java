@@ -41,14 +41,12 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
     private Long issuerId;
 
     //Activity parameters
-    private String payerEmail;
     private PaymentMethod paymentMethod;
     private Issuer issuer;
 
     private List<PayerCost> payerCosts;
     private PaymentPreference paymentPreference;
     private CardInfo cardInfo;
-    private Boolean installmentsReviewEnabled;
 
     public InstallmentsPresenter(@NonNull final AmountRepository amountRepository,
         @NonNull final PaymentSettingRepository configuration,
@@ -202,18 +200,6 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
         };
     }
 
-    public void setPayerEmail(String payerEmail) {
-        this.payerEmail = payerEmail;
-    }
-
-    public String getPayerEmail() {
-        return payerEmail;
-    }
-
-    public void setInstallmentsReviewEnabled(Boolean installmentReviewEnabled) {
-        installmentsReviewEnabled = installmentReviewEnabled;
-    }
-
     public String getBin() {
         return bin;
     }
@@ -228,24 +214,10 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
         }
     }
 
-    public void onItemSelected(int position) {
+    public void onItemSelected(final int position) {
         final PayerCost selectedPayerCost = payerCosts.get(position);
         userSelectionRepository.select(selectedPayerCost);
-        if (isInstallmentsReviewEnabled() && isInstallmentsReviewRequired(selectedPayerCost)) {
-            getView().hideInstallmentsRecyclerView();
-            getView().showInstallmentsReviewView();
-            getView().initInstallmentsReviewView(selectedPayerCost);
-        } else {
-            getView().finishWithResult(selectedPayerCost);
-        }
-    }
-
-    private Boolean isInstallmentsReviewEnabled() {
-        return installmentsReviewEnabled != null && installmentsReviewEnabled;
-    }
-
-    private Boolean isInstallmentsReviewRequired(PayerCost payerCost) {
-        return payerCost != null && payerCost.getCFTPercent() != null;
+        getView().finishWithResult(selectedPayerCost);
     }
 
     @Override

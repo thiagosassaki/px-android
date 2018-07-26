@@ -19,17 +19,15 @@ import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.presenters.PaymentMethodsPresenter;
 import com.mercadopago.android.px.providers.PaymentMethodsProvider;
 import com.mercadopago.android.px.providers.PaymentMethodsProviderImpl;
-import com.mercadopago.android.px.views.PaymentMethodsView;
 import com.mercadopago.android.px.util.ErrorUtil;
 import com.mercadopago.android.px.util.JsonUtil;
 import com.mercadopago.android.px.util.ViewUtils;
+import com.mercadopago.android.px.views.PaymentMethodsView;
 import java.lang.reflect.Type;
 import java.util.List;
 
 public class PaymentMethodsActivity extends MercadoPagoBaseActivity implements PaymentMethodsView {
 
-    public static final String EXTRA_MERCHANT_PUBLIC_KEY = "merchantPublicKey";
-    protected String mMerchantPublicKey;
     protected RecyclerView mRecyclerView;
     protected Toolbar mToolbar;
     protected TextView mBankDealsTextView;
@@ -39,23 +37,21 @@ public class PaymentMethodsActivity extends MercadoPagoBaseActivity implements P
     private PaymentMethodsProvider mResourcesProvider;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mPresenter = new PaymentMethodsPresenter();
 
         try {
             getActivityParameters();
-            mResourcesProvider = new PaymentMethodsProviderImpl(this, mMerchantPublicKey);
+            mResourcesProvider = new PaymentMethodsProviderImpl(this);
             onValidStart();
-        } catch (IllegalStateException exception) {
+        } catch (final IllegalStateException exception) {
             onInvalidStart(exception.getMessage());
         }
     }
 
     protected void getActivityParameters() {
-
-        mMerchantPublicKey = getIntent().getStringExtra(EXTRA_MERCHANT_PUBLIC_KEY);
 
         PaymentPreference paymentPreference =
             JsonUtil.getInstance().fromJson(getIntent().getStringExtra("paymentPreference"), PaymentPreference.class);
@@ -99,7 +95,7 @@ public class PaymentMethodsActivity extends MercadoPagoBaseActivity implements P
     }
 
     protected void onInvalidStart(String message) {
-        ErrorUtil.startErrorActivity(this, message, false, mMerchantPublicKey);
+        ErrorUtil.startErrorActivity(this, message, false);
     }
 
     private void initializeToolbar() {
@@ -173,7 +169,7 @@ public class PaymentMethodsActivity extends MercadoPagoBaseActivity implements P
 
     @Override
     public void showError(MercadoPagoError exception) {
-        ErrorUtil.startErrorActivity(this, exception, mMerchantPublicKey);
+        ErrorUtil.startErrorActivity(this, exception);
     }
 
     @Override
@@ -184,7 +180,6 @@ public class PaymentMethodsActivity extends MercadoPagoBaseActivity implements P
             public void onClick(View v) {
                 new MercadoPagoComponents.Activities.BankDealsActivityBuilder()
                     .setActivity(PaymentMethodsActivity.this)
-                    .setMerchantPublicKey(mMerchantPublicKey)
                     .startActivity();
             }
         });

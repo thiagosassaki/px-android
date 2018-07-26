@@ -1,8 +1,10 @@
 package com.mercadopago.android.px.providers;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.mvp.TaggedCallback;
 import java.util.List;
@@ -12,9 +14,9 @@ public class PayerInformationProviderImpl implements PayerInformationProvider {
     private final Context context;
     private final MercadoPagoServicesAdapter mercadoPago;
 
-    public PayerInformationProviderImpl(Context context, String publicKey, String payerAccessToken) {
+    public PayerInformationProviderImpl(@NonNull final Context context) {
         this.context = context;
-        mercadoPago = new MercadoPagoServicesAdapter(context, publicKey, payerAccessToken);
+        mercadoPago = Session.getSession(context).getMercadoPagoServiceAdapter();
     }
 
     @Override

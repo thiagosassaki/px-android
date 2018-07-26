@@ -20,9 +20,9 @@ import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.onetap.components.OneTapContainer;
 import com.mercadopago.android.px.tracker.Tracker;
+import com.mercadopago.android.px.util.JsonUtil;
 import com.mercadopago.android.px.viewmodel.CardPaymentModel;
 import com.mercadopago.android.px.viewmodel.OneTapModel;
-import com.mercadopago.android.px.util.JsonUtil;
 import java.math.BigDecimal;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -213,9 +213,6 @@ public class OneTapFragment extends Fragment implements OneTap.View {
             callback.onOneTapConfirmCardFlow();
         }
         new MercadoPagoComponents.Activities.CardVaultActivityBuilder()
-            .setMerchantPublicKey(model.getPublicKey())
-            .setESCEnabled(model.isEscEnabled())
-            .setInstallmentsEnabled(false)
             .setCard(card)
             .startActivity(this, REQ_CODE_CARD_VAULT);
     }
