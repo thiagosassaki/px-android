@@ -1,8 +1,11 @@
 package com.mercadopago.android.px.presenters;
 
+import android.support.annotation.NonNull;
 import com.mercadopago.android.px.callbacks.FailureRecovery;
 import com.mercadopago.android.px.callbacks.OnSelectedCallback;
+import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PaymentMethod;
@@ -20,6 +23,7 @@ import java.util.List;
 
 public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersProvider> {
 
+    @NonNull private final UserSelectionRepository userSelectionRepository;
     //Local vars
     private PaymentMethod mPaymentMethod;
     private List<Issuer> mIssuers;
@@ -28,6 +32,10 @@ public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersP
 
     //Card Info
     private String mBin = "";
+
+    public IssuersPresenter(@NonNull final UserSelectionRepository userSelectionRepository) {
+        this.userSelectionRepository = userSelectionRepository;
+    }
 
     public void initialize() {
         if (wereIssuersSet()) {
@@ -51,7 +59,9 @@ public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersP
         if (mIssuers.isEmpty()) {
             getView().showError(getResourcesProvider().getEmptyIssuersError(), "");
         } else if (mIssuers.size() == 1) {
-            getView().finishWithResult(issuers.get(0));
+            final Issuer issuer = issuers.get(0);
+            storeIssuerSelection(issuer);
+            getView().finishWithResult();
         } else {
             getView().showHeader();
             getView().showIssuers(issuers, getDpadSelectionCallback());
@@ -94,8 +104,14 @@ public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersP
         };
     }
 
-    public void onItemSelected(int position) {
-        getView().finishWithResult(mIssuers.get(position));
+    public void onItemSelected(final int position) {
+        final Issuer issuer = mIssuers.get(position);
+        storeIssuerSelection(issuer);
+        getView().finishWithResult();
+    }
+
+    private void storeIssuerSelection(@NonNull final Issuer issuer) {
+        userSelectionRepository.select(issuer);
     }
 
     public void recoverFromFailure() {

@@ -1,8 +1,10 @@
 package com.mercadopago.android.px.presenters;
 
+import android.support.annotation.NonNull;
 import com.mercadopago.android.px.callbacks.FailureRecovery;
 import com.mercadopago.android.px.controllers.PaymentMethodGuessingController;
 import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.PaymentMethod;
@@ -26,6 +28,7 @@ import com.mercadopago.android.px.util.TextUtils;
 
 public class SecurityCodePresenter extends MvpPresenter<SecurityCodeActivityView, SecurityCodeProvider> {
 
+    @NonNull private final PaymentSettingRepository paymentSettingRepository;
     private FailureRecovery mFailureRecovery;
 
     //Card Info
@@ -40,6 +43,10 @@ public class SecurityCodePresenter extends MvpPresenter<SecurityCodeActivityView
     protected Card mCard;
     protected Token mToken;
     protected PaymentRecovery mPaymentRecovery;
+
+    public SecurityCodePresenter(@NonNull final PaymentSettingRepository paymentSettingRepository) {
+        this.paymentSettingRepository = paymentSettingRepository;
+    }
 
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         mPaymentMethod = paymentMethod;
@@ -253,6 +260,7 @@ public class SecurityCodePresenter extends MvpPresenter<SecurityCodeActivityView
                 @Override
                 public void onSuccess(Token token) {
                     mToken = token;
+                    paymentSettingRepository.configure(mToken);
                     putSecurityCode();
                 }
 
@@ -352,6 +360,7 @@ public class SecurityCodePresenter extends MvpPresenter<SecurityCodeActivityView
         if (mCardInfo != null) {
             mToken.setLastFourDigits(mCardInfo.getLastFourDigits());
         }
+        paymentSettingRepository.configure(mToken);
         getView().finishWithResult();
     }
 

@@ -8,6 +8,7 @@ import com.mercadopago.android.px.controllers.PaymentMethodGuessingController;
 import com.mercadopago.android.px.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
+import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.model.BankDeal;
 import com.mercadopago.android.px.model.Bin;
@@ -47,6 +48,7 @@ public class GuessingCardPresenter extends MvpPresenter<GuessingCardActivityView
     public static final int CARD_DEFAULT_IDENTIFICATION_NUMBER_LENGTH = 12;
     @NonNull private final AmountRepository amountRepository;
     @NonNull private final UserSelectionRepository userSelectionRepository;
+    @NonNull private final PaymentSettingRepository paymentSettingRepository;
     private final GroupsRepository groupsRepository;
 
     //Card controller
@@ -95,10 +97,11 @@ public class GuessingCardPresenter extends MvpPresenter<GuessingCardActivityView
 
     public GuessingCardPresenter(@NonNull final AmountRepository amountRepository,
         @NonNull final UserSelectionRepository userSelectionRepository,
-        final GroupsRepository groupsRepository) {
+        final GroupsRepository groupsRepository, @NonNull final PaymentSettingRepository paymentSettingRepository) {
         this.amountRepository = amountRepository;
         this.userSelectionRepository = userSelectionRepository;
         this.groupsRepository = groupsRepository;
+        this.paymentSettingRepository = paymentSettingRepository;
         mShowBankDeals = true;
         mEraseSpace = true;
     }
@@ -874,6 +877,7 @@ public class GuessingCardPresenter extends MvpPresenter<GuessingCardActivityView
 
     public void resolveTokenRequest(Token token) {
         mToken = token;
+        paymentSettingRepository.configure(mToken);
         getIssuers();
     }
 
@@ -931,6 +935,7 @@ public class GuessingCardPresenter extends MvpPresenter<GuessingCardActivityView
     private void resolveIssuersList(List<Issuer> issuers) {
         if (issuers.size() == 1) {
             mIssuer = issuers.get(0);
+            userSelectionRepository.select(mIssuer);
             getInstallments();
         } else {
             getView().finishCardFlow(userSelectionRepository.getPaymentMethod(), mToken, issuers);

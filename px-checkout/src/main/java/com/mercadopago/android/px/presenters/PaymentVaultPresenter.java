@@ -266,6 +266,8 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
             }
         }
         userSelectionRepository.select(paymentMethod);
+        //TODO ver que pasa si selectedCard es null
+        userSelectionRepository.select(selectedCard.getIssuer());
         return selectedCard;
     }
 

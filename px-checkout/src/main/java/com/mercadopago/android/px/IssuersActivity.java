@@ -17,6 +17,7 @@ import com.mercadopago.android.px.controllers.CheckoutTimer;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.customviews.MPTextView;
 import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.listeners.RecyclerItemClickListener;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.Issuer;
@@ -32,11 +33,11 @@ import com.mercadopago.android.px.tracking.utils.TrackingUtil;
 import com.mercadopago.android.px.uicontrollers.FontCache;
 import com.mercadopago.android.px.uicontrollers.card.CardRepresentationModes;
 import com.mercadopago.android.px.uicontrollers.card.FrontCardView;
-import com.mercadopago.android.px.views.IssuersActivityView;
 import com.mercadopago.android.px.util.ApiUtil;
 import com.mercadopago.android.px.util.ErrorUtil;
 import com.mercadopago.android.px.util.JsonUtil;
 import com.mercadopago.android.px.util.ScaleUtil;
+import com.mercadopago.android.px.views.IssuersActivityView;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -75,7 +76,8 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        createPresenter();
+        mPresenter =
+            new IssuersPresenter(Session.getSession(this).getConfigurationModule().getUserSelectionRepository());
         getActivityParameters();
 
         mPresenter.attachView(this);
@@ -91,20 +93,16 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
         mPresenter.initialize();
     }
 
-    protected void createPresenter() {
-        mPresenter = new IssuersPresenter();
-    }
-
     private void getActivityParameters() {
         mPublicKey = getIntent().getStringExtra("merchantPublicKey");
         mPrivateKey = getIntent().getStringExtra("payerAccessToken");
 
         List<Issuer> issuers;
         try {
-            Type listType = new TypeToken<List<Issuer>>() {
+            final Type listType = new TypeToken<List<Issuer>>() {
             }.getType();
             issuers = JsonUtil.getInstance().getGson().fromJson(getIntent().getStringExtra("issuers"), listType);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             issuers = null;
         }
 
@@ -358,10 +356,8 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
     }
 
     @Override
-    public void finishWithResult(Issuer issuer) {
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra("issuer", JsonUtil.getInstance().toJson(issuer));
-        setResult(RESULT_OK, returnIntent);
+    public void finishWithResult() {
+        setResult(RESULT_OK);
         finish();
         animateTransitionSlideInSlideOut();
     }

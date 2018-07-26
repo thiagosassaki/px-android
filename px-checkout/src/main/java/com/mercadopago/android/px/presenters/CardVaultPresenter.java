@@ -33,6 +33,7 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
     private final AmountRepository amountRepository;
     private final PaymentSettingRepository configuration;
     @NonNull private final UserSelectionRepository userSelectionRepository;
+    @NonNull private final PaymentSettingRepository paymentSettingRepository;
 
     private FailureRecovery failureRecovery;
     private String bin;
@@ -67,9 +68,11 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
 
     public CardVaultPresenter(@NonNull final AmountRepository amountRepository,
         @NonNull final PaymentSettingRepository configuration,
-        @NonNull final UserSelectionRepository userSelectionRepository) {
+        @NonNull final UserSelectionRepository userSelectionRepository,
+        @NonNull final PaymentSettingRepository paymentSettingRepository) {
         this.configuration = configuration;
         this.userSelectionRepository = userSelectionRepository;
+        this.paymentSettingRepository = paymentSettingRepository;
         installmentsEnabled = true;
         this.amountRepository = amountRepository;
     }
@@ -330,9 +333,9 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         startSecurityCodeFlowIfNeeded();
     }
 
-    public void resolveIssuersRequest(final Issuer issuer) {
+    public void resolveIssuersRequest() {
         issuersListShown = true;
-        setIssuer(issuer);
+        setIssuer(userSelectionRepository.getIssuer());
         checkStartInstallmentsActivity();
     }
 
@@ -355,8 +358,8 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         setPayerCost(payerCost);
     }
 
-    public void resolveSecurityCodeRequest(final Token token) {
-        setToken(token);
+    public void resolveSecurityCodeRequest() {
+        setToken(paymentSettingRepository.getToken());
         if (tokenRecoveryAvailable()) {
             setPayerCost(getPaymentRecovery().getPayerCost());
             setIssuer(getPaymentRecovery().getIssuer());
@@ -475,6 +478,7 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
                     public void onSuccess(final Token token) {
                         CardVaultPresenter.this.token = token;
                         CardVaultPresenter.this.token.setLastFourDigits(card.getLastFourDigits());
+                        paymentSettingRepository.configure(CardVaultPresenter.this.token);
                         finishWithResult();
                     }
 

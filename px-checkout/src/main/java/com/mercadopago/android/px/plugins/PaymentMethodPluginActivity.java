@@ -64,22 +64,24 @@ public class PaymentMethodPluginActivity extends AppCompatActivity implements Ac
 
         trackScreen(plugin.getId());
 
-        final PluginComponent.Props props = new PluginComponent.Props.Builder()
-            .setData(CheckoutStore.getInstance().getData())
-            .setCheckoutPreference(CheckoutStore.getInstance().getCheckoutPreference())
-            .build();
+        //TODO arreglar plugin, lo hicimos mierda.
 
-        final Component component = plugin.createConfigurationComponent(props, this);
-        componentManager = new ComponentManager(this);
+//        final PaymentComponent.Props props = new PaymentComponent.Props.Builder()
+//            .setData(CheckoutStore.getInstance().getData())
+//            .setCheckoutPreference(CheckoutStore.getInstance().getCheckoutPreference())
+//            .build();
+//
+//        final Component component = plugin.createConfigurationComponent(props, this);
+//        componentManager = new ComponentManager(this);
 
-        if (component == null) {
-            setResult(RESULT_CANCELED);
-            finish();
-            return;
-        }
-
-        component.setDispatcher(this);
-        componentManager.render(component);
+//        if (component == null) {
+//            setResult(RESULT_CANCELED);
+//            finish();
+//            return;
+//        }
+//
+//        component.setDispatcher(this);
+//        componentManager.render(component);
     }
 
     private void trackScreen(final String id) {

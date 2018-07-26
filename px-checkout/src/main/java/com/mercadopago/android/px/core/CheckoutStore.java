@@ -175,7 +175,7 @@ public class CheckoutStore {
         PaymentProcessor paymentProcessor = null;
         if (!TextUtils.isEmpty(selectedPaymentMethodId)) {
             paymentProcessor = paymentPlugins.get(PAYMENT_PROCESSOR_KEY);
-            if (paymentProcessor == null || !paymentProcessor.support(selectedPaymentMethodId, getData())) {
+            if (paymentProcessor == null) {
                 paymentProcessor = paymentPlugins.get(selectedPaymentMethodId);
             }
         }
@@ -184,11 +184,6 @@ public class CheckoutStore {
 
     public boolean hasPaymentProcessor() {
         return paymentPlugins.containsKey(PAYMENT_PROCESSOR_KEY);
-    }
-
-    public void addPaymentPlugins(@NonNull final PaymentProcessor paymentProcessor,
-        @NonNull final String paymentMethod) {
-        paymentPlugins.put(paymentMethod, paymentProcessor);
     }
 
     public PaymentData getPaymentData() {

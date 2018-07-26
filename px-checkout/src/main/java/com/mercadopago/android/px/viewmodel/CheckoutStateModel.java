@@ -29,19 +29,14 @@ public final class CheckoutStateModel implements Serializable {
 
     public final PaymentResultScreenPreference paymentResultScreenPreference;
 
-    public final boolean isBinary;
-
     public final int requestedResult;
 
-    public Issuer selectedIssuer;
-    public Token createdToken;
     public Card selectedCard;
     public Payment createdPayment;
     public Payer collectedPayer;
     public boolean paymentMethodEdited;
     public boolean editPaymentMethodFromReviewAndConfirm;
     public PaymentRecovery paymentRecovery;
-    public String currentPaymentIdempotencyKey;
     public String merchantPublicKey;
     public boolean isUniquePaymentMethod;
     public boolean isOneTap;
@@ -51,6 +46,5 @@ public final class CheckoutStateModel implements Serializable {
         paymentResultInput = config.getPaymentResult();
         paymentDataInput = config.getPaymentData();
         paymentResultScreenPreference = config.getPaymentResultScreenPreference();
-        isBinary = config.isBinaryMode();
     }
 }

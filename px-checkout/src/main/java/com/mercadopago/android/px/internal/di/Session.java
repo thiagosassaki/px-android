@@ -4,12 +4,15 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
+import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
 import com.mercadopago.android.px.internal.datasource.AmountService;
 import com.mercadopago.android.px.internal.datasource.DiscountApiService;
 import com.mercadopago.android.px.internal.datasource.DiscountServiceImp;
 import com.mercadopago.android.px.internal.datasource.DiscountStorageService;
 import com.mercadopago.android.px.internal.datasource.GroupsService;
 import com.mercadopago.android.px.internal.datasource.InstallmentService;
+import com.mercadopago.android.px.internal.datasource.PaymentService;
+import com.mercadopago.android.px.internal.datasource.PluginService;
 import com.mercadopago.android.px.internal.datasource.cache.GroupsCache;
 import com.mercadopago.android.px.internal.datasource.cache.GroupsCacheCoordinator;
 import com.mercadopago.android.px.internal.datasource.cache.GroupsDiskCache;
@@ -17,6 +20,7 @@ import com.mercadopago.android.px.internal.datasource.cache.GroupsMemCache;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
+import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
@@ -38,6 +42,7 @@ public final class Session extends ApplicationModule
     private DiscountRepository discountRepository;
     private AmountRepository amountRepository;
     private GroupsRepository groupsRepository;
+    private PaymentRepository paymentRepository;
     private GroupsCache groupsCache;
 
     private Session(@NonNull final Context context) {
@@ -69,6 +74,7 @@ public final class Session extends ApplicationModule
         configuration.configure(mercadoPagoCheckout.getCharges());
         configuration.configure(mercadoPagoCheckout.getFlowPreference());
         configuration.configurePrivateKey(mercadoPagoCheckout.getPrivateKey());
+        configuration.configure(mercadoPagoCheckout.binaryMode);
         discountRepository
             .configureDiscountManually(mercadoPagoCheckout.getDiscount(), mercadoPagoCheckout.getCampaign());
 
@@ -85,6 +91,13 @@ public final class Session extends ApplicationModule
         getDiscountRepository().reset();
         getConfigurationModule().reset();
         getGroupsCache().evict();
+    }
+
+    @NonNull
+    public MercadoPagoServicesAdapter getMercadoPagoServiceAdapter() {
+        final PaymentSettingRepository paymentSettings = getConfigurationModule().getPaymentSettings();
+        return new MercadoPagoServicesAdapter(getContext(), paymentSettings.getPublicKey(),
+            paymentSettings.getPrivateKey());
     }
 
     public GroupsRepository getGroupsRepository() {
@@ -142,5 +155,17 @@ public final class Session extends ApplicationModule
                     new GroupsMemCache());
         }
         return groupsCache;
+    }
+
+    @NonNull
+    public PaymentRepository getPaymentRepository() {
+        if (paymentRepository == null) {
+            final ConfigurationModule configurationModule = getConfigurationModule();
+            paymentRepository = new PaymentService(configurationModule.getUserSelectionRepository(),
+                configurationModule.getPaymentSettings(),
+                new PluginService(getContext()), getDiscountRepository(), getAmountRepository(),
+                null, getContext());
+        }
+        return paymentRepository;
     }
 }

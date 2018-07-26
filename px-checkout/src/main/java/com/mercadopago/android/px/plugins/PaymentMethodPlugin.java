@@ -2,7 +2,6 @@ package com.mercadopago.android.px.plugins;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.mercadopago.android.px.plugins.model.PaymentMethodInfo;
 import java.util.Map;
 
@@ -31,10 +30,6 @@ public abstract class PaymentMethodPlugin {
 
     @NonNull
     public abstract PaymentMethodInfo getPaymentMethodInfo(@NonNull final Context context);
-
-    @Nullable
-    public abstract PluginComponent createConfigurationComponent(@NonNull final PluginComponent.Props props,
-        @NonNull final Context context);
 
     public boolean isConfigurationComponentEnabled(@NonNull final Map<String, Object> data) {
         return true;

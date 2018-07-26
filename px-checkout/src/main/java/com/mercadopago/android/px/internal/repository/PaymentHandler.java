@@ -1,19 +1,17 @@
 package com.mercadopago.android.px.internal.repository;
 
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import com.mercadopago.android.px.model.Card;
-import com.mercadopago.android.px.model.Payment;
-import com.mercadopago.android.px.services.exceptions.ApiException;
+import com.mercadopago.android.px.plugins.OnPaymentListener;
 
-public interface PaymentHandler {
-
-    void onPaymentSuccess(@NonNull final Payment payment);
-
-    void onPaymentError(@NonNull final ApiException error);
+public interface PaymentHandler extends OnPaymentListener {
 
     void onPaymentMethodRequired();
 
     void onCvvRequired(@NonNull final Card card);
 
     void onCardError();
+
+    void onVisualPayment(Fragment fragment);
 }

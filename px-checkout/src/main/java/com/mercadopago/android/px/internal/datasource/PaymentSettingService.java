@@ -5,13 +5,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
+import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.commission.ChargeRule;
 import com.mercadopago.android.px.model.commission.PaymentMethodRule;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.FlowPreference;
 import com.mercadopago.android.px.util.JsonUtil;
 import java.lang.reflect.Type;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class PaymentSettingService implements PaymentSettingRepository {
 
@@ -21,6 +24,8 @@ public class PaymentSettingService implements PaymentSettingRepository {
     private static final String PREF_PUBLIC_KEY = "PREF_PUBLIC_KEY";
     private static final String PREF_PRIVATE_KEY = "PREF_PRIVATE_KEY";
     private static final String PREF_FLOW = "PREF_FLOW";
+    private static final String PREF_BINARY_MODE = "PREF_BINARY_MODE";
+    private static final String PREF_TOKEN = "PREF_TOKEN";
 
     @NonNull private final SharedPreferences sharedPreferences;
     @NonNull private final JsonUtil jsonUtil;
@@ -44,6 +49,18 @@ public class PaymentSettingService implements PaymentSettingRepository {
     public void configurePreferenceId(@Nullable final String preferenceId) {
         final SharedPreferences.Editor edit = sharedPreferences.edit();
         edit.putString(PREF_CHECKOUT_PREF_ID, preferenceId).apply();
+    }
+
+    @Override
+    public void configure(final boolean binaryMode) {
+        sharedPreferences.edit().putBoolean(PREF_BINARY_MODE, binaryMode).apply();
+    }
+
+    @Override
+    public void configure(@NonNull final Token token) {
+        final SharedPreferences.Editor edit = sharedPreferences.edit();
+        edit.putString(PREF_TOKEN, jsonUtil.toJson(token));
+        edit.apply();
     }
 
     @Override
@@ -72,6 +89,11 @@ public class PaymentSettingService implements PaymentSettingRepository {
         final SharedPreferences.Editor edit = sharedPreferences.edit();
         edit.putString(PREF_PRIVATE_KEY, privateKey);
         edit.apply();
+    }
+
+    @Override
+    public boolean isBinaryMode() {
+        return sharedPreferences.getBoolean(PREF_BINARY_MODE, false);
     }
 
     @Override
@@ -116,6 +138,18 @@ public class PaymentSettingService implements PaymentSettingRepository {
     @Override
     public String getPublicKey() {
         return sharedPreferences.getString(PREF_PUBLIC_KEY, "");
+    }
+
+    @Nullable
+    @Override
+    public Token getToken() {
+        return jsonUtil.fromJson(sharedPreferences.getString(PREF_TOKEN, ""), Token.class);
+    }
+
+    @NonNull
+    @Override
+    public String getTransactionId() {
+        return String.format(Locale.getDefault(), "%s%d", getPublicKey(), Calendar.getInstance().getTimeInMillis());
     }
 
     @NonNull

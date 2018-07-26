@@ -335,9 +335,7 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
 
     protected void resolveCardVaultRequest(final int resultCode, final Intent data) {
         if (resultCode == RESULT_OK) {
-            final Issuer issuer = JsonUtil.getInstance().fromJson(data.getStringExtra(EXTRA_ISSUER), Issuer.class);
-            final Token token = JsonUtil.getInstance().fromJson(data.getStringExtra(EXTRA_TOKEN), Token.class);
-            presenter.onCardFlowResponse(issuer, token);
+            presenter.onCardFlowResponse();
         } else {
             final MercadoPagoError mercadoPagoError =
                 (data == null || data.getStringExtra(EXTRA_MERCADO_PAGO_ERROR) == null) ? null :
@@ -353,11 +351,10 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
 
     private void resolvePaymentVaultRequest(final int resultCode, final Intent data) {
         if (resultCode == RESULT_OK) {
-            final Issuer issuer = JsonUtil.getInstance().fromJson(data.getStringExtra(EXTRA_ISSUER), Issuer.class);
             final Token token = JsonUtil.getInstance().fromJson(data.getStringExtra(EXTRA_TOKEN), Token.class);
             final Card card = JsonUtil.getInstance().fromJson(data.getStringExtra(EXTRA_CARD), Card.class);
             final Payer payer = JsonUtil.getInstance().fromJson(data.getStringExtra(EXTRA_PAYER), Payer.class);
-            presenter.onPaymentMethodSelectionResponse(issuer, token, card, payer);
+            presenter.onPaymentMethodSelectionResponse(token, card, payer);
         } else if (isErrorResult(data)) {
             final MercadoPagoError mercadoPagoError =
                 JsonUtil.getInstance().fromJson(data.getStringExtra(EXTRA_MERCADO_PAGO_ERROR), MercadoPagoError.class);

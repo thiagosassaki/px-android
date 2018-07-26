@@ -61,7 +61,9 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
         final Session session = Session.getSession(this);
         configuration = session.getConfigurationModule().getPaymentSettings();
         privateKey = configuration.getCheckoutPreference().getPayer().getAccessToken();
-        presenter = new CardVaultPresenter(session.getAmountRepository(), configuration, session.getConfigurationModule().getUserSelectionRepository());
+        presenter = new CardVaultPresenter(session.getAmountRepository(), configuration,
+            session.getConfigurationModule().getUserSelectionRepository(),
+            session.getConfigurationModule().getPaymentSettings());
         presenter.attachResourcesProvider(new CardVaultProviderImpl(this, publicKey, privateKey, escEnabled));
         presenter.attachView(this);
         presenter.setCard(card);
@@ -278,10 +280,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
 
     protected void resolveIssuersRequest(int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            Bundle bundle = data.getExtras();
-            Issuer issuer = JsonUtil.getInstance().fromJson(bundle.getString("issuer"), Issuer.class);
-
-            presenter.resolveIssuersRequest(issuer);
+            presenter.resolveIssuersRequest();
         } else if (resultCode == RESULT_CANCELED) {
             presenter.onResultCancel();
         }
@@ -331,9 +330,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
 
     protected void resolveSecurityCodeRequest(int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            Token token = JsonUtil.getInstance().fromJson(data.getStringExtra("token"), Token.class);
-
-            presenter.resolveSecurityCodeRequest(token);
+            presenter.resolveSecurityCodeRequest();
         } else if (resultCode == RESULT_CANCELED) {
             presenter.onResultCancel();
         }
@@ -427,9 +424,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
     public void finishWithResult() {
         Intent returnIntent = new Intent();
         returnIntent.putExtra("payerCost", JsonUtil.getInstance().toJson(presenter.getPayerCost()));
-        returnIntent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(presenter.getPaymentMethod()));
         returnIntent.putExtra("token", JsonUtil.getInstance().toJson(presenter.getToken()));
-        returnIntent.putExtra("issuer", JsonUtil.getInstance().toJson(presenter.getIssuer()));
         returnIntent.putExtra(EXTRA_CARD, JsonUtil.getInstance().toJson(presenter.getCard()));
         setResult(RESULT_OK, returnIntent);
         finish();

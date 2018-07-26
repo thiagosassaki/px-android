@@ -70,7 +70,7 @@ public class MercadoPagoCheckout implements Serializable {
     @Nullable
     private final Campaign campaign;
 
-    private final boolean binaryMode;
+    public final boolean binaryMode;
 
     @Nullable
     private final String privateKey;
@@ -195,10 +195,6 @@ public class MercadoPagoCheckout implements Serializable {
     @NonNull
     public FlowPreference getFlowPreference() {
         return flowPreference;
-    }
-
-    public boolean isBinaryMode() {
-        return binaryMode;
     }
 
     @Nullable

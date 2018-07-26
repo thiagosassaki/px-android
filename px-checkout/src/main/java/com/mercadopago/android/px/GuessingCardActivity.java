@@ -233,7 +233,7 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
         final Session session = Session.getSession(this);
         mPresenter = new GuessingCardPresenter(session.getAmountRepository(),
             session.getConfigurationModule().getUserSelectionRepository(),
-            session.getGroupsRepository());
+            session.getGroupsRepository(), session.getConfigurationModule().getPaymentSettings());
         mPublicKey = intent.getStringExtra("merchantPublicKey");
         mPrivateKey = intent.getStringExtra("payerAccessToken");
         PaymentPreference paymentPreference =
@@ -1608,7 +1608,6 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     public void finishCardFlow(PaymentMethod paymentMethod, Token token,
         List<Issuer> issuers) {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(paymentMethod));
         returnIntent.putExtra("token", JsonUtil.getInstance().toJson(token));
         returnIntent.putExtra("issuers", JsonUtil.getInstance().toJson(issuers));
         setResult(RESULT_OK, returnIntent);
@@ -1620,9 +1619,7 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     public void finishCardFlow(PaymentMethod paymentMethod, Token token,
         Issuer issuer, List<PayerCost> payerCosts) {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(paymentMethod));
         returnIntent.putExtra("token", JsonUtil.getInstance().toJson(token));
-        returnIntent.putExtra("issuer", JsonUtil.getInstance().toJson(issuer));
         returnIntent.putExtra("payerCosts", JsonUtil.getInstance().toJson(payerCosts));
         setResult(RESULT_OK, returnIntent);
         finish();

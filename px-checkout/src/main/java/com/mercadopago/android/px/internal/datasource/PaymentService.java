@@ -2,8 +2,8 @@ package com.mercadopago.android.px.internal.datasource;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
-import com.mercadopago.android.px.internal.repository.CardRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentHandler;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
@@ -15,11 +15,9 @@ import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.plugins.PaymentProcessor;
-import com.mercadopago.android.px.plugins.PluginComponent;
 import com.mercadopago.android.px.viewmodel.OneTapModel;
 import com.mercadopago.android.px.viewmodel.mappers.CardMapper;
 import com.mercadopago.android.px.viewmodel.mappers.PaymentMethodMapper;
-import java.util.HashMap;
 
 public class PaymentService implements PaymentRepository {
 
@@ -31,7 +29,6 @@ public class PaymentService implements PaymentRepository {
     @NonNull private final PaymentProcessor paymentProcessor;
     @NonNull private final PaymentMethodMapper paymentMethodMapper;
     @NonNull private final CardMapper cardMapper;
-    @NonNull private final CardRepository cardRepository;
     @NonNull private Context context;
 
     public PaymentService(@NonNull final UserSelectionRepository userSelectionRepository,
@@ -39,7 +36,6 @@ public class PaymentService implements PaymentRepository {
         @NonNull final PluginRepository pluginRepository,
         @NonNull final DiscountRepository discountRepository,
         @NonNull final AmountRepository amountRepository,
-        @NonNull final CardRepository cardRepository,
         @NonNull final PaymentProcessor paymentProcessor,
         @NonNull final Context context) {
 
@@ -48,7 +44,6 @@ public class PaymentService implements PaymentRepository {
         this.pluginRepository = pluginRepository;
         this.discountRepository = discountRepository;
         this.amountRepository = amountRepository;
-        this.cardRepository = cardRepository;
         this.paymentProcessor = paymentProcessor;
         this.context = context;
         paymentMethodMapper = new PaymentMethodMapper();
@@ -95,6 +90,7 @@ public class PaymentService implements PaymentRepository {
     }
 
     private void validateCardInfo(final PaymentHandler paymentHandler) {
+        //TODO arreglar
         if (cardRepository.getCard() != null && userSelectionRepository.getPayerCost() != null) {
             if (cardRepository.getToken() != null) {
                 createPayment(paymentHandler);
@@ -107,16 +103,17 @@ public class PaymentService implements PaymentRepository {
     }
 
     private void createPayment(final PaymentHandler paymentHandler) {
-        final PaymentData paymentData = createPaymentData();
 
-        final PluginComponent.Props props =
-            new PluginComponent.Props.Builder()
-                .setCheckoutPreference(paymentSettingRepository.getCheckoutPreference())
-                .setData(new HashMap<String, Object>())
-                .setPaymentData(paymentData)
-                .build();
+        final PaymentProcessor.Props processorProperties =
+            new PaymentProcessor.Props(createPaymentData(), paymentSettingRepository.getCheckoutPreference());
 
-        final PluginComponent paymentComponent = paymentProcessor.createPaymentComponent(props, context);
+        if (paymentProcessor.needsVisualPaymentProcessing()) {
+            //TODO make
+            final Fragment fragment = paymentProcessor.initVisualPayment(processorProperties, paymentHandler);
+            paymentHandler.onVisualPayment(fragment);
+        } else {
+            paymentProcessor.initPayment(context, processorProperties, paymentHandler);
+        }
     }
 
     //TODO remove duplication - Presenter Checkout
@@ -124,10 +121,11 @@ public class PaymentService implements PaymentRepository {
         final PaymentData paymentData = new PaymentData();
         paymentData.setPaymentMethod(userSelectionRepository.getPaymentMethod());
         paymentData.setPayerCost(userSelectionRepository.getPayerCost());
-        paymentData.setIssuer(cardRepository.getCard() != null ? cardRepository.getCard().getIssuer() : null);
-        paymentData.setToken(cardRepository.getToken());
+        paymentData.setIssuer(userSelectionRepository.getIssuer());
+        paymentData.setToken(paymentSettingRepository.getToken());
         paymentData.setDiscount(discountRepository.getDiscount());
         paymentData.setTransactionAmount(amountRepository.getAmountToPay());
+        //TODO verify identification for payer that comes from boleto selection.
         paymentData.setPayer(paymentSettingRepository.getCheckoutPreference().getPayer());
         return paymentData;
     }

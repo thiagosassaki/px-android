@@ -53,17 +53,17 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity impl
             return;
         }
 
-        final PluginComponent.Props props = new PluginComponent.Props.Builder()
-            .setData(store.getData())
-            .setPaymentData(store.getPaymentData())
-            .setCheckoutPreference(store.getCheckoutPreference())
-            .build();
-
-        final PluginComponent component = paymentProcessor.createPaymentComponent(props, this);
-        final ComponentManager componentManager = new ComponentManager(this);
-
-        component.setDispatcher(this);
-        componentManager.render(component);
+//        final PaymentComponent.Props props = new PaymentComponent.Props.Builder()
+//            .setData(store.getData())
+//            .setPaymentData(store.getPaymentData())
+//            .setCheckoutPreference(store.getCheckoutPreference())
+//            .build();
+//
+//        final PaymentComponent component = paymentProcessor.initPayment(props, this);
+//        final ComponentManager componentManager = new ComponentManager(this);
+//
+//        component.setDispatcher(this);
+//        componentManager.render(component);
     }
 
     private void cancel() {

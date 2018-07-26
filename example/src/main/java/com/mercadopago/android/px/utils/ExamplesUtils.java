@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import android.util.Log;
 import android.widget.Toast;
-import com.mercadopago.android.px.components.CustomComponent;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.core.MercadoPagoCheckout.Builder;
 import com.mercadopago.android.px.exceptions.MercadoPagoError;
@@ -14,15 +13,14 @@ import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Sites;
-import com.mercadopago.android.px.plugins.components.SampleCustomComponent;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.FlowPreference;
 import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
 import com.mercadopago.android.px.tracking.listeners.TracksListener;
 import com.mercadopago.android.px.tracking.tracker.MPTracker;
-import com.mercadopago.example.R;
 import com.mercadopago.android.px.util.JsonUtil;
 import com.mercadopago.android.px.util.ViewUtils;
+import com.mercadopago.example.R;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -125,10 +123,7 @@ public final class ExamplesUtils {
     }
 
     private static Builder customExitReviewAndConfirm() {
-        final CustomComponent.Props props = new CustomComponent.Props(new HashMap<String, Object>(), null);
-        final ReviewAndConfirmPreferences preferences = new ReviewAndConfirmPreferences.Builder()
-            .setTopComponent(new SampleCustomComponent(props)).build();
-        return createBaseWithDecimals().setReviewAndConfirmPreferences(preferences);
+        return createBaseWithDecimals();
     }
 
     private static Builder startBaseFlowWithTrackListener() {

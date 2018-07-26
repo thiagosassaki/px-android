@@ -26,6 +26,7 @@ import com.mercadopago.android.px.customviews.MPEditText;
 import com.mercadopago.android.px.customviews.MPTextView;
 import com.mercadopago.android.px.exceptions.ExceptionHandler;
 import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.listeners.card.CardSecurityCodeTextWatcher;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CardInfo;
@@ -144,7 +145,8 @@ public class SecurityCodeActivity extends MercadoPagoBaseActivity implements Sec
 
     private void createPresenter() {
         if (mSecurityCodePresenter == null) {
-            mSecurityCodePresenter = new SecurityCodePresenter();
+            final Session session = Session.getSession(this);
+            mSecurityCodePresenter = new SecurityCodePresenter(session.getConfigurationModule().getPaymentSettings());
         }
     }
 
@@ -472,9 +474,7 @@ public class SecurityCodeActivity extends MercadoPagoBaseActivity implements Sec
 
     @Override
     public void finishWithResult() {
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra("token", JsonUtil.getInstance().toJson(mSecurityCodePresenter.getToken()));
-        setResult(RESULT_OK, returnIntent);
+        setResult(RESULT_OK);
         finish();
     }
 
