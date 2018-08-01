@@ -71,7 +71,6 @@ public class CheckoutPreference implements Serializable {
     private Payer getPayer(final Builder builder) {
         final Payer payer = new Payer();
         payer.setEmail(builder.payerEmail);
-        payer.setAccessToken(builder.payerAccessToken);
         return payer;
     }
 
@@ -262,7 +261,6 @@ public class CheckoutPreference implements Serializable {
         private Integer defaultInstallments;
         private Date expirationDateTo;
         private Date expirationDateFrom;
-        private String payerAccessToken;
         private BigDecimal marketplaceFee;
         private BigDecimal shippingCost;
         private String operationType;
@@ -331,27 +329,6 @@ public class CheckoutPreference implements Serializable {
         @SuppressWarnings("unused")
         public Builder setActiveFrom(final Date date) {
             expirationDateFrom = date;
-            return this;
-        }
-
-        /**
-         * @deprecated This method is deprecated, access token should be added
-         * as private key.
-         */
-        @Deprecated
-        @SuppressWarnings("unused")
-        public Builder setPayerAccessToken(final String payerAccessToken) {
-            this.payerAccessToken = payerAccessToken;
-            return this;
-        }
-
-        /**
-         * @deprecated Account money is always enabled. You can exclude it
-         * using the add exclusion methods.
-         */
-        @Deprecated
-        @SuppressWarnings("unused")
-        public Builder enableAccountMoney() {
             return this;
         }
 
