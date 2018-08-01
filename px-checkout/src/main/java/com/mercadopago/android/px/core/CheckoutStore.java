@@ -33,6 +33,8 @@ public final class CheckoutStore {
     private DataInitializationTask dataInitializationTask;
     private List<PaymentMethodPlugin> paymentMethodPluginList = new ArrayList<>();
     private Map<String, PaymentProcessor> paymentPlugins = new HashMap<>();
+
+    @Deprecated
     private CheckoutHooks checkoutHooks;
 
     //App state
@@ -149,12 +151,9 @@ public final class CheckoutStore {
         this.hook = hook;
     }
 
+    @Deprecated
     public CheckoutHooks getCheckoutHooks() {
         return checkoutHooks;
-    }
-
-    public void setCheckoutHooks(CheckoutHooks checkoutHooks) {
-        this.checkoutHooks = checkoutHooks;
     }
 
     public Map<String, Object> getData() {

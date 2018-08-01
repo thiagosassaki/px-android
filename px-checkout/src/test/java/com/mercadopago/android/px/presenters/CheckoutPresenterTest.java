@@ -61,9 +61,9 @@ import static com.mercadopago.android.px.core.MercadoPagoCheckout.PAYMENT_RESULT
 import static com.mercadopago.android.px.utils.StubCheckoutPreferenceUtils.stubExpiredPreference;
 import static com.mercadopago.android.px.utils.StubCheckoutPreferenceUtils.stubPreferenceOneItem;
 import static com.mercadopago.android.px.utils.StubCheckoutPreferenceUtils.stubPreferenceOneItemAndPayer;
-import static com.mercadopago.android.px.utils.StubCheckoutPreferenceUtils.stubPreferenceWithAccessToken;
 import static com.mercadopago.android.px.utils.StubPaymentResult.stubApprovedOffPaymentResult;
 import static junit.framework.Assert.assertEquals;
+
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -225,7 +225,7 @@ public class CheckoutPresenterTest {
     @Test
     public void onCreatePaymentWithESCTokenErrorThenRequestSecurityCode() {
 
-        CheckoutPreference checkoutPreference = stubPreferenceWithAccessToken();
+        CheckoutPreference checkoutPreference = stubPreferenceOneItem();
 
         ApiException apiException = Payments.getInvalidESCPayment();
         MercadoPagoError mpException = new MercadoPagoError(apiException, "");
@@ -271,7 +271,7 @@ public class CheckoutPresenterTest {
     @Ignore
     @Test
     public void onCreatePaymentWithESCTokenErrorThenDeleteESC() {
-        CheckoutPreference checkoutPreference = stubPreferenceWithAccessToken();
+        CheckoutPreference checkoutPreference = stubPreferenceOneItem();
 
         provider.setCheckoutPreferenceResponse(checkoutPreference);
         when(groupsRepository.getGroups())
@@ -708,7 +708,7 @@ public class CheckoutPresenterTest {
         paymentData.setPayerCost(payerCost);
         paymentData.setToken(token);
 
-        final CheckoutPreference checkoutPreference = stubPreferenceWithAccessToken();
+        final CheckoutPreference checkoutPreference = stubPreferenceOneItem();
 
         PaymentResult paymentResult = new PaymentResult.Builder()
             .setPaymentData(paymentData)
@@ -732,7 +732,7 @@ public class CheckoutPresenterTest {
     @Test
     public void ifPaymentResultApprovedSetAndESCEnabledButTokenHasNoESCThenDontSaveESC() {
 
-        CheckoutPreference checkoutPreference = stubPreferenceWithAccessToken();
+        CheckoutPreference checkoutPreference = stubPreferenceOneItem();
 
         PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
         Issuer issuer = Issuers.getIssuers().get(0);
@@ -767,7 +767,7 @@ public class CheckoutPresenterTest {
     @Test
     public void ifPaymentResultApprovedSetAndESCEnabledThenShowPaymentResultScreen() {
 
-        CheckoutPreference checkoutPreference = stubPreferenceWithAccessToken();
+        CheckoutPreference checkoutPreference = stubPreferenceOneItem();
 
         PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
         Issuer issuer = Issuers.getIssuers().get(0);
@@ -804,7 +804,7 @@ public class CheckoutPresenterTest {
     @Test
     public void createPaymentWithESCTokenThenSaveESC() {
 
-        final CheckoutPreference checkoutPreference = stubPreferenceWithAccessToken();
+        final CheckoutPreference checkoutPreference = stubPreferenceOneItem();
 
         provider.setPaymentResponse(Payments.getApprovedPayment());
 
@@ -840,7 +840,7 @@ public class CheckoutPresenterTest {
 
     @Test
     public void ifPaymentResultInvalidESCSetAndESCEnabledThenDontSaveESC() {
-        CheckoutPreference checkoutPreference = stubPreferenceWithAccessToken();
+        CheckoutPreference checkoutPreference = stubPreferenceOneItem();
 
         PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
         Issuer issuer = Issuers.getIssuers().get(0);
@@ -875,7 +875,7 @@ public class CheckoutPresenterTest {
     @Test
     public void ifPaymentResultInvalidESCSetAndESCEnabledThenDeleteESCSaved() {
 
-        CheckoutPreference checkoutPreference = stubPreferenceWithAccessToken();
+        CheckoutPreference checkoutPreference = stubPreferenceOneItem();
         PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
         Issuer issuer = Issuers.getIssuers().get(0);
         PayerCost payerCost = Installments.getInstallments().getPayerCosts().get(0);
@@ -945,7 +945,7 @@ public class CheckoutPresenterTest {
 
     @Test
     public void ifOnlyPayerFromPreferenceThenUseItForPayment() {
-        CheckoutPreference preference = stubPreferenceWithAccessToken();
+        CheckoutPreference preference = stubPreferenceOneItem();
         when(configuration.getCheckoutPreference()).thenReturn(preference);
         provider.setCheckoutPreferenceResponse(preference);
         when(groupsRepository.getGroups())

@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.CheckoutActivity;
 import com.mercadopago.android.px.callbacks.CallbackHolder;
-import com.mercadopago.android.px.hooks.CheckoutHooks;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
@@ -145,7 +144,6 @@ public class MercadoPagoCheckout implements Serializable {
         store.setPaymentResultScreenPreference(paymentResultScreenPreference);
         store.setPaymentMethodPluginList(builder.paymentMethodPluginList);
         store.setPaymentPlugins(builder.paymentPlugins);
-        store.setCheckoutHooks(builder.checkoutHooks);
         store.setDataInitializationTask(builder.dataInitializationTask);
     }
 
@@ -258,7 +256,6 @@ public class MercadoPagoCheckout implements Serializable {
         PaymentResult paymentResult;
         Discount discount;
         Campaign campaign;
-        CheckoutHooks checkoutHooks;
         DataInitializationTask dataInitializationTask;
         String regularFontPath;
         String lightFontPath;
@@ -374,11 +371,6 @@ public class MercadoPagoCheckout implements Serializable {
          */
         public Builder setReviewAndConfirmPreferences(final ReviewAndConfirmPreferences reviewAndConfirmPreferences) {
             this.reviewAndConfirmPreferences = reviewAndConfirmPreferences;
-            return this;
-        }
-
-        public Builder setCheckoutHooks(@NonNull final CheckoutHooks checkoutHooks) {
-            this.checkoutHooks = checkoutHooks;
             return this;
         }
 
