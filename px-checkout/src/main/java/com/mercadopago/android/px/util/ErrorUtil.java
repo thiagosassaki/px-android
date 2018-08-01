@@ -3,8 +3,10 @@ package com.mercadopago.android.px.util;
 import android.app.Activity;
 import android.content.Intent;
 import com.mercadopago.android.px.ErrorActivity;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.di.Session;
+
+import static com.mercadopago.android.px.core.MercadoPagoCheckout.EXTRA_ERROR;
 
 /**
  * Created by mreverter on 9/5/16.
@@ -13,7 +15,7 @@ import com.mercadopago.android.px.internal.di.Session;
 public final class ErrorUtil {
 
     public static final int ERROR_REQUEST_CODE = 94;
-    public static final String ERROR_EXTRA_KEY = "mercadoPagoError";
+
     public static final String PUBLIC_KEY_EXTRA = "publicKey";
 
     private ErrorUtil() {
@@ -37,7 +39,7 @@ public final class ErrorUtil {
             Session.getSession(launcherActivity).getConfigurationModule().getPaymentSettings().getPublicKey();
 
         final Intent intent = new Intent(launcherActivity, ErrorActivity.class);
-        intent.putExtra(ERROR_EXTRA_KEY, JsonUtil.getInstance().toJson(mercadoPagoError));
+        intent.putExtra(EXTRA_ERROR, JsonUtil.getInstance().toJson(mercadoPagoError));
         intent.putExtra(PUBLIC_KEY_EXTRA, publicKey);
         launcherActivity.startActivityForResult(intent, ERROR_REQUEST_CODE);
     }

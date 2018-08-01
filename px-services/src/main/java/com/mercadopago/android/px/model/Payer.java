@@ -1,18 +1,10 @@
 package com.mercadopago.android.px.model;
 
-import android.support.annotation.Nullable;
 import java.io.Serializable;
 
 public class Payer implements Serializable {
 
     private String id;
-    /**
-     * @deprecated This method is deprecated, access token should be added
-     * as private key.
-     */
-    @Deprecated
-    private String accessToken;
-
     private Identification identification;
     private String type;
     private String email;
@@ -49,24 +41,6 @@ public class Payer implements Serializable {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    /**
-     * @deprecated This method is deprecated, access token should be added
-     * as private key.
-     */
-    @Deprecated
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    /**
-     * @deprecated This method is deprecated, access token should be added
-     * as private key.
-     */
-    @Deprecated
-    public void setAccessToken(@Nullable final String accessToken) {
-        this.accessToken = accessToken;
     }
 
     public String getFirstName() {

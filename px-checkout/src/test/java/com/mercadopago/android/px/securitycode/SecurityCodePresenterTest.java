@@ -1,6 +1,6 @@
 package com.mercadopago.android.px.securitycode;
 
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.mocks.Cards;
 import com.mercadopago.android.px.mocks.Issuers;
 import com.mercadopago.android.px.mocks.PayerCosts;

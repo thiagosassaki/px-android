@@ -1,6 +1,6 @@
 package com.mercadopago.android.px.paymentmethods;
 
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.mvp.TaggedCallback;

@@ -25,7 +25,7 @@ import com.mercadopago.android.px.callbacks.card.TicketIdentificationNameEditTex
 import com.mercadopago.android.px.callbacks.card.TicketIdentificationNumberEditTextCallback;
 import com.mercadopago.android.px.customviews.MPEditText;
 import com.mercadopago.android.px.customviews.MPTextView;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.listeners.card.TicketIdentificationNameTextWatcher;
 import com.mercadopago.android.px.listeners.card.TicketIdentificationNumberTextWatcher;
 import com.mercadopago.android.px.model.Identification;

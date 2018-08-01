@@ -99,7 +99,9 @@ public class FooterContainerTest {
 
     @Test
     public void testRejectedBadFilledDatePaymentResult() {
-
+        //TODO remove
+        CheckoutStore.getInstance()
+            .setPaymentResultScreenPreference(new PaymentResultScreenPreference.Builder().build());
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedBadFilledDatePaymentResult();
         final FooterContainer footerContainer = new FooterContainer(
             new FooterContainer.Props(paymentResult), dispatcher, provider);

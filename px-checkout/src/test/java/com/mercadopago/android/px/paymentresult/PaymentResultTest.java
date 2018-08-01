@@ -1,7 +1,7 @@
 package com.mercadopago.android.px.paymentresult;
 
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.mocks.PaymentMethods;
 import com.mercadopago.android.px.model.Instruction;

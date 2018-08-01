@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.mvp.TaggedCallback;

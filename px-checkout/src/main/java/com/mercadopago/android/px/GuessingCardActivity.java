@@ -35,12 +35,11 @@ import com.mercadopago.android.px.callbacks.card.CardSecurityCodeEditTextCallbac
 import com.mercadopago.android.px.callbacks.card.CardholderNameEditTextCallback;
 import com.mercadopago.android.px.controllers.CheckoutTimer;
 import com.mercadopago.android.px.controllers.PaymentMethodGuessingController;
-import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.core.MercadoPagoComponents;
 import com.mercadopago.android.px.customviews.MPEditText;
 import com.mercadopago.android.px.customviews.MPTextView;
-import com.mercadopago.android.px.exceptions.ExceptionHandler;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.ExceptionHandler;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.listeners.card.CardExpiryDateTextWatcher;
 import com.mercadopago.android.px.listeners.card.CardIdentificationNumberTextWatcher;
@@ -59,7 +58,6 @@ import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentType;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Token;
-import com.mercadopago.android.px.observers.TimerObserver;
 import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.presenters.GuessingCardPresenter;
 import com.mercadopago.android.px.providers.GuessingCardProviderImpl;
@@ -83,7 +81,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 public class GuessingCardActivity extends MercadoPagoBaseActivity implements GuessingCardActivityView,
-    TimerObserver, CardExpiryDateEditTextCallback, View.OnTouchListener, View.OnClickListener {
+    CardExpiryDateEditTextCallback, View.OnTouchListener, View.OnClickListener {
 
     public static final String CARD_NUMBER_INPUT = "cardNumber";
     public static final String CARDHOLDER_NAME_INPUT = "cardHolderName";
@@ -395,7 +393,6 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     @Override
     public void initializeTimer() {
         if (CheckoutTimer.getInstance().isTimerEnabled()) {
-            CheckoutTimer.getInstance().addObserver(this);
             mTimerTextView.setVisibility(View.VISIBLE);
             mTimerTextView.setText(CheckoutTimer.getInstance().getCurrentTime());
         }
@@ -1629,17 +1626,6 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
         final Intent returnIntent = new Intent();
         returnIntent.putExtra("backButtonPressed", true);
         setResult(RESULT_CANCELED, returnIntent);
-        finish();
-    }
-
-    @Override
-    public void onTimeChanged(String timeToShow) {
-        mTimerTextView.setText(timeToShow);
-    }
-
-    @Override
-    public void onFinish() {
-        setResult(MercadoPagoCheckout.TIMER_FINISHED_RESULT_CODE);
         finish();
     }
 

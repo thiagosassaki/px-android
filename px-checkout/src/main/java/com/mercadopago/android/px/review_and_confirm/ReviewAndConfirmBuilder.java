@@ -3,6 +3,7 @@ package com.mercadopago.android.px.review_and_confirm;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.R;
+import com.mercadopago.android.px.internal.di.ConfigurationModule;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
@@ -72,8 +73,9 @@ public class ReviewAndConfirmBuilder {
         validate(activity);
 
         final Session session = Session.getSession(activity);
+        final ConfigurationModule configurationModule = session.getConfigurationModule();
         final UserSelectionRepository userSelectionRepository =
-            session.getConfigurationModule().getUserSelectionRepository();
+            configurationModule.getUserSelectionRepository();
 
         final AmountRepository amountRepository = session.getAmountRepository();
 
@@ -87,7 +89,7 @@ public class ReviewAndConfirmBuilder {
             activity.getResources().getString(R.string.px_review_summary_product),
             activity.getResources().getString(R.string.px_review_summary_products));
 
-        boolean termsAndConditionsEnabled = TextUtils.isEmpty(checkoutPreference.getPayer().getAccessToken());
+        final boolean termsAndConditionsEnabled = TextUtils.isEmpty(configurationModule.getPaymentSettings().getPrivateKey());
 
         final TermsAndConditionsModel mercadoPagoTermsAndConditions =
             termsAndConditionsEnabled ? new TermsAndConditionsModel(site.getTermsAndConditionsUrl(),

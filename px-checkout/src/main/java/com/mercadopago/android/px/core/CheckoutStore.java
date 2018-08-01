@@ -54,21 +54,15 @@ public final class CheckoutStore {
     }
 
     public PaymentResultScreenPreference getPaymentResultScreenPreference() {
-        if (paymentResultScreenPreference == null) {
-            paymentResultScreenPreference = new PaymentResultScreenPreference.Builder().build();
-        }
         return paymentResultScreenPreference;
     }
 
     @NonNull
     public ReviewAndConfirmPreferences getReviewAndConfirmPreferences() {
-        if (reviewAndConfirmPreferences == null) {
-            reviewAndConfirmPreferences = new ReviewAndConfirmPreferences.Builder().build();
-        }
         return reviewAndConfirmPreferences;
     }
 
-    public void setPaymentResultScreenPreference(PaymentResultScreenPreference paymentResultScreenPreference) {
+    public void setPaymentResultScreenPreference(final PaymentResultScreenPreference paymentResultScreenPreference) {
         this.paymentResultScreenPreference = paymentResultScreenPreference;
     }
 
@@ -76,7 +70,7 @@ public final class CheckoutStore {
         return dataInitializationTask;
     }
 
-    public void setDataInitializationTask(DataInitializationTask dataInitializationTask) {
+    public void setDataInitializationTask(final DataInitializationTask dataInitializationTask) {
         this.dataInitializationTask = dataInitializationTask;
     }
 

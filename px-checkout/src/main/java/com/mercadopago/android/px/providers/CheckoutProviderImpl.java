@@ -10,8 +10,8 @@ import android.support.v4.provider.FontsContractCompat;
 
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
-import com.mercadopago.android.px.exceptions.ExceptionHandler;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.ExceptionHandler;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.Payment;
@@ -224,6 +224,7 @@ public class CheckoutProviderImpl implements CheckoutProvider {
                 MercadoPagoUtil.isCard(paymentData.getPaymentMethod().getPaymentTypeId())) {
             payer.setId(customerId);
         }
+
         paymentBody.setPayer(payer);
 
         if (paymentData.getToken() != null) {

@@ -10,9 +10,8 @@ import com.mercadopago.android.px.components.ComponentManager;
 import com.mercadopago.android.px.components.LoadingComponent;
 import com.mercadopago.android.px.components.LoadingRenderer;
 import com.mercadopago.android.px.components.RendererFactory;
-import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.core.MercadoPagoComponents;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.paymentresult.components.AccreditationComment;
@@ -187,10 +186,7 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-
-        if (resultCode == MercadoPagoCheckout.TIMER_FINISHED_RESULT_CODE) {
-            resolveTimerObserverResult(resultCode);
-        } else if (requestCode == MercadoPagoComponents.Activities.CONGRATS_REQUEST_CODE) {
+        if (requestCode == MercadoPagoComponents.Activities.CONGRATS_REQUEST_CODE) {
             finishWithOkResult(resultCode, data);
         } else if (requestCode == MercadoPagoComponents.Activities.PENDING_REQUEST_CODE) {
             resolveRequest(resultCode, data);

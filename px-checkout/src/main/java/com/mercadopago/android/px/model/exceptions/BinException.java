@@ -1,4 +1,4 @@
-package com.mercadopago.android.px.exceptions;
+package com.mercadopago.android.px.model.exceptions;
 
 import com.mercadopago.android.px.model.Bin;
 

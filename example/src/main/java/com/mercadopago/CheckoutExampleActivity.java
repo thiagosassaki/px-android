@@ -23,9 +23,11 @@ public class CheckoutExampleActivity extends AppCompatActivity {
     private View mRegularLayout;
     private MPButton continueSimpleCheckout;
     private CheckoutLazyBuilder checkoutLazyBuilder;
+    private static final int REQ_CODE_CHECKOUT = 1;
+    private static final int REQ_CODE_JSON = 2;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyLog()
@@ -64,7 +66,7 @@ public class CheckoutExampleActivity extends AppCompatActivity {
                 continueSimpleCheckout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mercadoPagoCheckout.startForPayment(CheckoutExampleActivity.this);
+                        mercadoPagoCheckout.startPayment(CheckoutExampleActivity.this, REQ_CODE_CHECKOUT);
                     }
                 });
             }
@@ -74,8 +76,8 @@ public class CheckoutExampleActivity extends AppCompatActivity {
                 continueSimpleCheckout.setEnabled(true);
                 continueSimpleCheckout.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        mercadoPagoCheckout.startForPayment(CheckoutExampleActivity.this);
+                    public void onClick(final View v) {
+                        mercadoPagoCheckout.startPayment(CheckoutExampleActivity.this, REQ_CODE_CHECKOUT);
                     }
                 });
             }
@@ -84,7 +86,7 @@ public class CheckoutExampleActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        resolveCheckoutResult(this, requestCode, resultCode, data);
+        resolveCheckoutResult(this, requestCode, resultCode, data, REQ_CODE_CHECKOUT);
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -104,6 +106,6 @@ public class CheckoutExampleActivity extends AppCompatActivity {
 
     private void startJsonInput() {
         Intent intent = new Intent(this, JsonSetupActivity.class);
-        startActivityForResult(intent, MercadoPagoCheckout.CHECKOUT_REQUEST_CODE);
+        startActivityForResult(intent, REQ_CODE_JSON);
     }
 }

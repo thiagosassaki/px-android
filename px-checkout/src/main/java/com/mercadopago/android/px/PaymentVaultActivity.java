@@ -21,11 +21,10 @@ import com.mercadopago.android.px.codediscount.CodeDiscountDialog;
 import com.mercadopago.android.px.codediscount.CodeDiscountDialog.DiscountListener;
 import com.mercadopago.android.px.controllers.CheckoutTimer;
 import com.mercadopago.android.px.core.CheckoutStore;
-import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.core.MercadoPagoComponents;
 import com.mercadopago.android.px.customviews.GridSpacingItemDecoration;
 import com.mercadopago.android.px.customviews.MPTextView;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.hooks.Hook;
 import com.mercadopago.android.px.hooks.HookActivity;
 import com.mercadopago.android.px.internal.datasource.PluginService;
@@ -43,7 +42,6 @@ import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentMethodSearchItem;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Token;
-import com.mercadopago.android.px.observers.TimerObserver;
 import com.mercadopago.android.px.plugins.PaymentMethodPlugin;
 import com.mercadopago.android.px.plugins.PaymentMethodPluginActivity;
 import com.mercadopago.android.px.plugins.model.PaymentMethodInfo;
@@ -68,8 +66,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mercadopago.android.px.core.MercadoPagoCheckout.EXTRA_ERROR;
+
 public class PaymentVaultActivity extends MercadoPagoBaseActivity
-        implements PaymentVaultView, DiscountListener, TimerObserver {
+        implements PaymentVaultView, DiscountListener {
 
     public static final int COLUMN_SPACING_DP_VALUE = 20;
     public static final int COLUMNS = 2;
@@ -155,7 +155,6 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
 
     private void showTimer() {
         if (CheckoutTimer.getInstance().isTimerEnabled()) {
-            CheckoutTimer.getInstance().addObserver(this);
             mTimerTextView.setVisibility(View.VISIBLE);
             mTimerTextView.setText(CheckoutTimer.getInstance().getCurrentTime());
         }
@@ -335,7 +334,7 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
         if (resultCode == RESULT_OK) {
             setResult(RESULT_OK, data);
             finish();
-        } else if (resultCode == RESULT_CANCELED && data != null && data.hasExtra("mercadoPagoError")) {
+        } else if (resultCode == RESULT_CANCELED && data != null && data.hasExtra(EXTRA_ERROR)) {
             setResult(Activity.RESULT_CANCELED, data);
             finish();
         } else {
@@ -382,14 +381,14 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
         }
     }
 
-    private boolean shouldFinishOnBack(Intent data) {
+    private boolean shouldFinishOnBack(final Intent data) {
         return !CheckoutStore.getInstance().hasEnabledPaymentMethodPlugin() &&
                 (presenter.getSelectedSearchItem() != null &&
                         (!presenter.getSelectedSearchItem().hasChildren()
                                 || (presenter.getSelectedSearchItem().getChildren().size() == 1))
                         || (presenter.getSelectedSearchItem() == null &&
                         presenter.isOnlyOneItemAvailable()) ||
-                        (data != null) && (data.getStringExtra("mercadoPagoError") != null));
+                        (data != null) && (data.getStringExtra(EXTRA_ERROR) != null));
     }
 
     @Override
@@ -553,17 +552,6 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
     protected void onStop() {
         mActivityActive = false;
         super.onStop();
-    }
-
-    @Override
-    public void onTimeChanged(String timeToShow) {
-        mTimerTextView.setText(timeToShow);
-    }
-
-    @Override
-    public void onFinish() {
-        setResult(MercadoPagoCheckout.TIMER_FINISHED_RESULT_CODE);
-        finish();
     }
 
     @Override

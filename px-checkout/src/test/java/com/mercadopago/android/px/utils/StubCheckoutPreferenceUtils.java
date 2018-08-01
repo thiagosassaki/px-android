@@ -115,6 +115,7 @@ public final class StubCheckoutPreferenceUtils {
         return stubBuilderOneItem();
     }
 
+
     public static CheckoutPreference stubPreferenceOneItem() {
         return stubBuilderOneItem()
             .build();

@@ -1,7 +1,7 @@
 package com.mercadopago.android.px.presenters;
 
 import com.mercadopago.android.px.callbacks.FailureRecovery;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.mvp.MvpPresenter;

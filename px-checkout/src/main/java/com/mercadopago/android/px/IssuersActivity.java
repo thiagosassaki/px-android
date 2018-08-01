@@ -14,15 +14,13 @@ import com.google.gson.reflect.TypeToken;
 import com.mercadopago.android.px.adapters.IssuersAdapter;
 import com.mercadopago.android.px.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.controllers.CheckoutTimer;
-import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.customviews.MPTextView;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.listeners.RecyclerItemClickListener;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PaymentMethod;
-import com.mercadopago.android.px.observers.TimerObserver;
 import com.mercadopago.android.px.presenters.IssuersPresenter;
 import com.mercadopago.android.px.providers.IssuersProviderImpl;
 import com.mercadopago.android.px.services.exceptions.ApiException;
@@ -45,7 +43,7 @@ import java.util.List;
  * Created by vaserber on 10/11/16.
  */
 
-public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersActivityView, TimerObserver {
+public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersActivityView {
 
     protected IssuersPresenter mPresenter;
 
@@ -72,7 +70,7 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
     protected ViewGroup mProgressLayout;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         createPresenter();
         getActivityParameters();
@@ -263,7 +261,6 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
 
     private void showTimer() {
         if (CheckoutTimer.getInstance().isTimerEnabled()) {
-            CheckoutTimer.getInstance().addObserver(this);
             mTimerTextView.setVisibility(View.VISIBLE);
             mTimerTextView.setText(CheckoutTimer.getInstance().getCurrentTime());
         }
@@ -322,17 +319,6 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
                 finish();
             }
         }
-    }
-
-    @Override
-    public void onTimeChanged(String timeToShow) {
-        mTimerTextView.setText(timeToShow);
-    }
-
-    @Override
-    public void onFinish() {
-        setResult(MercadoPagoCheckout.TIMER_FINISHED_RESULT_CODE);
-        finish();
     }
 
     @Override

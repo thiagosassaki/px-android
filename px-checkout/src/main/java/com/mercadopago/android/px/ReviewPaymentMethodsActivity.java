@@ -8,7 +8,7 @@ import android.widget.FrameLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.android.px.adapters.ReviewPaymentMethodsAdapter;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.presenters.ReviewPaymentMethodsPresenter;
 import com.mercadopago.android.px.providers.ReviewPaymentMethodsProviderImpl;

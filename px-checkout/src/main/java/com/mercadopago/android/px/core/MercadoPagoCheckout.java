@@ -11,7 +11,6 @@ import com.mercadopago.android.px.callbacks.CallbackHolder;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
-import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.commission.ChargeRule;
 import com.mercadopago.android.px.plugins.DataInitializationTask;
@@ -34,13 +33,12 @@ import java.util.Map;
 import static com.mercadopago.android.px.plugins.PaymentProcessor.PAYMENT_PROCESSOR_KEY;
 import static com.mercadopago.android.px.util.TextUtils.isEmpty;
 
+@SuppressWarnings("unused")
 public class MercadoPagoCheckout implements Serializable {
 
-    public static final int CHECKOUT_REQUEST_CODE = 5;
-    public static final int PAYMENT_DATA_RESULT_CODE = 6;
     public static final int PAYMENT_RESULT_CODE = 7;
-    public static final int TIMER_FINISHED_RESULT_CODE = 8;
-    public static final int PAYMENT_METHOD_CHANGED_REQUESTED = 9;
+    public static final String EXTRA_PAYMENT_RESULT = "EXTRA_PAYMENT_RESULT";
+    public static final String EXTRA_ERROR = "EXTRA_ERROR";
 
     @NonNull
     private final String publicKey;
@@ -51,14 +49,8 @@ public class MercadoPagoCheckout implements Serializable {
     @NonNull
     private final AdvancedConfiguration advancedConfiguration;
 
-    @Nullable
+    @NonNull
     private final PaymentResultScreenPreference paymentResultScreenPreference;
-
-    @Nullable
-    private final PaymentData paymentData;
-
-    @Nullable
-    private final PaymentResult paymentResult;
 
     @Nullable
     private final String preferenceId;
@@ -68,8 +60,6 @@ public class MercadoPagoCheckout implements Serializable {
 
     @Nullable
     private final Campaign campaign;
-
-    private final boolean binaryMode;
 
     @Nullable
     private final String privateKey;
@@ -84,57 +74,28 @@ public class MercadoPagoCheckout implements Serializable {
         checkoutPreference = builder.checkoutPreference;
         advancedConfiguration = builder.advancedConfiguration;
         paymentResultScreenPreference = builder.paymentResultScreenPreference;
-        binaryMode = builder.binaryMode;
         discount = builder.discount;
         campaign = builder.campaign;
         charges = builder.charges;
-        paymentResult = builder.paymentResult;
-        paymentData = builder.paymentData;
         preferenceId = builder.preferenceId;
         privateKey = builder.privateKey;
         configureCheckoutStore(builder);
-        configureFlowHandler();
-    }
-
-    /**
-     * Deprecated - new implementation involves payment processor.
-     * <p>
-     * Starts checkout experience.
-     * When the flows ends it returns a {@link PaymentData} object to finish the payment.
-     * will be returned on {@link Activity#onActivityResult(int, int, Intent)} if success or
-     * {@link com.mercadopago.android.px.exceptions.MercadoPagoError}
-     * if something went wrong or canceled.
-     *
-     * @param context context needed to start checkout.
-     */
-    @Deprecated
-    @SuppressWarnings("unused")
-    public void startForPaymentData(@NonNull final Context context) {
-        //TODO payment result code should not be hardcoded.
-        startForResult(context, MercadoPagoCheckout.PAYMENT_DATA_RESULT_CODE);
+        FlowHandler.getInstance().generateFlowId();
+        CallbackHolder.getInstance().clean();
     }
 
     /**
      * Starts checkout experience.
      * When the flows ends it returns a {@link PaymentResult} object that
      * will be returned on {@link Activity#onActivityResult(int, int, Intent)} if success or
-     * {@link com.mercadopago.android.px.exceptions.MercadoPagoError}
+     * {@link com.mercadopago.android.px.model.exceptions.MercadoPagoError}
      * <p>
      * will return on {@link Activity#onActivityResult(int, int, Intent)}
      *
      * @param context context needed to start checkout.
      */
-    @SuppressWarnings("unused")
-    public void startForPayment(@NonNull final Context context) {
-        //TODO payment result code should not be hardcoded.
-        startForResult(context, MercadoPagoCheckout.PAYMENT_RESULT_CODE);
-    }
-
-    private void configureFlowHandler() {
-        //Create flow identifier only for new checkouts
-        if (paymentResult == null && paymentData == null) {
-            FlowHandler.getInstance().generateFlowId();
-        }
+    public void startPayment(@NonNull final Context context, final int resCode) {
+        startIntent(context, CheckoutActivity.getIntent(context, this), resCode);
     }
 
     private void configureCheckoutStore(final Builder builder) {
@@ -147,29 +108,19 @@ public class MercadoPagoCheckout implements Serializable {
         store.setDataInitializationTask(builder.dataInitializationTask);
     }
 
-    private void startForResult(@NonNull final Context context, final int resultCode) {
-        CallbackHolder.getInstance().clean();
-        startCheckoutActivity(context, resultCode);
-    }
-
-    private void startCheckoutActivity(@NonNull final Context context, final int resultCode) {
-        startIntent(context, CheckoutActivity.getIntent(context, resultCode, this));
-    }
-
-    private void startIntent(@NonNull final Context context, @NonNull final Intent checkoutIntent) {
-
+    private void startIntent(@NonNull final Context context, @NonNull final Intent checkoutIntent, final int resCode) {
         if (!prefetch) {
             Session.getSession(context).init(this);
         }
 
         if (context instanceof Activity) {
-            ((Activity) context).startActivityForResult(checkoutIntent, MercadoPagoCheckout.CHECKOUT_REQUEST_CODE);
+            ((Activity) context).startActivityForResult(checkoutIntent, resCode);
         } else {
             context.startActivity(checkoutIntent);
         }
     }
 
-    @Nullable
+    @NonNull
     public PaymentResultScreenPreference getPaymentResultScreenPreference() {
         return paymentResultScreenPreference;
     }
@@ -177,10 +128,6 @@ public class MercadoPagoCheckout implements Serializable {
     @NonNull
     public AdvancedConfiguration getAdvancedConfiguration() {
         return advancedConfiguration;
-    }
-
-    public boolean isBinaryMode() {
-        return binaryMode;
     }
 
     @Nullable
@@ -196,16 +143,6 @@ public class MercadoPagoCheckout implements Serializable {
     @NonNull
     public List<ChargeRule> getCharges() {
         return charges;
-    }
-
-    @Nullable
-    public PaymentData getPaymentData() {
-        return paymentData;
-    }
-
-    @Nullable
-    public PaymentResult getPaymentResult() {
-        return paymentResult;
     }
 
     @NonNull
@@ -243,24 +180,25 @@ public class MercadoPagoCheckout implements Serializable {
 
         final List<PaymentMethodPlugin> paymentMethodPluginList = new ArrayList<>();
 
-        Boolean binaryMode = false;
-
         @NonNull
         AdvancedConfiguration advancedConfiguration = new AdvancedConfiguration.Builder().build();
 
         @Nullable
         String privateKey;
 
-        PaymentResultScreenPreference paymentResultScreenPreference;
-        PaymentData paymentData;
-        PaymentResult paymentResult;
+        @NonNull
+        PaymentResultScreenPreference paymentResultScreenPreference =
+            new PaymentResultScreenPreference.Builder().build();
+
+        @NonNull
+        ReviewAndConfirmPreferences reviewAndConfirmPreferences = new ReviewAndConfirmPreferences.Builder().build();
+
         Discount discount;
         Campaign campaign;
         DataInitializationTask dataInitializationTask;
         String regularFontPath;
         String lightFontPath;
         String monoFontPath;
-        ReviewAndConfirmPreferences reviewAndConfirmPreferences;
 
         /**
          * Checkout builder allow you to create a {@link MercadoPagoCheckout}
@@ -272,8 +210,6 @@ public class MercadoPagoCheckout implements Serializable {
             preferenceId = null;
             this.publicKey = publicKey;
             this.checkoutPreference = checkoutPreference;
-            //TODO 21/06/2017 - Hack for credits, should remove payer access token.
-            privateKey = checkoutPreference.getPayer().getAccessToken();
         }
 
         /**
@@ -309,11 +245,7 @@ public class MercadoPagoCheckout implements Serializable {
          * @return builder
          */
         public Builder setPrivateKey(@NonNull final String privateKey) {
-            //TODO 21/06/2017 - Hack for credits, should remove payer access token.
             this.privateKey = privateKey;
-            if (checkoutPreference != null) {
-                checkoutPreference.getPayer().setAccessToken(privateKey);
-            }
             return this;
         }
 
@@ -349,20 +281,6 @@ public class MercadoPagoCheckout implements Serializable {
         }
 
         /**
-         * If enableBinaryMode is called, processed payment can only be APPROVED or REJECTED.
-         * <p>
-         * Non compatible with PaymentProcessor.
-         * <p>
-         * Non compatible with off payments methods
-         *
-         * @return builder
-         */
-        public Builder enableBinaryMode() {
-            binaryMode = true;
-            return this;
-        }
-
-        /**
          * Enable to preset configurations to customize visualization on
          * the Review and Confirm Screen see {@link ReviewAndConfirmPreferences.Builder}
          *
@@ -391,43 +309,8 @@ public class MercadoPagoCheckout implements Serializable {
             return this;
         }
 
-        private boolean hasPaymentDataDiscount() {
-            return paymentData != null && paymentData.getDiscount() != null;
-        }
-
-        private boolean hasPaymentResultDiscount() {
-            return paymentResult != null && paymentResult.getPaymentData() != null &&
-                paymentResult.getPaymentData().getDiscount() != null;
-        }
-
-        private boolean hasTwoDiscountsSet() {
-            return (hasPaymentDataDiscount() || hasPaymentResultDiscount()) && discount != null;
-        }
-
         public MercadoPagoCheckout build() {
-            if (hasTwoDiscountsSet()) {
-                throw new IllegalStateException("payment data discount and discount set");
-            }
             return new MercadoPagoCheckout(this);
-        }
-
-        /**
-         * @deprecated we will not support this mechanism anymore.
-         * It's replaced with {@link PaymentProcessor}
-         */
-        public Builder setPaymentData(final PaymentData paymentData) {
-            this.paymentData = paymentData;
-            return this;
-        }
-
-        /**
-         * @deprecated we will not support this mechanism anymore.
-         * It's replaced with {@link PaymentProcessor}
-         */
-        @Deprecated
-        public Builder setPaymentResult(final PaymentResult paymentResult) {
-            this.paymentResult = paymentResult;
-            return this;
         }
 
         /**

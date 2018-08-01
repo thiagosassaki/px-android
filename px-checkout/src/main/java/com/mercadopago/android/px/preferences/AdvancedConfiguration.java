@@ -10,10 +10,12 @@ public class AdvancedConfiguration implements Serializable {
 
     private final boolean bankDealsEnabled;
     private final boolean escEnabled;
+    private final boolean isBinaryMode;
 
     /* default */ AdvancedConfiguration(final Builder builder) {
         bankDealsEnabled = builder.bankDealsEnabled;
         escEnabled = builder.escEnabled;
+        isBinaryMode = builder.isBinaryMode;
     }
 
     public boolean isBankDealsEnabled() {
@@ -24,10 +26,15 @@ public class AdvancedConfiguration implements Serializable {
         return escEnabled;
     }
 
+    public boolean isBinaryMode() {
+        return isBinaryMode;
+    }
+
     @SuppressWarnings("unused")
     public static class Builder {
         /* default */ boolean bankDealsEnabled = true;
         /* default */ boolean escEnabled = false;
+        /* default */ boolean isBinaryMode = false;
 
         /**
          * Add the possibility to configure Bank's deals behaviour.
@@ -52,6 +59,21 @@ public class AdvancedConfiguration implements Serializable {
          */
         public Builder setEscEnabled(final boolean escEnabled) {
             this.escEnabled = escEnabled;
+            return this;
+        }
+
+        /**
+         * If enableBinaryMode is called, processed payment can only be APPROVED or REJECTED.
+         * Default value is false.
+         * <p>
+         * Non compatible with PaymentProcessor.
+         * <p>
+         * Non compatible with off payments methods
+         *
+         * @return builder
+         */
+        public Builder setBinaryMode(final boolean isBinaryMode) {
+            this.isBinaryMode = isBinaryMode;
             return this;
         }
 

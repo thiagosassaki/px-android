@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by mromar on 11/10/16.
  */
-
+@Deprecated
 public class CheckoutTimer implements Timer {
 
     private CountDownTimer mCountDownTimer;

@@ -80,9 +80,6 @@ public class PaymentSettingService implements PaymentSettingRepository {
         if (checkoutPreference == null) {
             edit.remove(PREF_CHECKOUT_PREF).apply();
         } else {
-            //TODO FIX - ACCESS TOKEN
-            final String privateKey = getPrivateKey();
-            checkoutPreference.getPayer().setAccessToken(privateKey);
             edit.putString(PREF_CHECKOUT_PREF, jsonUtil.toJson(checkoutPreference));
             edit.apply();
         }
@@ -128,9 +125,6 @@ public class PaymentSettingService implements PaymentSettingRepository {
     @Nullable
     @Override
     public String getPrivateKey() {
-        //TODO FIX - ACCESS TOKEN
-        final CheckoutPreference checkoutPreference = getCheckoutPreference();
-        return checkoutPreference == null ? sharedPreferences.getString(PREF_PRIVATE_KEY, null)
-            : checkoutPreference.getPayer().getAccessToken();
+        return sharedPreferences.getString(PREF_PRIVATE_KEY, null);
     }
 }

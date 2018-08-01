@@ -8,9 +8,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import com.google.gson.reflect.TypeToken;
-import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.core.MercadoPagoComponents;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.Card;
@@ -166,10 +165,8 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == MercadoPagoCheckout.TIMER_FINISHED_RESULT_CODE) {
-            resolveTimerObserverResult(resultCode);
-        } else if (requestCode == MercadoPagoComponents.Activities.GUESSING_CARD_REQUEST_CODE) {
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        if (requestCode == MercadoPagoComponents.Activities.GUESSING_CARD_REQUEST_CODE) {
             resolveGuessingCardRequest(resultCode, data);
         } else if (requestCode == MercadoPagoComponents.Activities.ISSUERS_REQUEST_CODE) {
             resolveIssuersRequest(resultCode, data);

@@ -141,4 +141,22 @@ public class Card implements CardInformation {
     public String getSecurityCodeLocation() {
         return securityCode != null ? securityCode.getCardLocation() : CARD_DEFAULT_SECURITY_CODE_LOCATION;
     }
+
+    @Override
+    public String toString() {
+        return "Card{" +
+            "cardHolder=" + cardHolder +
+            ", customerId='" + customerId + '\'' +
+            ", dateCreated=" + dateCreated +
+            ", dateLastUpdated=" + dateLastUpdated +
+            ", expirationMonth=" + expirationMonth +
+            ", expirationYear=" + expirationYear +
+            ", firstSixDigits='" + firstSixDigits + '\'' +
+            ", id='" + id + '\'' +
+            ", issuer=" + issuer +
+            ", lastFourDigits='" + lastFourDigits + '\'' +
+            ", paymentMethod=" + paymentMethod +
+            ", securityCode=" + securityCode +
+            '}';
+    }
 }

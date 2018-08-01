@@ -20,9 +20,8 @@ import com.mercadopago.android.px.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.callbacks.OnCodeDiscountCallback;
 import com.mercadopago.android.px.codediscount.CodeDiscountDialog;
 import com.mercadopago.android.px.controllers.CheckoutTimer;
-import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.customviews.MPTextView;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.di.ConfigurationModule;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
@@ -35,7 +34,6 @@ import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.Site;
-import com.mercadopago.android.px.observers.TimerObserver;
 import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.presenters.InstallmentsPresenter;
 import com.mercadopago.android.px.providers.InstallmentsProviderImpl;
@@ -60,7 +58,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class InstallmentsActivity extends MercadoPagoBaseActivity
-        implements InstallmentsActivityView, CodeDiscountDialog.DiscountListener, TimerObserver {
+        implements InstallmentsActivityView, CodeDiscountDialog.DiscountListener {
 
     protected InstallmentsPresenter presenter;
 
@@ -302,7 +300,6 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
 
     private void showTimer() {
         if (CheckoutTimer.getInstance().isTimerEnabled()) {
-            CheckoutTimer.getInstance().addObserver(this);
             mTimerTextView.setVisibility(View.VISIBLE);
             mTimerTextView.setText(CheckoutTimer.getInstance().getCurrentTime());
         }
@@ -348,17 +345,6 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         if (mActivityActive) {
             ApiUtil.showApiExceptionError(this, apiException, requestOrigin);
         }
-    }
-
-    @Override
-    public void onTimeChanged(String timeToShow) {
-        mTimerTextView.setText(timeToShow);
-    }
-
-    @Override
-    public void onFinish() {
-        setResult(MercadoPagoCheckout.TIMER_FINISHED_RESULT_CODE);
-        finish();
     }
 
     @Override

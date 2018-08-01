@@ -32,10 +32,6 @@ public class CheckoutConfiguration {
         return publicKey;
     }
 
-    public boolean paymentRequired() {
-        return "payment".equals(startFor);
-    }
-
     public boolean paymentDataRequired() {
         return "payment_data".equals(startFor);
     }

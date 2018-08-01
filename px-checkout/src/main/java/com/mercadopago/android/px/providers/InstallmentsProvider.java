@@ -1,6 +1,6 @@
 package com.mercadopago.android.px.providers;
 
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.model.Installment;
 import com.mercadopago.android.px.mvp.ResourcesProvider;
 import com.mercadopago.android.px.mvp.TaggedCallback;

@@ -7,7 +7,7 @@ import com.mercadopago.android.px.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.constants.PaymentMethods;
 import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.core.MercadoPagoComponents;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.hooks.Hook;
 import com.mercadopago.android.px.hooks.HookHelper;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
@@ -30,12 +30,9 @@ import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.providers.PaymentVaultProvider;
 import com.mercadopago.android.px.services.callbacks.Callback;
 import com.mercadopago.android.px.services.exceptions.ApiException;
-import com.mercadopago.android.px.util.MercadoPagoUtil;
 import com.mercadopago.android.px.views.AmountView;
 import com.mercadopago.android.px.views.PaymentVaultView;
-import com.mercadopago.android.px.util.MercadoPagoUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

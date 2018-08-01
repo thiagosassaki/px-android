@@ -9,7 +9,7 @@ import com.mercadopago.android.px.components.NextAction;
 import com.mercadopago.android.px.components.RecoverPaymentAction;
 import com.mercadopago.android.px.components.ResultCodeAction;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.Instruction;
 import com.mercadopago.android.px.model.Instructions;
