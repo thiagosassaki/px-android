@@ -235,18 +235,21 @@
 
     <string name="px_something_went_wrong">Oops! Something went wrong…</string>
     <string name="px_we_apply_the_best_available_discount">Discounts are not cumulative. We apply the best available discount</string>
-    <string name="px_max_coupon_amount">Discount cap %1$s</string>
+    <string name="px_max_coupon_amount">Discount limit: %1$s</string>
     <string name="px_with_max_coupon_amount">With max coupon amount</string>
     <string name="px_total_to_pay">Total to pay</string>
     <string name="px_enter_coupon_code">Enter your discount coupon</string>
     <string name="px_enter_coupon_code_title">Enter your coupon</string>
+    <string name="px_always_on_discount_detail">With each payment to this brand you will consume the discounts until you reach the limit.</string>
+    <string name="px_one_shot_discount_detail">The limit is available for one single payment.</string>
+    <string name="px_discount_detail_end_date">Valid until %s.</string>
 
     <string name="px_interest_label">Does\'t include bank interest</string>
-    <string name="px_discount_dialog_title">My Discount</string>
     <string name="px_excellent">¡Excellent!</string>
     <string name="px_get_your_discount_amount">Now pay your purchase and get\n %1$s discount</string>
     <string name="px_get_your_discount_percent">Now pay your purchase and get %1$s%% discount</string>
     <string name="px_discount_error_check_this_data">Check this data</string>
+    <string name="px_error_something_went_wrong_try_again">Something went wrong, try again.</string>
 
     <!-- Unlock Card -->
     <string name="px_text_unlock_card_start">Remember to</string>
@@ -258,7 +261,6 @@
     <string name="px_error_message_detail_multiple_installments">Multiple installments found for an issuer at InstallmentsActivity</string>
     <string name="px_error_message_detail_issuers">No issuers found at IssuersActivity</string>
     <string name="px_error_message_detail_no_payment_method_list">No payment method list found at ReviewPaymentMethodsActivity</string>
-
 
     <!-- Boleto -->
     <string name="px_fill_your_data">Enter your data…</string>

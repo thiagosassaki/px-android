@@ -19,5 +19,5 @@ public interface DiscountService {
         @Query("coupon_code") String couponCode);
 
     @GET("/campaigns/check_availability")
-    MPCall<List<Campaign>> getCampaigns(@Query("public_key") String publicKey);
+    MPCall<List<Campaign>> getCampaigns(@Query("public_key") String publicKey, @Query("email") String payerEmail);
 }

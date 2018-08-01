@@ -64,4 +64,8 @@ public interface PaymentVaultView extends MvpView {
     void showDetailDialog(@NonNull final Discount discount, @NonNull final Campaign campaign);
 
     void showDiscountInputDialog();
+
+    void onSuccessCodeDiscountCallback(final Discount discount);
+
+    void onFailureCodeDiscountCallback();
 }

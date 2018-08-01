@@ -4,14 +4,16 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.mercadolibre.android.ui.widgets.MeliButton;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.components.CompactComponent;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.util.textformatter.TextFormatter;
+
 import javax.annotation.Nonnull;
 
-class CongratsCodeDiscount extends CompactComponent<CongratsCodeDiscount.Props, CodeDiscountDialog.Actions> {
+class CongratsCodeDiscount extends CompactComponent<CongratsCodeDiscount.Props, Void> {
 
     /* default */ static class Props {
 
@@ -23,8 +25,16 @@ class CongratsCodeDiscount extends CompactComponent<CongratsCodeDiscount.Props, 
         }
     }
 
-    /* default */ CongratsCodeDiscount(@NonNull final Props props, @NonNull final CodeDiscountDialog.Actions actions) {
-        super(props, actions);
+    @NonNull
+    public final Action action;
+
+    /* default */ CongratsCodeDiscount(@NonNull final Props props, @NonNull final Action action) {
+        super(props);
+        this.action = action;
+    }
+
+    public interface Action {
+        void onButtonClicked();
     }
 
     @Override
@@ -45,14 +55,14 @@ class CongratsCodeDiscount extends CompactComponent<CongratsCodeDiscount.Props, 
         final TextView subtitle = mainContainer.findViewById(R.id.subtitle);
         if (props.discount.hasPercentOff()) {
             subtitle.setText(subtitle.getContext()
-                .getString(R.string.px_get_your_discount_percent, props.discount.getPercentOff()));
+                    .getString(R.string.px_get_your_discount_percent, props.discount.getPercentOff()));
         } else {
             TextFormatter.withCurrencyId(props.discount.getCurrencyId())
-                .withSpace()
-                .amount(props.discount.getAmountOff())
-                .normalDecimals()
-                .into(subtitle)
-                .holder(R.string.px_get_your_discount_amount);
+                    .withSpace()
+                    .amount(props.discount.getAmountOff())
+                    .normalDecimals()
+                    .into(subtitle)
+                    .holder(R.string.px_get_your_discount_amount);
         }
     }
 
@@ -62,9 +72,7 @@ class CongratsCodeDiscount extends CompactComponent<CongratsCodeDiscount.Props, 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                if (getActions() != null) {
-                    getActions().closeDialog();
-                }
+                action.onButtonClicked();
             }
         });
     }

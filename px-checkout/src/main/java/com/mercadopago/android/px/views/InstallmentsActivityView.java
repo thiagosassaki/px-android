@@ -36,4 +36,8 @@ public interface InstallmentsActivityView extends MvpView {
     void showAmount(@NonNull final DiscountRepository discountRepository,
         @NonNull final BigDecimal itemsPlusCharges,
         @NonNull final Site site);
+
+    void onSuccessCodeDiscountCallback(Discount discount);
+
+    void onFailureCodeDiscountCallback();
 }

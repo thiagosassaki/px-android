@@ -6,9 +6,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.mercadolibre.android.ui.widgets.MeliDialog;
 import com.mercadopago.android.px.R;
-import com.mercadopago.android.px.components.DetailDirectDiscount;
+import com.mercadopago.android.px.components.DiscountDetailContainer;
+import com.mercadopago.android.px.components.DiscountDetailContainer.Props.DialogTitleType;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
 
@@ -19,8 +21,8 @@ public class DiscountDetailDialog extends MeliDialog {
     private static final String ARG_CAMPAIGN = "arg_campaign";
 
     public static void showDialog(@NonNull final Discount discount,
-        @NonNull final Campaign campaign,
-        final FragmentManager supportFragmentManager) {
+                                  @NonNull final Campaign campaign,
+                                  final FragmentManager supportFragmentManager) {
         DiscountDetailDialog discountDetailDialog = new DiscountDetailDialog();
         Bundle bundle = new Bundle();
         bundle.putParcelable(ARG_DISCOUNT, discount);
@@ -38,9 +40,8 @@ public class DiscountDetailDialog extends MeliDialog {
             final Discount discount = args.getParcelable(ARG_DISCOUNT);
             final Campaign campaign = args.getParcelable(ARG_CAMPAIGN);
             final ViewGroup container = view.findViewById(R.id.main_container);
-            final View discountDetail = new DetailDirectDiscount(new DetailDirectDiscount.Props(discount, campaign))
-                .render(container);
-            container.addView(discountDetail);
+            final DiscountDetailContainer discountDetailContainer = new DiscountDetailContainer(new DiscountDetailContainer.Props(DialogTitleType.BIG, discount, campaign));
+            discountDetailContainer.render(container);
         } else {
             dismiss();
         }
@@ -49,12 +50,6 @@ public class DiscountDetailDialog extends MeliDialog {
     @Override
     public int getContentView() {
         return R.layout.px_dialog_detail_discount;
-    }
-
-    @Nullable
-    @Override
-    public String getTitle() {
-        return getContext().getString(R.string.px_discount_dialog_title);
     }
 
     @Nullable

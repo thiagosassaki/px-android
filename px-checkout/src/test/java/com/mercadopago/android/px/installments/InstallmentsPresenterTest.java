@@ -530,6 +530,16 @@ public class InstallmentsPresenterTest {
             // do nothing
         }
 
+        @Override
+        public void onSuccessCodeDiscountCallback(Discount discount) {
+            // do nothing
+        }
+
+        @Override
+        public void onFailureCodeDiscountCallback() {
+            // do nothing
+        }
+
         private void simulateInstallmentSelection(int index) {
             installmentSelectionCallback.onSelected(index);
         }

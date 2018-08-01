@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.MercadoPagoComponents;
 import com.mercadopago.android.px.internal.datasource.PluginService;
@@ -67,6 +68,13 @@ public class OneTapFragment extends Fragment implements OneTap.View {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        final OneTapModel model = (OneTapModel) getArguments().getSerializable(ARG_ONE_TAP_MODEL);
+        configureView(getView(), presenter, model);
+    }
+
+    @Override
     public void onAttach(final Context context) {
         super.onAttach(context);
         if (context instanceof CallBack) {
@@ -83,8 +91,8 @@ public class OneTapFragment extends Fragment implements OneTap.View {
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater,
-        @Nullable final ViewGroup container,
-        @Nullable final Bundle savedInstanceState) {
+                             @Nullable final ViewGroup container,
+                             @Nullable final Bundle savedInstanceState) {
         return inflater.inflate(R.layout.px_onetap_fragment, container, false);
     }
 
@@ -106,7 +114,7 @@ public class OneTapFragment extends Fragment implements OneTap.View {
     private void trackScreen(final OneTapModel model) {
         if (getActivity() != null) {
             Tracker.trackOneTapScreen(getActivity().getApplicationContext(), model.getPublicKey(),
-                model.getPaymentMethods().getOneTapMetadata(), amountToPay);
+                    model.getPaymentMethods().getOneTapMetadata(), amountToPay);
         }
     }
 
@@ -117,10 +125,10 @@ public class OneTapFragment extends Fragment implements OneTap.View {
         }
     }
 
-    private void configureView(final View view, final OneTap.Actions actions,
-        final OneTapModel model) {
+    private void configureView(final View view, final OneTap.Actions actions, final OneTapModel model) {
         final ViewGroup container = view.findViewById(R.id.main_container);
         final Toolbar toolbar = view.findViewById(R.id.toolbar);
+        container.removeAllViews();
         configureToolbar(toolbar);
         new OneTapContainer(model, actions).render(container);
     }
@@ -187,7 +195,7 @@ public class OneTapFragment extends Fragment implements OneTap.View {
     public void trackConfirm(final OneTapModel model) {
         if (getActivity() != null) {
             Tracker.trackOneTapConfirm(getActivity().getApplicationContext(), model.getPublicKey(),
-                model.getPaymentMethods().getOneTapMetadata(), amountToPay);
+                    model.getPaymentMethods().getOneTapMetadata(), amountToPay);
         }
     }
 
@@ -202,8 +210,8 @@ public class OneTapFragment extends Fragment implements OneTap.View {
     public void trackModal(final OneTapModel model) {
         if (getActivity() != null) {
             Tracker
-                .trackOneTapSummaryDetail(getActivity().getApplicationContext(), model.getPublicKey(), hasDiscount,
-                    model.getPaymentMethods().getOneTapMetadata().getCard());
+                    .trackOneTapSummaryDetail(getActivity().getApplicationContext(), model.getPublicKey(), hasDiscount,
+                            model.getPaymentMethods().getOneTapMetadata().getCard());
         }
     }
 

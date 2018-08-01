@@ -48,7 +48,7 @@ public class BusinessPaymentModel implements Parcelable {
             totalAmountProps);
     }
 
-    protected BusinessPaymentModel(Parcel in) {
+    protected BusinessPaymentModel(final Parcel in) {
         payment = in.readParcelable(BusinessPayment.class.getClassLoader());
         discount = in.readParcelable(Discount.class.getClassLoader());
         paymentMethod = in.readParcelable(PaymentMethod.class.getClassLoader());

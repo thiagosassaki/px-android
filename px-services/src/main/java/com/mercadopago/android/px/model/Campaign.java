@@ -4,10 +4,14 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
 import com.google.gson.annotations.SerializedName;
 import com.mercadopago.android.px.services.util.ParcelableUtil;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 public class Campaign implements Serializable, Parcelable {
@@ -17,6 +21,8 @@ public class Campaign implements Serializable, Parcelable {
     private final BigDecimal maxCouponAmount;
     @SerializedName("max_redeem_per_user")
     private final int maxRedeemPerUser;
+    @SerializedName("end_date")
+    private final Date endDate;
 
     private static final String CODE_TYPE_SINGLE = "single";
     private static final String CODE_TYPE_MULTIPLE = "multiple";
@@ -27,6 +33,7 @@ public class Campaign implements Serializable, Parcelable {
         maxCouponAmount = builder.maxCouponAmount;
         codeType = builder.codeType;
         maxRedeemPerUser = builder.maxRedeemPerUser;
+        endDate = builder.endDate;
     }
 
     @SuppressWarnings("unused")
@@ -44,8 +51,21 @@ public class Campaign implements Serializable, Parcelable {
         return codeType;
     }
 
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public String getPrettyEndDate() {
+        return DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault())
+                .format(endDate);
+    }
+
     public boolean hasMaxCouponAmount() {
         return maxCouponAmount != null && BigDecimal.ZERO.compareTo(maxCouponAmount) < 0;
+    }
+
+    public boolean hasEndDate() {
+        return endDate != null;
     }
 
     public boolean isSingleCodeDiscountCampaign() {
@@ -60,12 +80,12 @@ public class Campaign implements Serializable, Parcelable {
         return CODE_TYPE_NONE.contains(codeType);
     }
 
-    public int getMaxRedeemPerUser() {
-        return maxRedeemPerUser;
-    }
-
     public boolean isOneShotDiscount() {
         return maxRedeemPerUser == 1;
+    }
+
+    public boolean isAlwaysOnDiscount() {
+        return maxRedeemPerUser > 1;
     }
 
     /* default */ Campaign(final Parcel in) {
@@ -73,6 +93,7 @@ public class Campaign implements Serializable, Parcelable {
         maxCouponAmount = ParcelableUtil.getOptionalBigDecimal(in);
         codeType = in.readString();
         maxRedeemPerUser = in.readInt();
+        endDate = new Date(in.readLong());
     }
 
     public static final Creator<Campaign> CREATOR = new Creator<Campaign>() {
@@ -98,11 +119,12 @@ public class Campaign implements Serializable, Parcelable {
         ParcelableUtil.writeOptional(dest, maxCouponAmount);
         dest.writeString(codeType);
         dest.writeInt(maxRedeemPerUser);
+        dest.writeLong(endDate.getTime());
     }
 
     public String getCampaignTermsUrl() {
         return String
-            .format(Locale.US, "https://api.mercadolibre.com/campaigns/%s/terms_and_conditions?format_type=html", id);
+                .format(Locale.US, "https://api.mercadolibre.com/campaigns/%s/terms_and_conditions?format_type=html", id);
     }
 
     @SuppressWarnings("unused")
@@ -113,6 +135,7 @@ public class Campaign implements Serializable, Parcelable {
         /* default */ BigDecimal maxCouponAmount = BigDecimal.ZERO;
         /* default */ String codeType;
         /* default */ int maxRedeemPerUser = 1;
+        /* default */ Date endDate;
 
         /**
          * Builder for campaign construction
@@ -155,6 +178,17 @@ public class Campaign implements Serializable, Parcelable {
          */
         public Builder setMaxRedeemPerUser(final int maxRedeemPerUser) {
             this.maxRedeemPerUser = maxRedeemPerUser;
+            return this;
+        }
+
+        /**
+         * This value represents discount campaign's end date (expiry date).
+         *
+         * @param endDate for discount campaign.
+         * @return builder.
+         */
+        public Builder setEndDate(final Date endDate) {
+            this.endDate = endDate;
             return this;
         }
 

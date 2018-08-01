@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -12,10 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.android.px.adapters.PayerCostsAdapter;
-import com.mercadopago.android.px.callbacks.OnDiscountRetrieved;
 import com.mercadopago.android.px.callbacks.OnSelectedCallback;
+import com.mercadopago.android.px.callbacks.OnCodeDiscountCallback;
 import com.mercadopago.android.px.codediscount.CodeDiscountDialog;
 import com.mercadopago.android.px.controllers.CheckoutTimer;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
@@ -58,7 +60,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class InstallmentsActivity extends MercadoPagoBaseActivity
-    implements InstallmentsActivityView, OnDiscountRetrieved, TimerObserver {
+        implements InstallmentsActivityView, CodeDiscountDialog.DiscountListener, TimerObserver {
 
     protected InstallmentsPresenter presenter;
 
@@ -89,6 +91,7 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
 
     private AmountView amountView;
     private PaymentSettingRepository configuration;
+    private OnCodeDiscountCallback onCodeDiscountCallback;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -118,7 +121,7 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         final Intent intent = getIntent();
 
         final PaymentMethod paymentMethod =
-            JsonUtil.getInstance().fromJson(intent.getStringExtra("paymentMethod"), PaymentMethod.class);
+                JsonUtil.getInstance().fromJson(intent.getStringExtra("paymentMethod"), PaymentMethod.class);
 
         presenter.setPaymentMethod(paymentMethod);
         presenter.setIssuer(JsonUtil.getInstance().fromJson(intent.getStringExtra("issuer"), Issuer.class));
@@ -181,7 +184,7 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
 
         if (CheckoutTimer.getInstance().isTimerEnabled()) {
             Toolbar.LayoutParams marginParams =
-                new Toolbar.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    new Toolbar.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             marginParams.setMargins(0, 0, 0, 6);
             mLowResTitleToolbar.setLayoutParams(marginParams);
             mLowResTitleToolbar.setTextSize(19);
@@ -212,11 +215,11 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
             .build();
 
         ScreenViewEvent event = new ScreenViewEvent.Builder()
-            .setFlowId(FlowHandler.getInstance().getFlowId())
-            .setScreenId(TrackingUtil.SCREEN_ID_INSTALLMENTS)
-            .setScreenName(TrackingUtil.SCREEN_NAME_CARD_FORM_INSTALLMENTS)
-            .addProperty(TrackingUtil.PROPERTY_PAYMENT_METHOD_ID, presenter.getPaymentMethod().getId())
-            .build();
+                .setFlowId(FlowHandler.getInstance().getFlowId())
+                .setScreenId(TrackingUtil.SCREEN_ID_INSTALLMENTS)
+                .setScreenName(TrackingUtil.SCREEN_NAME_CARD_FORM_INSTALLMENTS)
+                .addProperty(TrackingUtil.PROPERTY_PAYMENT_METHOD_ID, presenter.getPaymentMethod().getId())
+                .build();
 
         mTrackingContext.trackEvent(event);
     }
@@ -324,12 +327,12 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         view.setAdapter(adapter);
         view.setLayoutManager(new LinearLayoutManager(this));
         view.addOnItemTouchListener(new RecyclerItemClickListener(this,
-            new RecyclerItemClickListener.OnItemClickListener() {
-                @Override
-                public void onItemClick(View view, int position) {
-                    presenter.onItemSelected(position);
-                }
-            }));
+                new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        presenter.onItemSelected(position);
+                    }
+                }));
     }
 
     @Override
@@ -423,7 +426,7 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
 
     @Override
     public void showAmount(@NonNull final DiscountRepository discountRepository,
-        @NonNull final BigDecimal itemsPlusCharges, @NonNull final Site site) {
+                           @NonNull final BigDecimal itemsPlusCharges, @NonNull final Site site) {
         amountView.setOnClickListener(presenter);
         amountView.show(discountRepository, itemsPlusCharges, site);
     }
@@ -439,7 +442,28 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
     }
 
     @Override
-    public void onDiscountRetrieved() {
-        //TODO actualizar cuotas
+    public void onDiscountRetrieved(final OnCodeDiscountCallback onCodeDiscountCallback) {
+        this.onCodeDiscountCallback = onCodeDiscountCallback;
+        presenter.onDiscountRetrieved();
+    }
+
+    @Override
+    public void onSuccessCodeDiscountCallback(final Discount discount) {
+        if (isCodeDiscountDialogActive()) {
+            onCodeDiscountCallback.onSuccess(discount);
+        }
+    }
+
+    @Override
+    public void onFailureCodeDiscountCallback() {
+        if (isCodeDiscountDialogActive()) {
+            onCodeDiscountCallback.onFailure();
+            presenter.initializeAmountRow();
+        }
+    }
+
+    private boolean isCodeDiscountDialogActive() {
+        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(CodeDiscountDialog.class.getName());
+        return fragment != null && fragment.isVisible() && onCodeDiscountCallback != null;
     }
 }

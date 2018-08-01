@@ -5,7 +5,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import java.math.BigDecimal;
 
-public class ParcelableUtil {
+public final class ParcelableUtil {
+
+    private ParcelableUtil() {
+    }
 
     @Nullable
     public static BigDecimal getOptionalBigDecimal(final Parcel in) {
@@ -30,11 +33,20 @@ public class ParcelableUtil {
         }
     }
 
+    @Nullable
+    public static String getOptionalString(final Parcel in) {
+        if (in.readByte() == 0) {
+            return null;
+        } else {
+            return in.readString();
+        }
+    }
+
     public static void write(final Parcel dest, final BigDecimal number) {
         dest.writeString(number.toString());
     }
 
-    public static void writeOptional(final Parcel dest, final BigDecimal number) {
+    public static void writeOptional(final Parcel dest, @Nullable final BigDecimal number) {
         if (number == null) {
             dest.writeByte((byte) 0);
         } else {
@@ -43,7 +55,16 @@ public class ParcelableUtil {
         }
     }
 
-    public static void writeOptional(final Parcel dest, final Integer number) {
+    public static void writeOptional(final Parcel dest, @Nullable final String string) {
+        if (string == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeString(string);
+        }
+    }
+
+    public static void writeOptional(final Parcel dest, @Nullable final Integer number) {
         if (number == null) {
             dest.writeByte((byte) 0);
         } else {

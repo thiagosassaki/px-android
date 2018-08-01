@@ -12,6 +12,7 @@ public class PaymentData implements Serializable {
     private Token token;
     private Discount discount;
     private Payer payer;
+    private String couponCode;
 
     public PaymentMethod getPaymentMethod() {
         return paymentMethod;
@@ -59,6 +60,14 @@ public class PaymentData implements Serializable {
 
     public void setPayer(Payer payer) {
         this.payer = payer;
+    }
+
+    public void setCouponCode(String couponCode) {
+        this.couponCode = couponCode;
+    }
+
+    public String getCouponCode() {
+        return couponCode;
     }
 
     public BigDecimal getTransactionAmount() {

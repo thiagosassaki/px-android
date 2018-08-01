@@ -742,6 +742,16 @@ public class PaymentVaultPresenterTest {
             //Do nothing
         }
 
+        @Override
+        public void onSuccessCodeDiscountCallback(Discount discount) {
+            //Do nothing
+        }
+
+        @Override
+        public void onFailureCodeDiscountCallback() {
+            //Do nothing
+        }
+
         private void simulateItemSelection(int index) {
             itemSelectionCallback.onSelected(searchItemsShown.get(index));
         }

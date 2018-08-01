@@ -222,17 +222,20 @@
     <string name="px_campaign_expired">Campanha expirado</string>
     <string name="px_something_went_wrong">Ops! Algo deu errado…</string>
     <string name="px_we_apply_the_best_available_discount">Os descontos não são acumulativos. Aplicamos o mais alto para este pagamento.</string>
-    <string name="px_max_coupon_amount">Limite de desconto %1$s</string>
+    <string name="px_max_coupon_amount">Limite de descontos: %1$s</string>
     <string name="px_total_to_pay">Total a pagar</string>
     <string name="px_enter_coupon_code">Digite seu cupom de desconto</string>
     <string name="px_enter_coupon_code_title">Adicione o seu cupom</string>
     <string name="px_with_max_coupon_amount">Com limite de desconto</string>
     <string name="px_interest_label">Não inclui juros bancários</string>
-    <string name="px_discount_dialog_title">Meu desconto</string>
     <string name="px_excellent">¡Excelente!</string>
     <string name="px_get_your_discount_amount">Agora pague sua compra e ganhe\n %1$s de desconto</string>
     <string name="px_get_your_discount_percent">Agora pague sua compra e ganhe %1$s%% de desconto</string>
     <string name="px_discount_error_check_this_data">Verificar esses dados</string>
+    <string name="px_error_something_went_wrong_try_again">Algo saiu errado, tente novamente.</string>
+    <string name="px_always_on_discount_detail">A cada pagamento para esta marca, você terá descontos até atingir o limite.</string>
+    <string name="px_one_shot_discount_detail">Limite disponível para consumo em um único pagamento.</string>
+    <string name="px_discount_detail_end_date">Válido até %s.</string>
 
     <!-- Unlock Card -->
     <string name="px_text_unlock_card_start">Lembre-se de</string>
