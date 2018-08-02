@@ -6,8 +6,9 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import java.io.Serializable;
 
-public class ExternalFragment implements Parcelable {
+public class ExternalFragment implements Parcelable, Serializable {
 
     @NonNull
     public final String zClassName;

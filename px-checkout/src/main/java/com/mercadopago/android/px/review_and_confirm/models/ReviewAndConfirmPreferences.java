@@ -5,15 +5,15 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import com.mercadopago.android.px.components.CustomComponent;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.ExternalFragment;
 import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class ReviewAndConfirmPreferences {
+public class ReviewAndConfirmPreferences implements Serializable {
 
     @Nullable
     private final ExternalFragment topFragment;
@@ -26,10 +26,6 @@ public class ReviewAndConfirmPreferences {
     private final String disclaimerText;
 
     // region deprecated
-    @Deprecated
-    private final CustomComponent topComponent;
-    @Deprecated
-    private final CustomComponent bottomComponent;
     @Deprecated
     @DrawableRes
     @Nullable private final Integer collectorIcon;
@@ -61,7 +57,6 @@ public class ReviewAndConfirmPreferences {
         bottomFragment = builder.bottomFragment;
         disclaimerText = builder.disclaimerText;
 
-        topComponent = builder.topView;
         collectorIcon = builder.collectorIcon;
         quantityLabel = builder.quantityLabel;
         unitPriceLabel = builder.unitPriceLabel;
@@ -71,7 +66,6 @@ public class ReviewAndConfirmPreferences {
         taxesAmount = builder.taxesAmount;
         discountAmount = builder.discountAmount;
         productTitle = builder.productTitle;
-        bottomComponent = builder.bottomView;
         disclaimerTextColor = builder.disclaimerTextColor;
         totalAmount = calculateTotalAmount();
     }
@@ -110,16 +104,6 @@ public class ReviewAndConfirmPreferences {
             || taxesAmount != null && taxesAmount.compareTo(BigDecimal.ZERO) > 0
             || discountAmount != null && discountAmount.compareTo(BigDecimal.ZERO) > 0
             || productAmount != null && productAmount.compareTo(BigDecimal.ZERO) > 0;
-    }
-
-    @Deprecated
-    public CustomComponent getTopComponent() {
-        return topComponent;
-    }
-
-    @Deprecated
-    public CustomComponent getBottomComponent() {
-        return bottomComponent;
     }
 
     @DrawableRes
@@ -226,10 +210,6 @@ public class ReviewAndConfirmPreferences {
         Integer collectorIcon;
         @Deprecated
         String quantityLabel;
-        @Deprecated
-        CustomComponent topView;
-        @Deprecated
-        CustomComponent bottomView;
         @Deprecated
         String unitPriceLabel;
         @Deprecated
@@ -414,34 +394,6 @@ public class ReviewAndConfirmPreferences {
         @Deprecated
         public Builder setDisclaimerTextColor(final String disclaimerTextColor) {
             this.disclaimerTextColor = disclaimerTextColor;
-            return this;
-        }
-
-        /**
-         * Custom view that will appear before payment method description
-         * inside Review and confirm screen
-         *
-         * @param topComponent the top component that renders the top view
-         * @return builder
-         * @deprecated As of release 4.0.0-beta-35.0.0, replaced by {@link #setTopFragment(Class, Bundle)}
-         */
-        @Deprecated
-        public Builder setTopComponent(final CustomComponent topComponent) {
-            topView = topComponent;
-            return this;
-        }
-
-        /**
-         * Custom view that will appear after payment method description
-         * inside Review and confirm screen
-         *
-         * @param bottomComponent the top bottom component that renders bottom view
-         * @return builder
-         * @deprecated As of release 4.0.0-beta-35.0.0, replaced by {@link #setBottomFragment(Class, Bundle)}
-         */
-        @Deprecated
-        public Builder setBottomComponent(final CustomComponent bottomComponent) {
-            bottomView = bottomComponent;
             return this;
         }
 

@@ -154,7 +154,7 @@ public class BodyTest {
         final Body body = new Body(getBodyPropsForOnPayment(paymentResult),
             dispatcher, paymentResultProvider);
 
-        Assert.assertTrue(body.hasReceipt());
+        Assert.assertTrue(body.hasReceipt(context));
     }
 
     @Test

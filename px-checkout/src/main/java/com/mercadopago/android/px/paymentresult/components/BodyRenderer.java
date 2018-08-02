@@ -25,7 +25,7 @@ public class BodyRenderer extends Renderer<Body> {
             RendererFactory.create(context, component.getBodyErrorComponent()).render(bodyViewGroup);
         } else {
 
-            if (component.hasReceipt()) {
+            if (component.hasReceipt(context)) {
                 RendererFactory.create(context, component.getReceiptComponent()).render(bodyViewGroup);
             }
 

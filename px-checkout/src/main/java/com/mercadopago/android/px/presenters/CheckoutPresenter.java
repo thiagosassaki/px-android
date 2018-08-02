@@ -32,6 +32,7 @@ import com.mercadopago.android.px.mvp.TaggedCallback;
 import com.mercadopago.android.px.plugins.DataInitializationTask;
 import com.mercadopago.android.px.plugins.model.BusinessPayment;
 import com.mercadopago.android.px.plugins.model.BusinessPaymentModel;
+import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentResultScreenPreference;
 import com.mercadopago.android.px.providers.CheckoutProvider;
@@ -67,6 +68,9 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     @NonNull
     private final UserSelectionRepository userSelectionRepository;
 
+    @NonNull
+    private final AdvancedConfiguration advancedConfiguration;
+
     private transient FailureRecovery failureRecovery;
 
     private DataInitializationTask dataInitializationTask; //instance saved as attribute to cancel and avoid crash
@@ -82,6 +86,7 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
         this.userSelectionRepository = userSelectionRepository;
         this.discountRepository = discountRepository;
         this.groupsRepository = groupsRepository;
+        advancedConfiguration = paymentConfiguration.getAdvancedConfiguration();
         state = persistentData;
     }
 
@@ -122,17 +127,18 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     }
 
     private void fetchImages() {
-        final PaymentResultScreenPreference resultPref =
-                state.paymentResultScreenPreference;
-        if (resultPref != null && getView() != null) {
-            if (!TextUtils.isEmpty(resultPref.getApprovedUrlIcon())) {
-                getView().fetchImageFromUrl(resultPref.getApprovedUrlIcon());
+        //TODO move this mechanism
+        final PaymentResultScreenPreference resultPreference =
+            advancedConfiguration.getPaymentResultScreenPreference();
+        if (isViewAttached()) {
+            if (!TextUtils.isEmpty(resultPreference.getApprovedUrlIcon())) {
+                getView().fetchImageFromUrl(resultPreference.getApprovedUrlIcon());
             }
-            if (!TextUtils.isEmpty(resultPref.getRejectedUrlIcon())) {
-                getView().fetchImageFromUrl(resultPref.getRejectedUrlIcon());
+            if (!TextUtils.isEmpty(resultPreference.getRejectedUrlIcon())) {
+                getView().fetchImageFromUrl(resultPreference.getRejectedUrlIcon());
             }
-            if (!TextUtils.isEmpty(resultPref.getPendingUrlIcon())) {
-                getView().fetchImageFromUrl(resultPref.getPendingUrlIcon());
+            if (!TextUtils.isEmpty(resultPreference.getPendingUrlIcon())) {
+                getView().fetchImageFromUrl(resultPreference.getPendingUrlIcon());
             }
         }
     }
@@ -207,8 +213,7 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
 
         if (state.isOneTap) {
             getView().hideProgress();
-            getView().showOneTap(OneTapModel.from(paymentMethodSearch, paymentConfiguration,
-                    CheckoutStore.getInstance().getReviewAndConfirmPreferences()));
+            getView().showOneTap(OneTapModel.from(paymentMethodSearch, paymentConfiguration));
         } else {
             getView().showPaymentMethodSelection();
         }
@@ -306,7 +311,7 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
             getResourcesProvider().createPayment(transactionId,
                 getCheckoutPreference(),
                 paymentData,
-                paymentConfiguration.getAdvancedConfiguration().isBinaryMode(),
+                advancedConfiguration.isBinaryMode(),
                 null, //TODO ver.
                 new TaggedCallback<Payment>(ApiUtil.RequestOrigin.CREATE_PAYMENT) {
                     @Override
@@ -637,10 +642,6 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
 
     public Payment getCreatedPayment() {
         return state.createdPayment;
-    }
-
-    public PaymentResultScreenPreference getPaymentResultScreenPreference() {
-        return state.paymentResultScreenPreference;
     }
 
     public CheckoutPreference getCheckoutPreference() {

@@ -1,7 +1,6 @@
 package com.mercadopago.android.px.paymentresult.props;
 
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.model.Instruction;
 import com.mercadopago.android.px.model.PaymentData;
 import java.math.BigDecimal;
@@ -41,11 +40,6 @@ public class PaymentResultBodyProps {
             .setDisclaimer(disclaimer)
             .setProcessingMode(processingMode)
             .setPaymentId(paymentId);
-    }
-
-    public boolean isReceiptEnabled() {
-        return CheckoutStore.getInstance().getPaymentResultScreenPreference() == null ||
-            CheckoutStore.getInstance().getPaymentResultScreenPreference().isApprovedReceiptEnabled();
     }
 
     public static class Builder {

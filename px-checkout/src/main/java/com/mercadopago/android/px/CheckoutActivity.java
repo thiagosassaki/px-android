@@ -4,13 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-
 import com.mercadopago.android.px.core.CheckoutStore;
-import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.core.MercadoPagoComponents;
-import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.hooks.Hook;
 import com.mercadopago.android.px.hooks.HookActivity;
 import com.mercadopago.android.px.internal.di.ConfigurationModule;
@@ -24,6 +19,7 @@ import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.Token;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.onetap.OneTapFragment;
 import com.mercadopago.android.px.plugins.BusinessPaymentResultActivity;
 import com.mercadopago.android.px.plugins.PaymentProcessorPluginActivity;
@@ -72,7 +68,6 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
     private static final String EXTRA_CARD = "card";
     private static final String EXTRA_PAYER = "payer";
 
-    private static final String EXTRA_CHECKOUT_CONFIGURATION = "extra_mercadopago_checkout";
     private static final String EXTRA_PERSISTENT_DATA = "extra_persistent_data";
     private static final String EXTRA_PRIVATE_KEY = "extra_private_key";
     private static final String EXTRA_PUBLIC_KEY = "extra_public_key";
@@ -82,10 +77,8 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
     private String privateKey;
     private Intent customDataBundle;
 
-    public static Intent getIntent(@NonNull final Context context,
-        @NonNull final MercadoPagoCheckout mercadoPagoCheckout) {
+    public static Intent getIntent(@NonNull final Context context) {
         final Intent checkoutIntent = new Intent(context, CheckoutActivity.class);
-        checkoutIntent.putExtra(EXTRA_CHECKOUT_CONFIGURATION, mercadoPagoCheckout);
         return checkoutIntent;
     }
 
@@ -138,21 +131,18 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
     }
 
     protected CheckoutPresenter getActivityParameters() {
-        final Intent intent = getIntent();
-        final MercadoPagoCheckout mercadoPagoCheckout =
-                (MercadoPagoCheckout) intent.getSerializableExtra(EXTRA_CHECKOUT_CONFIGURATION);
 
         final Session session = Session.getSession(this);
         final ConfigurationModule configurationModule = session.getConfigurationModule();
         final PaymentSettingRepository configuration = configurationModule.getPaymentSettings();
 
-
-        privateKey =  mercadoPagoCheckout.getPrivateKey();
+        privateKey = configuration.getPrivateKey();
 
         final CheckoutStateModel
-            persistentData = new CheckoutStateModel(mercadoPagoCheckout);
+            persistentData = new CheckoutStateModel();
 
-        merchantPublicKey = mercadoPagoCheckout.getMerchantPublicKey();
+        merchantPublicKey = configuration.getPublicKey();
+
         return new CheckoutPresenter(persistentData, configuration, session.getAmountRepository(),
                 configurationModule.getUserSelectionRepository(),
                 session.getDiscountRepository(),

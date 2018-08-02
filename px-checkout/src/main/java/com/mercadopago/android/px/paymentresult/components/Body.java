@@ -1,5 +1,6 @@
 package com.mercadopago.android.px.paymentresult.components;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.components.ActionDispatcher;
 import com.mercadopago.android.px.components.Component;
@@ -7,6 +8,7 @@ import com.mercadopago.android.px.components.PaymentMethodComponent;
 import com.mercadopago.android.px.components.Receipt;
 import com.mercadopago.android.px.components.TotalAmount;
 import com.mercadopago.android.px.core.CheckoutStore;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.model.ExternalFragment;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentTypes;
@@ -118,9 +120,11 @@ public class Body extends Component<PaymentResultBodyProps, Void> {
         return new BodyError(bodyErrorProps, getDispatcher(), paymentResultProvider);
     }
 
-    public boolean hasReceipt() {
+    public boolean hasReceipt(final Context context) {
         final com.mercadopago.android.px.model.PaymentMethod paymentMethod = props.paymentData.getPaymentMethod();
-        return props.paymentId != null && props.isReceiptEnabled() && props.paymentData != null
+        return props.paymentId != null && Session.getSession(context).getConfigurationModule().getPaymentSettings()
+            .getAdvancedConfiguration().getPaymentResultScreenPreference().isApprovedReceiptEnabled() &&
+            props.paymentData != null
             && isStatusApproved() && isPaymentTypeOn(paymentMethod);
     }
 

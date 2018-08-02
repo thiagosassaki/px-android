@@ -13,6 +13,9 @@ import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.paymentresult.model.Badge;
 import java.io.Serializable;
 
+/**
+ * This object declares custom preferences for "Congrats" screen
+ */
 public final class PaymentResultScreenPreference implements Serializable {
 
     private final Integer titleBackgroundColor;
