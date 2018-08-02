@@ -19,6 +19,7 @@ import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
 import com.mercadopago.android.px.tracking.listeners.TracksListener;
 import com.mercadopago.android.px.tracking.tracker.MPTracker;
+import com.mercadopago.android.px.util.JsonUtil;
 import com.mercadopago.android.px.util.ViewUtils;
 import com.mercadopago.example.R;
 import java.math.BigDecimal;
@@ -100,6 +101,7 @@ public final class ExamplesUtils {
         options.add(new Pair<>("One item with quantity", createBaseWithOneItemWithQuantity()));
         options.add(new Pair<>("Two items - Collector icon", createBaseWithTwoItemsAndCollectorIcon()));
         options.add(new Pair<>("One item - Long title", createBaseWithOneItemLongTitle()));
+        options.add(new Pair<>("Differential pricing preference", createWithDifferentialPricing()));
         return options;
     }
 
@@ -147,6 +149,10 @@ public final class ExamplesUtils {
             }
         });
         return createBase();
+    }
+
+    private static Builder createWithDifferentialPricing() {
+        return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, "99628543-518e6477-ac0d-4f4a-8097-51c2fcc00b71");
     }
 
     private static Builder createBase(@NonNull final CheckoutPreference checkoutPreference) {

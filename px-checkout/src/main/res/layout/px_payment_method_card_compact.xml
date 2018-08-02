@@ -102,6 +102,6 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/px_arrow_right_blue"/>
+        android:src="@drawable/px_arrow_right_grey"/>
 
 </RelativeLayout>

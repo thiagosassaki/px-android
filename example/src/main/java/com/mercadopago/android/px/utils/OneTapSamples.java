@@ -77,13 +77,13 @@ public final class OneTapSamples {
         options.add(new Pair<>("11 - One tap - Should suggest account money (amount lower than cap)",
                 startOneTapWithAccountMoneyLowerThanCap()));
         options.add(new Pair<>("12 - One tap - Shouldn't suggest one tap (amount greater than cap)",
-                starOneTapWithAmountGreaterThanCap()));
+            startOneTapWithAmountGreaterThanCap()));
         options.add(new Pair<>("13 - One tap - Should suggest account money (low account money)",
-                starOneTapWithLowAccountMoneyWithLowerAmount()));
+            startOneTapWithLowAccountMoneyWithLowerAmount()));
         options.add(new Pair<>("14 - One tap - Should suggest credit card (low account money, amount lower than cap)",
-                starOneTapWithLowAccountMoneyWithLowerAmountAndLowerCap()));
+            startOneTapWithLowAccountMoneyWithLowerAmountAndLowerCap()));
         options.add(new Pair<>("15 - One tap - Shouldn't suggest one tap (low account money, amount greater than cap)",
-                starOneTapWithLowAccountMoneyWithLowerAmountAndGreaterCap()));
+            startOneTapWithLowAccountMoneyWithLowerAmountAndGreaterCap()));
         options.add(new Pair<>("16 - One tap - Should suggest credit card (no account money) with direct discount",
                 startOneTapNoAccountMoneyWithCreditCardAndDirectDiscount()));
         options.add(new Pair<>("17 - One tap - Should suggest credit card (no account money) with code discount",
@@ -226,7 +226,7 @@ public final class OneTapSamples {
     }
 
     // It shouldn't suggest one tap
-    private static MercadoPagoCheckout.Builder starOneTapWithAmountGreaterThanCap() {
+    private static MercadoPagoCheckout.Builder startOneTapWithAmountGreaterThanCap() {
 
         final MainPaymentProcessor mainPaymentProcessor = new MainPaymentProcessor(getBusinessPaymentApproved());
         return new MercadoPagoCheckout.Builder(ONE_TAP_MERCHANT_PUBLIC_KEY,
@@ -237,7 +237,7 @@ public final class OneTapSamples {
     }
 
     // It should suggest one tap with acount money
-    private static MercadoPagoCheckout.Builder starOneTapWithLowAccountMoneyWithLowerAmount() {
+    private static MercadoPagoCheckout.Builder startOneTapWithLowAccountMoneyWithLowerAmount() {
 
         final MainPaymentProcessor mainPaymentProcessor = new MainPaymentProcessor(getBusinessPaymentApproved());
         return new MercadoPagoCheckout.Builder(ONE_TAP_MERCHANT_PUBLIC_KEY,
@@ -248,7 +248,7 @@ public final class OneTapSamples {
     }
 
     // It should suggest one tap with credit card
-    private static MercadoPagoCheckout.Builder starOneTapWithLowAccountMoneyWithLowerAmountAndLowerCap() {
+    private static MercadoPagoCheckout.Builder startOneTapWithLowAccountMoneyWithLowerAmountAndLowerCap() {
 
         final MainPaymentProcessor mainPaymentProcessor = new MainPaymentProcessor(getBusinessPaymentApproved());
         return new MercadoPagoCheckout.Builder(ONE_TAP_MERCHANT_PUBLIC_KEY,
@@ -259,7 +259,7 @@ public final class OneTapSamples {
     }
 
     // It shouldn't suggest one tap
-    private static MercadoPagoCheckout.Builder starOneTapWithLowAccountMoneyWithLowerAmountAndGreaterCap() {
+    private static MercadoPagoCheckout.Builder startOneTapWithLowAccountMoneyWithLowerAmountAndGreaterCap() {
         final MainPaymentProcessor mainPaymentProcessor = new MainPaymentProcessor(getBusinessPaymentApproved());
         return new MercadoPagoCheckout.Builder(ONE_TAP_MERCHANT_PUBLIC_KEY,
                 getCheckoutPreferenceWithPayerEmail(new ArrayList<String>(), 701))
@@ -319,9 +319,9 @@ public final class OneTapSamples {
     private static CheckoutPreference getCheckoutPreferenceWithPayerEmail(
             @NonNull final List<String> excludedPaymentTypes, int amount) {
         final List<Item> items = new ArrayList<>();
-        final Item item = new Item("description", 1, new BigDecimal(amount));
-        item.setTitle("Titulo del item");
+        final Item item = new Item("Descripción del producto", 1, new BigDecimal(amount));
         item.setId("1234");
+        item.setTitle("Titulo del producto");
         item.setCurrencyId(Sites.ARGENTINA.getCurrencyId());
         items.add(item);
         final CheckoutPreference checkoutPreference = new CheckoutPreference.Builder(Sites.ARGENTINA,

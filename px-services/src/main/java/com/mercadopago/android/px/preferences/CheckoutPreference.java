@@ -1,8 +1,10 @@
 package com.mercadopago.android.px.preferences;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.Size;
 import com.google.gson.annotations.SerializedName;
+import com.mercadopago.android.px.model.DifferentialPricing;
 import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.Site;
@@ -16,6 +18,10 @@ import java.util.List;
 
 import static com.mercadopago.android.px.services.util.TextUtil.isEmpty;
 
+/**
+ * Model that represents curl -X OPTIONS "https://api.mercadopago.com/checkout/preferences" | json_pp
+ * It can be not exactly the same because exists custom configurations for open Preference.
+ */
 public class CheckoutPreference implements Serializable {
 
     /**
@@ -26,6 +32,10 @@ public class CheckoutPreference implements Serializable {
     private String id;
     @SuppressWarnings("UnusedDeclaration")
     private String siteId;
+
+    @Nullable
+    @SerializedName("differential_pricing")
+    private DifferentialPricing differentialPricing;
 
     @NonNull
     private List<Item> items;
@@ -42,7 +52,6 @@ public class CheckoutPreference implements Serializable {
     private BigDecimal marketplaceFee;
     private BigDecimal shippingCost;
     private String operationType;
-    private Integer differentialPricingId;
     private BigDecimal conceptAmount;
     private String conceptId;
     //endregion support external integrations
@@ -55,7 +64,7 @@ public class CheckoutPreference implements Serializable {
         marketplaceFee = builder.marketplaceFee;
         shippingCost = builder.shippingCost;
         operationType = builder.operationType;
-        differentialPricingId = builder.differentialPricingId;
+        differentialPricing = builder.differentialPricing;
         conceptAmount = builder.conceptAmount;
         conceptId = builder.conceptId;
         payer = getPayer(builder);
@@ -137,9 +146,9 @@ public class CheckoutPreference implements Serializable {
         return localPreferenceSite;
     }
 
-    @SuppressWarnings("unused")
-    public Integer getDifferentialPricingId() {
-        return differentialPricingId;
+    @Nullable
+    public DifferentialPricing getDifferentialPricing() {
+        return differentialPricing;
     }
 
     @SuppressWarnings("unused")
@@ -264,7 +273,7 @@ public class CheckoutPreference implements Serializable {
         private BigDecimal marketplaceFee;
         private BigDecimal shippingCost;
         private String operationType;
-        private Integer differentialPricingId;
+        /* default */ @Nullable DifferentialPricing differentialPricing;
         private BigDecimal conceptAmount;
         private String conceptId;
 
@@ -350,9 +359,14 @@ public class CheckoutPreference implements Serializable {
             return this;
         }
 
-        @SuppressWarnings("unused")
-        public Builder setDifferentialPricingId(final Integer differentialPricingId) {
-            this.differentialPricingId = differentialPricingId;
+        /**
+         * Differential pricing configuration for this preference.
+         *
+         * @param differentialPricing differential pricing object
+         * @return builder
+         */
+        public Builder setDifferentialPricing(@Nullable final DifferentialPricing differentialPricing) {
+            this.differentialPricing = differentialPricing;
             return this;
         }
 

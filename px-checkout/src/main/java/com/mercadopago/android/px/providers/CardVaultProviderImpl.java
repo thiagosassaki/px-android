@@ -2,6 +2,7 @@ package com.mercadopago.android.px.providers;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
 import com.mercadopago.android.px.internal.di.Session;
@@ -65,8 +66,9 @@ public class CardVaultProviderImpl implements CardVaultProvider {
         final Long issuerId,
         final String paymentMethodId,
         final BigDecimal amount,
+        @Nullable final Integer differentialPricingId,
         final TaggedCallback<List<Installment>> taggedCallback) {
-        mercadoPago.getInstallments(bin, amount, issuerId, paymentMethodId, taggedCallback);
+        mercadoPago.getInstallments(bin, amount, issuerId, paymentMethodId, differentialPricingId, taggedCallback);
     }
 
     @Override

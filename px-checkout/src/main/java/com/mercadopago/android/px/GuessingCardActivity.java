@@ -221,6 +221,7 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
         final Session session = Session.getSession(this);
         mPresenter = new GuessingCardPresenter(session.getAmountRepository(),
             session.getConfigurationModule().getUserSelectionRepository(),
+            session.getConfigurationModule().getPaymentSettings(),
             session.getGroupsRepository(),
             session.getConfigurationModule().getPaymentSettings().getAdvancedConfiguration());
         PaymentPreference paymentPreference =

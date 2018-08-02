@@ -28,7 +28,8 @@ public interface CheckoutService {
         @Query("api_version") String apiVersion,
         @Query("processing_mode") String processingMode,
         @Query("cards_esc") String cardsWithEsc,
-        @Query("support_plugins") String supportedPlugins);
+        @Query("support_plugins") String supportedPlugins,
+        @Query("differential_pricing_id") Integer differentialPricingId);
 
     @POST("/{version}/checkout/payments")
     MPCall<Payment> createPayment(@Path(value = "version", encoded = true) String version,
