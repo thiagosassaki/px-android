@@ -1,8 +1,8 @@
 package com.mercadopago.android.px.services.core;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.mercadopago.android.px.model.BankDeal;
 import com.mercadopago.android.px.model.CardToken;
 import com.mercadopago.android.px.model.Customer;
@@ -22,7 +22,6 @@ import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.requests.PayerIntent;
 import com.mercadopago.android.px.model.requests.SecurityCodeIntent;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.preferences.ServicePreference;
 import com.mercadopago.android.px.services.BankDealService;
 import com.mercadopago.android.px.services.CheckoutService;
 import com.mercadopago.android.px.services.CustomService;
@@ -33,11 +32,9 @@ import com.mercadopago.android.px.services.PaymentService;
 import com.mercadopago.android.px.services.adapters.ErrorHandlingCallAdapter;
 import com.mercadopago.android.px.services.callbacks.Callback;
 import com.mercadopago.android.px.services.constants.ProcessingModes;
-import com.mercadopago.android.px.services.controllers.CustomServicesHandler;
 import com.mercadopago.android.px.services.util.HttpClientUtil;
 import com.mercadopago.android.px.services.util.JsonUtil;
 import com.mercadopago.android.px.services.util.LocaleUtil;
-import com.mercadopago.android.px.services.util.TextUtil;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -51,43 +48,31 @@ public class MercadoPagoServices {
 
     private static final String MP_API_BASE_URL = "https://api.mercadopago.com";
 
-    public static final int DEFAULT_CONNECT_TIMEOUT = 10;
-    public static final int DEFAULT_READ_TIMEOUT = 20;
-    public static final int DEFAULT_WRITE_TIMEOUT = 20;
+    private static final int DEFAULT_CONNECT_TIMEOUT = 10;
+    private static final int DEFAULT_READ_TIMEOUT = 20;
+    private static final int DEFAULT_WRITE_TIMEOUT = 20;
 
-    public static final int DEFAULT_PAYMENT_CONNECT_TIMEOUT = 10;
-    public static final int DEFAULT_PAYMENT_READ_TIMEOUT = 20;
-    public static final int DEFAULT_PAYMENT_WRITE_TIMEOUT = 20;
+    private static final int DEFAULT_PAYMENT_CONNECT_TIMEOUT = 10;
+    private static final int DEFAULT_PAYMENT_READ_TIMEOUT = 20;
+    private static final int DEFAULT_PAYMENT_WRITE_TIMEOUT = 20;
 
-    private ServicePreference mServicePreference;
     private final Context mContext;
     private final String mPublicKey;
     private final String mPrivateKey;
-    private String mProcessingMode;
+    private final String mProcessingMode;
 
-    private MercadoPagoServices(Builder builder) {
-        this.mContext = builder.mContext;
-        this.mPublicKey = builder.mPublicKey;
-        this.mPrivateKey = builder.mPrivateKey;
-        this.mServicePreference = CustomServicesHandler.getInstance().getServicePreference();
-        this.mProcessingMode =
-            mServicePreference != null ? mServicePreference.getProcessingModeString() : ProcessingModes.AGGREGATOR;
-    }
-
-    protected MercadoPagoServices(final Context mContext,
-        final String mPublicKey,
-        final String mPrivateKey) {
+    public MercadoPagoServices(@NonNull final Context mContext,
+        @NonNull final String mPublicKey,
+        @Nullable final String mPrivateKey) {
         this.mContext = mContext;
         this.mPublicKey = mPublicKey;
         this.mPrivateKey = mPrivateKey;
-        this.mServicePreference = CustomServicesHandler.getInstance().getServicePreference();
-        this.mProcessingMode =
-            mServicePreference != null ? mServicePreference.getProcessingModeString() : ProcessingModes.AGGREGATOR;
+        mProcessingMode = ProcessingModes.AGGREGATOR;
     }
 
-    public void getCheckoutPreference(String checkoutPreferenceId, Callback<CheckoutPreference> callback) {
-        CheckoutService service = getDefaultRetrofit(mContext).create(CheckoutService.class);
-        service.getPreference(Settings.servicesVersion, checkoutPreferenceId, this.mPublicKey).enqueue(callback);
+    public void getCheckoutPreference(final String checkoutPreferenceId, final Callback<CheckoutPreference> callback) {
+        final CheckoutService service = getDefaultRetrofit(mContext).create(CheckoutService.class);
+        service.getPreference(Settings.servicesVersion, checkoutPreferenceId, mPublicKey).enqueue(callback);
     }
 
     public void getInstructions(final Long paymentId, final String paymentTypeId,
@@ -100,10 +85,11 @@ public class MercadoPagoServices {
             .enqueue(callback);
     }
 
-    @SuppressLint("unused")
+    @SuppressWarnings("unused")
     public void getPaymentMethodSearch(final BigDecimal amount, final List<String> excludedPaymentTypes,
         final List<String> excludedPaymentMethods, final List<String> cardsWithEsc, final List<String> supportedPlugins,
-        final Payer payer, final Site site, final Callback<PaymentMethodSearch> callback) {
+        final Payer payer, final Site site, @Nullable final Integer differentialPricing,
+        final Callback<PaymentMethodSearch> callback) {
         final PayerIntent payerIntent = new PayerIntent(payer);
         final CheckoutService service = getDefaultRetrofit(mContext).create(CheckoutService.class);
 
@@ -116,7 +102,8 @@ public class MercadoPagoServices {
         service.getPaymentMethodSearch(Settings.servicesVersion,
             mContext.getResources().getConfiguration().locale.getLanguage(), this.mPublicKey, amount,
             excludedPaymentTypesAppended, excludedPaymentMethodsAppended, payerIntent, site.getId(),
-            PAYMENT_METHODS_OPTIONS_API_VERSION, mProcessingMode, cardsWithEscAppended, supportedPluginsAppended).
+            PAYMENT_METHODS_OPTIONS_API_VERSION, mProcessingMode, cardsWithEscAppended, supportedPluginsAppended,
+            differentialPricing).
             enqueue(callback);
     }
 
@@ -172,15 +159,19 @@ public class MercadoPagoServices {
 
     public void getIdentificationTypes(Callback<List<IdentificationType>> callback) {
         IdentificationService service = getDefaultRetrofit(mContext).create(IdentificationService.class);
-        service.getIdentificationTypes(this.mPublicKey, this.mPrivateKey).enqueue(callback);
+        service.getIdentificationTypes(mPublicKey, mPrivateKey).enqueue(callback);
     }
 
-    public void getInstallments(String bin, BigDecimal amount, Long issuerId, String paymentMethodId,
+    public void getInstallments(final String bin,
+        final BigDecimal amount,
+        final Long issuerId,
+        final String paymentMethodId,
+        @Nullable final Integer differentialPricingId,
         Callback<List<Installment>> callback) {
         PaymentService service = getDefaultRetrofit(mContext).create(PaymentService.class);
-        service.getInstallments(Settings.servicesVersion, this.mPublicKey, mPrivateKey, bin, amount, issuerId,
+        service.getInstallments(Settings.servicesVersion, mPublicKey, mPrivateKey, bin, amount, issuerId,
             paymentMethodId,
-            LocaleUtil.getLanguage(mContext), mProcessingMode).enqueue(callback);
+            LocaleUtil.getLanguage(mContext), mProcessingMode, differentialPricingId).enqueue(callback);
     }
 
     public void getIssuers(String paymentMethodId, String bin, final Callback<List<Issuer>> callback) {
@@ -246,33 +237,33 @@ public class MercadoPagoServices {
         return getGatewayRetrofit(DEFAULT_CONNECT_TIMEOUT, DEFAULT_READ_TIMEOUT, DEFAULT_WRITE_TIMEOUT);
     }
 
-    private Retrofit getGatewayRetrofit(int connectTimeout, int readTimeout, int writeTimeout) {
-        String baseUrl;
-        if (mServicePreference != null && !TextUtil.isEmpty(mServicePreference.getGatewayBaseURL())) {
-            baseUrl = mServicePreference.getGatewayBaseURL();
-        } else if (mServicePreference != null && !TextUtil.isEmpty(mServicePreference.getDefaultBaseURL())) {
-            baseUrl = mServicePreference.getDefaultBaseURL();
-        } else {
-            baseUrl = MP_API_BASE_URL;
-        }
-        return getRetrofit(mContext, baseUrl, connectTimeout, readTimeout, writeTimeout);
+    private Retrofit getGatewayRetrofit(final int connectTimeout, final int readTimeout, final int writeTimeout) {
+        return getRetrofit(mContext, MP_API_BASE_URL, connectTimeout, readTimeout, writeTimeout);
     }
 
     private CustomService getCustomService(String url) {
         return getCustomService(url, DEFAULT_CONNECT_TIMEOUT, DEFAULT_READ_TIMEOUT, DEFAULT_WRITE_TIMEOUT);
     }
 
-    private CustomService getCustomService(String baseUrl, int connectTimeout, int readTimeout, int writeTimeout) {
-        Retrofit retrofit = getRetrofit(mContext, baseUrl, connectTimeout, readTimeout, writeTimeout);
+    private CustomService getCustomService(final String baseUrl,
+        final int connectTimeout,
+        final int readTimeout,
+        final int writeTimeout) {
+
+        final Retrofit retrofit = getRetrofit(mContext, baseUrl, connectTimeout, readTimeout, writeTimeout);
         return retrofit.create(CustomService.class);
     }
 
-    private static String ripFirstSlash(String uri) {
+    private static String ripFirstSlash(final String uri) {
         return uri.startsWith("/") ? uri.substring(1) : uri;
     }
 
-    private static Retrofit getRetrofit(final Context mContext, String baseUrl, int connectTimeout,
-        int readTimeout, int writeTimeout) {
+    private static Retrofit getRetrofit(final Context mContext,
+        final String baseUrl,
+        final int connectTimeout,
+        final int readTimeout,
+        final int writeTimeout) {
+
         return new Retrofit.Builder()
             .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create(JsonUtil.getInstance().getGson()))
@@ -281,10 +272,10 @@ public class MercadoPagoServices {
             .build();
     }
 
-    private String getListAsString(List<String> list, String separator) {
-        StringBuilder stringBuilder = new StringBuilder();
+    private String getListAsString(final List<String> list, final String separator) {
+        final StringBuilder stringBuilder = new StringBuilder();
         if (list != null) {
-            for (String typeId : list) {
+            for (final String typeId : list) {
                 stringBuilder.append(typeId);
                 if (!typeId.equals(list.get(list.size() - 1))) {
                     stringBuilder.append(separator);
@@ -292,58 +283,5 @@ public class MercadoPagoServices {
             }
         }
         return stringBuilder.toString();
-    }
-
-    public static class Builder {
-
-        private Context mContext;
-        private String mPublicKey;
-        public String mPrivateKey;
-        public ServicePreference mServicePreference;
-
-        public Builder() {
-            mContext = null;
-            mPublicKey = null;
-        }
-
-        public Builder setContext(Context context) {
-            if (context == null) {
-                throw new IllegalArgumentException("context is null");
-            }
-            this.mContext = context;
-            return this;
-        }
-
-        public Builder setPrivateKey(String key) {
-            this.mPrivateKey = key;
-            return this;
-        }
-
-        public Builder setPublicKey(String key) {
-            this.mPublicKey = key;
-            return this;
-        }
-
-        public Builder setServicePreference(ServicePreference servicePreference) {
-            this.mServicePreference = servicePreference;
-            return this;
-        }
-
-        @Deprecated
-        public Builder setBetaEnvironment(Boolean betaEnvironment) {
-            throw new IllegalStateException("deprecated");
-        }
-
-        public MercadoPagoServices build() {
-
-            if (this.mContext == null) {
-                throw new IllegalStateException("context is null");
-            }
-            if (TextUtil.isEmpty(this.mPublicKey) && TextUtil.isEmpty(this.mPrivateKey)) {
-                throw new IllegalStateException("key is null");
-            }
-
-            return new MercadoPagoServices(this);
-        }
     }
 }

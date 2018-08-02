@@ -4,8 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.annotation.NonNull;
 import com.mercadopago.android.px.R;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.model.Cause;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import retrofit2.Response;
@@ -42,8 +43,10 @@ public class ApiUtil {
         return apiException;
     }
 
-    public static void showApiExceptionError(Activity activity, ApiException apiException, String publicKey,
-        String requestOrigin) {
+    public static void showApiExceptionError(@NonNull final Activity activity,
+        final ApiException apiException,
+        final String requestOrigin) {
+
         MercadoPagoError mercadoPagoError;
         String errorMessage;
 
@@ -53,10 +56,10 @@ public class ApiUtil {
         } else {
             mercadoPagoError = new MercadoPagoError(apiException, requestOrigin);
         }
-        ErrorUtil.startErrorActivity(activity, mercadoPagoError, publicKey);
+        ErrorUtil.startErrorActivity(activity, mercadoPagoError);
     }
 
-    public static boolean checkConnection(Context context) {
+    public static boolean checkConnection(@NonNull final Context context) {
 
         if (context != null) {
             try {

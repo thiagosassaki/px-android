@@ -2,9 +2,10 @@ package com.mercadopago.android.px.services.exceptions;
 
 import com.mercadopago.android.px.model.Cause;
 import com.mercadopago.android.px.services.util.ApiUtil;
+import java.io.Serializable;
 import java.util.List;
 
-public class ApiException {
+public class ApiException implements Serializable {
 
     private List<Cause> cause;
     private String error;
@@ -89,6 +90,16 @@ public class ApiException {
         public static final String INVALID_CARD_HOLDER_IDENTIFICATION_NUMBER = "324";
         public static final String INVALID_ESC = "E216";
         public static final String INVALID_FINGERPRINT = "E217";
+    }
+
+    @Override
+    public String toString() {
+        return "ApiException{" +
+            "cause=" + cause +
+            ", error='" + error + '\'' +
+            ", message='" + message + '\'' +
+            ", status=" + status +
+            '}';
     }
 }
 

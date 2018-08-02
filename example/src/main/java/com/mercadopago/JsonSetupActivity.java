@@ -16,16 +16,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
-import android.widget.Toast;
 import com.google.gson.JsonSyntaxException;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.utils.CheckoutConfiguration;
-import com.mercadopago.example.R;
 import com.mercadopago.android.px.util.JsonUtil;
 import com.mercadopago.android.px.util.TextUtils;
+import com.mercadopago.android.px.utils.CheckoutConfiguration;
+import com.mercadopago.example.R;
 
 public class JsonSetupActivity extends AppCompatActivity {
+
+    private static final int RES_CODE = 1;
 
     private EditText mJsonInputEditText;
     private Button mStartCheckoutButton;
@@ -34,7 +35,7 @@ public class JsonSetupActivity extends AppCompatActivity {
     private ScrollView mScrollView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_json_setup);
         initializeViews();
@@ -90,29 +91,22 @@ public class JsonSetupActivity extends AppCompatActivity {
     }
 
     private void startCheckout() {
-        MercadoPagoCheckout.Builder checkoutBuilder;
+        final MercadoPagoCheckout.Builder checkoutBuilder;
 
         if (!TextUtils.isEmpty(mConfiguration.getPrefId())) {
             checkoutBuilder =
                 new MercadoPagoCheckout.Builder(mConfiguration.getPublicKey(), mConfiguration.getPrefId());
         } else {
-            CheckoutPreference preference = createCheckoutPreference(mConfiguration);
+            final CheckoutPreference preference = createCheckoutPreference(mConfiguration);
             checkoutBuilder = new MercadoPagoCheckout.Builder(mConfiguration.getPublicKey(), preference);
         }
 
-        checkoutBuilder.setFlowPreference(mConfiguration.getFlowPreference());
-        MercadoPagoCheckout checkout = checkoutBuilder.build();
-
-        if (mConfiguration.paymentRequired()) {
-            checkout.startForPayment(this);
-        } else if (mConfiguration.paymentDataRequired()) {
-            checkout.startForPaymentData(this);
-        } else {
-            Toast.makeText(this, R.string.start_for_wrong, Toast.LENGTH_SHORT).show();
-        }
+        checkoutBuilder.setAdvancedConfiguration(mConfiguration.getAdvancedConfiguration());
+        final MercadoPagoCheckout checkout = checkoutBuilder.build();
+        checkout.startPayment(this, RES_CODE);
     }
 
-    private CheckoutPreference createCheckoutPreference(CheckoutConfiguration checkoutConfiguration) {
+    private CheckoutPreference createCheckoutPreference(final CheckoutConfiguration checkoutConfiguration) {
         return new CheckoutPreference.Builder(checkoutConfiguration.getSite(), checkoutConfiguration.getPayerEmail(),
             checkoutConfiguration.getItems())
             .build();
@@ -120,21 +114,21 @@ public class JsonSetupActivity extends AppCompatActivity {
 
     private void validateJson() {
         boolean isOk = false;
-        String configsJson = mJsonInputEditText.getText().toString();
+        final String configsJson = mJsonInputEditText.getText().toString();
         try {
             mConfiguration = JsonUtil.getInstance().fromJson(configsJson, CheckoutConfiguration.class);
             if (!TextUtils.isEmpty(configsJson)) {
                 isOk = true;
             }
-        } catch (JsonSyntaxException exception) {
+        } catch (final JsonSyntaxException exception) {
             //Do nothing
         }
         updateSetupStatus(isOk);
     }
 
-    private void updateSetupStatus(boolean ok) {
+    private void updateSetupStatus(final boolean ok) {
         if (ok) {
-            Drawable okImage = getResources().getDrawable(R.drawable.px_ok_sign);
+            final Drawable okImage = getResources().getDrawable(R.drawable.px_ok_sign);
             okImage.setColorFilter(ContextCompat.getColor(this, R.color.examples_green), PorterDuff.Mode.SRC_ATOP);
             mStatusImageView.setImageDrawable(okImage);
             mStartCheckoutButton.setEnabled(true);
@@ -145,7 +139,7 @@ public class JsonSetupActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         setResult(resultCode, data);
         finish();
     }

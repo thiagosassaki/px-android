@@ -1,5 +1,6 @@
 package com.mercadopago.android.px.providers;
 
+import android.support.annotation.Nullable;
 import com.mercadopago.android.px.model.BankDeal;
 import com.mercadopago.android.px.model.CardToken;
 import com.mercadopago.android.px.model.IdentificationType;
@@ -27,7 +28,11 @@ public interface GuessingCardProvider extends ResourcesProvider {
 
     void getIssuersAsync(String paymentMethodId, String bin, final TaggedCallback<List<Issuer>> taggedCallback);
 
-    void getInstallmentsAsync(String bin, BigDecimal amount, Long issuerId, String paymentMethodId,
+    void getInstallmentsAsync(final String bin,
+        final BigDecimal amount,
+        final Long issuerId,
+        final String paymentMethodId,
+        @Nullable final Integer differentialPricingId,
         final TaggedCallback<List<Installment>> taggedCallback);
 
     void getIdentificationTypesAsync(final TaggedCallback<List<IdentificationType>> taggedCallback);

@@ -95,7 +95,7 @@
             android:layout_gravity="right|end|center_vertical"
             android:layout_marginLeft="@dimen/px_s_margin"
             android:layout_marginStart="@dimen/px_s_margin"
-            android:background="@drawable/px_arrow_right_blue"
+            android:background="@drawable/px_arrow_right_grey"
             android:orientation="vertical"
             android:visibility="visible"/>
 

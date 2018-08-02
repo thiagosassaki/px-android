@@ -108,6 +108,10 @@ public class GroupsService implements GroupsRepository {
         final String supportedPluginsAppended =
             getListAsString(CheckoutStore.getInstance().getEnabledPaymentMethodPluginsIds(), SEPARATOR);
 
+        final Integer differentialPricingId =
+            checkoutPreference.getDifferentialPricing() != null ? checkoutPreference.getDifferentialPricing()
+                .getId() : null;
+
         return checkoutService
             .getPaymentMethodSearch(Settings.servicesVersion, language, paymentSettingRepository.getPublicKey(),
                 amountRepository.getAmountToPay(),
@@ -118,7 +122,8 @@ public class GroupsService implements GroupsRepository {
                 PAYMENT_METHODS_OPTIONS_API_VERSION,
                 ProcessingModes.AGGREGATOR,
                 cardsWithEscAppended,
-                supportedPluginsAppended);
+                supportedPluginsAppended,
+                differentialPricingId);
     }
 
     private Collection<String> getUnsupportedPaymentTypes(@NonNull final Site site) {

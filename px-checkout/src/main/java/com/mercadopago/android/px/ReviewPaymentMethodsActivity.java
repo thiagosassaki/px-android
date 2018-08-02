@@ -8,12 +8,12 @@ import android.widget.FrameLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.android.px.adapters.ReviewPaymentMethodsAdapter;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.presenters.ReviewPaymentMethodsPresenter;
 import com.mercadopago.android.px.providers.ReviewPaymentMethodsProviderImpl;
-import com.mercadopago.android.px.views.ReviewPaymentMethodsView;
 import com.mercadopago.android.px.util.ErrorUtil;
+import com.mercadopago.android.px.views.ReviewPaymentMethodsView;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -25,8 +25,6 @@ public class ReviewPaymentMethodsActivity extends MercadoPagoBaseActivity implem
 
     //Controls
     protected ReviewPaymentMethodsPresenter mPresenter;
-    //Parameters
-    protected String mPublicKey;
     //View controls
     protected RecyclerView mPaymentMethodsView;
     protected ReviewPaymentMethodsAdapter mAdapter;
@@ -51,7 +49,6 @@ public class ReviewPaymentMethodsActivity extends MercadoPagoBaseActivity implem
     }
 
     protected void getActivityParameters() {
-        mPublicKey = getIntent().getStringExtra("publicKey");
         List<PaymentMethod> supportedPaymentMethods = null;
         try {
             Gson gson = new Gson();
@@ -65,8 +62,8 @@ public class ReviewPaymentMethodsActivity extends MercadoPagoBaseActivity implem
     }
 
     @Override
-    public void showError(MercadoPagoError error, String requestOrigin) {
-        ErrorUtil.startErrorActivity(this, error, mPublicKey);
+    public void showError(final MercadoPagoError error, final String requestOrigin) {
+        ErrorUtil.startErrorActivity(this, error);
     }
 
     private void configurePresenter() {

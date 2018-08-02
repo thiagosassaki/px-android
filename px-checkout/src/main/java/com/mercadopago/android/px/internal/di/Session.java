@@ -72,11 +72,10 @@ public final class Session extends ApplicationModule
         final PaymentSettingRepository configuration = configurationModule.getPaymentSettings();
         configuration.configure(mercadoPagoCheckout.getMerchantPublicKey());
         configuration.configure(mercadoPagoCheckout.getCharges());
-        configuration.configure(mercadoPagoCheckout.getFlowPreference());
+        configuration.configure(mercadoPagoCheckout.getAdvancedConfiguration());
         configuration.configurePrivateKey(mercadoPagoCheckout.getPrivateKey());
-        configuration.configure(mercadoPagoCheckout.binaryMode);
         discountRepository
-            .configureDiscountManually(mercadoPagoCheckout.getDiscount(), mercadoPagoCheckout.getCampaign());
+            .configureMerchantDiscountManually(mercadoPagoCheckout.getDiscount(), mercadoPagoCheckout.getCampaign());
 
         final CheckoutPreference checkoutPreference = mercadoPagoCheckout.getCheckoutPreference();
         if (checkoutPreference != null) {
@@ -93,24 +92,30 @@ public final class Session extends ApplicationModule
         getGroupsCache().evict();
     }
 
-    @NonNull
-    public MercadoPagoServicesAdapter getMercadoPagoServiceAdapter() {
-        final PaymentSettingRepository paymentSettings = getConfigurationModule().getPaymentSettings();
-        return new MercadoPagoServicesAdapter(getContext(), paymentSettings.getPublicKey(),
-            paymentSettings.getPrivateKey());
-    }
-
     public GroupsRepository getGroupsRepository() {
         if (groupsRepository == null) {
             final PaymentSettingRepository paymentSettings = getConfigurationModule().getPaymentSettings();
             groupsRepository = new GroupsService(getAmountRepository(),
                 paymentSettings,
-                new MercadoPagoESCImpl(getContext(), paymentSettings.getFlow().isESCEnabled()),
+                getMercadoPagoESC(),
                 getRetrofitClient().create(CheckoutService.class),
                 LocaleUtil.getLanguage(getContext()),
                 getGroupsCache());
         }
         return groupsRepository;
+    }
+
+    @NonNull
+    public MercadoPagoESCImpl getMercadoPagoESC() {
+        final PaymentSettingRepository paymentSettings = getConfigurationModule().getPaymentSettings();
+        return new MercadoPagoESCImpl(getContext(), paymentSettings.getAdvancedConfiguration().isEscEnabled());
+    }
+
+    @NonNull
+    public MercadoPagoServicesAdapter getMercadoPagoServiceAdapter() {
+        final PaymentSettingRepository paymentSettings = getConfigurationModule().getPaymentSettings();
+        return new MercadoPagoServicesAdapter(getContext(), paymentSettings.getPublicKey(),
+            paymentSettings.getPrivateKey());
     }
 
     @Override

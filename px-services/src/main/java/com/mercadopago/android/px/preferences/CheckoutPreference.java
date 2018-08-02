@@ -1,8 +1,10 @@
 package com.mercadopago.android.px.preferences;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.Size;
 import com.google.gson.annotations.SerializedName;
+import com.mercadopago.android.px.model.DifferentialPricing;
 import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.Site;
@@ -16,6 +18,10 @@ import java.util.List;
 
 import static com.mercadopago.android.px.services.util.TextUtil.isEmpty;
 
+/**
+ * Model that represents curl -X OPTIONS "https://api.mercadopago.com/checkout/preferences" | json_pp
+ * It can be not exactly the same because exists custom configurations for open Preference.
+ */
 public class CheckoutPreference implements Serializable {
 
     /**
@@ -26,6 +32,10 @@ public class CheckoutPreference implements Serializable {
     private String id;
     @SuppressWarnings("UnusedDeclaration")
     private String siteId;
+
+    @Nullable
+    @SerializedName("differential_pricing")
+    private DifferentialPricing differentialPricing;
 
     @NonNull
     private List<Item> items;
@@ -42,7 +52,6 @@ public class CheckoutPreference implements Serializable {
     private BigDecimal marketplaceFee;
     private BigDecimal shippingCost;
     private String operationType;
-    private Integer differentialPricingId;
     private BigDecimal conceptAmount;
     private String conceptId;
     //endregion support external integrations
@@ -55,10 +64,10 @@ public class CheckoutPreference implements Serializable {
         marketplaceFee = builder.marketplaceFee;
         shippingCost = builder.shippingCost;
         operationType = builder.operationType;
-        differentialPricingId = builder.differentialPricingId;
+        differentialPricing = builder.differentialPricing;
         conceptAmount = builder.conceptAmount;
         conceptId = builder.conceptId;
-        this.payer = getPayer(builder);
+        payer = getPayer(builder);
         final PaymentPreference paymentPreference = new PaymentPreference();
         paymentPreference.setExcludedPaymentTypeIds(builder.excludedPaymentTypes);
         paymentPreference.setExcludedPaymentMethodIds(builder.excludedPaymentMethods);
@@ -71,7 +80,6 @@ public class CheckoutPreference implements Serializable {
     private Payer getPayer(final Builder builder) {
         final Payer payer = new Payer();
         payer.setEmail(builder.payerEmail);
-        payer.setAccessToken(builder.payerAccessToken);
         return payer;
     }
 
@@ -138,9 +146,9 @@ public class CheckoutPreference implements Serializable {
         return localPreferenceSite;
     }
 
-    @SuppressWarnings("unused")
-    public Integer getDifferentialPricingId() {
-        return differentialPricingId;
+    @Nullable
+    public DifferentialPricing getDifferentialPricing() {
+        return differentialPricing;
     }
 
     @SuppressWarnings("unused")
@@ -154,6 +162,11 @@ public class CheckoutPreference implements Serializable {
     }
     //endregion support external integrations
 
+    /**
+     * Sum of value * quantity of listed items in a preference.
+     *
+     * @return items total amount
+     */
     public BigDecimal getTotalAmount() {
         return Item.getTotalAmountWith(items);
     }
@@ -257,11 +270,10 @@ public class CheckoutPreference implements Serializable {
         private Integer defaultInstallments;
         private Date expirationDateTo;
         private Date expirationDateFrom;
-        private String payerAccessToken;
         private BigDecimal marketplaceFee;
         private BigDecimal shippingCost;
         private String operationType;
-        private Integer differentialPricingId;
+        /* default */ @Nullable DifferentialPricing differentialPricing;
         private BigDecimal conceptAmount;
         private String conceptId;
 
@@ -329,27 +341,6 @@ public class CheckoutPreference implements Serializable {
             return this;
         }
 
-        /**
-         * @deprecated This method is deprecated, access token should be added
-         * as private key.
-         */
-        @Deprecated
-        @SuppressWarnings("unused")
-        public Builder setPayerAccessToken(final String payerAccessToken) {
-            this.payerAccessToken = payerAccessToken;
-            return this;
-        }
-
-        /**
-         * @deprecated Account money is always enabled. You can exclude it
-         * using the add exclusion methods.
-         */
-        @Deprecated
-        @SuppressWarnings("unused")
-        public Builder enableAccountMoney() {
-            return this;
-        }
-
         @SuppressWarnings("unused")
         public Builder setMarketplaceFee(final BigDecimal marketplaceFee) {
             this.marketplaceFee = marketplaceFee;
@@ -368,9 +359,14 @@ public class CheckoutPreference implements Serializable {
             return this;
         }
 
-        @SuppressWarnings("unused")
-        public Builder setDifferentialPricingId(final Integer differentialPricingId) {
-            this.differentialPricingId = differentialPricingId;
+        /**
+         * Differential pricing configuration for this preference.
+         *
+         * @param differentialPricing differential pricing object
+         * @return builder
+         */
+        public Builder setDifferentialPricing(@Nullable final DifferentialPricing differentialPricing) {
+            this.differentialPricing = differentialPricing;
             return this;
         }
 

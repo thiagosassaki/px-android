@@ -2,6 +2,10 @@ package com.mercadopago.android.px.preferences;
 
 import java.io.Serializable;
 
+/**
+ * @deprecated new mechanism {@link AdvancedConfiguration}
+ */
+@Deprecated
 public class FlowPreference implements Serializable {
 
     public static final int DEFAULT_MAX_SAVED_CARDS_TO_SHOW = 3;

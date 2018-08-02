@@ -3,13 +3,14 @@ package com.mercadopago.android.px.presenters;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.callbacks.FailureRecovery;
 import com.mercadopago.android.px.controllers.PaymentMethodGuessingController;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.Cause;
+import com.mercadopago.android.px.model.DifferentialPricing;
 import com.mercadopago.android.px.model.Installment;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PayerCost;
@@ -41,8 +42,6 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
     //Activity parameters
     private PaymentRecovery paymentRecovery;
 
-    private boolean installmentsEnabled;
-    private boolean installmentsReviewEnabled;
     private boolean automaticSelection;
 
     private String merchantBaseUrl;
@@ -73,15 +72,21 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         this.configuration = configuration;
         this.userSelectionRepository = userSelectionRepository;
         this.paymentSettingRepository = paymentSettingRepository;
-        installmentsEnabled = true;
         this.amountRepository = amountRepository;
     }
 
     public void initialize() {
-        try {
-            onValidStart();
-        } catch (final IllegalStateException exception) {
-            getView().showError(new MercadoPagoError(exception.getMessage(), false), "");
+        installmentsListShown = false;
+        issuersListShown = false;
+        if (viewAttached()) {
+            getView().showProgressLayout();
+        }
+        if (tokenRecoveryAvailable()) {
+            startTokenRecoveryFlow();
+        } else if (savedCardAvailable()) {
+            startSavedCardFlow();
+        } else {
+            startNewCardFlow();
         }
     }
 
@@ -91,10 +96,6 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
 
     public void setPaymentRecovery(final PaymentRecovery paymentRecovery) {
         this.paymentRecovery = paymentRecovery;
-    }
-
-    public void setInstallmentsEnabled(final boolean installmentsEnabled) {
-        this.installmentsEnabled = installmentsEnabled;
     }
 
     public void setCard(final Card card) {
@@ -158,14 +159,6 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         }
     }
 
-    public void setInstallmentsReviewEnabled(final boolean installmentReviewEnabled) {
-        installmentsReviewEnabled = installmentReviewEnabled;
-    }
-
-    public Boolean getInstallmentsReviewEnabled() {
-        return installmentsReviewEnabled;
-    }
-
     public CardInfo getCardInfo() {
         return cardInfo;
     }
@@ -203,7 +196,7 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
     }
 
     private void checkStartInstallmentsActivity() {
-        if (isInstallmentsEnabled() && payerCost == null) {
+        if (payerCost == null) {
             installmentsListShown = true;
             askForInstallments();
         } else {
@@ -239,10 +232,6 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         }
     }
 
-    public boolean isInstallmentsEnabled() {
-        return installmentsEnabled;
-    }
-
     public void recoverFromFailure() {
         if (failureRecovery != null) {
             failureRecovery.recover();
@@ -254,11 +243,13 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
     }
 
     private void getInstallmentsForCardAsync(final Card card) {
-        String bin = TextUtils.isEmpty(cardInfo.getFirstSixDigits()) ? "" : cardInfo.getFirstSixDigits();
-        Long issuerId = this.card.getIssuer() == null ? null : this.card.getIssuer().getId();
+        final String bin = TextUtils.isEmpty(cardInfo.getFirstSixDigits()) ? "" : cardInfo.getFirstSixDigits();
+        final Long issuerId = this.card.getIssuer() == null ? null : this.card.getIssuer().getId();
         String paymentMethodId = card.getPaymentMethod() == null ? "" : card.getPaymentMethod().getId();
-
+        final DifferentialPricing differentialPricing = configuration.getCheckoutPreference().getDifferentialPricing();
+        final Integer differentialPricingId = differentialPricing == null ? null : differentialPricing.getId();
         getResourcesProvider().getInstallmentsAsync(bin, issuerId, paymentMethodId, amountRepository.getAmountToPay(),
+            differentialPricingId,
             new TaggedCallback<List<Installment>>(ApiUtil.RequestOrigin.GET_INSTALLMENTS) {
                 @Override
                 public void onSuccess(final List<Installment> installments) {
@@ -381,21 +372,6 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         getView().cancelCardVault();
     }
 
-    private void onValidStart() {
-        installmentsListShown = false;
-        issuersListShown = false;
-        if (viewAttached()) {
-            getView().showProgressLayout();
-        }
-        if (tokenRecoveryAvailable()) {
-            startTokenRecoveryFlow();
-        } else if (savedCardAvailable()) {
-            startSavedCardFlow();
-        } else {
-            startNewCardFlow();
-        }
-    }
-
     private void startTokenRecoveryFlow() {
         setCardInfo(new CardInfo(getPaymentRecovery().getToken()));
         setPaymentMethod(getPaymentRecovery().getPaymentMethod());
@@ -407,11 +383,7 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         setCardInfo(new CardInfo(getCard()));
         setPaymentMethod(getCard().getPaymentMethod());
         setIssuer(getCard().getIssuer());
-        if (isInstallmentsEnabled()) {
-            getInstallmentsForCardAsync(getCard());
-        } else {
-            askForSecurityCodeWithoutInstallments();
-        }
+        getInstallmentsForCardAsync(getCard());
     }
 
     private void startNewCardFlow() {

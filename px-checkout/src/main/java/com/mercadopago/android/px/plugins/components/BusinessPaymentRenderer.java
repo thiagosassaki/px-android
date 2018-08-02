@@ -45,7 +45,7 @@ public class BusinessPaymentRenderer extends Renderer<BusinessPaymentContainer> 
         }
 
         if (component.props.payment.hasHelp()) {
-            View helpView = new HelpComponent(component.props.payment.getHelp()).render(mainContentContainer);
+            final View helpView = new HelpComponent(component.props.payment.getHelp()).render(mainContentContainer);
             mainContentContainer.addView(helpView);
         }
 
@@ -79,7 +79,7 @@ public class BusinessPaymentRenderer extends Renderer<BusinessPaymentContainer> 
 
     private View renderPaymentMethod(@NonNull final PaymentMethodComponent.PaymentMethodProps props,
         @NonNull final LinearLayout mainContentContainer) {
-        PaymentMethodComponent paymentMethodComponent = new PaymentMethodComponent(props);
+        final PaymentMethodComponent paymentMethodComponent = new PaymentMethodComponent(props);
         RendererFactory.create(mainContentContainer.getContext(), paymentMethodComponent).render(mainContentContainer);
         return mainContentContainer.findViewById(R.id.mpsdkPaymentMethodContainer);
     }
@@ -90,7 +90,7 @@ public class BusinessPaymentRenderer extends Renderer<BusinessPaymentContainer> 
         return new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                int diffHeight = calculateDiff(mainContentContainer, scrollView);
+                final int diffHeight = calculateDiff(mainContentContainer, scrollView);
                 if (diffHeight > 0) {
                     toCorrect.setPadding(toCorrect.getPaddingLeft(),
                         toCorrect.getPaddingTop() + (int) Math.ceil(diffHeight / 2f), toCorrect.getPaddingRight(),
@@ -102,18 +102,18 @@ public class BusinessPaymentRenderer extends Renderer<BusinessPaymentContainer> 
 
     private void renderFooter(@NonNull final BusinessPaymentContainer component,
         @NonNull final LinearLayout linearLayout) {
-        Button.Props primaryButtonProps = getButtonProps(component.props.payment.getPrimaryAction());
-        Button.Props secondaryButtonProps = getButtonProps(component.props.payment.getSecondaryAction());
-        Footer footer =
+        final Button.Props primaryButtonProps = getButtonProps(component.props.payment.getPrimaryAction());
+        final Button.Props secondaryButtonProps = getButtonProps(component.props.payment.getSecondaryAction());
+        final Footer footer =
             new Footer(new Footer.Props(primaryButtonProps, secondaryButtonProps), component.getDispatcher());
-        View footerView = footer.render(linearLayout);
+        final View footerView = footer.render(linearLayout);
         linearLayout.addView(footerView);
     }
 
     @Nullable
     private Button.Props getButtonProps(final ExitAction action) {
         if (action != null) {
-            String label = action.getName();
+            final String label = action.getName();
             return new Button.Props(label, action);
         }
         return null;
@@ -122,9 +122,9 @@ public class BusinessPaymentRenderer extends Renderer<BusinessPaymentContainer> 
     @NonNull
     private View renderHeader(@NonNull final BusinessPaymentContainer component,
         @NonNull final LinearLayout linearLayout) {
-        Context context = linearLayout.getContext();
-        Header header = new Header(HeaderProps.from(component.props.payment, context), component.getDispatcher());
-        View render = RendererFactory.create(context, header).render(linearLayout);
+        final Context context = linearLayout.getContext();
+        final Header header = new Header(HeaderProps.from(component.props.payment, context), component.getDispatcher());
+        final View render = RendererFactory.create(context, header).render(linearLayout);
         return render.findViewById(R.id.mpsdkPaymentResultContainerHeader);
     }
 
@@ -135,7 +135,7 @@ public class BusinessPaymentRenderer extends Renderer<BusinessPaymentContainer> 
         return new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                int diffHeight = calculateDiff(mainContentContainer, scrollView);
+                final int diffHeight = calculateDiff(mainContentContainer, scrollView);
                 if (diffHeight > 0) {
                     header
                         .setPadding(header.getPaddingLeft(), header.getPaddingTop() + (int) Math.ceil(diffHeight / 2f),
@@ -146,9 +146,9 @@ public class BusinessPaymentRenderer extends Renderer<BusinessPaymentContainer> 
         };
     }
 
-    private int calculateDiff(final LinearLayout mainContentContainer, final ScrollView scrollView) {
-        int linearHeight = mainContentContainer.getMeasuredHeight();
-        int scrollHeight = scrollView.getMeasuredHeight();
+    /* default */ int calculateDiff(final LinearLayout mainContentContainer, final ScrollView scrollView) {
+        final int linearHeight = mainContentContainer.getMeasuredHeight();
+        final int scrollHeight = scrollView.getMeasuredHeight();
         return scrollHeight - linearHeight;
     }
 }

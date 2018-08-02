@@ -35,12 +35,11 @@ import com.mercadopago.android.px.callbacks.card.CardSecurityCodeEditTextCallbac
 import com.mercadopago.android.px.callbacks.card.CardholderNameEditTextCallback;
 import com.mercadopago.android.px.controllers.CheckoutTimer;
 import com.mercadopago.android.px.controllers.PaymentMethodGuessingController;
-import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.core.MercadoPagoComponents;
 import com.mercadopago.android.px.customviews.MPEditText;
 import com.mercadopago.android.px.customviews.MPTextView;
-import com.mercadopago.android.px.exceptions.ExceptionHandler;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.ExceptionHandler;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.listeners.card.CardExpiryDateTextWatcher;
 import com.mercadopago.android.px.listeners.card.CardIdentificationNumberTextWatcher;
@@ -59,11 +58,9 @@ import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentType;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Token;
-import com.mercadopago.android.px.observers.TimerObserver;
 import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.presenters.GuessingCardPresenter;
 import com.mercadopago.android.px.providers.GuessingCardProviderImpl;
-import com.mercadopago.android.px.services.controllers.CustomServicesHandler;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.services.exceptions.CardTokenException;
 import com.mercadopago.android.px.tracker.FlowHandler;
@@ -72,7 +69,6 @@ import com.mercadopago.android.px.tracking.utils.TrackingUtil;
 import com.mercadopago.android.px.uicontrollers.card.CardRepresentationModes;
 import com.mercadopago.android.px.uicontrollers.card.CardView;
 import com.mercadopago.android.px.uicontrollers.card.IdentificationCardView;
-import com.mercadopago.android.px.views.GuessingCardActivityView;
 import com.mercadopago.android.px.util.ApiUtil;
 import com.mercadopago.android.px.util.ErrorUtil;
 import com.mercadopago.android.px.util.JsonUtil;
@@ -80,11 +76,12 @@ import com.mercadopago.android.px.util.MPAnimationUtils;
 import com.mercadopago.android.px.util.MPCardMaskUtil;
 import com.mercadopago.android.px.util.ScaleUtil;
 import com.mercadopago.android.px.util.ViewUtils;
+import com.mercadopago.android.px.views.GuessingCardActivityView;
 import java.lang.reflect.Type;
 import java.util.List;
 
 public class GuessingCardActivity extends MercadoPagoBaseActivity implements GuessingCardActivityView,
-    TimerObserver, CardExpiryDateEditTextCallback, View.OnTouchListener, View.OnClickListener {
+    CardExpiryDateEditTextCallback, View.OnTouchListener, View.OnClickListener {
 
     public static final String CARD_NUMBER_INPUT = "cardNumber";
     public static final String CARDHOLDER_NAME_INPUT = "cardHolderName";
@@ -121,7 +118,7 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     //ViewMode
     protected boolean mLowResActive;
     protected GuessingCardPresenter mPresenter;
-    protected String mDefaultBaseURL;
+
     private Activity mActivity;
     //View controls
     private ScrollView mScrollView;
@@ -170,18 +167,15 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     //Input Controls
     private String mCurrentEditingEditText;
     private String mCardSideState;
-    private String mPublicKey;
-    private String mPrivateKey;
     private boolean mActivityActive;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivity = this;
         mActivityActive = true;
         mButtonContainerMustBeShown = true;
         getActivityParameters();
-        setMerchantInfo();
         configurePresenter();
         analizeLowRes();
 
@@ -217,13 +211,7 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
 
     private void configurePresenter() {
         mPresenter.attachView(this);
-        mPresenter.attachResourcesProvider(new GuessingCardProviderImpl(this, mPublicKey, mPrivateKey));
-    }
-
-    private void setMerchantInfo() {
-        if (CustomServicesHandler.getInstance().getServicePreference() != null) {
-            mDefaultBaseURL = CustomServicesHandler.getInstance().getServicePreference().getDefaultBaseURL();
-        }
+        mPresenter.attachResourcesProvider(new GuessingCardProviderImpl(this));
     }
 
     private void getActivityParameters() {
@@ -233,9 +221,9 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
         final Session session = Session.getSession(this);
         mPresenter = new GuessingCardPresenter(session.getAmountRepository(),
             session.getConfigurationModule().getUserSelectionRepository(),
-            session.getGroupsRepository(), session.getConfigurationModule().getPaymentSettings());
-        mPublicKey = intent.getStringExtra("merchantPublicKey");
-        mPrivateKey = intent.getStringExtra("payerAccessToken");
+            session.getConfigurationModule().getPaymentSettings(),
+            session.getGroupsRepository(),
+            session.getConfigurationModule().getPaymentSettings().getAdvancedConfiguration());
         PaymentPreference paymentPreference =
             JsonUtil.getInstance().fromJson(intent.getStringExtra("paymentPreference"), PaymentPreference.class);
 
@@ -249,17 +237,11 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
         Identification identification = new Identification();
         boolean identificationNumberRequired = false;
 
-        Boolean showBankDeals = intent.getBooleanExtra("showBankDeals", true);
-
-        mPresenter.setPrivateKey(mPrivateKey);
-        mPresenter.setPublicKey(mPublicKey);
         mPresenter.setToken(token);
-        mPresenter.setShowBankDeals(showBankDeals);
         mPresenter.setIdentification(identification);
         mPresenter.setIdentificationNumberRequired(identificationNumberRequired);
         mPresenter.setPaymentPreference(paymentPreference);
         mPresenter.setPaymentRecovery(paymentRecovery);
-        mPresenter.setPayerEmail(payerEmail);
     }
 
     @Override
@@ -412,7 +394,6 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     @Override
     public void initializeTimer() {
         if (CheckoutTimer.getInstance().isTimerEnabled()) {
-            CheckoutTimer.getInstance().addObserver(this);
             mTimerTextView.setVisibility(View.VISIBLE);
             mTimerTextView.setText(CheckoutTimer.getInstance().getCurrentTime());
         }
@@ -423,13 +404,13 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
         if (error.isApiException()) {
             showApiException(error.getApiException(), requestOrigin);
         } else {
-            ErrorUtil.startErrorActivity(this, error, mPublicKey);
+            ErrorUtil.startErrorActivity(this, error);
         }
     }
 
     public void showApiException(ApiException apiException, String requestOrigin) {
         if (mActivityActive) {
-            ApiUtil.showApiExceptionError(this, apiException, mPublicKey, requestOrigin);
+            ApiUtil.showApiExceptionError(this, apiException, requestOrigin);
         }
     }
 
@@ -839,7 +820,6 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     private void startReviewPaymentMethodsActivity(List<PaymentMethod> supportedPaymentMethods) {
         new MercadoPagoComponents.Activities.ReviewPaymentMethodsActivityBuilder()
             .setActivity(mActivity)
-            .setPublicKey(mPresenter.getPublicKey())
             .setPaymentMethods(supportedPaymentMethods)
             .startActivity();
         overridePendingTransition(R.anim.px_slide_up_activity, R.anim.px_no_change_animation);
@@ -1104,7 +1084,7 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
 
     @Override
     public void showApiExceptionError(ApiException exception, String requestOrigin) {
-        ApiUtil.showApiExceptionError(mActivity, exception, mPresenter.getPublicKey(), requestOrigin);
+        ApiUtil.showApiExceptionError(mActivity, exception, requestOrigin);
     }
 
     @Override
@@ -1551,7 +1531,6 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
         List<PaymentType> paymentTypes = mPresenter.getPaymentTypes();
         new MercadoPagoComponents.Activities.PaymentTypesActivityBuilder()
             .setActivity(mActivity)
-            .setMerchantPublicKey(mPresenter.getPublicKey())
             .setPaymentMethods(paymentMethods)
             .setPaymentTypes(paymentTypes)
             .setCardInfo(new CardInfo(mPresenter.getCardToken()))
@@ -1644,17 +1623,6 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     }
 
     @Override
-    public void onTimeChanged(String timeToShow) {
-        mTimerTextView.setText(timeToShow);
-    }
-
-    @Override
-    public void onFinish() {
-        setResult(MercadoPagoCheckout.TIMER_FINISHED_RESULT_CODE);
-        finish();
-    }
-
-    @Override
     public void hideProgress() {
         mButtonContainer.setVisibility(View.VISIBLE);
         mInputContainer.setVisibility(View.VISIBLE);
@@ -1706,8 +1674,6 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
         if (id == R.id.mpsdkBankDealsText) {
             new MercadoPagoComponents.Activities.BankDealsActivityBuilder()
                 .setActivity(mActivity)
-                .setMerchantPublicKey(mPresenter.getPublicKey())
-                .setPayerAccessToken(mPresenter.getPrivateKey())
                 .setBankDeals(mPresenter.getBankDealsList())
                 .startActivity();
         } else if (id == R.id.mpsdkNextButton) {

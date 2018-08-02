@@ -2,7 +2,6 @@ package com.mercadopago.android.px.installments;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.callbacks.OnSelectedCallback;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
@@ -21,6 +20,7 @@ import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Sites;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.mvp.TaggedCallback;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentPreference;
@@ -155,86 +155,36 @@ public class InstallmentsPresenterTest {
     }
 
     @Test
-    public void whenIsReviewEnabledThenShowReview() {
+    public void whenInstallmentIsSelectedFinishWithResult() {
 
-        List<PayerCost> payerCosts = PayerCosts.getPayerCostsWithCFT();
+        final List<PayerCost> payerCosts = PayerCosts.getPayerCostsWithCFT();
 
-        PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-        Issuer issuer = Issuers.getIssuerMLA();
-        PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
-
-        presenter.setCardInfo(getCardInfo());
-        presenter.setPaymentMethod(paymentMethod);
-        presenter.setPayerCosts(payerCosts);
-        presenter.setIssuer(issuer);
-        presenter.setInstallmentsReviewEnabled(true);
-
-        presenter.initialize();
-
-        mockedView.simulateInstallmentSelection(0);
-
-        assertFalse(mockedView.installmentRecyclerViewShown);
-        assertTrue(mockedView.installmentsReviewViewShown);
-        assertTrue(mockedView.installmentsReviewViewInitialized);
-    }
-
-    @Test
-    public void whenIsReviewEnabledButIsNotRequiredThenNotShowReview() {
-
-        List<PayerCost> payerCosts = PayerCosts.getPayerCostList();
-
-        PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-        Issuer issuer = Issuers.getIssuerMLA();
-        PaymentPreference paymentPreference = new PaymentPreference();
-
+        final PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
+        final Issuer issuer = Issuers.getIssuerMLA();
+        final PaymentPreference paymentPreference = new PaymentPreference();
         presenter.setPaymentPreference(paymentPreference);
         presenter.setCardInfo(getCardInfo());
         presenter.setPaymentMethod(paymentMethod);
         presenter.setPayerCosts(payerCosts);
         presenter.setIssuer(issuer);
-        presenter.setInstallmentsReviewEnabled(true);
 
         presenter.initialize();
 
         mockedView.simulateInstallmentSelection(0);
 
-        assertFalse(mockedView.installmentsReviewViewShown);
-        assertTrue(mockedView.finishWithResult);
-    }
-
-    @Test
-    public void whenIsNotReviewEnabledThenFinishWithResult() {
-
-        List<PayerCost> payerCosts = PayerCosts.getPayerCostsWithCFT();
-
-        PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-        Issuer issuer = Issuers.getIssuerMLA();
-        PaymentPreference paymentPreference = new PaymentPreference();
-        presenter.setPaymentPreference(paymentPreference);
-        presenter.setCardInfo(getCardInfo());
-        presenter.setPaymentMethod(paymentMethod);
-        presenter.setPayerCosts(payerCosts);
-        presenter.setIssuer(issuer);
-        presenter.setInstallmentsReviewEnabled(false);
-
-        presenter.initialize();
-
-        mockedView.simulateInstallmentSelection(0);
-
-        assertFalse(mockedView.installmentsReviewViewShown);
         assertTrue(mockedView.finishWithResult);
     }
 
     @Test
     public void whenSelectOnInstallmentThenFinishWithPayerCost() {
 
-        List<Installment> installments = Installments.getInstallmentsList();
+        final List<Installment> installments = Installments.getInstallmentsList();
         provider.setResponse(installments);
 
-        PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-        Issuer issuer = Issuers.getIssuerMLA();
-        PaymentPreference paymentPreference = new PaymentPreference();
+        final PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
+        final Issuer issuer = Issuers.getIssuerMLA();
+        final PaymentPreference paymentPreference = new PaymentPreference();
+
         presenter.setPaymentPreference(paymentPreference);
         presenter.setCardInfo(getCardInfo());
         presenter.setPaymentMethod(paymentMethod);
@@ -246,8 +196,8 @@ public class InstallmentsPresenterTest {
 
         assertTrue(mockedView.installmentsShown);
         assertTrue(mockedView.headerShown);
-        assertEquals(installments.get(0).getPayerCosts().get(0), mockedView.selectedPayerCost);
         assertTrue(mockedView.finishWithResult);
+        assertEquals(installments.get(0).getPayerCosts().get(0), mockedView.selectedPayerCost);
     }
 
     @Test
@@ -471,7 +421,7 @@ public class InstallmentsPresenterTest {
             failedResponse = new MercadoPagoError("Default mocked error", false);
         }
 
-        private void setResponse(List<Installment> installments) {
+        void setResponse(List<Installment> installments) {
             shouldFail = false;
             successfulResponse = installments;
         }
@@ -483,6 +433,7 @@ public class InstallmentsPresenterTest {
 
         @Override
         public void getInstallments(String bin, BigDecimal amount, Long issuerId, String paymentMethodId,
+            Integer differential,
             TaggedCallback<List<Installment>> taggedCallback) {
             if (shouldFail) {
                 taggedCallback.onFailure(failedResponse);
@@ -518,8 +469,6 @@ public class InstallmentsPresenterTest {
         private boolean errorShown = false;
         private boolean loadingViewShown = false;
         private boolean installmentRecyclerViewShown = false;
-        private boolean installmentsReviewViewShown = false;
-        private boolean installmentsReviewViewInitialized = false;
         private PayerCost selectedPayerCost;
         private OnSelectedCallback<Integer> installmentSelectionCallback;
         private boolean bankInterestsWarningShown = false;
@@ -557,28 +506,8 @@ public class InstallmentsPresenterTest {
         }
 
         @Override
-        public void initInstallmentsReviewView(PayerCost payerCost) {
-            this.installmentsReviewViewInitialized = true;
-        }
-
-        @Override
-        public void hideInstallmentsRecyclerView() {
-            this.installmentRecyclerViewShown = false;
-        }
-
-        @Override
         public void showInstallmentsRecyclerView() {
             this.installmentRecyclerViewShown = true;
-        }
-
-        @Override
-        public void hideInstallmentsReviewView() {
-            this.installmentsReviewViewShown = false;
-        }
-
-        @Override
-        public void showInstallmentsReviewView() {
-            this.installmentsReviewViewShown = true;
         }
 
         @Override
@@ -599,6 +528,16 @@ public class InstallmentsPresenterTest {
         @Override
         public void showAmount(@NonNull final DiscountRepository discountRepository,
             @NonNull final BigDecimal itemsPlusCharges, @NonNull final Site site) {
+            // do nothing
+        }
+
+        @Override
+        public void onSuccessCodeDiscountCallback(Discount discount) {
+            // do nothing
+        }
+
+        @Override
+        public void onFailureCodeDiscountCallback() {
             // do nothing
         }
 

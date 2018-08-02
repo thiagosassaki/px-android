@@ -1,9 +1,12 @@
 package com.mercadopago.android.px.providers;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.model.Installment;
 import com.mercadopago.android.px.mvp.TaggedCallback;
 import java.math.BigDecimal;
@@ -14,15 +17,19 @@ public class InstallmentsProviderImpl implements InstallmentsProvider {
     private final Context context;
     private final MercadoPagoServicesAdapter mercadoPago;
 
-    public InstallmentsProviderImpl(Context context, String publicKey, String privateKey) {
+    public InstallmentsProviderImpl(@NonNull final Context context) {
         this.context = context;
-        mercadoPago = new MercadoPagoServicesAdapter(context, publicKey, privateKey);
+        mercadoPago = Session.getSession(context).getMercadoPagoServiceAdapter();
     }
 
     @Override
-    public void getInstallments(String bin, BigDecimal amount, Long issuerId, String paymentMethodId,
+    public void getInstallments(final String bin,
+        final BigDecimal amount,
+        final Long issuerId,
+        final String paymentMethodId,
+        @Nullable final Integer differentialPricingId,
         final TaggedCallback<List<Installment>> taggedCallback) {
-        mercadoPago.getInstallments(bin, amount, issuerId, paymentMethodId, taggedCallback);
+        mercadoPago.getInstallments(bin, amount, issuerId, paymentMethodId, differentialPricingId, taggedCallback);
     }
 
     @Override

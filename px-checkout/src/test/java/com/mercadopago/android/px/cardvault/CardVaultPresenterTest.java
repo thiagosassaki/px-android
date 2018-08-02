@@ -1,6 +1,5 @@
 package com.mercadopago.android.px.cardvault;
 
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
@@ -19,6 +18,7 @@ import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.SavedESCCardToken;
 import com.mercadopago.android.px.model.Token;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.mvp.TaggedCallback;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentPreference;
@@ -69,12 +69,6 @@ public class CardVaultPresenterTest {
     }
 
     @Test
-    public void ifInstallmentsEnabledNotSetThenDefaultValueIsTrue() {
-        presenter.initialize();
-        assertTrue(presenter.isInstallmentsEnabled());
-    }
-
-    @Test
     public void ifInstallmentsEnabledAndSavedCardSetThenGetInstallmentsForCard() {
 
         List<Installment> installmentsList = Installments.getInstallmentsList();
@@ -88,20 +82,6 @@ public class CardVaultPresenterTest {
         assertEquals(expectedPayerCosts.size(), mockedPayerCosts.size());
         assertTrue(expectedPayerCosts.size() > 1);
         assertNull(presenter.getPayerCost());
-    }
-
-    @Test
-    public void ifInstallmentsNotEnabledAndSavedCardSetThenDontGetInstallments() {
-
-        List<Installment> installmentsList = Installments.getInstallmentsList();
-        provider.setResponse(installmentsList);
-
-        presenter.setCard(Cards.getCard());
-        presenter.setInstallmentsEnabled(false);
-
-        presenter.initialize();
-
-        assertNull(presenter.getPayerCostList());
     }
 
     @Test
@@ -170,21 +150,6 @@ public class CardVaultPresenterTest {
         presenter.initialize();
 
         assertTrue(mockedView.installmentsFlowStarted);
-    }
-
-    @Test
-    public void ifInstallmentsNotEnabledAndSavedCardSetThenStartSecurityCodeFlow() {
-
-        List<Installment> installmentsList = Installments.getInstallmentsList();
-        provider.setResponse(installmentsList);
-
-        presenter.setCard(Cards.getCard());
-        presenter.setInstallmentsEnabled(false);
-
-        presenter.initialize();
-
-        assertFalse(mockedView.installmentsFlowStarted);
-        assertTrue(mockedView.securityCodeFlowStarted);
     }
 
     @Test
@@ -650,64 +615,7 @@ public class CardVaultPresenterTest {
         assertTrue(mockedView.animateSlide);
     }
 
-    @Test
-    public void whenDontAskForInstallmentsAndDontAskForSecurityCodeThenCloseFlowWithNoAnimation() {
-        provider.setESCEnabled(true);
-
-        List<Installment> installmentsList = Installments.getInstallmentsList();
-        provider.setResponse(installmentsList);
-
-        final Card mockedCard = Cards.getCard();
-        mockedCard.setId("12345");
-        presenter.setCard(mockedCard);
-
-        //Set ESC to simulate it is saved
-        //Don't ask for security code
-        presenter.setESC("12345678");
-
-        //Disable installments
-        //Don't ask for installments
-        presenter.setInstallmentsEnabled(false);
-
-        final Token mockedToken = Tokens.getTokenWithESC();
-        //Token response
-        provider.setResponse(mockedToken);
-
-        presenter.initialize();
-
-        assertFalse(mockedView.securityCodeFlowStarted);
-        assertFalse(mockedView.installmentsFlowStarted);
-        assertTrue(mockedView.animateNoAnimation);
-    }
-
-    @Test
-    public void whenDontAskForInstallmentsAndAskSecurityCodeThenCloseFlowWithSlideAnimation() {
-        //Ask for security code
-        provider.setESCEnabled(false);
-
-        final List<Installment> installmentsList = Installments.getInstallmentsList();
-        provider.setResponse(installmentsList);
-
-        final Card mockedCard = Cards.getCard();
-        mockedCard.setId("12345");
-        presenter.setCard(mockedCard);
-
-        //Disable installments
-        //Don't ask for installments
-        presenter.setInstallmentsEnabled(false);
-
-        final Token mockedToken = Tokens.getTokenWithESC();
-        //Token response
-        provider.setResponse(mockedToken);
-
-        presenter.initialize();
-
-        assertTrue(mockedView.securityCodeFlowStarted);
-        assertFalse(mockedView.installmentsFlowStarted);
-        assertTrue(mockedView.animateSlide);
-    }
-
-    private class MockedProvider implements CardVaultProvider {
+    private static final class MockedProvider implements CardVaultProvider {
 
         private static final String MULTIPLE_INSTALLMENTS = "multiple installments";
         private static final String MISSING_INSTALLMENTS = "missing installments";
@@ -776,6 +684,7 @@ public class CardVaultPresenterTest {
 
         @Override
         public void getInstallmentsAsync(String bin, Long issuerId, String paymentMethodId, BigDecimal amount,
+            Integer differential,
             TaggedCallback<List<Installment>> taggedCallback) {
             if (shouldFail) {
                 taggedCallback.onFailure(failedResponse);
@@ -816,7 +725,6 @@ public class CardVaultPresenterTest {
     private class MockedView implements CardVaultView {
 
         private MercadoPagoError errorShown;
-        private List<Installment> installmentsShown;
         private boolean issuerFlowStarted;
         private boolean installmentsFlowStarted;
         private boolean securityCodeFlowStarted;

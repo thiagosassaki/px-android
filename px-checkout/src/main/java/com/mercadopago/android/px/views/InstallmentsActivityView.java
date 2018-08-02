@@ -2,7 +2,7 @@ package com.mercadopago.android.px.views;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.callbacks.OnSelectedCallback;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
@@ -25,15 +25,7 @@ public interface InstallmentsActivityView extends MvpView {
 
     void showHeader();
 
-    void initInstallmentsReviewView(PayerCost payerCost);
-
-    void hideInstallmentsRecyclerView();
-
     void showInstallmentsRecyclerView();
-
-    void hideInstallmentsReviewView();
-
-    void showInstallmentsReviewView();
 
     void warnAboutBankInterests();
 
@@ -44,4 +36,8 @@ public interface InstallmentsActivityView extends MvpView {
     void showAmount(@NonNull final DiscountRepository discountRepository,
         @NonNull final BigDecimal itemsPlusCharges,
         @NonNull final Site site);
+
+    void onSuccessCodeDiscountCallback(Discount discount);
+
+    void onFailureCodeDiscountCallback();
 }

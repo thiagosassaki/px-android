@@ -21,13 +21,15 @@ import static com.mercadopago.android.px.utils.ExamplesUtils.resolveCheckoutResu
 
 public class SelectCheckoutActivity extends AppCompatActivity {
 
+    private static final int REQ_CODE_CHECKOUT = 1;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_checkout);
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        final RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        DividerItemDecoration dividerItemDecoration =
+        final DividerItemDecoration dividerItemDecoration =
             new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
         recyclerView.setAdapter(new SelectionAdapter(getOptions()));
         recyclerView.addItemDecoration(dividerItemDecoration);
@@ -35,7 +37,7 @@ public class SelectCheckoutActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        resolveCheckoutResult(this, requestCode, resultCode, data);
+        resolveCheckoutResult(this, requestCode, resultCode, data, REQ_CODE_CHECKOUT);
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -78,7 +80,7 @@ public class SelectCheckoutActivity extends AppCompatActivity {
                     @Override
                     public void onClick(final View v) {
                         assert pair.second != null;
-                        pair.second.build().startForPayment(SelectCheckoutActivity.this);
+                        pair.second.build().startPayment(SelectCheckoutActivity.this, REQ_CODE_CHECKOUT);
                     }
                 });
             }

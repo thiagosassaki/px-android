@@ -1,6 +1,6 @@
 package com.mercadopago.android.px.plugins;
 
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.plugins.model.PluginPayment;
 
 public interface OnPaymentListener {

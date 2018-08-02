@@ -15,13 +15,12 @@ import com.google.gson.reflect.TypeToken;
 import com.mercadopago.android.px.adapters.PaymentTypesAdapter;
 import com.mercadopago.android.px.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.controllers.CheckoutTimer;
-import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.customviews.MPTextView;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.listeners.RecyclerItemClickListener;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentType;
-import com.mercadopago.android.px.observers.TimerObserver;
 import com.mercadopago.android.px.presenters.PaymentTypesPresenter;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.tracker.FlowHandler;
@@ -31,11 +30,11 @@ import com.mercadopago.android.px.tracking.utils.TrackingUtil;
 import com.mercadopago.android.px.uicontrollers.FontCache;
 import com.mercadopago.android.px.uicontrollers.card.CardRepresentationModes;
 import com.mercadopago.android.px.uicontrollers.card.FrontCardView;
-import com.mercadopago.android.px.views.PaymentTypesActivityView;
 import com.mercadopago.android.px.util.ApiUtil;
 import com.mercadopago.android.px.util.ErrorUtil;
 import com.mercadopago.android.px.util.JsonUtil;
 import com.mercadopago.android.px.util.ScaleUtil;
+import com.mercadopago.android.px.views.PaymentTypesActivityView;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -43,7 +42,7 @@ import java.util.List;
  * Created by vaserber on 10/25/16.
  */
 
-public class PaymentTypesActivity extends MercadoPagoBaseActivity implements PaymentTypesActivityView, TimerObserver {
+public class PaymentTypesActivity extends MercadoPagoBaseActivity implements PaymentTypesActivityView {
 
     protected PaymentTypesPresenter mPresenter;
     //ViewMode
@@ -65,7 +64,7 @@ public class PaymentTypesActivity extends MercadoPagoBaseActivity implements Pay
     private MPTextView mLowResTitleToolbar;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (mPresenter == null) {
             mPresenter = new PaymentTypesPresenter();
@@ -80,7 +79,6 @@ public class PaymentTypesActivity extends MercadoPagoBaseActivity implements Pay
     }
 
     private void getActivityParameters() {
-        String publicKey = getIntent().getStringExtra("merchantPublicKey");
 
         List<PaymentMethod> paymentMethods;
         try {
@@ -104,7 +102,6 @@ public class PaymentTypesActivity extends MercadoPagoBaseActivity implements Pay
         CardInfo cardInfo = JsonUtil.getInstance().fromJson(getIntent().getStringExtra("cardInfo"), CardInfo.class);
         mPresenter.setPaymentMethodList(paymentMethods);
         mPresenter.setPaymentTypesList(paymentTypes);
-        mPresenter.setPublicKey(publicKey);
         mPresenter.setCardInfo(cardInfo);
     }
 
@@ -132,15 +129,15 @@ public class PaymentTypesActivity extends MercadoPagoBaseActivity implements Pay
         showTimer();
         initializeAdapter();
         mPresenter.loadPaymentTypes();
-        trackScreen();
+        trackScreen(Session.getSession(this).getConfigurationModule().getPaymentSettings().getPublicKey());
     }
 
-    protected void trackScreen() {
-        MPTrackingContext mpTrackingContext = new MPTrackingContext.Builder(this, mPresenter.getPublicKey())
+    protected void trackScreen(final String publicKey) {
+        MPTrackingContext mpTrackingContext = new MPTrackingContext.Builder(this, publicKey)
             .setVersion(BuildConfig.VERSION_NAME)
             .build();
 
-        ScreenViewEvent event = new ScreenViewEvent.Builder()
+        final ScreenViewEvent event = new ScreenViewEvent.Builder()
             .setFlowId(FlowHandler.getInstance().getFlowId())
             .setScreenId(TrackingUtil.SCREEN_ID_PAYMENT_TYPES)
             .setScreenName(TrackingUtil.SCREEN_NAME_PAYMENT_TYPES)
@@ -150,7 +147,6 @@ public class PaymentTypesActivity extends MercadoPagoBaseActivity implements Pay
 
     private void showTimer() {
         if (CheckoutTimer.getInstance().isTimerEnabled()) {
-            CheckoutTimer.getInstance().addObserver(this);
             mTimerTextView.setVisibility(View.VISIBLE);
             mTimerTextView.setText(CheckoutTimer.getInstance().getCurrentTime());
         }
@@ -230,12 +226,12 @@ public class PaymentTypesActivity extends MercadoPagoBaseActivity implements Pay
 
     @Override
     public void showApiExceptionError(ApiException exception, String requestOrigin) {
-        ApiUtil.showApiExceptionError(mActivity, exception, mPresenter.getPublicKey(), requestOrigin);
+        ApiUtil.showApiExceptionError(mActivity, exception, requestOrigin);
     }
 
     @Override
     public void startErrorView(String message, String errorDetail) {
-        ErrorUtil.startErrorActivity(mActivity, message, errorDetail, false, mPresenter.getPublicKey());
+        ErrorUtil.startErrorActivity(mActivity, message, errorDetail, false);
     }
 
     private void loadLowResViews() {
@@ -327,16 +323,5 @@ public class PaymentTypesActivity extends MercadoPagoBaseActivity implements Pay
                 finish();
             }
         }
-    }
-
-    @Override
-    public void onTimeChanged(String timeToShow) {
-        mTimerTextView.setText(timeToShow);
-    }
-
-    @Override
-    public void onFinish() {
-        setResult(MercadoPagoCheckout.TIMER_FINISHED_RESULT_CODE);
-        finish();
     }
 }

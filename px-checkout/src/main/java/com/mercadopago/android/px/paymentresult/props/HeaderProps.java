@@ -5,6 +5,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.plugins.model.BusinessPayment;
+import com.mercadopago.android.px.services.util.TextUtil;
 
 public class HeaderProps {
 
@@ -31,12 +32,19 @@ public class HeaderProps {
         label = builder.label;
     }
 
-    public static HeaderProps from(@NonNull BusinessPayment businessPayment, @NonNull Context context) {
-        BusinessPayment.Decorator decorator = businessPayment.getDecorator();
-        Builder builder = new Builder();
+    public static HeaderProps from(@NonNull final BusinessPayment businessPayment, @NonNull final Context context) {
+        final BusinessPayment.Decorator decorator = businessPayment.getDecorator();
+        final Builder builder = new Builder();
 
         if (businessPayment.getIcon() != 0) {
             builder.setIconImage(businessPayment.getIcon());
+        }
+
+        String subtitle;
+        if (TextUtil.isEmpty(businessPayment.getSubtitle())) {
+            subtitle = decorator.message == 0 ? null : context.getString(decorator.message);
+        } else {
+            subtitle = businessPayment.getSubtitle();
         }
 
         builder.setIconUrl(businessPayment.getImageUrl());
@@ -49,7 +57,7 @@ public class HeaderProps {
             .setIconImage(businessPayment.getIcon())
             .setBadgeImage(decorator.badge)
             .setTitle(businessPayment.getTitle())
-            .setLabel(decorator.message == 0 ? null : context.getString(decorator.message))
+            .setLabel(subtitle)
             .build();
     }
 

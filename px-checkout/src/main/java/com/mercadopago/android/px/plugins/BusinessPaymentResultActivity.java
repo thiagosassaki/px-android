@@ -23,7 +23,7 @@ public class BusinessPaymentResultActivity extends AppCompatActivity implements 
     public static void start(final AppCompatActivity activity,
         final BusinessPaymentModel model,
         final String merchantPublicKey,
-        int requestCode) {
+        final int requestCode) {
         Intent intent = new Intent(activity, BusinessPaymentResultActivity.class);
         intent.putExtra(EXTRA_BUSINESS_PAYMENT_MODEL, model);
         intent.putExtra(EXTRA_MERCHANT_PUBLIC_KEY, merchantPublicKey);
@@ -31,10 +31,10 @@ public class BusinessPaymentResultActivity extends AppCompatActivity implements 
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        BusinessPaymentModel model = parseBusinessPaymentModel();
-        String merchantPublicKey = parseMerchantPublicKey();
+        final BusinessPaymentModel model = parseBusinessPaymentModel();
+        final String merchantPublicKey = parseMerchantPublicKey();
         if (model != null) {
             initializeView(model);
         } else {
@@ -59,9 +59,9 @@ public class BusinessPaymentResultActivity extends AppCompatActivity implements 
     }
 
     private void initializeView(final BusinessPaymentModel model) {
-        BusinessPaymentContainer businessPaymentContainer = new BusinessPaymentContainer(
+        final BusinessPaymentContainer businessPaymentContainer = new BusinessPaymentContainer(
             new BusinessPaymentContainer.Props(model.payment, model.getPaymentMethodProps()), this);
-        ComponentManager componentManager = new ComponentManager(this);
+        final ComponentManager componentManager = new ComponentManager(this);
         componentManager.render(businessPaymentContainer);
     }
 
@@ -75,7 +75,7 @@ public class BusinessPaymentResultActivity extends AppCompatActivity implements 
     }
 
     private void processCustomExit(final ExitAction action) {
-        Intent intent = action.toIntent();
+        final Intent intent = action.toIntent();
         setResult(RESULT_OK, intent);
         finish();
     }

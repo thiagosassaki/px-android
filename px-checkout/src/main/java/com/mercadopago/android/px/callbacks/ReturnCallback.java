@@ -1,6 +1,6 @@
 package com.mercadopago.android.px.callbacks;
 
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 
 /**
  * Created by vaserber on 1/20/17.

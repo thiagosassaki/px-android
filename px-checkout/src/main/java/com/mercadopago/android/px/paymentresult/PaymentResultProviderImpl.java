@@ -1,8 +1,11 @@
 package com.mercadopago.android.px.paymentresult;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
+import com.mercadopago.android.px.internal.di.Session;
+import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.Instructions;
 import com.mercadopago.android.px.mvp.TaggedCallback;
 
@@ -10,9 +13,12 @@ public class PaymentResultProviderImpl implements PaymentResultProvider {
     private final Context context;
     private final MercadoPagoServicesAdapter mercadoPago;
 
-    public PaymentResultProviderImpl(Context context, String publicKey, String privateKey) {
+    public PaymentResultProviderImpl(@NonNull final Context context) {
         this.context = context;
-        mercadoPago = new MercadoPagoServicesAdapter(context, publicKey, privateKey);
+        final PaymentSettingRepository paymentSettings =
+            Session.getSession(context).getConfigurationModule().getPaymentSettings();
+        mercadoPago =
+            new MercadoPagoServicesAdapter(context, paymentSettings.getPublicKey(), paymentSettings.getPrivateKey());
     }
 
     @Override

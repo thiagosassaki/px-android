@@ -1,8 +1,9 @@
-package com.mercadopago.android.px.exceptions;
+package com.mercadopago.android.px.model.exceptions;
 
 import com.mercadopago.android.px.services.exceptions.ApiException;
+import java.io.Serializable;
 
-public class MercadoPagoError {
+public class MercadoPagoError implements Serializable {
 
     private String message;
     private String errorDetail;
@@ -10,7 +11,7 @@ public class MercadoPagoError {
     private ApiException apiException;
     private final boolean recoverable;
 
-    public MercadoPagoError(String message, boolean recoverable) {
+    public MercadoPagoError(final String message, final boolean recoverable) {
         this.message = message;
         this.recoverable = recoverable;
     }
@@ -49,5 +50,16 @@ public class MercadoPagoError {
 
     public boolean isApiException() {
         return apiException != null;
+    }
+
+    @Override
+    public String toString() {
+        return "MercadoPagoError{" +
+            "message='" + message + '\'' +
+            ", errorDetail='" + errorDetail + '\'' +
+            ", requestOrigin='" + requestOrigin + '\'' +
+            ", apiException=" + apiException +
+            ", recoverable=" + recoverable +
+            '}';
     }
 }

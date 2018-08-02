@@ -112,18 +112,9 @@ public final class StubCheckoutPreferenceUtils {
     }
 
     public static CheckoutPreference.Builder stubBuilderOneItemAndPayer() {
-        return stubBuilderOneItem()
-            .setPayerAccessToken("AT");
+        return stubBuilderOneItem();
     }
 
-    public static CheckoutPreference stubPreferenceWithAccessToken() {
-        return stubBuilderWithAccessToken()
-            .build();
-    }
-
-    private static CheckoutPreference.Builder stubBuilderWithAccessToken() {
-        return stubBuilderOneItemAndPayer().setPayerAccessToken("ACCESS_TOKEN");
-    }
 
     public static CheckoutPreference stubPreferenceOneItem() {
         return stubBuilderOneItem()

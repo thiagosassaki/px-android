@@ -3,6 +3,7 @@ package com.mercadopago.android.px.onetap.components;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.components.Action;
 import com.mercadopago.android.px.components.Button;
@@ -21,7 +22,9 @@ import com.mercadopago.android.px.review_and_confirm.models.LineSeparatorType;
 import com.mercadopago.android.px.review_and_confirm.models.TermsAndConditionsModel;
 import com.mercadopago.android.px.viewmodel.OneTapModel;
 import com.mercadopago.android.px.util.ViewUtils;
+
 import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -51,28 +54,25 @@ public class OneTapContainer extends CompactComponent<OneTapModel, OneTap.Action
     private void addItem(final ViewGroup parent, final List<Item> items) {
         final String defaultMultipleTitle = parent.getContext().getString(R.string.px_review_summary_products);
         final int icon =
-            props.getCollectorIcon() == null ? R.drawable.px_review_item_default : props.getCollectorIcon();
+                props.getCollectorIcon() == null ? R.drawable.px_review_item_default : props.getCollectorIcon();
         final String itemsTitle = com.mercadopago.android.px.model.Item
-            .getItemsTitle(items, defaultMultipleTitle);
+                .getItemsTitle(items, defaultMultipleTitle);
         final View render = new CollapsedItem(new CollapsedItem.Props(icon, itemsTitle)).render(parent);
         parent.addView(render);
     }
 
-    private void addAmount(final ViewGroup parent,
-        final PaymentSettingRepository configuration,
-        final DiscountRepository discountRepository) {
+    private void addAmount(final ViewGroup parent, final PaymentSettingRepository configuration, final DiscountRepository discountRepository) {
         final Amount.Props props = Amount.Props.from(this.props, configuration, discountRepository);
-        final View view = new Amount(props, getActions())
-            .render(parent);
+        final View view = new Amount(props, getActions()).render(parent);
         parent.addView(view);
     }
 
     private void addPaymentMethod(final ViewGroup parent,
-        final PaymentSettingRepository configuration,
-        final DiscountRepository discountRepository) {
+                                  final PaymentSettingRepository configuration,
+                                  final DiscountRepository discountRepository) {
         final View view =
-            new PaymentMethod(PaymentMethod.Props.createFrom(props, configuration, discountRepository),
-                getActions()).render(parent);
+                new PaymentMethod(PaymentMethod.Props.createFrom(props, configuration, discountRepository),
+                        getActions()).render(parent);
         parent.addView(view);
     }
 
@@ -80,12 +80,12 @@ public class OneTapContainer extends CompactComponent<OneTapModel, OneTap.Action
         if (campaign != null) {
             final Context context = parent.getContext();
             TermsAndConditionsModel model = new TermsAndConditionsModel(campaign.getCampaignTermsUrl(),
-                context.getString(R.string.px_discount_terms_and_conditions_message),
-                context.getString(R.string.px_discount_terms_and_conditions_linked_message),
-                props.getPublicKey(),
-                LineSeparatorType.NONE);
+                    context.getString(R.string.px_discount_terms_and_conditions_message),
+                    context.getString(R.string.px_discount_terms_and_conditions_linked_message),
+                    props.getPublicKey(),
+                    LineSeparatorType.NONE);
             final View view = new TermsAndConditionsComponent(model)
-                .render(parent);
+                    .render(parent);
             parent.addView(view);
         }
     }

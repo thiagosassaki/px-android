@@ -3,7 +3,7 @@ package com.mercadopago.android.px.paymentvault;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.constants.PaymentMethods;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.hooks.Hook;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
@@ -23,7 +23,6 @@ import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.plugins.PaymentMethodPlugin;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.preferences.FlowPreference;
 import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.presenters.PaymentVaultPresenter;
 import com.mercadopago.android.px.providers.PaymentVaultProvider;
@@ -310,20 +309,6 @@ public class PaymentVaultPresenterTest {
         assertEquals(paymentMethodSearch.getCustomSearchItems().size(), mockedView.customOptionsShown.size());
     }
 
-    @Test
-    public void ifMaxSavedCardLimitCardsShown() {
-
-        PaymentMethodSearch paymentMethodSearch = PaymentMethodSearchs.getCompletePaymentMethodSearchMLA();
-        when(groupsRepository.getGroups()).thenReturn(new StubSuccessMpCall<>(paymentMethodSearch));
-
-        presenter.setMaxSavedCards(1);
-
-        presenter.initialize();
-
-        //Account money + 1 card
-        assertEquals(2, mockedView.customOptionsShown.size());
-    }
-
     //Discounts
     @Test
     public void ifDiscountsAreNotEnabledNotShowDiscountRow() {
@@ -402,7 +387,6 @@ public class PaymentVaultPresenterTest {
         apiException.setMessage("Mocked failure");
         when(groupsRepository.getGroups()).thenReturn(new StubFailMpCall<PaymentMethodSearch>(apiException));
 
-        presenter.setMaxSavedCards(1);
         presenter.initialize();
         presenter.detachView();
         presenter.recoverFromFailure();
@@ -417,8 +401,6 @@ public class PaymentVaultPresenterTest {
         apiException.setMessage("Mocked failure");
         MercadoPagoError mercadoPagoError = new MercadoPagoError(apiException, "");
         provider.setResponse(mercadoPagoError);
-
-        presenter.setMaxSavedCards(1);
 
         when(groupsRepository.getGroups())
             .thenReturn(new StubSuccessMpCall<>(PaymentMethodSearchs.getCompletePaymentMethodSearchMLA()));
@@ -466,9 +448,9 @@ public class PaymentVaultPresenterTest {
     }
 
     @Test
-    public void ifShowAllSavedCardsTestThenShowThem() {
+    public void whenHasCustomItemsThenShowThemAll() {
         // 6 Saved Cards + Account Money
-        PaymentMethodSearch paymentMethodSearch = PaymentMethodSearchs.getPaymentMethodSearchWithSavedCardsMLA();
+        final PaymentMethodSearch paymentMethodSearch = PaymentMethodSearchs.getPaymentMethodSearchWithSavedCardsMLA();
 
         when(groupsRepository.getGroups()).thenReturn(new StubSuccessMpCall<>(paymentMethodSearch));
 
@@ -476,62 +458,9 @@ public class PaymentVaultPresenterTest {
         presenter.attachResourcesProvider(provider);
 
         // Set show all saved cards
-        presenter.setShowAllSavedCardsEnabled(true);
-        presenter.setMaxSavedCards(FlowPreference.DEFAULT_MAX_SAVED_CARDS_TO_SHOW);
 
         presenter.initialize();
 
-        assertEquals(mockedView.customOptionsShown.size(), paymentMethodSearch.getCustomSearchItems().size());
-    }
-
-    @Test
-    public void ifMaxSavedCardsSetThenShowWithLimit() {
-        // 6 Saved Cards + Account Money
-        PaymentMethodSearch paymentMethodSearch = PaymentMethodSearchs.getPaymentMethodSearchWithSavedCardsMLA();
-        when(groupsRepository.getGroups()).thenReturn(new StubSuccessMpCall<>(paymentMethodSearch));
-        presenter.attachView(mockedView);
-        presenter.attachResourcesProvider(provider);
-        presenter.setMaxSavedCards(4);
-        presenter.initialize();
-        // 4 Cards + Account Money
-        assertEquals(mockedView.customOptionsShown.size(), 5);
-    }
-
-    @Test
-    public void ifMaxSavedCardsSetThenShowWithLimitAgain() {
-        // 6 Saved Cards + Account Money
-        PaymentMethodSearch paymentMethodSearch = PaymentMethodSearchs.getPaymentMethodSearchWithSavedCardsMLA();
-        when(groupsRepository.getGroups()).thenReturn(new StubSuccessMpCall<>(paymentMethodSearch));
-        presenter.setMaxSavedCards(1);
-
-        presenter.initialize();
-
-        // 1 Card + Account Money
-        assertEquals(mockedView.customOptionsShown.size(), 2);
-    }
-
-    @Test
-    public void ifMaxSavedCardsSetAndShowAllSetThenShowAllSavedCards() {
-        // 6 Saved Cards + Account Money
-        PaymentMethodSearch paymentMethodSearch = PaymentMethodSearchs.getPaymentMethodSearchWithSavedCardsMLA();
-        when(groupsRepository.getGroups()).thenReturn(new StubSuccessMpCall<>(paymentMethodSearch));
-        presenter.setShowAllSavedCardsEnabled(true);
-        presenter.setMaxSavedCards(4);
-
-        presenter.initialize();
-
-        assertEquals(mockedView.customOptionsShown.size(), paymentMethodSearch.getCustomSearchItems().size());
-    }
-
-    @Test
-    public void ifMaxSavedCardsSetMoreThanActualAmountOfCardsThenShowAll() {
-        // 6 Saved Cards + Account Money
-        PaymentMethodSearch paymentMethodSearch = PaymentMethodSearchs.getPaymentMethodSearchWithSavedCardsMLA();
-        when(groupsRepository.getGroups()).thenReturn(new StubSuccessMpCall<>(paymentMethodSearch));
-        // More cards than we have
-        presenter.setMaxSavedCards(8);
-        presenter.initialize();
-        // Show every card we have
         assertEquals(mockedView.customOptionsShown.size(), paymentMethodSearch.getCustomSearchItems().size());
     }
 
@@ -681,11 +610,6 @@ public class PaymentVaultPresenterTest {
             @NonNull String siteId) {
 
         }
-
-        @Override
-        public List<String> getCardsWithEsc() {
-            return new ArrayList<>();
-        }
     }
 
     private static class MockedView implements PaymentVaultView {
@@ -815,6 +739,16 @@ public class PaymentVaultPresenterTest {
 
         @Override
         public void showDiscountInputDialog() {
+            //Do nothing
+        }
+
+        @Override
+        public void onSuccessCodeDiscountCallback(Discount discount) {
+            //Do nothing
+        }
+
+        @Override
+        public void onFailureCodeDiscountCallback() {
             //Do nothing
         }
 

@@ -1,8 +1,10 @@
 package com.mercadopago.android.px.providers;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CardToken;
 import com.mercadopago.android.px.model.PaymentMethod;
@@ -13,7 +15,6 @@ import com.mercadopago.android.px.model.requests.SecurityCodeIntent;
 import com.mercadopago.android.px.mvp.TaggedCallback;
 import com.mercadopago.android.px.services.exceptions.CardTokenException;
 import com.mercadopago.android.px.util.MercadoPagoESC;
-import com.mercadopago.android.px.util.MercadoPagoESCImpl;
 
 public class SecurityCodeProviderImpl implements SecurityCodeProvider {
 
@@ -27,10 +28,11 @@ public class SecurityCodeProviderImpl implements SecurityCodeProvider {
     private static final String PAYMENT_METHOD_NOT_SET = "payment method not set";
     private static final String CARD_INFO_NOT_SET = "card info can't be null";
 
-    public SecurityCodeProviderImpl(Context context, String publicKey, String privateKey, boolean escEnabled) {
+    public SecurityCodeProviderImpl(@NonNull final Context context) {
         mContext = context;
-        mMercadoPagoServicesAdapter = new MercadoPagoServicesAdapter(context, publicKey, privateKey);
-        mercadoPagoESC = new MercadoPagoESCImpl(context, escEnabled);
+        final Session session = Session.getSession(context);
+        mMercadoPagoServicesAdapter = session.getMercadoPagoServiceAdapter();
+        mercadoPagoESC = session.getMercadoPagoESC();
     }
 
     @Override

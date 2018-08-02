@@ -8,13 +8,12 @@ import android.util.Log;
 import android.widget.Toast;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.core.MercadoPagoCheckout.Builder;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.preferences.FlowPreference;
 import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
 import com.mercadopago.android.px.tracking.listeners.TracksListener;
 import com.mercadopago.android.px.tracking.tracker.MPTracker;
@@ -48,27 +47,31 @@ public final class ExamplesUtils {
     private static final String DUMMY_MERCHANT_PUBLIC_KEY = "TEST-c6d9b1f9-71ff-4e05-9327-3c62468a23ee";
 
     public static void resolveCheckoutResult(final Activity context, final int requestCode, final int resultCode,
-        final Intent data) {
+        final Intent data, final int reqCodeCheckout) {
         ViewUtils.showRegularLayout(context);
 
-        if (requestCode == MercadoPagoCheckout.CHECKOUT_REQUEST_CODE) {
+        if (requestCode == reqCodeCheckout) {
             if (resultCode == MercadoPagoCheckout.PAYMENT_RESULT_CODE) {
-                final Payment payment = JsonUtil.getInstance().fromJson(data.getStringExtra("payment"), Payment.class);
+                final Payment payment = (Payment) data.getSerializableExtra(MercadoPagoCheckout.EXTRA_PAYMENT_RESULT);
                 Toast.makeText(context, new StringBuilder()
                     .append(PAYMENT_WITH_STATUS_MESSAGE)
-                    .append(payment.getStatus()), Toast.LENGTH_LONG)
+                    .append(payment), Toast.LENGTH_LONG)
                     .show();
             } else if (resultCode == RESULT_CANCELED) {
-                if (data != null && data.getStringExtra("mercadoPagoError") != null) {
-                    final MercadoPagoError mercadoPagoError = JsonUtil.getInstance()
-                        .fromJson(data.getStringExtra("mercadoPagoError"), MercadoPagoError.class);
-                    Toast.makeText(context, "Error: " + mercadoPagoError.getMessage(), Toast.LENGTH_LONG).show();
+                if (data != null
+                    && data.getExtras() != null
+                    && data.getExtras().containsKey(MercadoPagoCheckout.EXTRA_ERROR)) {
+                    final MercadoPagoError mercadoPagoError =
+                        (MercadoPagoError) data.getSerializableExtra(MercadoPagoCheckout.EXTRA_ERROR);
+                    Toast.makeText(context, "Error: " + mercadoPagoError, Toast.LENGTH_LONG)
+                        .show();
                 } else {
                     Toast.makeText(context, new StringBuilder()
                         .append("Cancel - ")
                         .append(REQUESTED_CODE_MESSAGE)
                         .append(requestCode)
                         .append(RESULT_CODE_MESSAGE)
+
                         .append(resultCode), Toast.LENGTH_LONG)
                         .show();
                 }
@@ -96,6 +99,7 @@ public final class ExamplesUtils {
         options.add(new Pair<>("One item with quantity", createBaseWithOneItemWithQuantity()));
         options.add(new Pair<>("Two items - Collector icon", createBaseWithTwoItemsAndCollectorIcon()));
         options.add(new Pair<>("One item - Long title", createBaseWithOneItemLongTitle()));
+        options.add(new Pair<>("Differential pricing preference", createWithDifferentialPricing()));
         return options;
     }
 
@@ -108,8 +112,7 @@ public final class ExamplesUtils {
             }
         }
 
-        return createBase(builder.build())
-            .setFlowPreference(new FlowPreference.Builder().exitOnPaymentMethodChange().build());
+        return createBase(builder.build());
     }
 
     @NonNull
@@ -141,6 +144,10 @@ public final class ExamplesUtils {
             }
         });
         return createBase();
+    }
+
+    private static Builder createWithDifferentialPricing() {
+        return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, "99628543-518e6477-ac0d-4f4a-8097-51c2fcc00b71");
     }
 
     private static Builder createBase(@NonNull final CheckoutPreference checkoutPreference) {

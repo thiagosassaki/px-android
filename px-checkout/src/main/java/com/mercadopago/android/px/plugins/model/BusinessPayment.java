@@ -11,45 +11,31 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.model.ExternalFragment;
+import com.mercadopago.android.px.services.util.ParcelableUtil;
 import com.mercadopago.android.px.util.TextUtils;
 
 @SuppressWarnings("unused")
 public class BusinessPayment implements PluginPayment, Parcelable {
 
-    @Nullable
-    private final String help;
-    @NonNull
-    private final String title;
-
-    @NonNull
-    private final Decorator decorator;
-
+    @NonNull private final String title;
+    @NonNull private final Decorator decorator;
+    @NonNull private final String paymentStatus;
+    @NonNull private final String paymentStatusDetail;
     private final boolean shouldShowPaymentMethod;
     private final int iconId;
 
-    @Nullable
-    private final ExitAction exitActionPrimary;
-    @Nullable
-    private final ExitAction exitActionSecondary;
-    @Nullable
-    private final String statementDescription;
-    @Nullable
-    private final String receiptId;
+    @Nullable private final String help;
+    @Nullable private final ExitAction exitActionPrimary;
+    @Nullable private final ExitAction exitActionSecondary;
+    @Nullable private final String statementDescription;
+    @Nullable private final String receiptId;
+    @Nullable private final String imageUrl;
+    @Nullable private final ExternalFragment topFragment;
+    @Nullable private final ExternalFragment bottomFragment;
+
 
     @Nullable
-    private final String imageUrl;
-
-    @NonNull
-    private final String paymentStatus;
-
-    @NonNull
-    private final String paymentStatusDetail;
-
-    @Nullable
-    private final ExternalFragment topFragment;
-
-    @Nullable
-    private final ExternalFragment bottomFragment;
+    private final String subtitle;
 
     /* default */ BusinessPayment(final Builder builder) {
         help = builder.help;
@@ -66,6 +52,7 @@ public class BusinessPayment implements PluginPayment, Parcelable {
         bottomFragment = builder.bottomFragment;
         paymentStatus = builder.paymentStatus;
         paymentStatusDetail = builder.paymentStatusDetail;
+        subtitle = builder.subtitle;
     }
 
     protected BusinessPayment(final Parcel in) {
@@ -83,6 +70,7 @@ public class BusinessPayment implements PluginPayment, Parcelable {
         bottomFragment = in.readParcelable(ExternalFragment.class.getClassLoader());
         paymentStatus = in.readString();
         paymentStatusDetail = in.readString();
+        subtitle = ParcelableUtil.getOptionalString(in);
     }
 
     public static final Creator<BusinessPayment> CREATOR = new Creator<BusinessPayment>() {
@@ -123,6 +111,7 @@ public class BusinessPayment implements PluginPayment, Parcelable {
         dest.writeParcelable(bottomFragment, 0);
         dest.writeString(paymentStatus);
         dest.writeString(paymentStatusDetail);
+        ParcelableUtil.writeOptional(dest, subtitle);
     }
 
     public boolean hasReceipt() {
@@ -130,11 +119,11 @@ public class BusinessPayment implements PluginPayment, Parcelable {
     }
 
     public boolean hasTopFragment() {
-        return topFragment != null;
+        return getTopFragment() != null;
     }
 
     public boolean hasBottomFragment() {
-        return bottomFragment != null;
+        return getBottomFragment() != null;
     }
 
     @NonNull
@@ -209,6 +198,11 @@ public class BusinessPayment implements PluginPayment, Parcelable {
         return paymentStatusDetail;
     }
 
+    @Nullable
+    public String getSubtitle() {
+        return subtitle;
+    }
+
     public enum Decorator {
         APPROVED("APPROVED", R.color.ui_components_success_color,
             R.drawable.px_badge_check, 0),
@@ -260,6 +254,7 @@ public class BusinessPayment implements PluginPayment, Parcelable {
         /* default */ @Nullable ExitAction buttonSecondary;
         /* default */ @Nullable String help;
         /* default */ @Nullable String receiptId;
+        /* default */ @Nullable String subtitle;
 
         ExternalFragment topFragment;
         ExternalFragment bottomFragment;
@@ -393,6 +388,18 @@ public class BusinessPayment implements PluginPayment, Parcelable {
          */
         public Builder setBottomFragment(@NonNull final Class<? extends Fragment> zClass, @Nullable final Bundle args) {
             bottomFragment = new ExternalFragment(zClass, args);
+            return this;
+        }
+
+        /**
+         * When subtitle is set, then default {@link Decorator} subtitle will be replaced
+         * on the screen with it.
+         *
+         * @param subtitle subtitle text
+         * @return builder
+         */
+        public Builder setSubtitle(@Nullable final String subtitle) {
+            this.subtitle = subtitle;
             return this;
         }
     }

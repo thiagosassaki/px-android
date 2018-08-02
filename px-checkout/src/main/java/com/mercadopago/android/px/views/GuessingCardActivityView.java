@@ -1,7 +1,7 @@
 package com.mercadopago.android.px.views;
 
 import com.mercadopago.android.px.controllers.PaymentMethodGuessingController;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PayerCost;

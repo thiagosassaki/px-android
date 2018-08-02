@@ -24,8 +24,10 @@ public interface PaymentService {
     MPCall<List<Installment>> getInstallments(@Path(value = "version", encoded = true) String version,
         @Query("public_key") String publicKey, @Query("access_token") String privateKey, @Query("bin") String bin,
         @Query("amount") BigDecimal amount, @Query("issuer.id") Long issuerId,
-        @Query("payment_method_id") String paymentMethodId, @Query("locale") String locale,
-        @Query("processing_mode") String processingMode);
+        @Query("payment_method_id") String paymentMethodId,
+        @Query("locale") String locale,
+        @Query("processing_mode") String processingMode,
+        @Query("differential_pricing_id") Integer differentialPricingId);
 
     @GET("/{version}/checkout/payment_methods/card_issuers")
     MPCall<List<Issuer>> getIssuers(@Path(value = "version", encoded = true) String version,

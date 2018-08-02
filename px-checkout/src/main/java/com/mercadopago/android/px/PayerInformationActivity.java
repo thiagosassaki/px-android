@@ -25,7 +25,7 @@ import com.mercadopago.android.px.callbacks.card.TicketIdentificationNameEditTex
 import com.mercadopago.android.px.callbacks.card.TicketIdentificationNumberEditTextCallback;
 import com.mercadopago.android.px.customviews.MPEditText;
 import com.mercadopago.android.px.customviews.MPTextView;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.listeners.card.TicketIdentificationNameTextWatcher;
 import com.mercadopago.android.px.listeners.card.TicketIdentificationNumberTextWatcher;
 import com.mercadopago.android.px.model.Identification;
@@ -35,12 +35,12 @@ import com.mercadopago.android.px.presenters.PayerInformationPresenter;
 import com.mercadopago.android.px.providers.PayerInformationProviderImpl;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.uicontrollers.identification.IdentificationTicketView;
-import com.mercadopago.android.px.views.PayerInformationView;
 import com.mercadopago.android.px.util.ApiUtil;
 import com.mercadopago.android.px.util.ErrorUtil;
 import com.mercadopago.android.px.util.JsonUtil;
 import com.mercadopago.android.px.util.ScaleUtil;
 import com.mercadopago.android.px.util.ViewUtils;
+import com.mercadopago.android.px.views.PayerInformationView;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,8 +67,6 @@ public class PayerInformationActivity extends MercadoPagoBaseActivity implements
 
     // Local vars
     protected PayerInformationPresenter mPresenter;
-    protected String mPublicKey;
-    private String mPayerAccessToken;
     private boolean mActivityActive;
 
     //View controls
@@ -108,10 +106,7 @@ public class PayerInformationActivity extends MercadoPagoBaseActivity implements
 
         createPresenter();
         analyzeLowRes();
-        getActivityParameters();
-
         configurePresenter();
-
         setContentView();
         initializeControls();
         initializeToolbar();
@@ -201,14 +196,9 @@ public class PayerInformationActivity extends MercadoPagoBaseActivity implements
         mPresenter = new PayerInformationPresenter();
     }
 
-    private void getActivityParameters() {
-        mPublicKey = getIntent().getStringExtra("merchantPublicKey");
-        mPayerAccessToken = getIntent().getStringExtra("payerAccessToken");
-    }
-
     private void configurePresenter() {
         mPresenter.attachView(this);
-        mPresenter.attachResourcesProvider(new PayerInformationProviderImpl(this, mPublicKey, mPayerAccessToken));
+        mPresenter.attachResourcesProvider(new PayerInformationProviderImpl(this));
     }
 
     private void setContentView() {
@@ -675,13 +665,13 @@ public class PayerInformationActivity extends MercadoPagoBaseActivity implements
         if (error.isApiException()) {
             showApiException(error.getApiException(), requestOrigin);
         } else {
-            ErrorUtil.startErrorActivity(this, error, mPublicKey);
+            ErrorUtil.startErrorActivity(this, error);
         }
     }
 
     public void showApiException(ApiException apiException, String requestOrigin) {
         if (mActivityActive) {
-            ApiUtil.showApiExceptionError(this, apiException, mPublicKey, requestOrigin);
+            ApiUtil.showApiExceptionError(this, apiException, requestOrigin);
         }
     }
 

@@ -8,8 +8,8 @@ import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.commission.ChargeRule;
 import com.mercadopago.android.px.model.commission.PaymentMethodRule;
+import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.preferences.FlowPreference;
 import com.mercadopago.android.px.util.JsonUtil;
 import java.lang.reflect.Type;
 import java.util.Calendar;
@@ -23,9 +23,9 @@ public class PaymentSettingService implements PaymentSettingRepository {
     private static final String PREF_CHECKOUT_PREF_ID = "PREF_CHECKOUT_PREFERENCE_ID";
     private static final String PREF_PUBLIC_KEY = "PREF_PUBLIC_KEY";
     private static final String PREF_PRIVATE_KEY = "PREF_PRIVATE_KEY";
-    private static final String PREF_FLOW = "PREF_FLOW";
     private static final String PREF_BINARY_MODE = "PREF_BINARY_MODE";
     private static final String PREF_TOKEN = "PREF_TOKEN";
+    private static final String PREF_ADVANCED = "PREF_ADVANCED";
 
     @NonNull private final SharedPreferences sharedPreferences;
     @NonNull private final JsonUtil jsonUtil;
@@ -71,9 +71,9 @@ public class PaymentSettingService implements PaymentSettingRepository {
     }
 
     @Override
-    public void configure(@NonNull final FlowPreference flowPreference) {
+    public void configure(@NonNull final AdvancedConfiguration advancedConfiguration) {
         final SharedPreferences.Editor edit = sharedPreferences.edit();
-        edit.putString(PREF_FLOW, jsonUtil.toJson(flowPreference));
+        edit.putString(PREF_ADVANCED, jsonUtil.toJson(advancedConfiguration));
         edit.apply();
     }
 
@@ -102,9 +102,6 @@ public class PaymentSettingService implements PaymentSettingRepository {
         if (checkoutPreference == null) {
             edit.remove(PREF_CHECKOUT_PREF).apply();
         } else {
-            //TODO FIX - ACCESS TOKEN
-            final String privateKey = getPrivateKey();
-            checkoutPreference.getPayer().setAccessToken(privateKey);
             edit.putString(PREF_CHECKOUT_PREF, jsonUtil.toJson(checkoutPreference));
             edit.apply();
         }
@@ -154,17 +151,14 @@ public class PaymentSettingService implements PaymentSettingRepository {
 
     @NonNull
     @Override
-    public FlowPreference getFlow() {
+    public AdvancedConfiguration getAdvancedConfiguration() {
         // should never be null - see MercadoPagoCheckout
-        return jsonUtil.fromJson(sharedPreferences.getString(PREF_FLOW, ""), FlowPreference.class);
+        return jsonUtil.fromJson(sharedPreferences.getString(PREF_ADVANCED, ""), AdvancedConfiguration.class);
     }
 
     @Nullable
     @Override
     public String getPrivateKey() {
-        //TODO FIX - ACCESS TOKEN
-        final CheckoutPreference checkoutPreference = getCheckoutPreference();
-        return checkoutPreference == null ? sharedPreferences.getString(PREF_PRIVATE_KEY, null)
-            : checkoutPreference.getPayer().getAccessToken();
+        return sharedPreferences.getString(PREF_PRIVATE_KEY, null);
     }
 }

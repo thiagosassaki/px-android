@@ -1,6 +1,6 @@
 package com.mercadopago.android.px.paymentresult;
 
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.tracking.model.ScreenViewEvent;
 

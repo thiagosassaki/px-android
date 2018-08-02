@@ -1,6 +1,6 @@
 package com.mercadopago.android.px.views;
 
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.mvp.MvpView;
 import java.util.List;

@@ -23,7 +23,7 @@ public class DiscountApiService {
 
     @NonNull
     public MPCall<List<Campaign>> getCampaigns() {
-        return discountService.getCampaigns(paymentSettingRepository.getPublicKey());
+        return discountService.getCampaigns(paymentSettingRepository.getPublicKey(), getEmail());
     }
 
     @NonNull

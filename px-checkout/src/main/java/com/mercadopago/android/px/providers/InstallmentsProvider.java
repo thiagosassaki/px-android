@@ -1,6 +1,7 @@
 package com.mercadopago.android.px.providers;
 
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
+import android.support.annotation.Nullable;
 import com.mercadopago.android.px.model.Installment;
 import com.mercadopago.android.px.mvp.ResourcesProvider;
 import com.mercadopago.android.px.mvp.TaggedCallback;
@@ -13,7 +14,11 @@ import java.util.List;
 
 public interface InstallmentsProvider extends ResourcesProvider {
 
-    void getInstallments(String bin, BigDecimal amount, Long issuerId, String paymentMethodId,
+    void getInstallments(final String bin,
+        final BigDecimal amount,
+        final Long issuerId,
+        final String paymentMethodId,
+        @Nullable final Integer differentialPricingId,
         final TaggedCallback<List<Installment>> taggedCallback);
 
     MercadoPagoError getNoInstallmentsFoundError();

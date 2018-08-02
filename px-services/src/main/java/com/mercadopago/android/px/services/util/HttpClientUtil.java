@@ -5,9 +5,10 @@ import android.net.ConnectivityManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.mercadopago.android.px.services.BuildConfig;
 import com.mercadopago.android.px.services.core.ConnectivityStateInterceptor;
-import com.mercadopago.android.px.services.core.Settings;
 import com.mercadopago.android.px.services.core.TLSSocketFactory;
+import com.mercadopago.android.px.services.core.UserAgentInterceptor;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 import okhttp3.Cache;
@@ -21,6 +22,7 @@ public final class HttpClientUtil {
     private static OkHttpClient customClient;
     private static final int CACHE_SIZE = 10 * 1024 * 1024; // 10 MB
     private static final String CACHE_DIR_NAME = "PX_OKHTTP_CACHE_SERVICES";
+    private static final HttpLoggingInterceptor.Level LOGGING_INTERCEPTOR = HttpLoggingInterceptor.Level.NONE;
 
     private HttpClientUtil() {
     }
@@ -48,6 +50,7 @@ public final class HttpClientUtil {
      * @param writeTimeout
      * @return am httpClient with TLS 1.1 support
      */
+    @SuppressWarnings("unused")
     @NonNull
     public static OkHttpClient createClient(final int connectTimeout,
         final int readTimeout,
@@ -69,13 +72,17 @@ public final class HttpClientUtil {
         final int readTimeout,
         final int writeTimeout) {
         // Set log info
-        final HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(Settings.OKHTTP_LOGGING);
 
         final OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder()
             .connectTimeout(connectTimeout, TimeUnit.SECONDS)
             .writeTimeout(writeTimeout, TimeUnit.SECONDS)
             .readTimeout(readTimeout, TimeUnit.SECONDS);
+        //User-Agent interceptor
+        okHttpClientBuilder.addInterceptor(new UserAgentInterceptor(BuildConfig.USER_AGENT));
+        // add logging interceptor
+        final HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(LOGGING_INTERCEPTOR);
+        okHttpClientBuilder.addInterceptor(interceptor);
 
         // Set cache size
         if (context != null) {

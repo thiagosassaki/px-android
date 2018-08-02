@@ -1,16 +1,19 @@
 package com.mercadopago.android.px.presenters;
 
 import android.support.annotation.NonNull;
+
 import com.mercadopago.android.px.callbacks.FailureRecovery;
 import com.mercadopago.android.px.callbacks.OnSelectedCallback;
+import com.mercadopago.android.px.callbacks.OnCodeDiscountCallback;
 import com.mercadopago.android.px.controllers.PaymentMethodGuessingController;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.CardInfo;
+import com.mercadopago.android.px.model.DifferentialPricing;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.Installment;
 import com.mercadopago.android.px.model.Issuer;
@@ -24,15 +27,20 @@ import com.mercadopago.android.px.util.ApiUtil;
 import com.mercadopago.android.px.util.InstallmentsUtil;
 import com.mercadopago.android.px.views.AmountView;
 import com.mercadopago.android.px.views.InstallmentsActivityView;
+
 import java.util.List;
 
 public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView, InstallmentsProvider> implements
-    AmountView.OnClick {
+        AmountView.OnClick {
 
-    @NonNull private final AmountRepository amountRepository;
-    @NonNull private final PaymentSettingRepository configuration;
-    @NonNull private final UserSelectionRepository userSelectionRepository;
-    @NonNull private final DiscountRepository discountRepository;
+    @NonNull
+    private final AmountRepository amountRepository;
+    @NonNull
+    private final PaymentSettingRepository configuration;
+    @NonNull
+    private final UserSelectionRepository userSelectionRepository;
+    @NonNull
+    private final DiscountRepository discountRepository;
 
     private FailureRecovery mFailureRecovery;
 
@@ -41,19 +49,17 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
     private Long issuerId;
 
     //Activity parameters
-    private String payerEmail;
     private PaymentMethod paymentMethod;
     private Issuer issuer;
 
     private List<PayerCost> payerCosts;
     private PaymentPreference paymentPreference;
     private CardInfo cardInfo;
-    private Boolean installmentsReviewEnabled;
 
     public InstallmentsPresenter(@NonNull final AmountRepository amountRepository,
-        @NonNull final PaymentSettingRepository configuration,
-        @NonNull final UserSelectionRepository userSelectionRepository,
-        @NonNull final DiscountRepository discountRepository) {
+                                 @NonNull final PaymentSettingRepository configuration,
+                                 @NonNull final UserSelectionRepository userSelectionRepository,
+                                 @NonNull final DiscountRepository discountRepository) {
         this.amountRepository = amountRepository;
         this.configuration = configuration;
         this.userSelectionRepository = userSelectionRepository;
@@ -69,7 +75,7 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
     public void initializeAmountRow() {
         if (isViewAttached()) {
             getView().showAmount(discountRepository,
-                amountRepository.getItemsPlusCharges(), configuration.getCheckoutPreference().getSite());
+                    amountRepository.getItemsPlusCharges(), configuration.getCheckoutPreference().getSite());
         }
     }
 
@@ -93,9 +99,9 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
 
     private void resolvePayerCosts(List<PayerCost> payerCosts) {
         final PayerCost defaultPayerCost =
-            paymentPreference == null ? null : paymentPreference.getDefaultInstallments(payerCosts);
+                paymentPreference == null ? null : paymentPreference.getDefaultInstallments(payerCosts);
         this.payerCosts =
-            paymentPreference == null ? payerCosts : paymentPreference.getInstallmentsBelowMax(payerCosts);
+                paymentPreference == null ? payerCosts : paymentPreference.getInstallmentsBelowMax(payerCosts);
 
         if (defaultPayerCost != null) {
             userSelectionRepository.select(defaultPayerCost);
@@ -115,39 +121,41 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
 
     private void getInstallmentsAsync() {
         getView().showLoadingView();
-
+        final DifferentialPricing differentialPricing = configuration.getCheckoutPreference().getDifferentialPricing();
+        final Integer differentialPricingId = differentialPricing == null ? null : differentialPricing.getId();
         getResourcesProvider().getInstallments(bin, amountRepository.getAmountToPay(), issuerId, paymentMethod.getId(),
-            new TaggedCallback<List<Installment>>(ApiUtil.RequestOrigin.GET_INSTALLMENTS) {
+            differentialPricingId,new TaggedCallback<List<Installment>>(ApiUtil.RequestOrigin.GET_INSTALLMENTS) {
                 @Override
                 public void onSuccess(final List<Installment> installments) {
                     if (installments.size() == 0) {
                         getView().showError(getResourcesProvider().getNoInstallmentsFoundError(), "");
                     } else if (installments.size() == 1) {
                         resolvePayerCosts(installments.get(0).getPayerCosts());
-                    } else {
+                    getView().onSuccessCodeDiscountCallback(discountRepository.getDiscount());} else {
                         getView().showError(getResourcesProvider().getMultipleInstallmentsFoundForAnIssuerError(), "");
                     }
                 }
 
-                @Override
-                public void onFailure(final MercadoPagoError mercadoPagoError) {
-                    getView().hideLoadingView();
-                    setFailureRecovery(new FailureRecovery() {
-                        @Override
-                        public void recover() {
-                            getInstallmentsAsync();
-                        }
-                    });
-                    getView().showError(mercadoPagoError, ApiUtil.RequestOrigin.GET_INSTALLMENTS);
-                }
-            });
+                    @Override
+                    public void onFailure(final MercadoPagoError mercadoPagoError) {
+                        getView().hideLoadingView();
+                        setFailureRecovery(new FailureRecovery() {
+                            @Override
+                            public void recover() {
+                                getInstallmentsAsync();
+                            }
+                        });
+                        getView().showError(mercadoPagoError, ApiUtil.RequestOrigin.GET_INSTALLMENTS);
+                        getView().onFailureCodeDiscountCallback();
+                    }
+                });
     }
 
-    public void setPaymentMethod(PaymentMethod paymentMethod) {
+    public void setPaymentMethod(final PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
-    public void setCardInfo(CardInfo cardInfo) {
+    public void setCardInfo(final CardInfo cardInfo) {
         this.cardInfo = cardInfo;
         if (this.cardInfo != null) {
             bin = this.cardInfo.getFirstSixDigits();
@@ -202,18 +210,6 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
         };
     }
 
-    public void setPayerEmail(String payerEmail) {
-        this.payerEmail = payerEmail;
-    }
-
-    public String getPayerEmail() {
-        return payerEmail;
-    }
-
-    public void setInstallmentsReviewEnabled(Boolean installmentReviewEnabled) {
-        installmentsReviewEnabled = installmentReviewEnabled;
-    }
-
     public String getBin() {
         return bin;
     }
@@ -228,24 +224,10 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
         }
     }
 
-    public void onItemSelected(int position) {
+    public void onItemSelected(final int position) {
         final PayerCost selectedPayerCost = payerCosts.get(position);
         userSelectionRepository.select(selectedPayerCost);
-        if (isInstallmentsReviewEnabled() && isInstallmentsReviewRequired(selectedPayerCost)) {
-            getView().hideInstallmentsRecyclerView();
-            getView().showInstallmentsReviewView();
-            getView().initInstallmentsReviewView(selectedPayerCost);
-        } else {
-            getView().finishWithResult(selectedPayerCost);
-        }
-    }
-
-    private Boolean isInstallmentsReviewEnabled() {
-        return installmentsReviewEnabled != null && installmentsReviewEnabled;
-    }
-
-    private Boolean isInstallmentsReviewRequired(PayerCost payerCost) {
-        return payerCost != null && payerCost.getCFTPercent() != null;
+        getView().finishWithResult(selectedPayerCost);
     }
 
     @Override
@@ -256,5 +238,10 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
     @Override
     public void onInputRequestClicked() {
         getView().showDiscountInputDialog();
+    }
+
+    public void onDiscountRetrieved() {
+        getInstallmentsAsync();
+        initializeAmountRow();
     }
 }

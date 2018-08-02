@@ -1,9 +1,9 @@
 package com.mercadopago.android.px.guessing;
 
 import com.mercadopago.android.px.controllers.PaymentMethodGuessingController;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
+import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.mocks.BankDeals;
 import com.mercadopago.android.px.mocks.Cards;
@@ -27,7 +27,9 @@ import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Token;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.mvp.TaggedCallback;
+import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.presenters.GuessingCardPresenter;
 import com.mercadopago.android.px.providers.GuessingCardProvider;
@@ -35,10 +37,10 @@ import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.services.exceptions.CardTokenException;
 import com.mercadopago.android.px.tracker.MPTrackingContext;
 import com.mercadopago.android.px.uicontrollers.card.CardView;
+import com.mercadopago.android.px.util.ApiUtil;
 import com.mercadopago.android.px.utils.CardTestUtils;
 import com.mercadopago.android.px.utils.StubSuccessMpCall;
 import com.mercadopago.android.px.views.GuessingCardActivityView;
-import com.mercadopago.android.px.util.ApiUtil;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +67,8 @@ public class GuessingCardPresenterTest {
     @Mock private UserSelectionRepository userSelectionRepository;
     @Mock private GroupsRepository groupsRepository;
     @Mock private PaymentMethodSearch paymentMethodSearch;
+    @Mock private AdvancedConfiguration advancedConfiguration;
+    @Mock private PaymentSettingRepository paymentSettingRepository;
 
     @Before
     public void setUp() {
@@ -72,17 +76,12 @@ public class GuessingCardPresenterTest {
         final List<PaymentMethod> pm = PaymentMethods.getPaymentMethodListMLA();
         when(groupsRepository.getGroups()).thenReturn(new StubSuccessMpCall<>(paymentMethodSearch));
         when(paymentMethodSearch.getPaymentMethods()).thenReturn(pm);
-        presenter = new GuessingCardPresenter(amountRepository, userSelectionRepository, groupsRepository);
+        when(advancedConfiguration.isBankDealsEnabled()).thenReturn(true);
+        presenter = new GuessingCardPresenter(amountRepository, userSelectionRepository, paymentSettingRepository,
+            groupsRepository,
+            advancedConfiguration);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
-    }
-
-    @Test
-    public void ifPublicKeyNotSetThenShowMissingPublicKeyError() {
-
-        presenter.initialize();
-
-        assertEquals(MockedProvider.MISSING_PUBLIC_KEY, mockedView.errorShown.getMessage());
     }
 
     @Test
@@ -93,8 +92,6 @@ public class GuessingCardPresenterTest {
 
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
-
-        presenter.setPublicKey("mockedPublicKey");
 
         presenter.initialize();
 
@@ -119,7 +116,6 @@ public class GuessingCardPresenterTest {
             new PaymentRecovery(mockedToken, mockedPaymentMethod, mockedPayerCost, mockedIssuer, paymentStatus,
                 paymentStatusDetail);
 
-        presenter.setPublicKey("mockedPublicKey");
         presenter.setPaymentRecovery(mockedPaymentRecovery);
 
         presenter.initialize();
@@ -144,8 +140,6 @@ public class GuessingCardPresenterTest {
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
-        presenter.setPublicKey("mockedPublicKey");
-
         presenter.initialize();
 
         List<PaymentMethod> mockedGuessedPaymentMethods = new ArrayList<>();
@@ -165,8 +159,6 @@ public class GuessingCardPresenterTest {
         presenter.setPaymentPreference(paymentPreference);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
-
-        presenter.setPublicKey("mockedPublicKey");
 
         presenter.initialize();
 
@@ -190,8 +182,6 @@ public class GuessingCardPresenterTest {
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
-        presenter.setPublicKey("mockedPublicKey");
-
         presenter.initialize();
 
         List<PaymentMethod> mockedGuessedPaymentMethods = new ArrayList<>();
@@ -213,8 +203,6 @@ public class GuessingCardPresenterTest {
         presenter.setPaymentPreference(paymentPreference);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
-
-        presenter.setPublicKey("mockedPublicKey");
 
         presenter.initialize();
 
@@ -241,8 +229,6 @@ public class GuessingCardPresenterTest {
         presenter.setPaymentPreference(paymentPreference);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
-
-        presenter.setPublicKey("mockedPublicKey");
 
         presenter.initialize();
 
@@ -271,8 +257,6 @@ public class GuessingCardPresenterTest {
         presenter.setPaymentPreference(paymentPreference);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
-
-        presenter.setPublicKey("mockedPublicKey");
 
         presenter.initialize();
 
@@ -303,8 +287,6 @@ public class GuessingCardPresenterTest {
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
-        presenter.setPublicKey("mockedPublicKey");
-
         presenter.initialize();
 
         List<PaymentMethod> mockedGuessedPaymentMethods = new ArrayList<>();
@@ -327,8 +309,6 @@ public class GuessingCardPresenterTest {
         presenter.setPaymentPreference(paymentPreference);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
-
-        presenter.setPublicKey("mockedPublicKey");
 
         presenter.initialize();
 
@@ -356,8 +336,6 @@ public class GuessingCardPresenterTest {
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
-        presenter.setPublicKey("mockedPublicKey");
-
         presenter.initialize();
 
         assertTrue(mockedView.showInputContainer);
@@ -378,9 +356,6 @@ public class GuessingCardPresenterTest {
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
-        presenter.setPublicKey("mockedPublicKey");
-        presenter.setShowBankDeals(false);
-
         presenter.initialize();
 
         assertTrue(mockedView.hideBankDeals);
@@ -398,8 +373,6 @@ public class GuessingCardPresenterTest {
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
-        presenter.setPublicKey("mockedPublicKey");
-
         presenter.initialize();
 
         assertTrue(
@@ -416,7 +389,6 @@ public class GuessingCardPresenterTest {
         PaymentPreference paymentPreference = new PaymentPreference();
         paymentPreference.setDefaultPaymentTypeId(PaymentTypes.DEBIT_CARD);
 
-        presenter.setPublicKey("mockedPublicKey");
         presenter.setPaymentPreference(paymentPreference);
 
         presenter.initialize();
@@ -445,7 +417,7 @@ public class GuessingCardPresenterTest {
         presenter.setPaymentPreference(paymentPreference);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
-        presenter.setPublicKey("mockedPublicKey");
+
         presenter.initialize();
 
         List<PaymentMethod> mockedGuessedPaymentMethods = new ArrayList<>();
@@ -468,8 +440,6 @@ public class GuessingCardPresenterTest {
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
-        presenter.setPublicKey("mockedPublicKey");
-
         presenter.initialize();
 
         List<PaymentMethod> mockedGuessedPaymentMethods = new ArrayList<>();
@@ -491,7 +461,7 @@ public class GuessingCardPresenterTest {
         PaymentPreference paymentPreference = new PaymentPreference();
         presenter.setPaymentPreference(paymentPreference);
         provider.setIdentificationTypesResponse(mpException);
-        presenter.setPublicKey("mockedPublicKey");
+
         presenter.initialize();
         assertEquals(provider.failedResponse.getApiException().getError(),
             MockedProvider.IDENTIFICATION_TYPES_NOT_FOUND);
@@ -508,7 +478,6 @@ public class GuessingCardPresenterTest {
         when(userSelectionRepository.hasSelectedPaymentMethod()).thenReturn(false);
         when(userSelectionRepository.getPaymentMethod()).thenReturn(null);
 
-        presenter.setPublicKey("mockedPublicKey");
         List<PaymentMethod> paymentMethodList = PaymentMethods.getPaymentMethodListMLA();
         presenter.setPaymentPreference(paymentPreference);
         presenter.attachView(mockedView);
@@ -533,8 +502,6 @@ public class GuessingCardPresenterTest {
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
-        presenter.setPublicKey("mockedPublicKey");
-
         presenter.initialize();
 
         final List<PaymentMethod> pm = PaymentMethods.getPaymentMethodListMLA();
@@ -555,8 +522,6 @@ public class GuessingCardPresenterTest {
         presenter.setPaymentPreference(paymentPreference);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
-
-        presenter.setPublicKey("mockedPublicKey");
 
         presenter.initialize();
 
@@ -583,8 +548,6 @@ public class GuessingCardPresenterTest {
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
-        presenter.setPublicKey("mockedPublicKey");
-
         presenter.initialize();
 
         DummyCard card = CardTestUtils.getDummyCard("master");
@@ -610,8 +573,6 @@ public class GuessingCardPresenterTest {
         presenter.setPaymentPreference(paymentPreference);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
-
-        presenter.setPublicKey("mockedPublicKey");
 
         presenter.initialize();
 
@@ -644,8 +605,6 @@ public class GuessingCardPresenterTest {
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
-        presenter.setPublicKey("mockedPublicKey");
-
         presenter.initialize();
 
         DummyCard card = CardTestUtils.getDummyCard("master");
@@ -676,8 +635,6 @@ public class GuessingCardPresenterTest {
         presenter.setPaymentPreference(paymentPreference);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
-
-        presenter.setPublicKey("mockedPublicKey");
 
         presenter.initialize();
 
@@ -719,7 +676,6 @@ public class GuessingCardPresenterTest {
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
         when(userSelectionRepository.getPaymentMethod()).thenReturn(mockedPaymentMethod);
-        presenter.setPublicKey("mockedPublicKey");
 
         presenter.initialize();
 
@@ -760,7 +716,6 @@ public class GuessingCardPresenterTest {
         PaymentPreference paymentPreference = new PaymentPreference();
         paymentPreference.setExcludedPaymentMethodIds(excludedPaymentMethodIds);
 
-        presenter.setPublicKey("mockedPublicKey");
         presenter.setPaymentPreference(paymentPreference);
 
         presenter.initialize();
@@ -804,11 +759,12 @@ public class GuessingCardPresenterTest {
         final PaymentPreference paymentPreference = new PaymentPreference();
         paymentPreference.setExcludedPaymentMethodIds(excludedPaymentMethodIds);
 
-        presenter = new GuessingCardPresenter(amountRepository, userSelectionRepository, groupsRepository);
+        presenter = new GuessingCardPresenter(amountRepository, userSelectionRepository, paymentSettingRepository,
+            groupsRepository,
+            advancedConfiguration);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
-        presenter.setPublicKey("mockedPublicKey");
         presenter.setPaymentPreference(paymentPreference);
 
         presenter.initialize();
@@ -1347,6 +1303,7 @@ public class GuessingCardPresenterTest {
 
         @Override
         public void getInstallmentsAsync(String bin, BigDecimal amount, Long issuerId, String paymentMethodId,
+            Integer diff,
             TaggedCallback<List<Installment>> taggedCallback) {
             if (shouldFail) {
                 taggedCallback.onFailure(failedResponse);

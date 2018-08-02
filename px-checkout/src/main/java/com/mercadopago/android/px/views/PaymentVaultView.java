@@ -2,7 +2,7 @@ package com.mercadopago.android.px.views;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.callbacks.OnSelectedCallback;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.hooks.Hook;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.model.Campaign;
@@ -64,4 +64,8 @@ public interface PaymentVaultView extends MvpView {
     void showDetailDialog(@NonNull final Discount discount, @NonNull final Campaign campaign);
 
     void showDiscountInputDialog();
+
+    void onSuccessCodeDiscountCallback(final Discount discount);
+
+    void onFailureCodeDiscountCallback();
 }

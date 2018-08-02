@@ -17,9 +17,9 @@
         android:layout_gravity="left|start"
         android:textAppearance="@style/MLFont.Bold.Semi"
         android:textColor="@color/ui_meli_black"
-        android:textSize="@dimen/px_s_text"
+        android:textSize="@dimen/px_xs_text"
         app:font_style="bold"
-        tools:text="50 % OFF"/>
+        tools:text="Tope de descuento $ 250"/>
 
     <com.mercadopago.android.px.customviews.MPTextView
         android:id="@+id/detail"
@@ -31,7 +31,7 @@
         android:textColor="@color/ui_meli_grey"
         android:textSize="@dimen/px_xs_text"
         app:font_style="light"
-        tools:text="Tope de descuento $ 250"/>
+        tools:text="Tope disponible para consumir en un único pago. Válido hasta el 1 de agosto de 2019."/>
 
     <View
         android:layout_width="match_parent"

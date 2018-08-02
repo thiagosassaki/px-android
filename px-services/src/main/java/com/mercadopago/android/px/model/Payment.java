@@ -317,6 +317,45 @@ public class Payment implements Serializable {
             StatusDetail.STATUS_DETAIL_PENDING_WAITING_PAYMENT.equals(statusDetail);
     }
 
+    @Override
+    public String toString() {
+        return "Payment{" +
+            "binaryMode=" + binaryMode +
+            ", callForAuthorizeId='" + callForAuthorizeId + '\'' +
+            ", captured=" + captured +
+            ", card=" + card +
+            ", collectorId=" + collectorId +
+            ", couponAmount=" + couponAmount +
+            ", currencyId='" + currencyId + '\'' +
+            ", dateApproved=" + dateApproved +
+            ", dateCreated=" + dateCreated +
+            ", dateLastUpdated=" + dateLastUpdated +
+            ", description='" + description + '\'' +
+            ", differentialPricingId=" + differentialPricingId +
+            ", externalReference='" + externalReference + '\'' +
+            ", feeDetails=" + feeDetails +
+            ", id=" + id +
+            ", installments=" + installments +
+            ", issuerId='" + issuerId + '\'' +
+            ", liveMode=" + liveMode +
+            ", metadata=" + metadata +
+            ", moneyReleaseDate=" + moneyReleaseDate +
+            ", notificationUrl='" + notificationUrl + '\'' +
+            ", operationType='" + operationType + '\'' +
+            ", order=" + order +
+            ", payer=" + payer +
+            ", paymentMethodId='" + paymentMethodId + '\'' +
+            ", paymentTypeId='" + paymentTypeId + '\'' +
+            ", refunds=" + refunds +
+            ", statementDescriptor='" + statementDescriptor + '\'' +
+            ", status='" + status + '\'' +
+            ", statusDetail='" + statusDetail + '\'' +
+            ", transactionAmount=" + transactionAmount +
+            ", transactionAmountRefunded=" + transactionAmountRefunded +
+            ", transactionDetails=" + transactionDetails +
+            '}';
+    }
+
     public static class StatusCodes {
         public static final String STATUS_APPROVED = "approved";
         public static final String STATUS_IN_PROCESS = "in_process";

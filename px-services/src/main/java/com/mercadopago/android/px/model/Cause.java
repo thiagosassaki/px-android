@@ -1,10 +1,12 @@
 package com.mercadopago.android.px.model;
 
+import java.io.Serializable;
+
 /**
  * Created by mromar on 10/20/17.
  */
 
-public class Cause {
+public class Cause implements Serializable {
 
     private String code;
     private String description;
@@ -23,5 +25,13 @@ public class Cause {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "Cause{" +
+            "code='" + code + '\'' +
+            ", description='" + description + '\'' +
+            '}';
     }
 }

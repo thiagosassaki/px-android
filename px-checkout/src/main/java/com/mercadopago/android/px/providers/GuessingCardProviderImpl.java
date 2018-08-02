@@ -1,9 +1,12 @@
 package com.mercadopago.android.px.providers;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.mercadopago.android.px.BuildConfig;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.model.BankDeal;
 import com.mercadopago.android.px.model.CardToken;
 import com.mercadopago.android.px.model.IdentificationType;
@@ -23,10 +26,11 @@ public class GuessingCardProviderImpl implements GuessingCardProvider {
     private final String publicKey;
     private MPTrackingContext trackingContext;
 
-    public GuessingCardProviderImpl(Context context, String publicKey, String privateKey) {
+    public GuessingCardProviderImpl(@NonNull final Context context) {
         this.context = context;
-        this.publicKey = publicKey;
-        mercadoPago = new MercadoPagoServicesAdapter(context, publicKey, privateKey);
+        final Session session = Session.getSession(context);
+        publicKey = session.getConfigurationModule().getPaymentSettings().getPublicKey();
+        mercadoPago = session.getMercadoPagoServiceAdapter();
     }
 
     @Override
@@ -55,9 +59,13 @@ public class GuessingCardProviderImpl implements GuessingCardProvider {
     }
 
     @Override
-    public void getInstallmentsAsync(String bin, BigDecimal amount, Long issuerId, String paymentMethodId,
+    public void getInstallmentsAsync(final String bin,
+        final BigDecimal amount,
+        final Long issuerId,
+        final String paymentMethodId,
+        @Nullable final Integer differentialPricingId,
         final TaggedCallback<List<Installment>> taggedCallback) {
-        mercadoPago.getInstallments(bin, amount, issuerId, paymentMethodId, taggedCallback);
+        mercadoPago.getInstallments(bin, amount, issuerId, paymentMethodId, differentialPricingId, taggedCallback);
     }
 
     @Override

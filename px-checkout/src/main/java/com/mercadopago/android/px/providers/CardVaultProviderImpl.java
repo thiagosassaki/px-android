@@ -1,8 +1,12 @@
 package com.mercadopago.android.px.providers;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
+import com.mercadopago.android.px.internal.di.Session;
+import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.Installment;
 import com.mercadopago.android.px.model.SavedESCCardToken;
 import com.mercadopago.android.px.model.Token;
@@ -18,12 +22,13 @@ public class CardVaultProviderImpl implements CardVaultProvider {
     private final MercadoPagoServicesAdapter mercadoPago;
     private final MercadoPagoESC mercadoPagoESC;
 
-    public CardVaultProviderImpl(Context context, String publicKey, String privateKey, boolean escEnabled) {
+    public CardVaultProviderImpl(@NonNull final Context context) {
         this.context = context;
-
-        mercadoPago = new MercadoPagoServicesAdapter(context, publicKey, privateKey);
-
-        mercadoPagoESC = new MercadoPagoESCImpl(context, escEnabled);
+        final Session session = Session.getSession(context);
+        final PaymentSettingRepository paymentSettings = session.getConfigurationModule().getPaymentSettings();
+        mercadoPago =
+            new MercadoPagoServicesAdapter(context, paymentSettings.getPublicKey(), paymentSettings.getPrivateKey());
+        mercadoPagoESC = new MercadoPagoESCImpl(context, paymentSettings.getAdvancedConfiguration().isEscEnabled());
     }
 
     @Override
@@ -61,8 +66,9 @@ public class CardVaultProviderImpl implements CardVaultProvider {
         final Long issuerId,
         final String paymentMethodId,
         final BigDecimal amount,
+        @Nullable final Integer differentialPricingId,
         final TaggedCallback<List<Installment>> taggedCallback) {
-        mercadoPago.getInstallments(bin, amount, issuerId, paymentMethodId, taggedCallback);
+        mercadoPago.getInstallments(bin, amount, issuerId, paymentMethodId, differentialPricingId, taggedCallback);
     }
 
     @Override

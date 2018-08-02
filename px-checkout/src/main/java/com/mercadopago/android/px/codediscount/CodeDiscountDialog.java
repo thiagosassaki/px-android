@@ -8,12 +8,13 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.mercadolibre.android.ui.widgets.MeliButton;
 import com.mercadolibre.android.ui.widgets.MeliDialog;
 import com.mercadolibre.android.ui.widgets.MeliSpinner;
 import com.mercadolibre.android.ui.widgets.TextField;
 import com.mercadopago.android.px.R;
-import com.mercadopago.android.px.callbacks.OnDiscountRetrieved;
+import com.mercadopago.android.px.callbacks.OnCodeDiscountCallback;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.services.util.TextUtil;
@@ -22,7 +23,7 @@ import com.mercadopago.android.px.util.FlipModalAnimationUtil;
 import static android.graphics.Typeface.NORMAL;
 import static com.mercadolibre.android.ui.widgets.MeliButton.State.DISABLED;
 
-public class CodeDiscountDialog extends MeliDialog implements View.OnClickListener, CodeDiscountView {
+public class CodeDiscountDialog extends MeliDialog implements View.OnClickListener, CodeDiscountView, OnCodeDiscountCallback, CongratsCodeDiscount.Action {
 
     private static final String TAG = CodeDiscountDialog.class.getName();
 
@@ -34,7 +35,29 @@ public class CodeDiscountDialog extends MeliDialog implements View.OnClickListen
 
     private CodeDiscountPresenter presenter;
 
-    private OnDiscountRetrieved onDiscountRetrieved;
+    @Nullable
+    private DiscountListener discountListener;
+
+    public interface DiscountListener {
+        void onDiscountRetrieved(OnCodeDiscountCallback onCodeDiscountCallback);
+    }
+
+    @Override
+    public void onSuccess(@NonNull final Discount discount) {
+        final View back = new CongratsCodeDiscount(new CongratsCodeDiscount.Props(discount), this).render(container);
+        FlipModalAnimationUtil.flipView(container, inputLayout, back);
+    }
+
+    @Override
+    public void onFailure() {
+        presenter.discountRepository.reset();
+        processError(getString(R.string.px_error_something_went_wrong_try_again));
+    }
+
+    @Override
+    public void onButtonClicked() {
+        dismiss();
+    }
 
     public static void showDialog(@NonNull final FragmentManager supportFragmentManager) {
         final DialogFragment codeDiscountDialog = new CodeDiscountDialog();
@@ -54,11 +77,6 @@ public class CodeDiscountDialog extends MeliDialog implements View.OnClickListen
         final Session session = Session.getSession(view.getContext());
         presenter = new CodeDiscountPresenter(session.getDiscountRepository(), session.getAmountRepository());
         presenter.attachView(this);
-    }
-
-    @Override
-    public void showCodeError() {
-        input.setError(R.string.px_discount_error_check_this_data);
     }
 
     private boolean isValidInput() {
@@ -82,50 +100,47 @@ public class CodeDiscountDialog extends MeliDialog implements View.OnClickListen
             showLoading();
             presenter.getDiscountForCode(input.getText());
         } else {
-            showCodeError();
+            processCodeError();
         }
     }
 
-    @Override
-    public void processError() {
+    public void processError(@NonNull final String errorMessage) {
         confirmButton.setState(NORMAL);
         input.setEnabled(true);
         progress.setVisibility(View.GONE);
-        showCodeError();
+        input.setError(errorMessage);
     }
 
     @Override
     public void onAttach(final Context context) {
-        onDiscountRetrieved = (OnDiscountRetrieved) context;
+        if (context instanceof DiscountListener) {
+            discountListener = (DiscountListener) context;
+        }
+
         super.onAttach(context);
     }
 
     @Override
+    public void processCodeError() {
+        processError(getString(R.string.px_discount_error_check_this_data));
+    }
+
+    @Override
     public void onDetach() {
-        onDiscountRetrieved = null;
+        discountListener = null;
         super.onDetach();
     }
 
     @Override
     public void processSuccess(@NonNull final Discount discount) {
-        if (onDiscountRetrieved != null) {
-            onDiscountRetrieved.onDiscountRetrieved();
+        if (discountListener != null) {
+            discountListener.onDiscountRetrieved(this);
         }
-
-        final View back = new CongratsCodeDiscount(new CongratsCodeDiscount.Props(discount), new Actions())
-            .render(container);
-        FlipModalAnimationUtil.flipView(container, inputLayout, back);
     }
 
     @Override
     public void onDestroy() {
         presenter.detachView();
         super.onDestroy();
-    }
-
-    public class Actions {
-        public void closeDialog() {
-            dismiss();
-        }
     }
 }

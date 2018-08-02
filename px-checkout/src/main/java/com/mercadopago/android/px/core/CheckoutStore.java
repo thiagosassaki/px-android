@@ -9,7 +9,6 @@ import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.plugins.DataInitializationTask;
 import com.mercadopago.android.px.plugins.PaymentMethodPlugin;
 import com.mercadopago.android.px.plugins.PaymentProcessor;
-import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentResultScreenPreference;
 import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
 import com.mercadopago.android.px.util.TextUtils;
@@ -21,19 +20,21 @@ import javax.annotation.Nonnull;
 
 import static com.mercadopago.android.px.plugins.PaymentProcessor.PAYMENT_PROCESSOR_KEY;
 
-public class CheckoutStore {
+public final class CheckoutStore {
 
     private static final CheckoutStore INSTANCE = new CheckoutStore();
 
     //Preferences
     private PaymentResultScreenPreference paymentResultScreenPreference;
-    private CheckoutPreference checkoutPreference;
+
     private ReviewAndConfirmPreferences reviewAndConfirmPreferences;
 
     //Config
     private DataInitializationTask dataInitializationTask;
     private List<PaymentMethodPlugin> paymentMethodPluginList = new ArrayList<>();
     private Map<String, PaymentProcessor> paymentPlugins = new HashMap<>();
+
+    @Deprecated
     private CheckoutHooks checkoutHooks;
 
     //App state
@@ -52,38 +53,24 @@ public class CheckoutStore {
         return INSTANCE;
     }
 
-    public CheckoutPreference getCheckoutPreference() {
-        return checkoutPreference;
-    }
-
     public PaymentResultScreenPreference getPaymentResultScreenPreference() {
-        if (paymentResultScreenPreference == null) {
-            paymentResultScreenPreference = new PaymentResultScreenPreference.Builder().build();
-        }
         return paymentResultScreenPreference;
     }
 
     @NonNull
     public ReviewAndConfirmPreferences getReviewAndConfirmPreferences() {
-        if (reviewAndConfirmPreferences == null) {
-            reviewAndConfirmPreferences = new ReviewAndConfirmPreferences.Builder().build();
-        }
         return reviewAndConfirmPreferences;
     }
 
-    public void setPaymentResultScreenPreference(PaymentResultScreenPreference paymentResultScreenPreference) {
+    public void setPaymentResultScreenPreference(final PaymentResultScreenPreference paymentResultScreenPreference) {
         this.paymentResultScreenPreference = paymentResultScreenPreference;
-    }
-
-    public void setCheckoutPreference(final CheckoutPreference checkoutPreference) {
-        this.checkoutPreference = checkoutPreference;
     }
 
     public DataInitializationTask getDataInitializationTask() {
         return dataInitializationTask;
     }
 
-    public void setDataInitializationTask(DataInitializationTask dataInitializationTask) {
+    public void setDataInitializationTask(final DataInitializationTask dataInitializationTask) {
         this.dataInitializationTask = dataInitializationTask;
     }
 
@@ -158,12 +145,9 @@ public class CheckoutStore {
         this.hook = hook;
     }
 
+    @Deprecated
     public CheckoutHooks getCheckoutHooks() {
         return checkoutHooks;
-    }
-
-    public void setCheckoutHooks(CheckoutHooks checkoutHooks) {
-        this.checkoutHooks = checkoutHooks;
     }
 
     public Map<String, Object> getData() {

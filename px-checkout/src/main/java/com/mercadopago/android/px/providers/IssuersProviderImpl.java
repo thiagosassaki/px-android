@@ -1,9 +1,11 @@
 package com.mercadopago.android.px.providers;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.mvp.TaggedCallback;
 import java.util.List;
@@ -17,10 +19,9 @@ public class IssuersProviderImpl implements IssuersProvider {
     private final Context context;
     private final MercadoPagoServicesAdapter mercadoPago;
 
-    public IssuersProviderImpl(Context context, String publicKey, String privateKey) {
+    public IssuersProviderImpl(@NonNull final Context context) {
         this.context = context;
-
-        mercadoPago = new MercadoPagoServicesAdapter(context, publicKey, privateKey);
+        mercadoPago = Session.getSession(context).getMercadoPagoServiceAdapter();
     }
 
     @Override

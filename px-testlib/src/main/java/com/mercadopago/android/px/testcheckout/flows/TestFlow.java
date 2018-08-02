@@ -30,7 +30,7 @@ public class TestFlow {
 
     protected void startCheckout() {
         if (checkout != null && context != null) {
-            checkout.startForPayment(context);
+            checkout.startPayment(context, 1);
         }
     }
 }

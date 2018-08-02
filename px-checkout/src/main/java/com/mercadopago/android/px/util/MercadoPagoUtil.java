@@ -2,7 +2,7 @@ package com.mercadopago.android.px.util;
 
 import android.content.Context;
 import com.mercadopago.android.px.R;
-import com.mercadopago.android.px.exceptions.BinException;
+import com.mercadopago.android.px.model.exceptions.BinException;
 import com.mercadopago.android.px.model.Bin;
 import com.mercadopago.android.px.model.PaymentMethod;
 import java.util.ArrayList;
