@@ -106,8 +106,6 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
             issuers = null;
         }
 
-        mPresenter.setPaymentMethod(
-            JsonUtil.getInstance().fromJson(getIntent().getStringExtra("paymentMethod"), PaymentMethod.class));
         mPresenter.setCardInfo(JsonUtil.getInstance().fromJson(getIntent().getStringExtra("cardInfo"), CardInfo.class));
         mPresenter.setIssuers(issuers);
     }

@@ -201,10 +201,6 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
         }
     }
 
-    private void selectCard(final Card card) {
-        getView().startSavedCardFlow(card);
-    }
-
     private void showAvailableOptions() {
         final List<PaymentMethodPlugin> paymentMethodPluginList =
             CheckoutStore.getInstance().getPaymentMethodPluginList();
@@ -251,7 +247,9 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
     private void selectCard(final CustomSearchItem item) {
         if (PaymentTypes.isCardPaymentType(item.getType())) {
             final Card card = getCardWithPaymentMethod(item);
-            selectCard(card);
+            userSelectionRepository.select(card);
+            //TODO ver que pasa si selectedCard es null
+            getView().startSavedCardFlow(card);
         }
     }
 
@@ -265,9 +263,6 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
                 selectedCard.setSecurityCode(paymentMethod.getSettings().get(0).getSecurityCode());
             }
         }
-        userSelectionRepository.select(paymentMethod);
-        //TODO ver que pasa si selectedCard es null
-        userSelectionRepository.select(selectedCard.getIssuer());
         return selectedCard;
     }
 

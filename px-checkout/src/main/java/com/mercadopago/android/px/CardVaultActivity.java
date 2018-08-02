@@ -298,10 +298,6 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
 
     protected void resolveGuessingCardRequest(int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            PaymentMethod paymentMethod =
-                JsonUtil.getInstance().fromJson(data.getStringExtra("paymentMethod"), PaymentMethod.class);
-            Token token = JsonUtil.getInstance().fromJson(data.getStringExtra("token"), Token.class);
-            Issuer issuer = JsonUtil.getInstance().fromJson(data.getStringExtra("issuer"), Issuer.class);
             PayerCost payerCost = JsonUtil.getInstance().fromJson(data.getStringExtra("payerCost"), PayerCost.class);
 
             List<PayerCost> payerCosts;
@@ -322,7 +318,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
                 issuers = null;
             }
 
-            presenter.resolveNewCardRequest(paymentMethod, token, payerCost, issuer, payerCosts, issuers);
+            presenter.resolveNewCardRequest(payerCost, payerCosts, issuers);
         } else if (resultCode == RESULT_CANCELED) {
             presenter.onResultCancel();
         }
@@ -348,7 +344,6 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
             .setActivity(this)
             .setMerchantPublicKey(publicKey)
             .setPayerAccessToken(privateKey)
-            .setPaymentMethod(presenter.getPaymentMethod())
             .setCardInfo(presenter.getCardInfo())
             .setIssuers(presenter.getIssuersList())
             .startActivity();

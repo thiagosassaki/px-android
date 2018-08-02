@@ -161,6 +161,7 @@ public final class Session extends ApplicationModule
     public PaymentRepository getPaymentRepository() {
         if (paymentRepository == null) {
             final ConfigurationModule configurationModule = getConfigurationModule();
+            //TODO arreglar el param payment processor
             paymentRepository = new PaymentService(configurationModule.getUserSelectionRepository(),
                 configurationModule.getPaymentSettings(),
                 new PluginService(getContext()), getDiscountRepository(), getAmountRepository(),

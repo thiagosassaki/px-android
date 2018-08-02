@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
+import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.PaymentMethod;
@@ -14,6 +15,7 @@ public class UserSelectionService implements UserSelectionRepository {
     private static final String PREF_SELECTED_PM = "PREF_SELECTED_PAYMENT_METHOD";
     private static final String PREF_SELECTED_PAYER_COST = "PREF_SELECTED_INSTALLMENT";
     private static final String PREF_SELECTED_ISSUER = "PREF_SELECTED_ISSUER";
+    private static final String PREF_SELECTED_CARD = "PREF_SELECTED_CARD";
 
     @NonNull private final SharedPreferences sharedPreferences;
     @NonNull private final JsonUtil jsonUtil;
@@ -39,6 +41,13 @@ public class UserSelectionService implements UserSelectionRepository {
         sharedPreferences.edit().remove(PREF_SELECTED_PAYER_COST).apply();
     }
 
+    private void removeCardSelection() {
+        sharedPreferences.edit().remove(PREF_SELECTED_CARD).apply();
+        removePaymentMethodSelection();
+        removeIssuerSelection();
+        removePayerCostSelection();
+    }
+
     @Override
     public boolean hasSelectedPaymentMethod() {
         return getPaymentMethod() != null;
@@ -47,6 +56,11 @@ public class UserSelectionService implements UserSelectionRepository {
     @Override
     public boolean hasPayerCostSelected() {
         return getPayerCost() != null;
+    }
+
+    @Override
+    public boolean hasCardSelected() {
+        return getCard() != null;
     }
 
     /**
@@ -77,6 +91,13 @@ public class UserSelectionService implements UserSelectionRepository {
     }
 
     @Override
+    public void select(@NonNull final Card card) {
+        sharedPreferences.edit().putString(PREF_SELECTED_CARD, jsonUtil.toJson(card)).apply();
+        select(card.getPaymentMethod());
+        select(card.getIssuer());
+    }
+
+    @Override
     @Nullable
     public PaymentMethod getPaymentMethod() {
         return jsonUtil.fromJson(sharedPreferences.getString(PREF_SELECTED_PM, ""), PaymentMethod.class);
@@ -94,11 +115,18 @@ public class UserSelectionService implements UserSelectionRepository {
         return jsonUtil.fromJson(sharedPreferences.getString(PREF_SELECTED_ISSUER, ""), Issuer.class);
     }
 
+    @Nullable
+    @Override
+    public Card getCard() {
+        return jsonUtil.fromJson(sharedPreferences.getString(PREF_SELECTED_CARD, ""), Card.class);
+    }
+
     @Override
     public void reset() {
         removePayerCostSelection();
         removePaymentMethodSelection();
         removeIssuerSelection();
+        removeCardSelection();
     }
 
 }

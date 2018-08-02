@@ -1608,7 +1608,6 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     public void finishCardFlow(PaymentMethod paymentMethod, Token token,
         List<Issuer> issuers) {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("token", JsonUtil.getInstance().toJson(token));
         returnIntent.putExtra("issuers", JsonUtil.getInstance().toJson(issuers));
         setResult(RESULT_OK, returnIntent);
         finish();
@@ -1619,7 +1618,6 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     public void finishCardFlow(PaymentMethod paymentMethod, Token token,
         Issuer issuer, List<PayerCost> payerCosts) {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("token", JsonUtil.getInstance().toJson(token));
         returnIntent.putExtra("payerCosts", JsonUtil.getInstance().toJson(payerCosts));
         setResult(RESULT_OK, returnIntent);
         finish();
@@ -1630,9 +1628,6 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     public void finishCardFlow(PaymentMethod paymentMethod, Token token,
         Issuer issuer, PayerCost payerCost) {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(paymentMethod));
-        returnIntent.putExtra("token", JsonUtil.getInstance().toJson(token));
-        returnIntent.putExtra("issuer", JsonUtil.getInstance().toJson(issuer));
         returnIntent.putExtra("payerCost", JsonUtil.getInstance().toJson(payerCost));
         setResult(RESULT_OK, returnIntent);
         finish();

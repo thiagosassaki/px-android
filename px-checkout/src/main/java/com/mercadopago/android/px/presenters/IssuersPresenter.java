@@ -25,7 +25,6 @@ public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersP
 
     @NonNull private final UserSelectionRepository userSelectionRepository;
     //Local vars
-    private PaymentMethod mPaymentMethod;
     private List<Issuer> mIssuers;
     private CardInfo mCardInfo;
     private FailureRecovery mFailureRecovery;
@@ -71,7 +70,7 @@ public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersP
     private void getIssuersAsync() {
         getView().showLoadingView();
 
-        getResourcesProvider().getIssuers(mPaymentMethod.getId(), mBin,
+        getResourcesProvider().getIssuers(userSelectionRepository.getPaymentMethod().getId(), mBin,
             new TaggedCallback<List<Issuer>>(ApiUtil.RequestOrigin.GET_ISSUERS) {
                 @Override
                 public void onSuccess(List<Issuer> issuers) {
@@ -120,12 +119,8 @@ public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersP
         }
     }
 
-    public void setPaymentMethod(PaymentMethod paymentMethod) {
-        mPaymentMethod = paymentMethod;
-    }
-
     public PaymentMethod getPaymentMethod() {
-        return mPaymentMethod;
+        return userSelectionRepository.getPaymentMethod();
     }
 
     public void setIssuers(List<Issuer> issuers) {
@@ -157,6 +152,6 @@ public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersP
     }
 
     public boolean isRequiredCardDrawn() {
-        return mCardInfo != null && mPaymentMethod != null;
+        return mCardInfo != null && userSelectionRepository.getPaymentMethod() != null;
     }
 }
