@@ -296,7 +296,6 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
     public void startIssuersActivity() {
         new MercadoPagoComponents.Activities.IssuersActivityBuilder()
             .setActivity(this)
-            .setPaymentMethod(presenter.getPaymentMethod())
             .setCardInfo(presenter.getCardInfo())
             .setIssuers(presenter.getIssuersList())
             .startActivity();
@@ -340,8 +339,6 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
     private void startInstallmentsActivity() {
         new MercadoPagoComponents.Activities.InstallmentsActivityBuilder()
             .setActivity(this)
-            .setPaymentMethod(presenter.getPaymentMethod())
-            .setIssuer(presenter.getIssuer())
             .setPaymentPreference(configuration.getCheckoutPreference().getPaymentPreference())
             .setCardInfo(presenter.getCardInfo())
             .setPayerCosts(presenter.getPayerCostList())

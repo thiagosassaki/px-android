@@ -118,11 +118,7 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
     private void getActivityParameters() {
         final Intent intent = getIntent();
 
-        final PaymentMethod paymentMethod =
-                JsonUtil.getInstance().fromJson(intent.getStringExtra("paymentMethod"), PaymentMethod.class);
-
-        presenter.setPaymentMethod(paymentMethod);
-        presenter.setIssuer(JsonUtil.getInstance().fromJson(intent.getStringExtra("issuer"), Issuer.class));
+        presenter.setIssuer();
         presenter.setCardInfo(JsonUtil.getInstance().fromJson(intent.getStringExtra("cardInfo"), CardInfo.class));
 
         List<PayerCost> payerCosts;

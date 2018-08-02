@@ -208,7 +208,6 @@ public class MercadoPagoComponents {
         public static class IssuersActivityBuilder {
             private Activity activity;
             private CardInfo cardInformation;
-            private PaymentMethod paymentMethod;
             private List<Issuer> issuers;
 
             public IssuersActivityBuilder setActivity(Activity activity) {
@@ -221,11 +220,6 @@ public class MercadoPagoComponents {
                 return this;
             }
 
-            public IssuersActivityBuilder setPaymentMethod(PaymentMethod paymentMethod) {
-                this.paymentMethod = paymentMethod;
-                return this;
-            }
-
             public IssuersActivityBuilder setIssuers(List<Issuer> issuers) {
                 this.issuers = issuers;
                 return this;
@@ -235,15 +229,11 @@ public class MercadoPagoComponents {
                 if (activity == null) {
                     throw new IllegalStateException("activity is null");
                 }
-                if (paymentMethod == null) {
-                    throw new IllegalStateException("payment method is null");
-                }
                 startIssuersActivity();
             }
 
             private void startIssuersActivity() {
                 Intent intent = new Intent(activity, IssuersActivity.class);
-                intent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(paymentMethod));
                 intent.putExtra("issuers", JsonUtil.getInstance().toJson(issuers));
                 intent.putExtra("cardInfo", JsonUtil.getInstance().toJson(cardInformation));
                 activity.startActivityForResult(intent, ISSUERS_REQUEST_CODE);
@@ -254,8 +244,6 @@ public class MercadoPagoComponents {
             private Activity activity;
             private CardInfo cardInfo;
             private List<PayerCost> payerCosts;
-            private Issuer issuer;
-            private PaymentMethod paymentMethod;
             private PaymentPreference paymentPreference;
 
             public InstallmentsActivityBuilder setActivity(Activity activity) {
@@ -273,16 +261,6 @@ public class MercadoPagoComponents {
                 return this;
             }
 
-            public InstallmentsActivityBuilder setPaymentMethod(PaymentMethod paymentMethod) {
-                this.paymentMethod = paymentMethod;
-                return this;
-            }
-
-            public InstallmentsActivityBuilder setIssuer(Issuer issuer) {
-                this.issuer = issuer;
-                return this;
-            }
-
             public InstallmentsActivityBuilder setPayerCosts(List<PayerCost> payerCosts) {
                 this.payerCosts = payerCosts;
                 return this;
@@ -292,21 +270,11 @@ public class MercadoPagoComponents {
                 if (activity == null) {
                     throw new IllegalStateException("activity is null");
                 }
-                if (payerCosts == null) {
-                    if (issuer == null) {
-                        throw new IllegalStateException("issuer is null");
-                    }
-                    if (paymentMethod == null) {
-                        throw new IllegalStateException("payment method is null");
-                    }
-                }
                 startInstallmentsActivity();
             }
 
             private void startInstallmentsActivity() {
                 final Intent intent = new Intent(activity, InstallmentsActivity.class);
-                intent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(paymentMethod));
-                intent.putExtra("issuer", JsonUtil.getInstance().toJson(issuer));
                 intent.putExtra("payerCosts", JsonUtil.getInstance().toJson(payerCosts));
                 intent.putExtra("paymentPreference", JsonUtil.getInstance().toJson(paymentPreference));
                 intent.putExtra("cardInfo", JsonUtil.getInstance().toJson(cardInfo));

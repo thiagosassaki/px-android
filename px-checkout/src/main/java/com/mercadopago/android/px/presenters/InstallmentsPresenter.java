@@ -48,10 +48,6 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
     private String bin = "";
     private Long issuerId;
 
-    //Activity parameters
-    private PaymentMethod paymentMethod;
-    private Issuer issuer;
-
     private List<PayerCost> payerCosts;
     private PaymentPreference paymentPreference;
     private CardInfo cardInfo;
@@ -123,7 +119,8 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
         getView().showLoadingView();
         final DifferentialPricing differentialPricing = configuration.getCheckoutPreference().getDifferentialPricing();
         final Integer differentialPricingId = differentialPricing == null ? null : differentialPricing.getId();
-        getResourcesProvider().getInstallments(bin, amountRepository.getAmountToPay(), issuerId, paymentMethod.getId(),
+        getResourcesProvider().getInstallments(bin, amountRepository.getAmountToPay(), issuerId,
+            userSelectionRepository.getPaymentMethod().getId(),
             differentialPricingId,new TaggedCallback<List<Installment>>(ApiUtil.RequestOrigin.GET_INSTALLMENTS) {
                 @Override
                 public void onSuccess(final List<Installment> installments) {
@@ -151,10 +148,6 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
                 });
     }
 
-    public void setPaymentMethod(final PaymentMethod paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
-
     public void setCardInfo(final CardInfo cardInfo) {
         this.cardInfo = cardInfo;
         if (this.cardInfo != null) {
@@ -166,15 +159,14 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
         return cardInfo;
     }
 
-    public void setIssuer(Issuer issuer) {
-        this.issuer = issuer;
-        if (this.issuer != null) {
-            issuerId = this.issuer.getId();
+    public void setIssuer() {
+        if (userSelectionRepository.getIssuer() != null) {
+            issuerId = userSelectionRepository.getIssuer().getId();
         }
     }
 
     public Integer getCardNumberLength() {
-        return PaymentMethodGuessingController.getCardNumberLength(paymentMethod, bin);
+        return PaymentMethodGuessingController.getCardNumberLength(userSelectionRepository.getPaymentMethod(), bin);
     }
 
     public void setPayerCosts(List<PayerCost> payerCosts) {
@@ -194,11 +186,11 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
     }
 
     public PaymentMethod getPaymentMethod() {
-        return paymentMethod;
+        return userSelectionRepository.getPaymentMethod();
     }
 
     public boolean isRequiredCardDrawn() {
-        return cardInfo != null && paymentMethod != null;
+        return cardInfo != null && userSelectionRepository.getPaymentMethod() != null;
     }
 
     private OnSelectedCallback<Integer> getDpadSelectionCallback() {
