@@ -394,7 +394,6 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
             .setActivity(this)
             .setPaymentResult(paymentResult)
             .setDiscount(presenter.getDiscount())
-            .setPaymentResultScreenPreference(presenter.getPaymentResultScreenPreference())
             .setAmount(amount)
             .startActivity();
 

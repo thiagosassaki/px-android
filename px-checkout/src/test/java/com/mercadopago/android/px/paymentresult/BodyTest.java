@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import com.mercadopago.android.px.components.ActionDispatcher;
 import com.mercadopago.android.px.components.Receipt;
-import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.mocks.Instructions;
 import com.mercadopago.android.px.mocks.PaymentResults;
 import com.mercadopago.android.px.model.Instruction;
@@ -153,8 +152,7 @@ public class BodyTest {
         final PaymentResult paymentResult = PaymentResults.getStatusApprovedPaymentResult();
         final Body body = new Body(getBodyPropsForOnPayment(paymentResult),
             dispatcher, paymentResultProvider);
-
-        Assert.assertTrue(body.hasReceipt(context));
+        Assert.assertTrue(body.hasReceipt());
     }
 
     @Test
@@ -170,11 +168,10 @@ public class BodyTest {
     @Test
     public void testBodyHasCustomTopComponent() {
 
-        final PaymentResultScreenPreference preference = new PaymentResultScreenPreference.Builder()
+        // TODO
+        new PaymentResultScreenPreference.Builder()
             .setTopFragment(Fragment.class, new Bundle())
             .build();
-
-        CheckoutStore.getInstance().setPaymentResultScreenPreference(preference);
 
         final PaymentResult paymentResult = PaymentResults.getStatusApprovedPaymentResult();
         final Body body = new Body(getBodyPropsForOnPayment(paymentResult),
@@ -190,7 +187,7 @@ public class BodyTest {
             .setBottomFragment(Fragment.class, new Bundle())
             .build();
 
-        CheckoutStore.getInstance().setPaymentResultScreenPreference(preference);
+        //TODO
 
         final PaymentResult paymentResult = PaymentResults.getStatusApprovedPaymentResult();
         final Body body = new Body(getBodyPropsForOnPayment(paymentResult),
@@ -208,7 +205,7 @@ public class BodyTest {
             .setBottomFragment(Fragment.class, new Bundle())
             .build();
 
-        CheckoutStore.getInstance().setPaymentResultScreenPreference(preference);
+        //TODO
 
         final PaymentResult paymentResult = PaymentResults.getStatusApprovedPaymentResult();
         final Body body = new Body(getBodyPropsForOnPayment(paymentResult),

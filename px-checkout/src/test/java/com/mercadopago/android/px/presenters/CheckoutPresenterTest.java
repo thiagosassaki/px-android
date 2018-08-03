@@ -2,7 +2,6 @@ package com.mercadopago.android.px.presenters;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.core.CheckoutStore;
-import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.hooks.Hook;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
@@ -58,7 +57,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static com.mercadopago.android.px.utils.StubCheckoutPreferenceUtils.stubExpiredPreference;
 import static com.mercadopago.android.px.utils.StubCheckoutPreferenceUtils.stubPreferenceOneItem;
 import static com.mercadopago.android.px.utils.StubCheckoutPreferenceUtils.stubPreferenceOneItemAndPayer;
-import static com.mercadopago.android.px.utils.StubPaymentResult.stubApprovedOffPaymentResult;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
@@ -73,18 +71,12 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 @RunWith(MockitoJUnitRunner.class)
 public class CheckoutPresenterTest {
 
-    private static final String PREF_ID = "123";
-
-    private static final int REQUESTED_RESULT = 0x20;
-
-    @Mock private MercadoPagoCheckout mercadoPagoCheckout;
     @Mock private CheckoutView checkoutView;
     @Mock private CheckoutProvider checkoutProvider;
     @Mock private PaymentSettingRepository configuration;
     @Mock private AmountRepository amountRepository;
     @Mock private UserSelectionRepository userSelectionRepository;
     @Mock private DiscountRepository discountRepository;
-    @Mock private PaymentMethod paymentMethod;
     @Mock private GroupsRepository groupsRepository;
     @Mock private AdvancedConfiguration advancedConfiguration;
 
@@ -128,7 +120,7 @@ public class CheckoutPresenterTest {
         when(configuration.getAdvancedConfiguration()).thenReturn(advancedConfiguration);
         when(advancedConfiguration.isBinaryMode()).thenReturn(false);
 
-        final CheckoutStateModel model = new CheckoutStateModel(mercadoPagoCheckout);
+        final CheckoutStateModel model = new CheckoutStateModel();
         final CheckoutPresenter presenter = new CheckoutPresenter(model, configuration, amountRepository,
             userSelectionRepository, discountRepository,
             groupsRepository);
@@ -235,7 +227,6 @@ public class CheckoutPresenterTest {
             .setEscEnabled(true)
             .build();
 
-        when(mercadoPagoCheckout.getCheckoutPreference()).thenReturn(checkoutPreference);
         when(configuration.getAdvancedConfiguration()).thenReturn(advancedConfiguration);
         CheckoutPresenter presenter = getBasePresenter(view, provider);
 
