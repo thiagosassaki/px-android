@@ -145,7 +145,8 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
         final PaymentSettingRepository configuration = configurationModule.getPaymentSettings();
 
 
-        privateKey =  mercadoPagoCheckout.getPrivateKey();
+        //privateKey =  mercadoPagoCheckout.getPrivateKey();
+        privateKey = configurationModule.getPaymentSettings().getPrivateKey();
 
         final CheckoutStateModel
             persistentData = new CheckoutStateModel(mercadoPagoCheckout);

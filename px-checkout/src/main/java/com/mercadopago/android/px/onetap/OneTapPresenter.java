@@ -2,6 +2,7 @@ package com.mercadopago.android.px.onetap;
 
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.internal.repository.PaymentHandler;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
@@ -37,31 +38,37 @@ class OneTapPresenter extends MvpPresenter<OneTap.View, ResourcesProvider> imple
         paymentRepository.doPayment(model, new PaymentHandler() {
             @Override
             public void onPaymentFinished(final PluginPayment payment) {
+                Log.d("refactor", "payment finished");
                 payment.process(OneTapPresenter.this);
             }
 
             @Override
             public void onPaymentError(final MercadoPagoError error) {
                 //TODO same thing -> activity
+                Log.d("refactor", "payment error");
             }
 
             @Override
             public void onPaymentMethodRequired() {
                 //TODO no debería pasar.
+                Log.d("refactor", "payment method required");
             }
 
             @Override
             public void onCvvRequired(@NonNull final Card card) {
+                Log.d("refactor", "cvv required");
                 getView().showCardFlow(model, card);
             }
 
             @Override
             public void onCardError() {
+                Log.d("refactor", "card error");
                 getView().showCardFlow(model, null);
             }
 
             @Override
             public void onVisualPayment(final Fragment fragment) {
+                Log.d("refactor", "visual payment");
                 //TODO - Caso instores vending machine.
             }
 

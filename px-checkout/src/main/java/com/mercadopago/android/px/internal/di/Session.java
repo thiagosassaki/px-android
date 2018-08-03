@@ -3,6 +3,7 @@ package com.mercadopago.android.px.internal.di;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
 import com.mercadopago.android.px.internal.datasource.AmountService;
@@ -23,6 +24,7 @@ import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
+import com.mercadopago.android.px.plugins.PaymentProcessor;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.services.CheckoutService;
 import com.mercadopago.android.px.services.util.LocaleUtil;
@@ -166,11 +168,15 @@ public final class Session extends ApplicationModule
     public PaymentRepository getPaymentRepository() {
         if (paymentRepository == null) {
             final ConfigurationModule configurationModule = getConfigurationModule();
-            //TODO arreglar el param payment processor
+            //TODO arreglar el param payment processor, sacar el checkout store y arreglar el mapa de procesadoras
+            PaymentProcessor processor = CheckoutStore.getInstance()
+                .doesPaymentProcessorSupportPaymentMethodSelected(configurationModule
+                    .getUserSelectionRepository().getPaymentMethod().getId());
+
             paymentRepository = new PaymentService(configurationModule.getUserSelectionRepository(),
                 configurationModule.getPaymentSettings(),
                 new PluginService(getContext()), getDiscountRepository(), getAmountRepository(),
-                null, getContext());
+                processor, getContext());
         }
         return paymentRepository;
     }
