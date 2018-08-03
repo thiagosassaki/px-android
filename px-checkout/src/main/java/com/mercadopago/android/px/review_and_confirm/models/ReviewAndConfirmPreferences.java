@@ -218,12 +218,13 @@ public class ReviewAndConfirmPreferences implements Serializable {
 
         /**
          * Custom fragment that will appear before payment method information in review and confirm screen.
-         *
-         * @param zClass Fragment class
-         * @param args Bundle for fragment
+         *  @param zClass Fragment class
+         *  @param args Bundle for fragment
+         *  @return builder
          */
-        public void setTopFragment(@NonNull final Class<? extends Fragment> zClass, @Nullable final Bundle args) {
+        public Builder setTopFragment(@NonNull final Class<? extends Fragment> zClass, @Nullable final Bundle args) {
             topFragment = new ExternalFragment(zClass, args);
+            return this;
         }
 
         /**
@@ -231,9 +232,11 @@ public class ReviewAndConfirmPreferences implements Serializable {
          *
          * @param zClass Fragment class
          * @param args Bundle for fragment
+         * @return builder
          */
-        public void setBottomFragment(@NonNull final Class<? extends Fragment> zClass, @Nullable final Bundle args) {
+        public Builder setBottomFragment(@NonNull final Class<? extends Fragment> zClass, @Nullable final Bundle args) {
             bottomFragment = new ExternalFragment(zClass, args);
+            return this;
         }
 
         /**

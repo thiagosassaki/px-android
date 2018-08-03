@@ -1,6 +1,7 @@
 package com.mercadopago.android.px.paymentresult;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import com.mercadopago.android.px.components.ActionDispatcher;
 import com.mercadopago.android.px.components.Receipt;
@@ -54,7 +55,7 @@ public class BodyTest {
     }
 
     private PaymentResultBodyProps getBodyPropsForInstructions(Instruction instruction) {
-        return new PaymentResultBodyProps.Builder()
+        return new PaymentResultBodyProps.Builder(new PaymentResultScreenPreference.Builder().build())
             .setStatus(Payment.StatusCodes.STATUS_PENDING)
             .setStatusDetail(Payment.StatusDetail.STATUS_DETAIL_PENDING_WAITING_PAYMENT)
             .setProcessingMode(ProcessingModes.AGGREGATOR)
@@ -168,13 +169,12 @@ public class BodyTest {
     @Test
     public void testBodyHasCustomTopComponent() {
 
-        // TODO
-        new PaymentResultScreenPreference.Builder()
+        final PaymentResultScreenPreference preference = new PaymentResultScreenPreference.Builder()
             .setTopFragment(Fragment.class, new Bundle())
             .build();
 
         final PaymentResult paymentResult = PaymentResults.getStatusApprovedPaymentResult();
-        final Body body = new Body(getBodyPropsForOnPayment(paymentResult),
+        final Body body = new Body(getBodyPropsForOnPayment(paymentResult, preference),
             dispatcher, paymentResultProvider);
 
         Assert.assertTrue(body.hasTopCustomComponent());
@@ -187,10 +187,8 @@ public class BodyTest {
             .setBottomFragment(Fragment.class, new Bundle())
             .build();
 
-        //TODO
-
         final PaymentResult paymentResult = PaymentResults.getStatusApprovedPaymentResult();
-        final Body body = new Body(getBodyPropsForOnPayment(paymentResult),
+        final Body body = new Body(getBodyPropsForOnPayment(paymentResult, preference),
             dispatcher, paymentResultProvider);
 
         Assert.assertTrue(body.hasBottomCustomComponent());
@@ -205,10 +203,8 @@ public class BodyTest {
             .setBottomFragment(Fragment.class, new Bundle())
             .build();
 
-        //TODO
-
         final PaymentResult paymentResult = PaymentResults.getStatusApprovedPaymentResult();
-        final Body body = new Body(getBodyPropsForOnPayment(paymentResult),
+        final Body body = new Body(getBodyPropsForOnPayment(paymentResult, preference),
             dispatcher, paymentResultProvider);
 
 
@@ -216,8 +212,15 @@ public class BodyTest {
         Assert.assertTrue(body.hasBottomCustomComponent());
     }
 
-    private PaymentResultBodyProps getBodyPropsForOnPayment(PaymentResult paymentResult) {
-        return new PaymentResultBodyProps.Builder()
+    @NonNull
+    private PaymentResultBodyProps getBodyPropsForOnPayment(@NonNull final PaymentResult paymentResult) {
+        return getBodyPropsForOnPayment(paymentResult, new PaymentResultScreenPreference.Builder().build());
+    }
+
+    @NonNull
+    private PaymentResultBodyProps getBodyPropsForOnPayment(@NonNull final PaymentResult paymentResult,
+        @NonNull final PaymentResultScreenPreference preference) {
+        return new PaymentResultBodyProps.Builder(preference)
             .setStatus(paymentResult.getPaymentStatus())
             .setStatusDetail(paymentResult.getPaymentStatusDetail())
             .setPaymentData(paymentResult.getPaymentData())

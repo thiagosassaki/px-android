@@ -37,6 +37,7 @@ import com.mercadopago.android.px.plugins.model.BusinessPayment;
 import com.mercadopago.android.px.plugins.model.BusinessPaymentModel;
 import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
+import com.mercadopago.android.px.preferences.PaymentResultScreenPreference;
 import com.mercadopago.android.px.providers.CheckoutProvider;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.services.exceptions.CheckoutPreferenceException;
@@ -100,6 +101,7 @@ public class CheckoutPresenterTest {
     private CheckoutPresenter getPaymentPresenterWithDefaultAdvancedConfigurationMla() {
         final CheckoutPreference preference = stubPreferenceOneItem();
         when(configuration.getCheckoutPreference()).thenReturn(preference);
+
         provider.setCheckoutPreferenceResponse(preference);
         when(groupsRepository.getGroups())
             .thenReturn(new StubSuccessMpCall<>(PaymentMethodSearchs.getCompletePaymentMethodSearchMLA()));
@@ -118,6 +120,8 @@ public class CheckoutPresenterTest {
         final CheckoutView view,
         final CheckoutProvider provider) {
         when(configuration.getAdvancedConfiguration()).thenReturn(advancedConfiguration);
+        when(advancedConfiguration.getPaymentResultScreenPreference())
+            .thenReturn(new PaymentResultScreenPreference.Builder().build());
         when(advancedConfiguration.isBinaryMode()).thenReturn(false);
 
         final CheckoutStateModel model = new CheckoutStateModel();
@@ -810,19 +814,19 @@ public class CheckoutPresenterTest {
     @Test
     public void ifPayerDataCollectedAndPayerInPreferenceThenUseBothForPayment() {
 
-        String firstName = "FirstName";
-        String lastName = "LastName";
-        Identification identification = new Identification();
+        final String firstName = "FirstName";
+        final String lastName = "LastName";
+        final Identification identification = new Identification();
         identification.setType("cpf");
         identification.setNumber("111");
 
-        Payer collectedPayer = new Payer();
+        final Payer collectedPayer = new Payer();
         collectedPayer.setFirstName(firstName);
         collectedPayer.setLastName(lastName);
         collectedPayer.setIdentification(identification);
 
         provider.setPaymentResponse(Payments.getCallForAuthPayment());
-        CheckoutPreference preference = stubPreferenceOneItem();
+        final CheckoutPreference preference = stubPreferenceOneItem();
 
         when(configuration.getCheckoutPreference()).thenReturn(preference);
         provider.setCheckoutPreferenceResponse(preference);
