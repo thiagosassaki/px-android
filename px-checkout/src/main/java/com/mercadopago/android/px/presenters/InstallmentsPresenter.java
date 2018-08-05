@@ -1,12 +1,9 @@
 package com.mercadopago.android.px.presenters;
 
 import android.support.annotation.NonNull;
-
 import com.mercadopago.android.px.callbacks.FailureRecovery;
 import com.mercadopago.android.px.callbacks.OnSelectedCallback;
-import com.mercadopago.android.px.callbacks.OnCodeDiscountCallback;
 import com.mercadopago.android.px.controllers.PaymentMethodGuessingController;
-import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
@@ -19,6 +16,7 @@ import com.mercadopago.android.px.model.Installment;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.PaymentMethod;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.mvp.MvpPresenter;
 import com.mercadopago.android.px.mvp.TaggedCallback;
 import com.mercadopago.android.px.preferences.PaymentPreference;
@@ -27,7 +25,6 @@ import com.mercadopago.android.px.util.ApiUtil;
 import com.mercadopago.android.px.util.InstallmentsUtil;
 import com.mercadopago.android.px.views.AmountView;
 import com.mercadopago.android.px.views.InstallmentsActivityView;
-
 import java.util.List;
 
 public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView, InstallmentsProvider> implements
@@ -80,7 +77,7 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
     }
 
     private void showSiteRelatedInformation() {
-        if (InstallmentsUtil.shouldWarnAboutBankInterests(configuration.getCheckoutPreference().getSiteId())) {
+        if (InstallmentsUtil.shouldWarnAboutBankInterests(configuration.getCheckoutPreference().getSite().getId())) {
             getView().warnAboutBankInterests();
         }
     }

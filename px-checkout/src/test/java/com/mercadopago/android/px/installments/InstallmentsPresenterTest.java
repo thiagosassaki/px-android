@@ -355,7 +355,6 @@ public class InstallmentsPresenterTest {
         PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
         Issuer issuer = Issuers.getIssuers().get(0);
         when(checkoutPreference.getSite()).thenReturn(Sites.COLOMBIA);
-        when(checkoutPreference.getSiteId()).thenReturn(Sites.COLOMBIA.getId());
         presenter.setCardInfo(getCardInfo());
         presenter.setPaymentMethod(paymentMethod);
         presenter.setIssuer(issuer);
