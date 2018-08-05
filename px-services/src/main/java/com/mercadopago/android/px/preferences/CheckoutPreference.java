@@ -29,6 +29,7 @@ public class CheckoutPreference implements Serializable {
     /**
      * When the preference comes from backend then
      * id is received - Custom created CheckoutPreferences have null id.
+     * it is nullable but it shouldn't
      */
     @SuppressWarnings("UnusedDeclaration")
     @Nullable private String id;
@@ -36,15 +37,16 @@ public class CheckoutPreference implements Serializable {
     @SuppressWarnings("UnusedDeclaration")
     @NonNull private final String siteId;
 
+    @NonNull private final List<Item> items;
+
+    @NonNull private final Payer payer;
+
     @SerializedName("differential_pricing")
     @Nullable private final DifferentialPricing differentialPricing;
 
     @SerializedName("payment_methods")
-    private PaymentPreference paymentPreference;
+    @Nullable private final PaymentPreference paymentPreference;
 
-    @NonNull private final List<Item> items;
-
-    @NonNull private final Payer payer;
 
     @Nullable private final Date expirationDateTo;
 
@@ -62,7 +64,7 @@ public class CheckoutPreference implements Serializable {
     @Nullable private final String conceptId;
     //endregion support external integrations
 
-    CheckoutPreference(final Builder builder) {
+    /* default */ CheckoutPreference(final Builder builder) {
         items = builder.items;
         expirationDateFrom = builder.expirationDateFrom;
         expirationDateTo = builder.expirationDateTo;
@@ -88,7 +90,7 @@ public class CheckoutPreference implements Serializable {
     public void validate() throws CheckoutPreferenceException {
         if (!Item.validItems(items)) {
             throw new CheckoutPreferenceException(CheckoutPreferenceException.INVALID_ITEM);
-        } else if (!isEmpty(payer.getEmail())) {
+        } else if (isEmpty(payer.getEmail())) {
             throw new CheckoutPreferenceException(CheckoutPreferenceException.NO_EMAIL_FOUND);
         } else if (isExpired()) {
             throw new CheckoutPreferenceException(CheckoutPreferenceException.EXPIRED_PREFERENCE);
@@ -101,21 +103,20 @@ public class CheckoutPreference implements Serializable {
         }
     }
 
-
-    public boolean validPaymentTypeExclusion() {
-        return paymentPreference == null || paymentPreference.excludedPaymentTypesValid();
+    /* default */ boolean validPaymentTypeExclusion() {
+        return getPaymentPreference().excludedPaymentTypesValid();
     }
 
-    public boolean validInstallmentsPreference() {
-        return paymentPreference == null || paymentPreference.installmentPreferencesValid();
+    /* default */ boolean validInstallmentsPreference() {
+        return getPaymentPreference().installmentPreferencesValid();
     }
 
-    public Boolean isExpired() {
+    /* default */ Boolean isExpired() {
         final Date date = new Date();
         return expirationDateTo != null && date.after(expirationDateTo);
     }
 
-    public Boolean isActive() {
+    /* default */ Boolean isActive() {
         final Date date = new Date();
         return expirationDateFrom == null || date.after(expirationDateFrom);
     }
@@ -173,6 +174,7 @@ public class CheckoutPreference implements Serializable {
         }
     }
 
+    @NonNull
     public Site getSite() {
         return Sites.getById(siteId);
     }
@@ -189,33 +191,6 @@ public class CheckoutPreference implements Serializable {
     }
 
     @Nullable
-    public Integer getMaxInstallments() {
-        if (paymentPreference != null) {
-            return paymentPreference.getMaxInstallments();
-        } else {
-            return null;
-        }
-    }
-
-    @Nullable
-    public Integer getDefaultInstallments() {
-        if (paymentPreference != null) {
-            return paymentPreference.getDefaultInstallments();
-        } else {
-            return null;
-        }
-    }
-
-    @Nullable
-    public List<String> getExcludedPaymentMethods() {
-        if (paymentPreference != null) {
-            return paymentPreference.getExcludedPaymentMethodIds();
-        } else {
-            return null;
-        }
-    }
-
-    @Nullable
     public Date getExpirationDateFrom() {
         return expirationDateFrom;
     }
@@ -227,19 +202,28 @@ public class CheckoutPreference implements Serializable {
 
     @Nullable
     public String getDefaultPaymentMethodId() {
-        if (paymentPreference != null) {
-            return paymentPreference.getDefaultPaymentMethodId();
-        } else {
-            return null;
-        }
+        return getPaymentPreference().getDefaultPaymentMethodId();
     }
 
+    @Nullable
+    public List<String> getExcludedPaymentMethods() {
+        return getPaymentPreference().getExcludedPaymentMethodIds();
+    }
+
+    @Nullable
+    public Integer getDefaultInstallments() {
+        return getPaymentPreference().getDefaultInstallments();
+    }
+
+    @Nullable
+    public Integer getMaxInstallments() {
+        return getPaymentPreference().getMaxInstallments();
+    }
+
+    @NonNull
     public PaymentPreference getPaymentPreference() {
         // If payment preference does not exists create one.
-        if (paymentPreference == null) {
-            paymentPreference = new PaymentPreference();
-        }
-        return paymentPreference;
+        return paymentPreference == null ? new PaymentPreference() : paymentPreference;
     }
 
     @Nullable
