@@ -78,13 +78,11 @@ public class CheckoutPreference implements Serializable {
         payer = new Payer();
         payer.setEmail(builder.payerEmail);
 
-        final PaymentPreference paymentPreference = new PaymentPreference();
+        paymentPreference = new PaymentPreference();
         paymentPreference.setExcludedPaymentTypeIds(builder.excludedPaymentTypes);
         paymentPreference.setExcludedPaymentMethodIds(builder.excludedPaymentMethods);
         paymentPreference.setMaxAcceptedInstallments(builder.maxInstallments);
         paymentPreference.setDefaultInstallments(builder.defaultInstallments);
-
-        this.paymentPreference = paymentPreference;
     }
 
     public void validate() throws CheckoutPreferenceException {
@@ -166,15 +164,6 @@ public class CheckoutPreference implements Serializable {
     }
 
     @NonNull
-    public List<String> getExcludedPaymentTypes() {
-        if (paymentPreference != null) {
-            return paymentPreference.getExcludedPaymentTypes();
-        } else {
-            return new ArrayList<>();
-        }
-    }
-
-    @NonNull
     public Site getSite() {
         return Sites.getById(siteId);
     }
@@ -206,11 +195,6 @@ public class CheckoutPreference implements Serializable {
     }
 
     @Nullable
-    public List<String> getExcludedPaymentMethods() {
-        return getPaymentPreference().getExcludedPaymentMethodIds();
-    }
-
-    @Nullable
     public Integer getDefaultInstallments() {
         return getPaymentPreference().getDefaultInstallments();
     }
@@ -218,6 +202,16 @@ public class CheckoutPreference implements Serializable {
     @Nullable
     public Integer getMaxInstallments() {
         return getPaymentPreference().getMaxInstallments();
+    }
+
+    @NonNull
+    public List<String> getExcludedPaymentTypes() {
+        return getPaymentPreference().getExcludedPaymentTypes();
+    }
+
+    @Nullable
+    public List<String> getExcludedPaymentMethods() {
+        return getPaymentPreference().getExcludedPaymentMethodIds();
     }
 
     @NonNull
