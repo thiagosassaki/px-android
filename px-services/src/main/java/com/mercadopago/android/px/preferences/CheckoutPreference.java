@@ -253,7 +253,10 @@ public class CheckoutPreference implements Serializable {
         /* default */ String conceptId;
 
         /**
-         * Builder for custom CheckoutPreference construction
+         * Builder for custom CheckoutPreference construction.
+         * It should be only used if you are processing the payment
+         * with a Payment processor.
+         * Otherwise you should use the ID constructor.
          *
          * @param site preference site
          * @param payerEmail payer email
@@ -268,41 +271,101 @@ public class CheckoutPreference implements Serializable {
             excludedPaymentTypes = new ArrayList<>();
         }
 
+        /**
+         * Add exclusion payment method id
+         * If you exclude it, it's not going appear as a payment method available on checkout
+         *
+         * @param paymentMethodId exclusion id
+         * @return builder
+         * @see com.mercadopago.android.px.model.PaymentMethods
+         */
         public Builder addExcludedPaymentMethod(@NonNull final String paymentMethodId) {
             excludedPaymentMethods.add(paymentMethodId);
             return this;
         }
 
+        /**
+         * Add exclusion list by payment method id
+         * If you exclude it, it's not going appear as a payment method available on checkout
+         *
+         * @param paymentMethodIds exclusion list
+         * @return builder
+         * @see com.mercadopago.android.px.model.PaymentMethods
+         */
         public Builder addExcludedPaymentMethods(@NonNull final Collection<String> paymentMethodIds) {
             excludedPaymentMethods.addAll(paymentMethodIds);
             return this;
         }
 
+        /**
+         * Add exclusion by payment type
+         * If you exclude it, it's not going appear as a payment method available on checkout
+         *
+         * @param paymentTypeId exclusion type
+         * @return builder
+         * @see com.mercadopago.android.px.model.PaymentTypes
+         */
         public Builder addExcludedPaymentType(@NonNull final String paymentTypeId) {
             excludedPaymentTypes.add(paymentTypeId);
             return this;
         }
 
+        /**
+         * Add exclusion list by payment type
+         * If you exclude it, it's not going appear as a payment method available on checkout
+         *
+         * @param paymentTypeIds exclusion list
+         * @return builder
+         * @see com.mercadopago.android.px.model.PaymentTypes
+         */
         public Builder addExcludedPaymentTypes(@NonNull final Collection<String> paymentTypeIds) {
             excludedPaymentTypes.addAll(paymentTypeIds);
             return this;
         }
 
+        /**
+         * This value limits the amount of installments to be shown by the user.
+         *
+         * @param maxInstallments max installments to be shown
+         * @return builder
+         */
         public Builder setMaxInstallments(@Nullable final Integer maxInstallments) {
             this.maxInstallments = maxInstallments;
             return this;
         }
 
+        /**
+         * When default installments is not null
+         * then this value will be forced as installment selected if it matches
+         * with one provided by the Installments service.
+         *
+         * @param defaultInstallments number of the value to be forced
+         * @return builder
+         */
         public Builder setDefaultInstallments(@Nullable final Integer defaultInstallments) {
             this.defaultInstallments = defaultInstallments;
             return this;
         }
 
+        /**
+         * Date that indicates when this preference expires.
+         * If the preference is expired, then the checkout will show an error.
+         *
+         * @param date creation date.
+         * @return builder
+         */
         public Builder setExpirationDate(@Nullable final Date date) {
             expirationDateTo = date;
             return this;
         }
 
+        /**
+         * Date that indicates from when the preference is active.
+         * If the preference is related with a date in the future then an error screen will be shown.
+         *
+         * @param date creation date.
+         * @return builder
+         */
         public Builder setActiveFrom(@Nullable final Date date) {
             expirationDateFrom = date;
             return this;
@@ -310,6 +373,7 @@ public class CheckoutPreference implements Serializable {
 
         /**
          * Differential pricing configuration for this preference.
+         * This object is related with the way the installments are asked.
          *
          * @param differentialPricing differential pricing object
          * @return builder
@@ -319,31 +383,66 @@ public class CheckoutPreference implements Serializable {
             return this;
         }
 
+        /**
+         * internal usage
+         *
+         * @param marketplaceFee amount fee
+         * @return builder
+         */
         public Builder setMarketplaceFee(final BigDecimal marketplaceFee) {
             this.marketplaceFee = marketplaceFee;
             return this;
         }
 
+        /**
+         * internal usage
+         *
+         * @param shippingCost amount fee
+         * @return builder
+         */
         public Builder setShippingCost(final BigDecimal shippingCost) {
             this.shippingCost = shippingCost;
             return this;
         }
 
+        /**
+         * internal usage
+         *
+         * @param operationType this operation can be ...
+         * @return builder
+         */
         public Builder setOperationType(final String operationType) {
             this.operationType = operationType;
             return this;
         }
 
+        /**
+         * internal usage
+         *
+         * @param conceptAmount amount
+         * @return builder
+         */
         public Builder setConceptAmount(final BigDecimal conceptAmount) {
             this.conceptAmount = conceptAmount;
             return this;
         }
 
+        /**
+         * internal usage
+         *
+         * @param conceptId identifier
+         * @return builder
+         */
         public Builder setConceptId(final String conceptId) {
             this.conceptId = conceptId;
             return this;
         }
 
+        /**
+         * It creates the checkout preference.
+         *
+         * @return CheckoutPreference
+         */
         public CheckoutPreference build() {
             return new CheckoutPreference(this);
         }

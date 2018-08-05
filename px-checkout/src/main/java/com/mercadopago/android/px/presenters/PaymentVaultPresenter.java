@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.mercadopago.android.px.callbacks.FailureRecovery;
 import com.mercadopago.android.px.callbacks.OnSelectedCallback;
-import com.mercadopago.android.px.constants.PaymentMethods;
+import com.mercadopago.android.px.model.PaymentMethods;
 import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.core.MercadoPagoComponents;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
