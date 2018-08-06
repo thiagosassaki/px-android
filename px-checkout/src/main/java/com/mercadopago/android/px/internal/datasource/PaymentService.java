@@ -92,11 +92,24 @@ public class PaymentService implements PaymentRepository {
     private void validateCardInfo(final PaymentHandler paymentHandler) {
         //TODO arreglar
         if (userSelectionRepository.getCard() != null && userSelectionRepository.getPayerCost() != null) {
+            //Paying with saved card
             if (paymentSettingRepository.getToken() != null) {
                 createPayment(paymentHandler);
             } else {
                 paymentHandler.onCvvRequired(userSelectionRepository.getCard());
             }
+        } else if (userSelectionRepository.getPaymentMethod() != null) {
+            //Paying with new card
+            if (userSelectionRepository.getIssuer() == null) {
+                paymentHandler.onIssuerRequired();
+            } else if (userSelectionRepository.getPayerCost() == null) {
+                paymentHandler.onPayerCostRequired();
+            } else if (paymentSettingRepository.getToken() == null) {
+                paymentHandler.onTokenRequired();
+            } else {
+                createPayment(paymentHandler);
+            }
+
         } else {
             paymentHandler.onCardError();
         }

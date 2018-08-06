@@ -798,6 +798,21 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
             }
 
             @Override
+            public void onIssuerRequired() {
+                
+            }
+
+            @Override
+            public void onPayerCostRequired() {
+
+            }
+
+            @Override
+            public void onTokenRequired() {
+
+            }
+
+            @Override
             public void onPaymentFinished(final PluginPayment payment) {
 
                 Log.d("refactor", "payment finished");

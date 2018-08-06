@@ -14,4 +14,10 @@ public interface PaymentHandler extends OnPaymentListener {
     void onCardError();
 
     void onVisualPayment(Fragment fragment);
+
+    void onIssuerRequired();
+
+    void onPayerCostRequired();
+
+    void onTokenRequired();
 }

@@ -72,7 +72,20 @@ class OneTapPresenter extends MvpPresenter<OneTap.View, ResourcesProvider> imple
                 //TODO - Caso instores vending machine.
             }
 
+            @Override
+            public void onIssuerRequired() {
 
+            }
+
+            @Override
+            public void onPayerCostRequired() {
+
+            }
+
+            @Override
+            public void onTokenRequired() {
+
+            }
         });
     }
 
