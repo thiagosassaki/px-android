@@ -8,7 +8,7 @@ import com.mercadopago.android.px.components.ActionDispatcher;
 import com.mercadopago.android.px.components.Component;
 import com.mercadopago.android.px.components.LoadingComponent;
 import com.mercadopago.android.px.components.RendererFactory;
-import com.mercadopago.android.px.constants.PaymentMethods;
+import com.mercadopago.android.px.model.PaymentMethods;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.PaymentTypes;

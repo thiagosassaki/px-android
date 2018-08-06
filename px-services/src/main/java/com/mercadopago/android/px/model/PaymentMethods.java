@@ -1,4 +1,4 @@
-package com.mercadopago.android.px.constants;
+package com.mercadopago.android.px.model;
 
 public class PaymentMethods {
 
