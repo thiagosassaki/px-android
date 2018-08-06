@@ -7,18 +7,11 @@ import java.io.Serializable;
 
 public class Site implements Serializable, Parcelable {
 
-    private String id;
-    private String currencyId;
-    private String termsAndConditionsUrl;
+    private final String id;
+    private final String currencyId;
+    private final String termsAndConditionsUrl;
 
-    Site(@NonNull final String id) {
-        Site otherSite = Sites.getById(id);
-        this.id = otherSite.id;
-        this.currencyId = otherSite.getCurrencyId();
-        this.termsAndConditionsUrl = otherSite.termsAndConditionsUrl;
-    }
-
-    Site(@NonNull final String id,
+    /* default */ Site(@NonNull final String id,
         @NonNull final String currencyId,
         @NonNull final String termsAndConditionsUrl) {
         this.id = id;
@@ -26,7 +19,7 @@ public class Site implements Serializable, Parcelable {
         this.termsAndConditionsUrl = termsAndConditionsUrl;
     }
 
-    protected Site(Parcel in) {
+    protected Site(final Parcel in) {
         id = in.readString();
         currencyId = in.readString();
         termsAndConditionsUrl = in.readString();
@@ -34,12 +27,12 @@ public class Site implements Serializable, Parcelable {
 
     public static final Creator<Site> CREATOR = new Creator<Site>() {
         @Override
-        public Site createFromParcel(Parcel in) {
+        public Site createFromParcel(final Parcel in) {
             return new Site(in);
         }
 
         @Override
-        public Site[] newArray(int size) {
+        public Site[] newArray(final int size) {
             return new Site[size];
         }
     };

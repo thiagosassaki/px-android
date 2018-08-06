@@ -2,7 +2,7 @@ package com.mercadopago.android.px.model;
 
 import android.support.annotation.NonNull;
 
-public class Sites {
+public final class Sites {
 
     public static final Site ARGENTINA =
         new Site("MLA", "ARS", "https://www.mercadopago.com.ar/ayuda/terminos-y-condiciones_299");
@@ -24,27 +24,26 @@ public class Sites {
     }
 
     @NonNull
-    public static Site getById(@NonNull final String siteId) {
-        Site site;
+    public static Site getById(@NonNull final String siteId) throws IllegalArgumentException {
+
         if (Sites.ARGENTINA.getId().equals(siteId)) {
-            site = Sites.ARGENTINA;
+            return Sites.ARGENTINA;
         } else if (Sites.BRASIL.getId().equals(siteId)) {
-            site = Sites.BRASIL;
+            return Sites.BRASIL;
         } else if (Sites.CHILE.getId().equals(siteId)) {
-            site = Sites.CHILE;
+            return Sites.CHILE;
         } else if (Sites.MEXICO.getId().equals(siteId)) {
-            site = Sites.MEXICO;
+            return Sites.MEXICO;
         } else if (Sites.COLOMBIA.getId().equals(siteId)) {
-            site = Sites.COLOMBIA;
+            return Sites.COLOMBIA;
         } else if (Sites.VENEZUELA.getId().equals(siteId)) {
-            site = Sites.VENEZUELA;
+            return Sites.VENEZUELA;
         } else if (Sites.USA.getId().equals(siteId)) {
-            site = Sites.USA;
+            return Sites.USA;
         } else if (Sites.PERU.getId().equals(siteId)) {
-            site = Sites.PERU;
+            return Sites.PERU;
         } else {
             throw new IllegalArgumentException("There is no site for that id");
         }
-        return site;
     }
 }
