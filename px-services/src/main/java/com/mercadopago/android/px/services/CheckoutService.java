@@ -3,7 +3,7 @@ package com.mercadopago.android.px.services;
 import com.mercadopago.android.px.model.Instructions;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
-import com.mercadopago.android.px.model.requests.PayerIntent;
+import com.mercadopago.android.px.model.requests.GroupsIntent;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.services.adapters.MPCall;
 import java.math.BigDecimal;
@@ -23,7 +23,7 @@ public interface CheckoutService {
         @Query("amount") BigDecimal amount,
         @Query("excluded_payment_types") String excludedPaymentTypes,
         @Query("excluded_payment_methods") String excludedPaymentMethods,
-        @Body PayerIntent payerIntent,
+        @Body GroupsIntent groupsIntent,
         @Query("site_id") String siteId,
         @Query("api_version") String apiVersion,
         @Query("processing_mode") String processingMode,

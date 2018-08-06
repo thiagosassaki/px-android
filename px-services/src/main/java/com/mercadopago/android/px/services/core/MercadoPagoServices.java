@@ -19,7 +19,7 @@ import com.mercadopago.android.px.model.SavedCardToken;
 import com.mercadopago.android.px.model.SavedESCCardToken;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Token;
-import com.mercadopago.android.px.model.requests.PayerIntent;
+import com.mercadopago.android.px.model.requests.GroupsIntent;
 import com.mercadopago.android.px.model.requests.SecurityCodeIntent;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.services.BankDealService;
@@ -90,7 +90,7 @@ public class MercadoPagoServices {
         final List<String> excludedPaymentMethods, final List<String> cardsWithEsc, final List<String> supportedPlugins,
         final Payer payer, final Site site, @Nullable final Integer differentialPricing,
         final Callback<PaymentMethodSearch> callback) {
-        final PayerIntent payerIntent = new PayerIntent(payer);
+        final GroupsIntent groupsIntent = new GroupsIntent(mPrivateKey);
         final CheckoutService service = getDefaultRetrofit(mContext).create(CheckoutService.class);
 
         final String separator = ",";
@@ -101,7 +101,7 @@ public class MercadoPagoServices {
 
         service.getPaymentMethodSearch(Settings.servicesVersion,
             mContext.getResources().getConfiguration().locale.getLanguage(), this.mPublicKey, amount,
-            excludedPaymentTypesAppended, excludedPaymentMethodsAppended, payerIntent, site.getId(),
+            excludedPaymentTypesAppended, excludedPaymentMethodsAppended, groupsIntent, site.getId(),
             PAYMENT_METHODS_OPTIONS_API_VERSION, mProcessingMode, cardsWithEscAppended, supportedPluginsAppended,
             differentialPricing).
             enqueue(callback);
