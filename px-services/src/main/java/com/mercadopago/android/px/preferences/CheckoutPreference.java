@@ -252,7 +252,7 @@ public class CheckoutPreference implements Serializable {
          * with a Payment processor.
          * Otherwise you should use the ID constructor.
          *
-         * @param site preference site
+         * @param site preference site {@link Sites#getById(String)}
          * @param payerEmail payer email
          * @param items items to pay
          */

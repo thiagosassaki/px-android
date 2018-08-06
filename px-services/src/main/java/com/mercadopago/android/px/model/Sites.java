@@ -1,7 +1,11 @@
 package com.mercadopago.android.px.model;
 
 import android.support.annotation.NonNull;
+import java.util.Arrays;
 
+/**
+ * Utility class for sites.
+ */
 public final class Sites {
 
     public static final Site ARGENTINA =
@@ -20,30 +24,34 @@ public final class Sites {
     public static final Site PERU =
         new Site("MPE", "PEN", "https://www.mercadopago.com.pe/ayuda/terminos-condiciones-uso_2483");
 
+    private static final Iterable<Site> SITES = Arrays.asList(
+        ARGENTINA,
+        BRASIL,
+        CHILE,
+        MEXICO,
+        COLOMBIA,
+        VENEZUELA,
+        USA,
+        PERU
+    );
+
     private Sites() {
     }
 
+    /**
+     * Given a site id returns a {@link Site} or throws.
+     *
+     * @param siteId searched site id.
+     * @return site
+     * @throws IllegalArgumentException if it does not exists.
+     */
     @NonNull
     public static Site getById(@NonNull final String siteId) throws IllegalArgumentException {
-
-        if (Sites.ARGENTINA.getId().equals(siteId)) {
-            return Sites.ARGENTINA;
-        } else if (Sites.BRASIL.getId().equals(siteId)) {
-            return Sites.BRASIL;
-        } else if (Sites.CHILE.getId().equals(siteId)) {
-            return Sites.CHILE;
-        } else if (Sites.MEXICO.getId().equals(siteId)) {
-            return Sites.MEXICO;
-        } else if (Sites.COLOMBIA.getId().equals(siteId)) {
-            return Sites.COLOMBIA;
-        } else if (Sites.VENEZUELA.getId().equals(siteId)) {
-            return Sites.VENEZUELA;
-        } else if (Sites.USA.getId().equals(siteId)) {
-            return Sites.USA;
-        } else if (Sites.PERU.getId().equals(siteId)) {
-            return Sites.PERU;
-        } else {
-            throw new IllegalArgumentException("There is no site for that id");
+        for (final Site site : SITES) {
+            if (site.getId().equals(siteId)) {
+                return site;
+            }
         }
+        throw new IllegalArgumentException("There is no site for that id");
     }
 }
