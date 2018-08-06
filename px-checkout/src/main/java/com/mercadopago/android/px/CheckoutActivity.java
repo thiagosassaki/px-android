@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentTransaction;
 import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.core.MercadoPagoComponents;
+import com.mercadopago.android.px.internal.repository.PaymentHandler;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.hooks.Hook;
 import com.mercadopago.android.px.hooks.HookActivity;
@@ -23,11 +24,13 @@ import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.Token;
+import com.mercadopago.android.px.mvp.TaggedCallback;
 import com.mercadopago.android.px.onetap.OneTapFragment;
 import com.mercadopago.android.px.plugins.BusinessPaymentResultActivity;
 import com.mercadopago.android.px.plugins.PaymentProcessorPluginActivity;
 import com.mercadopago.android.px.plugins.model.BusinessPayment;
 import com.mercadopago.android.px.plugins.model.BusinessPaymentModel;
+import com.mercadopago.android.px.plugins.model.PluginPayment;
 import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.presenters.CheckoutPresenter;
 import com.mercadopago.android.px.providers.CheckoutProvider;
@@ -39,6 +42,7 @@ import com.mercadopago.android.px.tracker.MPTrackingContext;
 import com.mercadopago.android.px.tracking.model.ActionEvent;
 import com.mercadopago.android.px.tracking.tracker.MPTracker;
 import com.mercadopago.android.px.tracking.utils.TrackingUtil;
+import com.mercadopago.android.px.util.ApiUtil;
 import com.mercadopago.android.px.util.ErrorUtil;
 import com.mercadopago.android.px.util.JsonUtil;
 import com.mercadopago.android.px.util.MercadoPagoESCImpl;
@@ -163,6 +167,13 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
         Picasso.with(this)
                 .load(url)
                 .fetch();
+    }
+
+    @Override
+    public void createPaymentInMercadoPago() {
+        final Session session = Session.getSession(this);
+        presenter.createPaymentInMercadoPago(session.getPaymentRepository());
+
     }
 
     @Override

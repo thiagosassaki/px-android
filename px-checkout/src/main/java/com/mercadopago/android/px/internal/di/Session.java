@@ -169,9 +169,10 @@ public final class Session extends ApplicationModule
         if (paymentRepository == null) {
             final ConfigurationModule configurationModule = getConfigurationModule();
             //TODO arreglar el param payment processor, sacar el checkout store y arreglar el mapa de procesadoras
+            String paymentMethodIdSelected = configurationModule.getUserSelectionRepository().getPaymentMethod() == null
+                ? "" : configurationModule.getUserSelectionRepository().getPaymentMethod().getId();
             PaymentProcessor processor = CheckoutStore.getInstance()
-                .doesPaymentProcessorSupportPaymentMethodSelected(configurationModule
-                    .getUserSelectionRepository().getPaymentMethod().getId());
+                .doesPaymentProcessorSupportPaymentMethodSelected(paymentMethodIdSelected);
 
             paymentRepository = new PaymentService(configurationModule.getUserSelectionRepository(),
                 configurationModule.getPaymentSettings(),

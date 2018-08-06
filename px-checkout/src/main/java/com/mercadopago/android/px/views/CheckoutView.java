@@ -61,4 +61,6 @@ public interface CheckoutView extends MvpView {
     void exitCheckout(int resCode);
 
     void transitionOut();
+
+    void createPaymentInMercadoPago();
 }

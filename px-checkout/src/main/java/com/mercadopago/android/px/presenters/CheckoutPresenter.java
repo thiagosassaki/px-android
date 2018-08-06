@@ -3,6 +3,8 @@ package com.mercadopago.android.px.presenters;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+import android.support.v4.app.Fragment;
+import android.util.Log;
 import com.mercadopago.android.px.callbacks.FailureRecovery;
 import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.core.MercadoPagoComponents;
@@ -11,6 +13,8 @@ import com.mercadopago.android.px.hooks.HookHelper;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
+import com.mercadopago.android.px.internal.repository.PaymentHandler;
+import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.model.Campaign;
@@ -32,6 +36,7 @@ import com.mercadopago.android.px.mvp.TaggedCallback;
 import com.mercadopago.android.px.plugins.DataInitializationTask;
 import com.mercadopago.android.px.plugins.model.BusinessPayment;
 import com.mercadopago.android.px.plugins.model.BusinessPaymentModel;
+import com.mercadopago.android.px.plugins.model.PluginPayment;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentResultScreenPreference;
 import com.mercadopago.android.px.providers.CheckoutProvider;
@@ -300,7 +305,9 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
             getView().showPaymentProcessor();
         } else {
 
-            getResourcesProvider().createPayment(paymentSettingRepository.getTransactionId(),
+            getView().createPaymentInMercadoPago();
+
+            /*getResourcesProvider().createPayment(paymentSettingRepository.getTransactionId(),
                 getCheckoutPreference(),
                 paymentData,
                 paymentSettingRepository.getAdvancedConfiguration().isBinaryMode(),
@@ -323,7 +330,7 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
                                 resolvePaymentError(error, paymentData);
                             }
                         }
-                    });
+                    });*/
         }
     }
 
@@ -765,5 +772,55 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
 
     public boolean isUniquePaymentMethod() {
         return state.isUniquePaymentMethod;
+    }
+
+    public void createPaymentInMercadoPago(final PaymentRepository paymentRepository) {
+
+        paymentRepository.doPayment(new PaymentHandler() {
+            @Override
+            public void onPaymentMethodRequired() {
+
+            }
+
+            @Override
+            public void onCvvRequired(@NonNull final Card card) {
+
+            }
+
+            @Override
+            public void onCardError() {
+
+            }
+
+            @Override
+            public void onVisualPayment(final Fragment fragment) {
+
+            }
+
+            @Override
+            public void onPaymentFinished(final PluginPayment payment) {
+
+                Log.d("refactor", "payment finished");
+                Log.d("refactor", JsonUtil.getInstance().toJson(payment));
+//                    if (isViewAttached()) {
+//                        getView().hideProgress();
+//                        state.createdPayment = payment;
+//                        PaymentResult paymentResult = createPaymentResult(payment, paymentData);
+//                        checkStartPaymentResultActivity(paymentResult);
+//                    }
+            }
+
+            @Override
+            public void onPaymentError(final MercadoPagoError error) {
+
+                Log.d("refactor", "payment error");
+                Log.d("refactor", JsonUtil.getInstance().toJson(error));
+//                if (isViewAttached()) {
+//                    getView().hideProgress();
+//                    resolvePaymentError(error, paymentData);
+//                }
+            }
+        });
+
     }
 }
