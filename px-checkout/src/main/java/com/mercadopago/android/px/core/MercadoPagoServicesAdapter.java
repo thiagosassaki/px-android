@@ -43,7 +43,7 @@ public class MercadoPagoServicesAdapter extends MercadoPagoServices {
             callback);
     }
 
-    public Map<String, Object> convertPaymentBodyToMap(@NonNull final PaymentBody paymentBody) {
+    private Map<String, Object> convertPaymentBodyToMap(@NonNull final PaymentBody paymentBody) {
         final Type type = new TypeToken<Map<String, Object>>() {
         }.getType();
 
