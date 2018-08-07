@@ -209,7 +209,7 @@ public class CheckoutPreference implements Serializable {
         return getPaymentPreference().getExcludedPaymentTypes();
     }
 
-    @Nullable
+    @NonNull
     public List<String> getExcludedPaymentMethods() {
         return getPaymentPreference().getExcludedPaymentMethodIds();
     }

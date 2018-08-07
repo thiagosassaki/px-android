@@ -12,7 +12,6 @@ import com.mercadopago.android.px.components.ComponentManager;
 import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.internal.di.ConfigurationModule;
 import com.mercadopago.android.px.internal.di.Session;
-import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.PaymentTypes;
@@ -29,11 +28,12 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity impl
         return new Intent(context, PaymentProcessorPluginActivity.class);
     }
 
-    public static boolean isBusiness(@Nullable Intent intent) {
+    public static boolean isBusiness(@Nullable final Intent intent) {
         return intent != null && intent.getExtras() != null && intent.getExtras().containsKey(EXTRA_BUSINESS_PAYMENT);
     }
 
-    public static BusinessPayment getBusinessPayment(Intent intent) {
+    @Nullable
+    public static BusinessPayment getBusinessPayment(final Intent intent) {
         return (BusinessPayment) intent.getExtras().get(EXTRA_BUSINESS_PAYMENT);
     }
 
@@ -43,17 +43,12 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity impl
         final CheckoutStore store = CheckoutStore.getInstance();
         final Session session = Session.getSession(getApplicationContext());
         final ConfigurationModule configurationModule = session.getConfigurationModule();
-        final UserSelectionRepository userSelectionRepository = configurationModule.getUserSelectionRepository();
         final PaymentProcessor paymentProcessor =
-            store.doesPaymentProcessorSupportPaymentMethodSelected(
-                userSelectionRepository.getPaymentMethod().getId()
-            );
+            configurationModule.getPaymentSettings()
+                .getPaymentConfiguration()
+                .getPaymentProcessor();
 
-        if (paymentProcessor == null) {
-            cancel();
-            return;
-        }
-
+        //TODO construct payment data based on session.
         final PluginComponent.Props props = new PluginComponent.Props.Builder()
             .setData(store.getData())
             .setPaymentData(store.getPaymentData())
@@ -84,7 +79,7 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity impl
 
     @Override
     public void process(final BusinessPayment businessPayment) {
-        Intent intent = new Intent();
+        final Intent intent = new Intent();
         intent.putExtra(EXTRA_BUSINESS_PAYMENT, businessPayment);
         setResult(RESULT_OK, intent);
         finish();

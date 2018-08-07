@@ -17,6 +17,7 @@ import com.mercadopago.android.px.mvp.MvpView;
 import com.mercadopago.android.px.plugins.PaymentMethodPlugin;
 import com.mercadopago.android.px.preferences.PaymentPreference;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 
 public interface PaymentVaultView extends MvpView {
@@ -34,7 +35,7 @@ public interface PaymentVaultView extends MvpView {
     void showCustomOptions(List<CustomSearchItem> customSearchItems,
         OnSelectedCallback<CustomSearchItem> customSearchItemOnSelectedCallback);
 
-    void showPluginOptions(List<PaymentMethodPlugin> items, String position);
+    void showPluginOptions(Collection<PaymentMethodPlugin> items, PaymentMethodPlugin.PluginPosition position);
 
     void showSearchItems(List<PaymentMethodSearchItem> searchItems,
         OnSelectedCallback<PaymentMethodSearchItem> paymentMethodSearchItemSelectionCallback);

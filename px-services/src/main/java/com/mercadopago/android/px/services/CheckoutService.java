@@ -1,5 +1,6 @@
 package com.mercadopago.android.px.services;
 
+import android.support.annotation.Nullable;
 import com.mercadopago.android.px.model.Instructions;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
@@ -29,7 +30,7 @@ public interface CheckoutService {
         @Query("processing_mode") String processingMode,
         @Query("cards_esc") String cardsWithEsc,
         @Query("support_plugins") String supportedPlugins,
-        @Query("differential_pricing_id") Integer differentialPricingId);
+        @Nullable @Query("differential_pricing_id") Integer differentialPricingId);
 
     @POST("/{version}/checkout/payments")
     MPCall<Payment> createPayment(@Path(value = "version", encoded = true) String version,

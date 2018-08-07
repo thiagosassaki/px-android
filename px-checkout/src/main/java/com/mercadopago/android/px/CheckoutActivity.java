@@ -119,10 +119,11 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
             final ConfigurationModule configurationModule = session.getConfigurationModule();
             presenter =
                     new CheckoutPresenter((CheckoutStateModel) savedInstanceState.getSerializable(EXTRA_PERSISTENT_DATA),
-                            configurationModule.getPaymentSettings(), session.getAmountRepository(),
-                            configurationModule.getUserSelectionRepository(),
-                            session.getDiscountRepository(),
-                            session.getGroupsRepository());
+                        configurationModule.getPaymentSettings(), session.getAmountRepository(),
+                        configurationModule.getUserSelectionRepository(),
+                        session.getDiscountRepository(),
+                        session.getGroupsRepository(),
+                        session.getPluginRepository());
             privateKey = savedInstanceState.getString(EXTRA_PRIVATE_KEY);
             merchantPublicKey = savedInstanceState.getString(EXTRA_PUBLIC_KEY);
             configurePresenter();
@@ -143,10 +144,13 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
 
         merchantPublicKey = configuration.getPublicKey();
 
-        return new CheckoutPresenter(persistentData, configuration, session.getAmountRepository(),
-                configurationModule.getUserSelectionRepository(),
-                session.getDiscountRepository(),
-                session.getGroupsRepository());
+        return new CheckoutPresenter(persistentData,
+            configuration,
+            session.getAmountRepository(),
+            configurationModule.getUserSelectionRepository(),
+            session.getDiscountRepository(),
+            session.getGroupsRepository(),
+            session.getPluginRepository());
     }
 
     @Override

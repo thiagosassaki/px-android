@@ -12,6 +12,7 @@ import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
+import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Card;
@@ -48,6 +49,7 @@ import com.mercadopago.android.px.viewmodel.OneTapModel;
 import com.mercadopago.android.px.views.CheckoutView;
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +57,9 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
 
     private static final String INTERNAL_SERVER_ERROR_FIRST_DIGIT = "5";
 
-    private final CheckoutStateModel state;
+    @NonNull private final CheckoutStateModel state;
+
+    @NonNull private final PluginRepository pluginRepository;
 
     @NonNull
     private final GroupsRepository groupsRepository;
@@ -75,12 +79,13 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
 
     private DataInitializationTask dataInitializationTask; //instance saved as attribute to cancel and avoid crash
 
-    public CheckoutPresenter(final CheckoutStateModel persistentData,
-                             @NonNull final PaymentSettingRepository paymentConfiguration,
-                             @NonNull final AmountRepository amountRepository,
-                             @NonNull final UserSelectionRepository userSelectionRepository,
-                             @NonNull final DiscountRepository discountRepository,
-                             @NonNull final GroupsRepository groupsRepository) {
+    public CheckoutPresenter(@NonNull final CheckoutStateModel persistentData,
+        @NonNull final PaymentSettingRepository paymentConfiguration,
+        @NonNull final AmountRepository amountRepository,
+        @NonNull final UserSelectionRepository userSelectionRepository,
+        @NonNull final DiscountRepository discountRepository,
+        @NonNull final GroupsRepository groupsRepository,
+        @NonNull final PluginRepository pluginRepository) {
         this.paymentConfiguration = paymentConfiguration;
         this.amountRepository = amountRepository;
         this.userSelectionRepository = userSelectionRepository;
@@ -88,6 +93,7 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
         this.groupsRepository = groupsRepository;
         advancedConfiguration = paymentConfiguration.getAdvancedConfiguration();
         state = persistentData;
+        this.pluginRepository = pluginRepository;
     }
 
     public Serializable getState() {
@@ -144,14 +150,14 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     }
 
     private void initializePluginsData() {
-        final CheckoutStore store = CheckoutStore.getInstance();
-        dataInitializationTask = store.getDataInitializationTask();
-        if (dataInitializationTask != null) {
-            dataInitializationTask.execute(getDataInitializationCallback());
-        } else {
-            store.getData().put(DataInitializationTask.KEY_INIT_SUCCESS, true);
-            finishInitializingPluginsData();
-        }
+        dataInitializationTask = new DataInitializationTask(new HashMap<String, Object>()) {
+            @Override
+            public void onLoadData(@NonNull final Map<String, Object> data) {
+                //TODO check
+            }
+        };
+
+        dataInitializationTask.execute(getDataInitializationCallback());
     }
 
     @NonNull
@@ -303,7 +309,7 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
         getView().showProgress();
         final PaymentData paymentData = createPaymentData();
 
-        if (hasCustomPaymentProcessor()) {
+        if (paymentConfiguration.getPaymentConfiguration() != null) {
             CheckoutStore.getInstance().setPaymentData(paymentData);
             getView().showPaymentProcessor();
         } else {
@@ -344,12 +350,6 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
         } else {
             recoverCreatePayment(error);
         }
-    }
-
-    private boolean hasCustomPaymentProcessor() {
-        return CheckoutStore.getInstance()
-                .doesPaymentProcessorSupportPaymentMethodSelected(userSelectionRepository.getPaymentMethod().getId()) !=
-                null;
     }
 
     private void continuePaymentWithoutESC() {
@@ -508,8 +508,7 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     }
 
     private void savePaymentMethodQuantity(final PaymentMethodSearch paymentMethodSearch) {
-        final CheckoutStore store = CheckoutStore.getInstance();
-        int pluginCount = store.getPaymentMethodPluginCount();
+        final int pluginCount = pluginRepository.getPaymentMethodPluginCount();
         int groupCount = 0;
         int customCount = 0;
 

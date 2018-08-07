@@ -13,6 +13,7 @@ import com.mercadopago.android.px.services.callbacks.Callback;
 import com.mercadopago.android.px.services.core.Settings;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.util.TextUtils;
+import java.util.HashMap;
 import java.util.Map;
 
 class PrefetchService {
@@ -98,24 +99,26 @@ class PrefetchService {
     /* default */ void initPlugins() {
         //TODO refactor - muy turbio todo.
         final DataInitializationTask dataInitializationTask =
-            CheckoutStore.getInstance().getDataInitializationTask();
-        if (dataInitializationTask != null) {
-            dataInitializationTask.initPlugins(new DataInitializationTask.DataInitializationCallbacks() {
+            new DataInitializationTask(new HashMap<String, Object>()) {
                 @Override
-                public void onDataInitialized(@NonNull final Map<String, Object> data) {
-                    data.put(DataInitializationTask.KEY_INIT_SUCCESS, true);
-                    fetchGroups();
+                public void onLoadData(@NonNull final Map<String, Object> data) {
+                    //TODO check signature for this method, it makes no sense.
                 }
+            };
 
-                @Override
-                public void onFailure(@NonNull final Exception e, @NonNull final Map<String, Object> data) {
-                    data.put(DataInitializationTask.KEY_INIT_SUCCESS, false);
-                    fetchGroups();
-                }
-            });
-        } else {
-            fetchGroups();
-        }
+        dataInitializationTask.initPlugins(new DataInitializationTask.DataInitializationCallbacks() {
+            @Override
+            public void onDataInitialized(@NonNull final Map<String, Object> data) {
+                data.put(DataInitializationTask.KEY_INIT_SUCCESS, true);
+                fetchGroups();
+            }
+
+            @Override
+            public void onFailure(@NonNull final Exception e, @NonNull final Map<String, Object> data) {
+                data.put(DataInitializationTask.KEY_INIT_SUCCESS, false);
+                fetchGroups();
+            }
+        });
     }
 
     /* default */ void fetchGroups() {

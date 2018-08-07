@@ -1,36 +1,33 @@
 package com.mercadopago.android.px;
 
 import android.app.Activity;
-import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-
 import com.mercadopago.android.px.adapters.PaymentMethodSearchItemAdapter;
-import com.mercadopago.android.px.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.callbacks.OnCodeDiscountCallback;
+import com.mercadopago.android.px.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.codediscount.CodeDiscountDialog;
 import com.mercadopago.android.px.codediscount.CodeDiscountDialog.DiscountListener;
 import com.mercadopago.android.px.controllers.CheckoutTimer;
-import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.core.MercadoPagoComponents;
 import com.mercadopago.android.px.customviews.GridSpacingItemDecoration;
 import com.mercadopago.android.px.customviews.MPTextView;
-import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.hooks.Hook;
 import com.mercadopago.android.px.hooks.HookActivity;
-import com.mercadopago.android.px.internal.datasource.PluginService;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
+import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CustomSearchItem;
@@ -42,6 +39,7 @@ import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentMethodSearchItem;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Token;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.plugins.PaymentMethodPlugin;
 import com.mercadopago.android.px.plugins.PaymentMethodPluginActivity;
 import com.mercadopago.android.px.plugins.model.PaymentMethodInfo;
@@ -64,6 +62,7 @@ import com.mercadopago.android.px.views.DiscountDetailDialog;
 import com.mercadopago.android.px.views.PaymentVaultView;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static com.mercadopago.android.px.core.MercadoPagoCheckout.EXTRA_ERROR;
@@ -101,10 +100,10 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
         final Session session = Session.getSession(this);
         final PaymentSettingRepository configuration = session.getConfigurationModule().getPaymentSettings();
         presenter = new PaymentVaultPresenter(configuration,
-                session.getConfigurationModule().getUserSelectionRepository(),
-                new PluginService(this),
-                session.getDiscountRepository(),
-                session.getGroupsRepository());
+            session.getConfigurationModule().getUserSelectionRepository(),
+            session.getPluginRepository(),
+            session.getDiscountRepository(),
+            session.getGroupsRepository());
 
         getActivityParameters();
         configurePresenter();
@@ -248,11 +247,11 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
 
     private List<PaymentMethodSearchViewController> createPluginItemsViewControllers(
             final List<PaymentMethodInfo> infoItems) {
-        final CheckoutStore store = CheckoutStore.getInstance();
+        final PluginRepository pluginRepository = Session.getSession(this).getPluginRepository();
         final List<PaymentMethodSearchViewController> controllers = new ArrayList<>();
         for (final PaymentMethodInfo infoItem : infoItems) {
-            final PaymentMethodPlugin plugin = store.getPaymentMethodPluginById(infoItem.getId());
-            if (plugin != null && plugin.isEnabled(store.getData())) {
+            final PaymentMethodPlugin plugin = pluginRepository.getPlugin(infoItem.getId());
+            if (plugin.isEnabled()) {
                 final PluginPaymentMethodInfo pluginPaymentMethodInfo = new PluginPaymentMethodInfo(infoItem);
                 final PaymentMethodSearchViewController viewController =
                         new PaymentMethodInfoController(this, pluginPaymentMethodInfo);
@@ -260,7 +259,7 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
                     @Override
                     public void onClick(final View v) {
                         final String id = String.valueOf(v.getTag());
-                        presenter.selectPluginPaymentMethod(CheckoutStore.getInstance().getPaymentMethodPluginById(id));
+                        presenter.selectPluginPaymentMethod(pluginRepository.getPlugin(id));
                     }
                 });
                 controllers.add(viewController);
@@ -382,7 +381,7 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
     }
 
     private boolean shouldFinishOnBack(final Intent data) {
-        return !CheckoutStore.getInstance().hasEnabledPaymentMethodPlugin() &&
+        return !Session.getSession(this).getPluginRepository().hasEnabledPaymentMethodPlugin() &&
                 (presenter.getSelectedSearchItem() != null &&
                         (!presenter.getSelectedSearchItem().hasChildren()
                                 || (presenter.getSelectedSearchItem().getChildren().size() == 1))
@@ -495,12 +494,13 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
     }
 
     @Override
-    public void showPluginOptions(@NonNull final List<PaymentMethodPlugin> items, String position) {
+    public void showPluginOptions(@NonNull final Collection<PaymentMethodPlugin> items,
+        final PaymentMethodPlugin.PluginPosition position) {
 
         final List<PaymentMethodInfo> toInsert = new ArrayList<>();
 
         for (final PaymentMethodPlugin plugin : items) {
-            if (position.equalsIgnoreCase(plugin.displayOrder())) {
+            if (position == plugin.getPluginPosition()) {
                 toInsert.add(plugin.getPaymentMethodInfo(this));
             }
         }

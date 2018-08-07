@@ -1,13 +1,14 @@
-package com.mercadopago.android.px.plugins.components;
+package com.mercadopago.android.px.plugins;
 
 import android.content.Context;
+import com.mercadopago.android.px.plugins.components.SampleResources;
 import com.mercadopago.example.R;
 
 public class SampleResourcesProvider implements SampleResources {
 
     private final Context context;
 
-    public SampleResourcesProvider(Context context) {
+    public SampleResourcesProvider(final Context context) {
         this.context = context;
     }
 

@@ -34,6 +34,7 @@ import com.mercadopago.android.px.views.PaymentVaultView;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -668,7 +669,7 @@ public class PaymentVaultPresenterTest {
         }
 
         @Override
-        public void showPluginOptions(List<PaymentMethodPlugin> items, String position) {
+        public void showPluginOptions(Collection<PaymentMethodPlugin> items, String position) {
 
         }
 

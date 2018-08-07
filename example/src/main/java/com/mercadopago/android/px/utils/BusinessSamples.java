@@ -1,6 +1,7 @@
 package com.mercadopago.android.px.utils;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import com.mercadopago.SampleTopFragment;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
@@ -9,6 +10,7 @@ import com.mercadopago.android.px.plugins.MainPaymentProcessor;
 import com.mercadopago.android.px.plugins.SamplePaymentMethodPlugin;
 import com.mercadopago.android.px.plugins.model.BusinessPayment;
 import com.mercadopago.android.px.plugins.model.ExitAction;
+import com.mercadopago.android.px.preferences.PaymentConfiguration;
 import com.mercadopago.example.R;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,22 +37,25 @@ final class BusinessSamples {
     }
 
     private static MercadoPagoCheckout.Builder startCompleteRejectedBusiness() {
+        final BusinessPayment payment = getBusinessRejected();
+        return customBusinessPayment(payment);
+    }
+
+    @NonNull
+    public static BusinessPayment getBusinessRejected() {
         final Bundle args = new Bundle();
         args.putParcelable(SampleTopFragment.SOME_PARCELABLE, new SampleTopFragment.ParcelableArgument("SOME_LABEL"));
 
-        final BusinessPayment payment =
-            new BusinessPayment.Builder(BusinessPayment.Decorator.REJECTED, Payment.StatusCodes.STATUS_REJECTED,
-                Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_BAD_FILLED_CARD_NUMBER,
-                R.drawable.px_icon_card, "Title")
-                .setHelp("Help description!")
-                .setReceiptId("#123455")
-                .setTopFragment(SampleTopFragment.class, args)
-                .setPaymentMethodVisibility(true)
-                .setPrimaryButton(new ExitAction(BUTTON_PRIMARY_NAME, 23))
-                .setSecondaryButton(new ExitAction(BUTTON_SECONDARY_NAME, 34))
-                .build();
-
-        return customBusinessPayment(payment);
+        return new BusinessPayment.Builder(BusinessPayment.Decorator.REJECTED, Payment.StatusCodes.STATUS_REJECTED,
+            Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_BAD_FILLED_CARD_NUMBER,
+            R.drawable.px_icon_card, "Title")
+            .setHelp("Help description!")
+            .setReceiptId("#123455")
+            .setTopFragment(SampleTopFragment.class, args)
+            .setPaymentMethodVisibility(true)
+            .setPrimaryButton(new ExitAction(BUTTON_PRIMARY_NAME, 23))
+            .setSecondaryButton(new ExitAction(BUTTON_SECONDARY_NAME, 34))
+            .build();
     }
 
     static MercadoPagoCheckout.Builder startCompleteApprovedBusiness() {
@@ -114,7 +119,8 @@ final class BusinessSamples {
 
     private static MercadoPagoCheckout.Builder customBusinessPayment(final BusinessPayment businessPayment) {
         final MainPaymentProcessor mainPaymentProcessor = new MainPaymentProcessor(businessPayment);
-        return createBase().setPaymentProcessor(mainPaymentProcessor)
-            .addPaymentMethodPlugin(new SamplePaymentMethodPlugin(), mainPaymentProcessor);
+        return createBase().setPaymentConfiguration(new PaymentConfiguration.Builder(mainPaymentProcessor)
+            .addPaymentMethodPlugin(new SamplePaymentMethodPlugin())
+            .build());
     }
 }

@@ -11,10 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.MercadoPagoComponents;
-import com.mercadopago.android.px.internal.datasource.PluginService;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.PaymentMethod;
@@ -104,7 +102,7 @@ public class OneTapFragment extends Fragment implements OneTap.View {
             amountToPay = session.getAmountRepository().getAmountToPay();
             hasDiscount = session.getDiscountRepository().getDiscount() != null;
             final OneTapModel model = (OneTapModel) arguments.getSerializable(ARG_ONE_TAP_MODEL);
-            presenter = new OneTapPresenter(model, new PluginService(view.getContext()));
+            presenter = new OneTapPresenter(model, session.getPluginRepository());
             configureView(view, presenter, model);
             presenter.attachView(this);
             trackScreen(model);

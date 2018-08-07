@@ -3,19 +3,17 @@ package com.mercadopago.android.px.internal.datasource;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.google.gson.reflect.TypeToken;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.commission.ChargeRule;
-import com.mercadopago.android.px.model.commission.PaymentMethodRule;
 import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
+import com.mercadopago.android.px.preferences.PaymentConfiguration;
 import com.mercadopago.android.px.util.JsonUtil;
-import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PaymentSettingService implements PaymentSettingRepository {
 
-    private static final String PREF_CHARGES = "PREF_CHARGES";
     private static final String PREF_CHECKOUT_PREF = "PREF_CHECKOUT_PREFERENCE";
     private static final String PREF_CHECKOUT_PREF_ID = "PREF_CHECKOUT_PREFERENCE_ID";
     private static final String PREF_PUBLIC_KEY = "PREF_PUBLIC_KEY";
@@ -27,6 +25,8 @@ public class PaymentSettingService implements PaymentSettingRepository {
 
     //mem cache
     private CheckoutPreference pref;
+    //TODO add persistance.
+    private PaymentConfiguration paymentConfiguration;
 
     public PaymentSettingService(@NonNull final SharedPreferences sharedPreferences, @NonNull final JsonUtil jsonUtil) {
         this.sharedPreferences = sharedPreferences;
@@ -38,19 +38,13 @@ public class PaymentSettingService implements PaymentSettingRepository {
         final SharedPreferences.Editor edit = sharedPreferences.edit();
         edit.clear().apply();
         pref = null;
+        paymentConfiguration = null;
     }
 
     @Override
     public void configurePreferenceId(@Nullable final String preferenceId) {
         final SharedPreferences.Editor edit = sharedPreferences.edit();
         edit.putString(PREF_CHECKOUT_PREF_ID, preferenceId).apply();
-    }
-
-    @Override
-    public void configure(@NonNull final List<ChargeRule> charges) {
-        final SharedPreferences.Editor edit = sharedPreferences.edit();
-        edit.putString(PREF_CHARGES, jsonUtil.toJson(charges));
-        edit.apply();
     }
 
     @Override
@@ -75,6 +69,16 @@ public class PaymentSettingService implements PaymentSettingRepository {
     }
 
     @Override
+    public void configure(@Nullable final PaymentConfiguration paymentConfiguration) {
+        this.paymentConfiguration = paymentConfiguration;
+    }
+
+    @Override
+    public boolean hasPaymentConfiguration() {
+        return getPaymentConfiguration() != null;
+    }
+
+    @Override
     public void configure(@Nullable final CheckoutPreference checkoutPreference) {
         final SharedPreferences.Editor edit = sharedPreferences.edit();
         if (checkoutPreference == null) {
@@ -89,9 +93,15 @@ public class PaymentSettingService implements PaymentSettingRepository {
     @NonNull
     @Override
     public List<ChargeRule> chargeRules() {
-        final Type listType = new TypeToken<List<PaymentMethodRule>>() {
-        }.getType();
-        return jsonUtil.fromJson(sharedPreferences.getString(PREF_CHARGES, ""), listType);
+        final PaymentConfiguration paymentConfiguration = getPaymentConfiguration();
+        return paymentConfiguration == null ? new ArrayList<ChargeRule>() :
+            paymentConfiguration.getCharges();
+    }
+
+    @Nullable
+    @Override
+    public PaymentConfiguration getPaymentConfiguration() {
+        return paymentConfiguration;
     }
 
     @Nullable

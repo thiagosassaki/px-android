@@ -1,16 +1,16 @@
 package com.mercadopago.android.px.plugins;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.plugins.components.SamplePaymentMethod;
-import com.mercadopago.android.px.plugins.components.SampleResourcesProvider;
+import android.support.annotation.Nullable;
 import com.mercadopago.android.px.plugins.model.PaymentMethodInfo;
 import com.mercadopago.example.R;
 
 public class SamplePaymentMethodPlugin extends PaymentMethodPlugin {
 
     public SamplePaymentMethodPlugin() {
-        super("account_money");
+        super();
     }
 
     @Override
@@ -24,20 +24,38 @@ public class SamplePaymentMethodPlugin extends PaymentMethodPlugin {
         );
     }
 
+    @Nullable
     @Override
-    public String displayOrder() {
-        return PaymentMethodPlugin.POSIION_BOTTOM;
+    public Bundle getFragmentBundle(@NonNull final CheckoutData data,
+        @NonNull final Context context) {
+        return new Bundle();
     }
 
     @Override
-    public PluginComponent createConfigurationComponent(@NonNull final PluginComponent.Props props,
+    public boolean shouldShowFragmentOnSelection() {
+        return true;
+    }
+
+    @Nullable
+    @Override
+    public PluginFragment getFragment(@NonNull final CheckoutData data,
         @NonNull final Context context) {
-        return new SamplePaymentMethod(
-            props.toBuilder()
-                .setToolbarTitle("Sample Pago")
-                .setToolbarVisible(true)
-                .build(),
-            new SampleResourcesProvider(context)
-        );
+        return new SamplePluginFragment();
+    }
+
+    @Override
+    public PluginPosition getPluginPosition() {
+        return PluginPosition.BOTTOM;
+    }
+
+    @NonNull
+    @Override
+    public String getId() {
+        return "account_money";
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

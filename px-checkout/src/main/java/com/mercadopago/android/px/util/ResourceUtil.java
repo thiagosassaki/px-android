@@ -1,10 +1,9 @@
 package com.mercadopago.android.px.util;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.support.annotation.DrawableRes;
 import com.mercadopago.android.px.R;
-import com.mercadopago.android.px.core.CheckoutStore;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.plugins.PaymentMethodPlugin;
 
 public class ResourceUtil {
@@ -15,36 +14,30 @@ public class ResourceUtil {
     public static final String TINT_PREFIX = "grey_";
 
     @DrawableRes
-    private static int getPaymentMethodIcon(Context context, String id) {
+    private static int getPaymentMethodIcon(final Context context, String id) {
         int resource;
         id = SDK_PREFIX + id;
         try {
             resource = context.getResources().getIdentifier(id, DEF_TYPE_DRAWABLE, context.getPackageName());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             try {
                 resource = context.getResources()
                     .getIdentifier(SDK_PREFIX + BANK_SUFFIX, DEF_TYPE_DRAWABLE, context.getPackageName());
-            } catch (Exception ex) {
-                resource = 0;
+            } catch (final Exception ex) {
+                return R.drawable.px_none;
             }
         }
         return resource;
     }
 
     @DrawableRes
-    public static int getIconResource(Context context, String id) {
-        PaymentMethodPlugin paymentMethodPlugin = CheckoutStore.getInstance().getPaymentMethodPluginById(id);
-        int icon;
+    public static int getIconResource(final Context context, final String id) {
         try {
-            if (paymentMethodPlugin != null) {
-                icon = paymentMethodPlugin.getPaymentMethodInfo(context).icon;
-            } else {
-                icon = getPaymentMethodIcon(context, id);
-            }
-        } catch (final Resources.NotFoundException e) {
-            // Avoid crashes if the image doesn exist return empty default one.
-            icon = R.drawable.px_none;
+            final PaymentMethodPlugin paymentMethodPlugin =
+                Session.getSession(context).getPluginRepository().getPlugin(id);
+            return paymentMethodPlugin.getPaymentMethodInfo(context).icon;
+        } catch (final Exception e) {
+            return getPaymentMethodIcon(context, id);
         }
-        return icon;
     }
 }

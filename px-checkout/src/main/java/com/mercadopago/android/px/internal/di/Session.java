@@ -11,6 +11,7 @@ import com.mercadopago.android.px.internal.datasource.DiscountServiceImp;
 import com.mercadopago.android.px.internal.datasource.DiscountStorageService;
 import com.mercadopago.android.px.internal.datasource.GroupsService;
 import com.mercadopago.android.px.internal.datasource.InstallmentService;
+import com.mercadopago.android.px.internal.datasource.PluginService;
 import com.mercadopago.android.px.internal.datasource.cache.GroupsCache;
 import com.mercadopago.android.px.internal.datasource.cache.GroupsCacheCoordinator;
 import com.mercadopago.android.px.internal.datasource.cache.GroupsDiskCache;
@@ -19,8 +20,10 @@ import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
+import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
+import com.mercadopago.android.px.preferences.PaymentConfiguration;
 import com.mercadopago.android.px.services.CheckoutService;
 import com.mercadopago.android.px.services.util.LocaleUtil;
 import com.mercadopago.android.px.util.MercadoPagoESCImpl;
@@ -40,6 +43,7 @@ public final class Session extends ApplicationModule
     private AmountRepository amountRepository;
     private GroupsRepository groupsRepository;
     private GroupsCache groupsCache;
+    private PluginService pluginRepository;
 
     private Session(@NonNull final Context context) {
         super(context.getApplicationContext());
@@ -61,25 +65,28 @@ public final class Session extends ApplicationModule
         //TODO add session mapping object.
         // delete old data.
         clear();
-        // Store persistent configuration
+        // Store persistent paymentSetting
         final ConfigurationModule configurationModule = getConfigurationModule();
         final DiscountRepository discountRepository = getDiscountRepository();
 
-        final PaymentSettingRepository configuration = configurationModule.getPaymentSettings();
-        configuration.configure(mercadoPagoCheckout.getMerchantPublicKey());
-        configuration.configure(mercadoPagoCheckout.getCharges());
-        configuration.configure(mercadoPagoCheckout.getAdvancedConfiguration());
-        configuration.configurePrivateKey(mercadoPagoCheckout.getPrivateKey());
-        discountRepository
-            .configureMerchantDiscountManually(mercadoPagoCheckout.getDiscount(), mercadoPagoCheckout.getCampaign());
+        final PaymentConfiguration paymentConfiguration = mercadoPagoCheckout.getPaymentConfiguration();
+
+        final PaymentSettingRepository paymentSetting = configurationModule.getPaymentSettings();
+        paymentSetting.configure(mercadoPagoCheckout.getPublicKey());
+
+        paymentSetting.configure(mercadoPagoCheckout.getAdvancedConfiguration());
+        paymentSetting.configurePrivateKey(mercadoPagoCheckout.getPrivateKey());
+        paymentSetting.configure(paymentConfiguration);
+
+        discountRepository.configureMerchantDiscountManually(paymentConfiguration);
 
         final CheckoutPreference checkoutPreference = mercadoPagoCheckout.getCheckoutPreference();
         if (checkoutPreference != null) {
-            configuration.configure(checkoutPreference);
+            paymentSetting.configure(checkoutPreference);
         } else {
-            configuration.configurePreferenceId(mercadoPagoCheckout.getPreferenceId());
+            paymentSetting.configurePreferenceId(mercadoPagoCheckout.getPreferenceId());
         }
-        // end Store persistent configuration
+        // end Store persistent paymentSetting
     }
 
     private void clear() {
@@ -132,10 +139,12 @@ public final class Session extends ApplicationModule
     public DiscountRepository getDiscountRepository() {
         if (discountRepository == null) {
             final ConfigurationModule configurationModule = getConfigurationModule();
+            final PaymentSettingRepository paymentSettings = configurationModule.getPaymentSettings();
             discountRepository =
                 new DiscountServiceImp(new DiscountStorageService(getSharedPreferences(), getJsonUtil()),
                     new DiscountApiService(getRetrofitClient(),
-                        configurationModule.getPaymentSettings()));
+                        paymentSettings),
+                    paymentSettings);
         }
         return discountRepository;
     }
@@ -156,5 +165,13 @@ public final class Session extends ApplicationModule
                     new GroupsMemCache());
         }
         return groupsCache;
+    }
+
+    @NonNull
+    public PluginRepository getPluginRepository() {
+        if (pluginRepository == null) {
+            pluginRepository = new PluginService(getContext(), getConfigurationModule().getPaymentSettings());
+        }
+        return pluginRepository;
     }
 }

@@ -9,24 +9,13 @@ import android.support.annotation.Nullable;
 import com.mercadopago.android.px.CheckoutActivity;
 import com.mercadopago.android.px.callbacks.CallbackHolder;
 import com.mercadopago.android.px.internal.di.Session;
-import com.mercadopago.android.px.model.Campaign;
-import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.PaymentResult;
-import com.mercadopago.android.px.model.commission.ChargeRule;
-import com.mercadopago.android.px.plugins.DataInitializationTask;
-import com.mercadopago.android.px.plugins.PaymentMethodPlugin;
-import com.mercadopago.android.px.plugins.PaymentProcessor;
 import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
+import com.mercadopago.android.px.preferences.PaymentConfiguration;
 import com.mercadopago.android.px.tracker.FlowHandler;
 import com.mercadopago.android.px.uicontrollers.FontCache;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import static com.mercadopago.android.px.plugins.PaymentProcessor.PAYMENT_PROCESSOR_KEY;
 import static com.mercadopago.android.px.util.TextUtils.isEmpty;
 
 @SuppressWarnings("unused")
@@ -49,16 +38,10 @@ public class MercadoPagoCheckout {
     private final String preferenceId;
 
     @Nullable
-    private final Discount discount;
-
-    @Nullable
-    private final Campaign campaign;
-
-    @Nullable
     private final String privateKey;
 
-    @NonNull
-    private final ArrayList<ChargeRule> charges;
+    @Nullable
+    private final PaymentConfiguration paymentConfiguration;
 
     /* default */ boolean prefetch = false;
 
@@ -66,11 +49,9 @@ public class MercadoPagoCheckout {
         publicKey = builder.publicKey;
         checkoutPreference = builder.checkoutPreference;
         advancedConfiguration = builder.advancedConfiguration;
-        discount = builder.discount;
-        campaign = builder.campaign;
-        charges = builder.charges;
         preferenceId = builder.preferenceId;
         privateKey = builder.privateKey;
+        paymentConfiguration = builder.paymentConfiguration;
         configureCheckoutStore(builder);
         FlowHandler.getInstance().generateFlowId();
         CallbackHolder.getInstance().clean();
@@ -94,9 +75,6 @@ public class MercadoPagoCheckout {
     private void configureCheckoutStore(final Builder builder) {
         final CheckoutStore store = CheckoutStore.getInstance();
         store.reset();
-        store.setPaymentMethodPluginList(builder.paymentMethodPluginList);
-        store.setPaymentPlugins(builder.paymentPlugins);
-        store.setDataInitializationTask(builder.dataInitializationTask);
     }
 
     private void startIntent(@NonNull final Context context, @NonNull final Intent checkoutIntent,
@@ -117,23 +95,8 @@ public class MercadoPagoCheckout {
         return advancedConfiguration;
     }
 
-    @Nullable
-    public Discount getDiscount() {
-        return discount;
-    }
-
-    @Nullable
-    public Campaign getCampaign() {
-        return campaign;
-    }
-
     @NonNull
-    public List<ChargeRule> getCharges() {
-        return charges;
-    }
-
-    @NonNull
-    public String getMerchantPublicKey() {
+    public String getPublicKey() {
         return publicKey;
     }
 
@@ -152,32 +115,35 @@ public class MercadoPagoCheckout {
         return isEmpty(privateKey) ? "" : privateKey;
     }
 
+    @Nullable
+    public PaymentConfiguration getPaymentConfiguration() {
+        return paymentConfiguration;
+    }
+
     @SuppressWarnings("unused")
     public static final class Builder {
 
-        final String publicKey;
+        @NonNull final String publicKey;
 
-        final String preferenceId;
+        @Nullable final String preferenceId;
 
-        final CheckoutPreference checkoutPreference;
-
-        @NonNull final ArrayList<ChargeRule> charges = new ArrayList<>();
-
-        final Map<String, PaymentProcessor> paymentPlugins = new HashMap<>();
-
-        final List<PaymentMethodPlugin> paymentMethodPluginList = new ArrayList<>();
+        @Nullable final CheckoutPreference checkoutPreference;
 
         @NonNull
         AdvancedConfiguration advancedConfiguration = new AdvancedConfiguration.Builder().build();
 
+        @Nullable private PaymentConfiguration paymentConfiguration;
+
         @Nullable
         String privateKey;
 
-        Discount discount;
-        Campaign campaign;
-        DataInitializationTask dataInitializationTask;
+        @Deprecated
         String regularFontPath;
+
+        @Deprecated
         String lightFontPath;
+
+        @Deprecated
         String monoFontPath;
 
         /**
@@ -205,21 +171,6 @@ public class MercadoPagoCheckout {
         }
 
         /**
-         * Set Mercado Pago discount that will be applied to total amount.
-         * When you set a discount with its campaign, we do not check in discount service.
-         * You have to set a payment processor for discount be applied.
-         *
-         * @param discount Mercado Pago discount.
-         * @param campaign Discount campaign with discount data.
-         * @return builder to keep operating
-         */
-        public Builder setDiscount(@NonNull final Discount discount, @NonNull final Campaign campaign) {
-            this.discount = discount;
-            this.campaign = campaign;
-            return this;
-        }
-
-        /**
          * Private key provides save card capabilities and account money balance.
          *
          * @param privateKey the user private key
@@ -230,47 +181,13 @@ public class MercadoPagoCheckout {
             return this;
         }
 
-        /**
-         * Add extra charges that will apply to total amount.
-         *
-         * @param charge Extra charge that you could collect.
-         * @return builder to keep operating
-         */
-        public Builder addChargeRule(@NonNull final ChargeRule charge) {
-            charges.add(charge);
-            return this;
-        }
-
-        /**
-         * Add extra charges that will apply to total amount.
-         *
-         * @param charges the list of chargest that could apply.
-         * @return builder to keep operating
-         */
-        public Builder addChargeRules(@NonNull final Collection<ChargeRule> charges) {
-            this.charges.addAll(charges);
-            return this;
-        }
-
         public Builder setAdvancedConfiguration(@NonNull final AdvancedConfiguration advancedConfiguration) {
             this.advancedConfiguration = advancedConfiguration;
             return this;
         }
 
-        public Builder addPaymentMethodPlugin(@NonNull final PaymentMethodPlugin paymentMethodPlugin,
-            @NonNull final PaymentProcessor paymentProcessor) {
-            paymentMethodPluginList.add(paymentMethodPlugin);
-            paymentPlugins.put(paymentMethodPlugin.getId(), paymentProcessor);
-            return this;
-        }
-
-        public Builder setPaymentProcessor(@NonNull final PaymentProcessor paymentProcessor) {
-            paymentPlugins.put(PAYMENT_PROCESSOR_KEY, paymentProcessor);
-            return this;
-        }
-
-        public Builder setDataInitializationTask(@NonNull final DataInitializationTask dataInitializationTask) {
-            this.dataInitializationTask = dataInitializationTask;
+        public Builder setPaymentConfiguration(@NonNull final PaymentConfiguration paymentConfiguration) {
+            this.paymentConfiguration = paymentConfiguration;
             return this;
         }
 

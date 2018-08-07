@@ -12,7 +12,7 @@ public class AdvancedConfiguration implements Serializable {
 
     private final boolean bankDealsEnabled;
     private final boolean escEnabled;
-    private final boolean isBinaryMode;
+    private final boolean isBinaryMode; //TODO
     @NonNull private final PaymentResultScreenPreference paymentResultScreenPreference;
     @NonNull private final ReviewAndConfirmPreferences reviewAndConfirmPreferences;
 

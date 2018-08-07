@@ -5,13 +5,12 @@ import android.support.annotation.Nullable;
 import com.mercadopago.android.px.model.commission.ChargeRule;
 import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
+import com.mercadopago.android.px.preferences.PaymentConfiguration;
 import java.util.List;
 
 public interface PaymentSettingRepository {
 
     void reset();
-
-    void configure(@NonNull List<ChargeRule> charges);
 
     void configure(@NonNull final AdvancedConfiguration advancedConfiguration);
 
@@ -19,10 +18,15 @@ public interface PaymentSettingRepository {
 
     void configure(@Nullable CheckoutPreference checkoutPreference);
 
+    void configure(@Nullable final PaymentConfiguration paymentConfiguration);
+
     void configurePreferenceId(@Nullable String preferenceId);
 
     @NonNull
     List<ChargeRule> chargeRules();
+
+    @Nullable
+    PaymentConfiguration getPaymentConfiguration();
 
     @Nullable
     CheckoutPreference getCheckoutPreference();
@@ -40,4 +44,8 @@ public interface PaymentSettingRepository {
     String getPrivateKey();
 
     void configurePrivateKey(@Nullable final String privateKey);
+
+    boolean hasPaymentConfiguration();
+
+
 }

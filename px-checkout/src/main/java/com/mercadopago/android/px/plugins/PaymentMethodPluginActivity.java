@@ -7,16 +7,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import com.mercadopago.android.px.BuildConfig;
-import com.mercadopago.android.px.components.Action;
-import com.mercadopago.android.px.components.ActionDispatcher;
-import com.mercadopago.android.px.components.BackAction;
-import com.mercadopago.android.px.components.Component;
-import com.mercadopago.android.px.components.ComponentManager;
-import com.mercadopago.android.px.components.NextAction;
+import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.CheckoutStore;
-import com.mercadopago.android.px.internal.datasource.PluginService;
 import com.mercadopago.android.px.internal.di.ConfigurationModule;
 import com.mercadopago.android.px.internal.di.Session;
+import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.plugins.model.PaymentMethodInfo;
@@ -24,20 +19,18 @@ import com.mercadopago.android.px.tracker.FlowHandler;
 import com.mercadopago.android.px.tracker.MPTrackingContext;
 import com.mercadopago.android.px.tracking.model.ScreenViewEvent;
 
-public class PaymentMethodPluginActivity extends AppCompatActivity implements ActionDispatcher {
+public class PaymentMethodPluginActivity extends AppCompatActivity implements PluginFragment.Actions {
 
     private static final String SCREEN_NAME_CONFIG_PAYMENT_METHOD_PLUGIN = "CONFIG_PAYMENT_METHOD";
-    private static final String PUBLIC_KEY = "public_key";
+    private static final String PLUGIN_FRAGMENT = PluginFragment.class.getName();
 
     public static Intent getIntent(@NonNull final Context context) {
         return new Intent(context, PaymentMethodPluginActivity.class);
     }
-
-    ComponentManager componentManager;
-
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.px_activity_payment_method_plugin);
 
         final Session session = Session.getSession(this);
         final ConfigurationModule configurationModule = session.getConfigurationModule();
@@ -50,30 +43,29 @@ public class PaymentMethodPluginActivity extends AppCompatActivity implements Ac
             return;
         }
 
-        final PaymentMethodInfo paymentMethodInfo = new PluginService(this)
+        final PluginRepository pluginRepository = session.getPluginRepository();
+        final PaymentMethodInfo paymentMethodInfo = pluginRepository
             .getPaymentMethodInfo(paymentMethod.getId());
 
-        final PaymentMethodPlugin plugin = CheckoutStore
-            .getInstance().getPaymentMethodPluginById(paymentMethodInfo.getId());
+        final PaymentMethodPlugin plugin = pluginRepository.getPlugin(paymentMethodInfo.getId());
 
-        trackScreen(plugin.getId());
+        final PaymentMethodPlugin.CheckoutData checkoutData =
+            new PaymentMethodPlugin.CheckoutData(CheckoutStore.getInstance().getPaymentData(),
+                configurationModule.getPaymentSettings().getCheckoutPreference());
 
-        final PluginComponent.Props props = new PluginComponent.Props.Builder()
-            .setData(CheckoutStore.getInstance().getData())
-            .setCheckoutPreference(configurationModule.getPaymentSettings().getCheckoutPreference())
-            .build();
+        final PluginFragment fragment = plugin.getFragment(checkoutData, this);
 
-        final Component component = plugin.createConfigurationComponent(props, this);
-        componentManager = new ComponentManager(this);
-
-        if (component == null) {
-            setResult(RESULT_CANCELED);
-            finish();
-            return;
+        if (fragment == null) {
+            next();
+        } else {
+            final Bundle fragmentBundle = plugin.getFragmentBundle(checkoutData, this);
+            fragment.setArguments(fragmentBundle);
+            getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_container, fragment, PLUGIN_FRAGMENT)
+                .commit();
         }
 
-        component.setDispatcher(this);
-        componentManager.render(component);
+        trackScreen(plugin.getId());
     }
 
     private void trackScreen(final String id) {
@@ -93,19 +85,13 @@ public class PaymentMethodPluginActivity extends AppCompatActivity implements Ac
     }
 
     @Override
-    public void dispatch(final Action action) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (action instanceof NextAction) {
-                    setResult(RESULT_OK);
-                    finish();
-                } else if (action instanceof BackAction) {
-                    onBackPressed();
-                } else {
-                    componentManager.dispatch(action);
-                }
-            }
-        });
+    public void next() {
+        setResult(RESULT_OK);
+        finish();
+    }
+
+    @Override
+    public void back() {
+        onBackPressed();
     }
 }

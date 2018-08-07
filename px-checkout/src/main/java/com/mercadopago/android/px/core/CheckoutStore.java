@@ -1,31 +1,16 @@
 package com.mercadopago.android.px.core;
 
-import android.support.annotation.NonNull;
 import com.mercadopago.android.px.hooks.CheckoutHooks;
 import com.mercadopago.android.px.hooks.Hook;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.PaymentResult;
-import com.mercadopago.android.px.plugins.DataInitializationTask;
-import com.mercadopago.android.px.plugins.PaymentMethodPlugin;
-import com.mercadopago.android.px.plugins.PaymentProcessor;
-import com.mercadopago.android.px.util.TextUtils;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import javax.annotation.Nonnull;
-
-import static com.mercadopago.android.px.plugins.PaymentProcessor.PAYMENT_PROCESSOR_KEY;
 
 public final class CheckoutStore {
 
     private static final CheckoutStore INSTANCE = new CheckoutStore();
-
-    //Config
-    private DataInitializationTask dataInitializationTask;
-    private List<PaymentMethodPlugin> paymentMethodPluginList = new ArrayList<>();
-    private Map<String, PaymentProcessor> paymentPlugins = new HashMap<>();
 
     @Deprecated
     private CheckoutHooks checkoutHooks;
@@ -46,76 +31,6 @@ public final class CheckoutStore {
         return INSTANCE;
     }
 
-    public DataInitializationTask getDataInitializationTask() {
-        return dataInitializationTask;
-    }
-
-    public void setDataInitializationTask(final DataInitializationTask dataInitializationTask) {
-        this.dataInitializationTask = dataInitializationTask;
-    }
-
-    @NonNull
-    public List<PaymentMethodPlugin> getPaymentMethodPluginList() {
-        return paymentMethodPluginList;
-    }
-
-    public PaymentMethodPlugin getPaymentMethodPluginById(@NonNull final String id) {
-        for (final PaymentMethodPlugin plugin : paymentMethodPluginList) {
-            if (plugin.getId().equalsIgnoreCase(id)) {
-                return plugin;
-            }
-        }
-        return null;
-    }
-
-    public void setPaymentMethodPluginList(@NonNull final List<PaymentMethodPlugin> paymentMethodPluginList) {
-        this.paymentMethodPluginList = paymentMethodPluginList;
-    }
-
-    public boolean hasEnabledPaymentMethodPlugin() {
-        boolean result = false;
-        for (final PaymentMethodPlugin plugin : paymentMethodPluginList) {
-            if (plugin.isEnabled(CheckoutStore.getInstance().getData())) {
-                result = true;
-                break;
-            }
-        }
-        return result;
-    }
-
-    @Nonnull
-    public List<String> getEnabledPaymentMethodPluginsIds() {
-        final List<String> pluginIds = new ArrayList<>();
-        for (final PaymentMethodPlugin plugin : paymentMethodPluginList) {
-            if (plugin.isEnabled(CheckoutStore.getInstance().getData())) {
-                pluginIds.add(plugin.getId());
-            }
-        }
-        return pluginIds;
-    }
-
-    public PaymentMethodPlugin getFirstEnabledPlugin() {
-        for (final PaymentMethodPlugin plugin : paymentMethodPluginList) {
-            if (plugin.isEnabled(CheckoutStore.getInstance().getData())) {
-                return plugin;
-            }
-        }
-        return null;
-    }
-
-    public int getPaymentMethodPluginCount() {
-        int count = 0;
-        for (final PaymentMethodPlugin plugin : paymentMethodPluginList) {
-            if (plugin.isEnabled(CheckoutStore.getInstance().getData())) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    public void setPaymentPlugins(Map<String, PaymentProcessor> paymentPlugins) {
-        this.paymentPlugins = paymentPlugins;
-    }
 
     public Hook getHook() {
         return hook;
@@ -134,27 +49,6 @@ public final class CheckoutStore {
         return data;
     }
 
-    public PaymentProcessor doesPaymentProcessorSupportPaymentMethodSelected(
-        @NonNull final String selectedPaymentMethodId) {
-        PaymentProcessor paymentProcessor = null;
-        if (!TextUtils.isEmpty(selectedPaymentMethodId)) {
-            paymentProcessor = paymentPlugins.get(PAYMENT_PROCESSOR_KEY);
-            if (paymentProcessor == null || !paymentProcessor.support(selectedPaymentMethodId, getData())) {
-                paymentProcessor = paymentPlugins.get(selectedPaymentMethodId);
-            }
-        }
-        return paymentProcessor;
-    }
-
-    public boolean hasPaymentProcessor() {
-        return paymentPlugins.containsKey(PAYMENT_PROCESSOR_KEY);
-    }
-
-    public void addPaymentPlugins(@NonNull final PaymentProcessor paymentProcessor,
-        @NonNull final String paymentMethod) {
-        paymentPlugins.put(paymentMethod, paymentProcessor);
-    }
-
     public PaymentData getPaymentData() {
         return paymentData;
     }
@@ -167,7 +61,7 @@ public final class CheckoutStore {
         return payment;
     }
 
-    public void setPayment(Payment payment) {
+    public void setPayment(final Payment payment) {
         this.payment = payment;
     }
 
@@ -175,7 +69,7 @@ public final class CheckoutStore {
         return paymentResult;
     }
 
-    public void setPaymentResult(PaymentResult paymentResult) {
+    public void setPaymentResult(final PaymentResult paymentResult) {
         this.paymentResult = paymentResult;
     }
 
@@ -183,10 +77,5 @@ public final class CheckoutStore {
         paymentResult = null;
         paymentData = null;
         payment = null;
-    }
-
-    public void resetPlugins() {
-        paymentPlugins = new HashMap<>();
-        paymentMethodPluginList = new ArrayList<>();
     }
 }
