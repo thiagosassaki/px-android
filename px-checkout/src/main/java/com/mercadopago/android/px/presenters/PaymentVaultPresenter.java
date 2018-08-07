@@ -208,7 +208,7 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
 
     private void showAvailableOptions() {
         final Collection<PaymentMethodPlugin> paymentMethodPluginList =
-            pluginRepository.getPaymentMethodPluginList();
+            pluginRepository.getEnabledPlugins();
 
         getView().showPluginOptions(paymentMethodPluginList, PaymentMethodPlugin.PluginPosition.TOP);
 

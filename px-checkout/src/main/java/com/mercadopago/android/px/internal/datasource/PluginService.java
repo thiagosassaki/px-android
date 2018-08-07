@@ -63,12 +63,18 @@ public class PluginService implements PluginRepository {
     }
 
     @Override
-    public Collection<PaymentMethodPlugin> getPaymentMethodPluginList() {
+    public Collection<PaymentMethodPlugin> getEnabledPlugins() {
         final PaymentConfiguration paymentConfiguration = paymentSettings.getPaymentConfiguration();
         if (paymentConfiguration == null) {
             return new ArrayList<>();
         } else {
-            return paymentSettings.getPaymentConfiguration().getPaymentMethodPluginList();
+            final Collection<PaymentMethodPlugin> plugins = new ArrayList<>();
+            for (final PaymentMethodPlugin plugin : plugins) {
+                if (plugin.isEnabled()) {
+                    plugins.add(plugin);
+                }
+            }
+            return plugins;
         }
     }
 

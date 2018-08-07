@@ -21,7 +21,7 @@ public interface PluginRepository {
     @NonNull
     PaymentMethodInfo getPaymentMethodInfo(@NonNull final String pluginId);
 
-    Collection<PaymentMethodPlugin> getPaymentMethodPluginList();
+    Collection<PaymentMethodPlugin> getEnabledPlugins();
 
     boolean hasEnabledPaymentMethodPlugin();
 

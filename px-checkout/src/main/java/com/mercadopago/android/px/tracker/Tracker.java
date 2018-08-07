@@ -256,7 +256,7 @@ public class Tracker {
     private static String getFormattedPaymentMethodsForTracking(final Context context,
         @NonNull final PaymentMethodSearch paymentMethodSearch, final Set<String> escCardIds) {
         final Collection<PaymentMethodPlugin> paymentMethodPluginList =
-            Session.getSession(context).getPluginRepository().getPaymentMethodPluginList();
+            Session.getSession(context).getPluginRepository().getEnabledPlugins();
         return TrackingFormatter
             .getFormattedPaymentMethodsForTracking(paymentMethodSearch, paymentMethodPluginList, escCardIds);
     }
