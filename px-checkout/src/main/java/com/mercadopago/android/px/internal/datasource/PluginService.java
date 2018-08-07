@@ -64,38 +64,25 @@ public class PluginService implements PluginRepository {
 
     @Override
     public Collection<PaymentMethodPlugin> getEnabledPlugins() {
-        final PaymentConfiguration paymentConfiguration = paymentSettings.getPaymentConfiguration();
-        if (paymentConfiguration == null) {
-            return new ArrayList<>();
-        } else {
-            final Collection<PaymentMethodPlugin> plugins = new ArrayList<>();
-            for (final PaymentMethodPlugin plugin : plugins) {
-                if (plugin.isEnabled()) {
-                    plugins.add(plugin);
-                }
+        final Collection<PaymentMethodPlugin> plugins = new ArrayList<>();
+        for (final PaymentMethodPlugin plugin : all()) {
+            if (plugin.isEnabled()) {
+                plugins.add(plugin);
             }
-            return plugins;
         }
+        return plugins;
     }
 
     @Override
     public int getPaymentMethodPluginCount() {
-        int count = 0;
-        for (final PaymentMethodPlugin plugin : all()) {
-            if (plugin.isEnabled()) {
-                count++;
-            }
-        }
-        return count;
+        return getEnabledPlugins().size();
     }
 
     @Override
     @NonNull
     public PaymentMethodPlugin getFirstEnabledPlugin() {
-        for (final PaymentMethodPlugin plugin : all()) {
-            if (plugin.isEnabled()) {
-                return plugin;
-            }
+        for (final PaymentMethodPlugin plugin : getEnabledPlugins()) {
+            return plugin;
         }
         throw new IllegalStateException("there is no plugin");
     }
@@ -107,13 +94,6 @@ public class PluginService implements PluginRepository {
 
     @Override
     public boolean hasEnabledPaymentMethodPlugin() {
-        boolean result = false;
-        for (final PaymentMethodPlugin plugin : all()) {
-            if (plugin.isEnabled()) {
-                result = true;
-                break;
-            }
-        }
-        return result;
+        return !getEnabledPlugins().isEmpty();
     }
 }
