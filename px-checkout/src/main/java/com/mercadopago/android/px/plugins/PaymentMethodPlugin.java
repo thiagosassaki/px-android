@@ -33,6 +33,11 @@ public abstract class PaymentMethodPlugin implements Serializable {
     }
 
     /**
+     * Init method to be called in a background thread to init this plugin.
+     */
+    public abstract void init();
+
+    /**
      * This method returns {@link PluginPosition#TOP} or
      * {@link PluginPosition#BOTTOM} it represents
      * where the plugin will be placed in payment method selection.

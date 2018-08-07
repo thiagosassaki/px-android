@@ -30,7 +30,7 @@ import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.mvp.MvpPresenter;
 import com.mercadopago.android.px.mvp.TaggedCallback;
-import com.mercadopago.android.px.plugins.DataInitializationTask;
+import com.mercadopago.android.px.internal.datasource.PluginInitializationTask;
 import com.mercadopago.android.px.plugins.model.BusinessPayment;
 import com.mercadopago.android.px.plugins.model.BusinessPaymentModel;
 import com.mercadopago.android.px.preferences.AdvancedConfiguration;
@@ -76,7 +76,7 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
 
     private transient FailureRecovery failureRecovery;
 
-    private DataInitializationTask dataInitializationTask; //instance saved as attribute to cancel and avoid crash
+    private PluginInitializationTask pluginInitializationTask; //instance saved as attribute to cancel and avoid crash
 
     public CheckoutPresenter(@NonNull final CheckoutStateModel persistentData,
         @NonNull final PaymentSettingRepository paymentConfiguration,
@@ -148,22 +148,20 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     }
 
     private void initializePluginsData() {
-        dataInitializationTask = pluginRepository.getInitTask();
-        dataInitializationTask.execute(getDataInitializationCallback());
+        pluginInitializationTask = pluginRepository.getInitTask();
+        pluginInitializationTask.execute(getDataInitializationCallback());
     }
 
     @NonNull
-    private DataInitializationTask.DataInitializationCallbacks getDataInitializationCallback() {
-        return new DataInitializationTask.DataInitializationCallbacks() {
+    private PluginInitializationTask.DataInitializationCallbacks getDataInitializationCallback() {
+        return new PluginInitializationTask.DataInitializationCallbacks() {
             @Override
-            public void onDataInitialized(@NonNull final Map<String, Object> data) {
-                data.put(DataInitializationTask.KEY_INIT_SUCCESS, true);
+            public void onDataInitialized() {
                 finishInitializingPluginsData();
             }
 
             @Override
-            public void onFailure(@NonNull final Exception e, @NonNull final Map<String, Object> data) {
-                data.put(DataInitializationTask.KEY_INIT_SUCCESS, false);
+            public void onFailure(@NonNull final Exception e) {
                 finishInitializingPluginsData();
             }
         };
@@ -689,8 +687,8 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     }
 
     public void cancelInitialization() {
-        if (dataInitializationTask != null) {
-            dataInitializationTask.cancel();
+        if (pluginInitializationTask != null) {
+            pluginInitializationTask.cancel();
         }
     }
 
