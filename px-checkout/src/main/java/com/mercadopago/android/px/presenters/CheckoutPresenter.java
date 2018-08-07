@@ -49,7 +49,6 @@ import com.mercadopago.android.px.viewmodel.OneTapModel;
 import com.mercadopago.android.px.views.CheckoutView;
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -128,7 +127,6 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     private void startCheckout() {
         getResourcesProvider().fetchFonts();
         fetchImages();
-
         initializePluginsData();
     }
 
@@ -150,13 +148,7 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     }
 
     private void initializePluginsData() {
-        dataInitializationTask = new DataInitializationTask(new HashMap<String, Object>()) {
-            @Override
-            public void onLoadData(@NonNull final Map<String, Object> data) {
-                //TODO check
-            }
-        };
-
+        dataInitializationTask = pluginRepository.getInitTask();
         dataInitializationTask.execute(getDataInitializationCallback());
     }
 
@@ -170,7 +162,7 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
             }
 
             @Override
-            public void onFailure(@NonNull Exception e, @NonNull Map<String, Object> data) {
+            public void onFailure(@NonNull final Exception e, @NonNull final Map<String, Object> data) {
                 data.put(DataInitializationTask.KEY_INIT_SUCCESS, false);
                 finishInitializingPluginsData();
             }

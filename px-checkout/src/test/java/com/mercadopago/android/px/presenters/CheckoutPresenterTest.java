@@ -7,6 +7,7 @@ import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
+import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.mocks.Cards;
 import com.mercadopago.android.px.mocks.Customers;
@@ -33,6 +34,7 @@ import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.mvp.TaggedCallback;
+import com.mercadopago.android.px.plugins.DataInitializationTask;
 import com.mercadopago.android.px.plugins.model.BusinessPayment;
 import com.mercadopago.android.px.plugins.model.BusinessPaymentModel;
 import com.mercadopago.android.px.preferences.AdvancedConfiguration;
@@ -46,7 +48,9 @@ import com.mercadopago.android.px.utils.StubSuccessMpCall;
 import com.mercadopago.android.px.viewmodel.CheckoutStateModel;
 import com.mercadopago.android.px.viewmodel.OneTapModel;
 import com.mercadopago.android.px.views.CheckoutView;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -80,6 +84,7 @@ public class CheckoutPresenterTest {
     @Mock private DiscountRepository discountRepository;
     @Mock private GroupsRepository groupsRepository;
     @Mock private AdvancedConfiguration advancedConfiguration;
+    @Mock private PluginRepository pluginRepository;
 
     private MockedView view;
     private MockedProvider provider;
@@ -124,10 +129,23 @@ public class CheckoutPresenterTest {
             .thenReturn(new PaymentResultScreenPreference.Builder().build());
         when(advancedConfiguration.isBinaryMode()).thenReturn(false);
 
+        when(pluginRepository.getInitTask()).thenReturn(new DataInitializationTask(new HashMap<String, Object>()) {
+            @Override
+            public void execute(final DataInitializationCallbacks callbacks) {
+                initPlugins(callbacks);
+            }
+
+            @Override
+            public void onLoadData(@NonNull final Map<String, Object> data) {
+
+            }
+        });
+
         final CheckoutStateModel model = new CheckoutStateModel();
         final CheckoutPresenter presenter = new CheckoutPresenter(model, configuration, amountRepository,
             userSelectionRepository, discountRepository,
-            groupsRepository);
+            groupsRepository,
+            pluginRepository);
         presenter.attachResourcesProvider(provider);
         presenter.attachView(view);
         return presenter;
@@ -561,7 +579,6 @@ public class CheckoutPresenterTest {
     @Test
     public void ifPaymentMethodEditionRequestedAndUserPressesBackTwiceCancelCheckout() {
         final CheckoutPresenter presenter = getPaymentPresenterWithDefaultAdvancedConfigurationMla();
-
         presenter.initialize();
         assertTrue(view.showingPaymentMethodSelection);
 

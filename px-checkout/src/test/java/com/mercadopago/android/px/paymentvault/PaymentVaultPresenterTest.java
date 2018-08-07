@@ -669,7 +669,8 @@ public class PaymentVaultPresenterTest {
         }
 
         @Override
-        public void showPluginOptions(Collection<PaymentMethodPlugin> items, String position) {
+        public void showPluginOptions(final Collection<PaymentMethodPlugin> items,
+            final PaymentMethodPlugin.PluginPosition position) {
 
         }
 

@@ -5,11 +5,14 @@ import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.model.PaymentMethod;
+import com.mercadopago.android.px.plugins.DataInitializationTask;
 import com.mercadopago.android.px.plugins.PaymentMethodPlugin;
 import com.mercadopago.android.px.plugins.model.PaymentMethodInfo;
 import com.mercadopago.android.px.preferences.PaymentConfiguration;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PluginService implements PluginRepository {
 
@@ -92,6 +95,16 @@ public class PluginService implements PluginRepository {
             }
         }
         throw new IllegalStateException("there is no plugin");
+    }
+
+    @Override
+    public DataInitializationTask getInitTask() {
+        return new DataInitializationTask(new HashMap<String, Object>()) {
+            @Override
+            public void onLoadData(@NonNull final Map<String, Object> data) {
+                //TODO check
+            }
+        };
     }
 
     @Override
