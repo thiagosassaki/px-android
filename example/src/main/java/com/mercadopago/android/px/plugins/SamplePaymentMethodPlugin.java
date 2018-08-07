@@ -14,6 +14,11 @@ public class SamplePaymentMethodPlugin extends PaymentMethodPlugin {
     }
 
     @Override
+    public void init() {
+        //Do nothing
+    }
+
+    @Override
     @NonNull
     public PaymentMethodInfo getPaymentMethodInfo(@NonNull final Context context) {
         return new PaymentMethodInfo(
