@@ -30,12 +30,7 @@ public class MercadoPagoServicesAdapter extends MercadoPagoServices {
 
     public void createPayment(final PaymentBody paymentBody, final Callback<Payment> callback) {
 
-        final Type type = new TypeToken<Map<String, Object>>() {
-        }.getType();
-
-        final Map<String, Object> payload = JsonUtil.getInstance()
-            .getGson()
-            .fromJson(JsonUtil.getInstance().toJson(paymentBody), type);
+        final Map<String, Object> payload = convertPaymentBodyToMap(paymentBody);
 
         payload.put("issuer_id", paymentBody.getIssuerId());
         payload.put("installments", paymentBody.getInstallments());
@@ -47,4 +42,14 @@ public class MercadoPagoServicesAdapter extends MercadoPagoServices {
             new HashMap<String, String>(),
             callback);
     }
+
+    public Map<String, Object> convertPaymentBodyToMap(@NonNull final PaymentBody paymentBody) {
+        final Type type = new TypeToken<Map<String, Object>>() {
+        }.getType();
+
+        return JsonUtil.getInstance()
+            .getGson()
+            .fromJson(JsonUtil.getInstance().toJson(paymentBody), type);
+    }
+
 }

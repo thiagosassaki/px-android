@@ -174,11 +174,14 @@ public final class Session extends ApplicationModule
             PaymentProcessor processor = CheckoutStore.getInstance()
                 .doesPaymentProcessorSupportPaymentMethodSelected(paymentMethodIdSelected);
 
-            paymentRepository = new PaymentService(configurationModule.getUserSelectionRepository(),
+            paymentRepository = new PaymentService(getRetrofitClient().create(CheckoutService.class),
+                getMercadoPagoServiceAdapter(),
+                configurationModule.getUserSelectionRepository(),
                 configurationModule.getPaymentSettings(),
                 new PluginService(getContext()), getDiscountRepository(), getAmountRepository(),
                 processor, getContext());
         }
+
         return paymentRepository;
     }
 }
