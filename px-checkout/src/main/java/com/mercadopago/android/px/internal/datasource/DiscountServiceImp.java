@@ -24,24 +24,25 @@ public class DiscountServiceImp implements DiscountRepository {
     /* default */ volatile boolean fetched;
 
     public DiscountServiceImp(@NonNull final DiscountStorageService discountStorageService,
-                              @NonNull final DiscountApiService discountApiService) {
+        @NonNull final DiscountApiService discountApiService) {
         this.discountStorageService = discountStorageService;
         this.discountApiService = discountApiService;
         fetched = false;
     }
 
     @Override
-    public void configureMerchantDiscountManually(@Nullable final Discount discount, @Nullable final Campaign campaign) {
+    public void configureMerchantDiscountManually(@Nullable final Discount discount, @Nullable final Campaign campaign,
+        final boolean notAvailableDiscount) {
         final CheckoutStore store = CheckoutStore.getInstance();
         //TODO remove when discount signature change.
         if (store.hasPaymentProcessor() || !store.getPaymentMethodPluginList().isEmpty()) {
-            discountStorageService.configureDiscountManually(discount, campaign);
+            discountStorageService.configureDiscountManually(discount, campaign, notAvailableDiscount);
         }
     }
 
     @Override
     public void configureDiscountManually(@Nullable final Discount discount, @Nullable final Campaign campaign) {
-        discountStorageService.configureDiscountManually(discount, campaign);
+        discountStorageService.configureDiscountManually(discount, campaign, false);
     }
 
     @Override
@@ -92,6 +93,10 @@ public class DiscountServiceImp implements DiscountRepository {
         }
 
         return discountCampaign;
+    }
+
+    public boolean isNotAvailableDiscount() {
+        return discountStorageService.isNotAvailableDiscount();
     }
 
     @Override
@@ -177,7 +182,7 @@ public class DiscountServiceImp implements DiscountRepository {
         }
 
         private void getFromNetwork(final Callback<Boolean> callback, @NonNull final Callable campaignsCall)
-                throws Exception {
+            throws Exception {
             final List<Campaign> storage = discountStorageService.getCampaigns();
             if (storage.isEmpty()) {
                 campaignsCall.call();
@@ -187,7 +192,7 @@ public class DiscountServiceImp implements DiscountRepository {
         }
 
         /* default */ Callback<List<Campaign>> campaignCache(final Callback<Boolean> callback,
-                                                             final Callable discountCall) {
+            final Callable discountCall) {
             return new Callback<List<Campaign>>() {
                 @Override
                 public void success(final List<Campaign> campaigns) {
@@ -240,7 +245,8 @@ public class DiscountServiceImp implements DiscountRepository {
             return new Callback<Discount>() {
                 @Override
                 public void success(final Discount discount) {
-                    discountStorageService.configureDiscountManually(discount, directCampaign);
+                    discountStorageService.configureDiscountManually(discount, directCampaign, DiscountServiceImp.this
+                        .isNotAvailableDiscount());
                     callback.success(true);
                 }
 

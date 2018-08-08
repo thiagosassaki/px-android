@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="px_homebanking">Home Banking de</string>
+    <string name="px_card_installments_title">¿En cuántas cuotas?</string>
+    <string name="px_error_message_invalid_installments">Número de cuotas inválido</string>
+</resources>

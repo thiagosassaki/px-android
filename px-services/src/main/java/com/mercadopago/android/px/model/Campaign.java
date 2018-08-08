@@ -57,7 +57,7 @@ public class Campaign implements Serializable, Parcelable {
 
     public String getPrettyEndDate() {
         return DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault())
-                .format(endDate);
+            .format(endDate);
     }
 
     public boolean hasMaxCouponAmount() {
@@ -78,10 +78,6 @@ public class Campaign implements Serializable, Parcelable {
 
     public boolean isDirectDiscountCampaign() {
         return CODE_TYPE_NONE.contains(codeType);
-    }
-
-    public boolean isOneShotDiscount() {
-        return maxRedeemPerUser == 1;
     }
 
     public boolean isAlwaysOnDiscount() {
@@ -124,7 +120,7 @@ public class Campaign implements Serializable, Parcelable {
 
     public String getCampaignTermsUrl() {
         return String
-                .format(Locale.US, "https://api.mercadolibre.com/campaigns/%s/terms_and_conditions?format_type=html", id);
+            .format(Locale.US, "https://api.mercadolibre.com/campaigns/%s/terms_and_conditions?format_type=html", id);
     }
 
     @SuppressWarnings("unused")

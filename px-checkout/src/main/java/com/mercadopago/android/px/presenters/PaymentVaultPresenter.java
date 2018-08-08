@@ -1,7 +1,6 @@
 package com.mercadopago.android.px.presenters;
 
 import android.support.annotation.NonNull;
-
 import com.mercadopago.android.px.callbacks.FailureRecovery;
 import com.mercadopago.android.px.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.constants.PaymentMethods;
@@ -15,10 +14,8 @@ import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
-import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CustomSearchItem;
-import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
@@ -417,8 +414,8 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
     }
 
     @Override
-    public void onDetailClicked(@NonNull final Discount discount, @NonNull final Campaign campaign) {
-        getView().showDetailDialog(discount, campaign);
+    public void onDetailClicked() {
+        getView().showDetailDialog();
     }
 
     @Override

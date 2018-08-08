@@ -15,6 +15,8 @@ import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.plugins.components.SampleCustomComponent;
+import com.mercadopago.android.px.plugins.model.BusinessPayment;
+import com.mercadopago.android.px.plugins.model.ExitAction;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
 import com.mercadopago.android.px.tracking.listeners.TracksListener;
@@ -186,5 +188,13 @@ public final class ExamplesUtils {
 
     private static Builder createBaseWithOneItemLongTitle() {
         return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, DUMMY_PREFERENCE_ID_WITH_ITEM_LONG_TITLE);
+    }
+
+    /* default */ static BusinessPayment getBusinessPaymentApproved() {
+        return new BusinessPayment.Builder(BusinessPayment.Decorator.APPROVED, Payment.StatusCodes.STATUS_APPROVED,
+            Payment.StatusDetail.STATUS_DETAIL_ACCREDITED,
+            R.drawable.px_icon_card, "Title")
+            .setPrimaryButton(new ExitAction("Button Name", 23))
+            .build();
     }
 }

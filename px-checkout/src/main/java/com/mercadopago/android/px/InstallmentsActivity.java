@@ -27,7 +27,6 @@ import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.listeners.RecyclerItemClickListener;
-import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.Issuer;
@@ -119,7 +118,7 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         final Intent intent = getIntent();
 
         final PaymentMethod paymentMethod =
-                JsonUtil.getInstance().fromJson(intent.getStringExtra("paymentMethod"), PaymentMethod.class);
+            JsonUtil.getInstance().fromJson(intent.getStringExtra("paymentMethod"), PaymentMethod.class);
 
         presenter.setPaymentMethod(paymentMethod);
         presenter.setIssuer(JsonUtil.getInstance().fromJson(intent.getStringExtra("issuer"), Issuer.class));
@@ -182,7 +181,7 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
 
         if (CheckoutTimer.getInstance().isTimerEnabled()) {
             Toolbar.LayoutParams marginParams =
-                    new Toolbar.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                new Toolbar.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             marginParams.setMargins(0, 0, 0, 6);
             mLowResTitleToolbar.setLayoutParams(marginParams);
             mLowResTitleToolbar.setTextSize(19);
@@ -213,11 +212,11 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
             .build();
 
         ScreenViewEvent event = new ScreenViewEvent.Builder()
-                .setFlowId(FlowHandler.getInstance().getFlowId())
-                .setScreenId(TrackingUtil.SCREEN_ID_INSTALLMENTS)
-                .setScreenName(TrackingUtil.SCREEN_NAME_CARD_FORM_INSTALLMENTS)
-                .addProperty(TrackingUtil.PROPERTY_PAYMENT_METHOD_ID, presenter.getPaymentMethod().getId())
-                .build();
+            .setFlowId(FlowHandler.getInstance().getFlowId())
+            .setScreenId(TrackingUtil.SCREEN_ID_INSTALLMENTS)
+            .setScreenName(TrackingUtil.SCREEN_NAME_CARD_FORM_INSTALLMENTS)
+            .addProperty(TrackingUtil.PROPERTY_PAYMENT_METHOD_ID, presenter.getPaymentMethod().getId())
+            .build();
 
         mTrackingContext.trackEvent(event);
     }
@@ -324,12 +323,12 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         view.setAdapter(adapter);
         view.setLayoutManager(new LinearLayoutManager(this));
         view.addOnItemTouchListener(new RecyclerItemClickListener(this,
-                new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        presenter.onItemSelected(position);
-                    }
-                }));
+            new RecyclerItemClickListener.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    presenter.onItemSelected(position);
+                }
+            }));
     }
 
     @Override
@@ -412,14 +411,14 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
 
     @Override
     public void showAmount(@NonNull final DiscountRepository discountRepository,
-                           @NonNull final BigDecimal itemsPlusCharges, @NonNull final Site site) {
+        @NonNull final BigDecimal itemsPlusCharges, @NonNull final Site site) {
         amountView.setOnClickListener(presenter);
         amountView.show(discountRepository, itemsPlusCharges, site);
     }
 
     @Override
-    public void showDetailDialog(@NonNull final Discount discount, @NonNull final Campaign campaign) {
-        DiscountDetailDialog.showDialog(discount, campaign, getSupportFragmentManager());
+    public void showDetailDialog() {
+        DiscountDetailDialog.showDialog(getSupportFragmentManager());
     }
 
     @Override

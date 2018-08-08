@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-
 import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.core.MercadoPagoComponents;
@@ -176,9 +173,10 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
     public void showOneTap(@NonNull final OneTapModel oneTapModel) {
         final OneTapFragment instance = OneTapFragment.getInstance(oneTapModel);
         getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.one_tap_fragment, instance)
-                .commit();
+            .beginTransaction()
+            .setCustomAnimations(R.anim.px_slide_right_to_left_in, R.anim.px_slide_right_to_left_out)
+            .replace(R.id.one_tap_fragment, instance)
+            .commit();
     }
 
     @Override

@@ -1,8 +1,11 @@
 package com.mercadopago.android.px.services;
 
+import android.support.test.InstrumentationRegistry;
 import com.mercadopago.android.px.model.CardToken;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.PaymentMethod;
+import com.mercadopago.android.px.services.exceptions.CardTokenException;
+import org.junit.Test;
 
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.TestCase.assertFalse;
@@ -25,147 +28,147 @@ public class CardTokenTest {
     }
 
     @Test
-    public void testValidateNoSecurityCode() {
+    public void testValidateNoSecurityCode() throws CardTokenException {
         CardToken cardToken = StaticMock.getCardToken();
         PaymentMethod paymentMethod = StaticMock.getPaymentMethod(InstrumentationRegistry.getContext());
 
-        assertTrue(cardToken.validateSecurityCode(paymentMethod));
+        cardToken.validateSecurityCode(paymentMethod);
     }
 
     // * Card number
     @Test
-    public void testCardNumber() {
+    public void testCardNumber() throws CardTokenException{
         CardToken cardToken = StaticMock.getCardToken();
         PaymentMethod paymentMethod = StaticMock.getPaymentMethod(InstrumentationRegistry.getContext());
 
-        assertTrue(cardToken.validateCardNumber(paymentMethod));
+        cardToken.validateCardNumber(paymentMethod);
     }
 
-    @Test
-    public void testCardNumberEmpty() {
+    @Test(expected = CardTokenException.class)
+    public void testCardNumberEmpty() throws CardTokenException {
         CardToken cardToken = StaticMock.getCardToken();
         cardToken.setCardNumber("");
 
         PaymentMethod paymentMethod = StaticMock.getPaymentMethod(InstrumentationRegistry.getContext());
 
-        assertTrue(!cardToken.validateCardNumber(paymentMethod));
+        cardToken.validateCardNumber(paymentMethod);
     }
 
-    @Test
-    public void testCardNumberMinLength() {
+    @Test(expected = CardTokenException.class)
+    public void testCardNumberMinLength() throws CardTokenException {
         CardToken cardToken = StaticMock.getCardToken();
         cardToken.setCardNumber("4444");
 
         PaymentMethod paymentMethod = StaticMock.getPaymentMethod(InstrumentationRegistry.getContext());
 
-        assertTrue(!cardToken.validateCardNumber(paymentMethod));
+        cardToken.validateCardNumber(paymentMethod);
     }
 
-    @Test
-    public void testCardNumberMaxLength() {
+    @Test(expected = CardTokenException.class)
+    public void testCardNumberMaxLength() throws CardTokenException {
         CardToken cardToken = StaticMock.getCardToken();
         cardToken.setCardNumber("44440000444400004444");
 
         PaymentMethod paymentMethod = StaticMock.getPaymentMethod(InstrumentationRegistry.getContext());
 
-        assertTrue(!cardToken.validateCardNumber(paymentMethod));
+        cardToken.validateCardNumber(paymentMethod);
     }
 
-    @Test
-    public void testCardNumberWithPaymentMethodInvalidBin() {
+    @Test(expected = CardTokenException.class)
+    public void testCardNumberWithPaymentMethodInvalidBin() throws CardTokenException {
         CardToken cardToken = StaticMock.getCardToken();
         cardToken.setCardNumber("5300888800009999");
 
         PaymentMethod paymentMethod = StaticMock.getPaymentMethod(InstrumentationRegistry.getContext());
 
-        assertFalse(cardToken.validateCardNumber(paymentMethod));
+        cardToken.validateCardNumber(paymentMethod);
     }
 
-    @Test
-    public void testCardNumberWithPaymentMethodInvalidLength() {
+    @Test(expected = CardTokenException.class)
+    public void testCardNumberWithPaymentMethodInvalidLength() throws CardTokenException {
         CardToken cardToken = StaticMock.getCardToken();
         cardToken.setCardNumber("466057001125");
 
         PaymentMethod paymentMethod = StaticMock.getPaymentMethod(InstrumentationRegistry.getContext());
 
-        assertFalse(cardToken.validateCardNumber(paymentMethod));
+        cardToken.validateCardNumber(paymentMethod);
     }
 
-    @Test
-    public void testCardNumberWithPaymentMethodInvalidLuhn() {
+    @Test(expected = CardTokenException.class)
+    public void testCardNumberWithPaymentMethodInvalidLuhn() throws CardTokenException {
         CardToken cardToken = StaticMock.getCardToken();
         cardToken.setCardNumber("4660888888888888");
 
         PaymentMethod paymentMethod = StaticMock.getPaymentMethod(InstrumentationRegistry.getContext());
 
-        assertFalse(cardToken.validateCardNumber(paymentMethod));
+        cardToken.validateCardNumber(paymentMethod);
     }
 
     // * Security code
     @Test
-    public void testSecurityCode() {
+    public void testSecurityCode() throws CardTokenException {
         CardToken cardToken = StaticMock.getCardToken();
         PaymentMethod paymentMethod = StaticMock.getPaymentMethod(InstrumentationRegistry.getContext());
 
-        assertTrue(cardToken.validateSecurityCode(paymentMethod));
+        cardToken.validateSecurityCode(paymentMethod);
     }
 
-    @Test
-    public void testSecurityCodeEmpty() {
+    @Test(expected = CardTokenException.class)
+    public void testSecurityCodeEmpty() throws CardTokenException {
         CardToken cardToken = StaticMock.getCardToken();
         PaymentMethod paymentMethod = StaticMock.getPaymentMethod(InstrumentationRegistry.getContext());
 
         cardToken.setSecurityCode("");
 
-        assertTrue(!cardToken.validateSecurityCode(paymentMethod));
+        cardToken.validateSecurityCode(paymentMethod);
     }
 
-    @Test
-    public void testSecurityCodeMinLength() {
+    @Test(expected = CardTokenException.class)
+    public void testSecurityCodeMinLength() throws CardTokenException {
         CardToken cardToken = StaticMock.getCardToken();
         PaymentMethod paymentMethod = StaticMock.getPaymentMethod(InstrumentationRegistry.getContext());
 
         cardToken.setSecurityCode("4");
 
-        assertTrue(!cardToken.validateSecurityCode(paymentMethod));
+        cardToken.validateSecurityCode(paymentMethod);
     }
 
-    @Test
-    public void testSecurityCodeMaxLength() {
+    @Test(expected = CardTokenException.class)
+    public void testSecurityCodeMaxLength() throws CardTokenException {
         CardToken cardToken = StaticMock.getCardToken();
         cardToken.setSecurityCode("44444");
 
         PaymentMethod paymentMethod = StaticMock.getPaymentMethod(InstrumentationRegistry.getContext());
 
-        assertTrue(!cardToken.validateSecurityCode(paymentMethod));
+        cardToken.validateSecurityCode(paymentMethod);
     }
 
     @Test
-    public void testSecurityCodeWithPaymentMethod() {
+    public void testSecurityCodeWithPaymentMethod() throws CardTokenException {
         CardToken cardToken = StaticMock.getCardToken();
         PaymentMethod paymentMethod = StaticMock.getPaymentMethod(InstrumentationRegistry.getContext());
 
-        assertTrue(cardToken.validateSecurityCode(paymentMethod));
+        cardToken.validateSecurityCode(paymentMethod);
     }
 
-    @Test
-    public void testSecurityCodeWithPaymentMethodInvalidBin() {
+    @Test(expected = CardTokenException.class)
+    public void testSecurityCodeWithPaymentMethodInvalidBin() throws CardTokenException {
         CardToken cardToken = StaticMock.getCardToken();
         cardToken.setCardNumber("5300888800009999");
 
         PaymentMethod paymentMethod = StaticMock.getPaymentMethod(InstrumentationRegistry.getContext());
 
-        assertFalse(cardToken.validateSecurityCode(paymentMethod));
+        cardToken.validateSecurityCode(paymentMethod);
     }
 
-    @Test
-    public void testSecurityCodeWithPaymentMethodInvalidLength() {
+    @Test(expected = CardTokenException.class)
+    public void testSecurityCodeWithPaymentMethodInvalidLength() throws CardTokenException {
         CardToken cardToken = StaticMock.getCardToken();
         cardToken.setSecurityCode("4444");
 
         PaymentMethod paymentMethod = StaticMock.getPaymentMethod(InstrumentationRegistry.getContext());
 
-        assertFalse(cardToken.validateSecurityCode(paymentMethod));
+        cardToken.validateSecurityCode(paymentMethod);
     }
 
     // TODO: test cvv not required
