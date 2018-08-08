@@ -19,10 +19,11 @@ import com.mercadopago.android.px.tracker.FlowHandler;
 import com.mercadopago.android.px.tracker.MPTrackingContext;
 import com.mercadopago.android.px.tracking.model.ScreenViewEvent;
 
-public class PaymentMethodPluginActivity extends AppCompatActivity implements PluginFragment.Actions {
+public class PaymentMethodPluginActivity extends AppCompatActivity implements
+    PaymentMethodPluginFragment.onPaymentMethodActions {
 
     private static final String SCREEN_NAME_CONFIG_PAYMENT_METHOD_PLUGIN = "CONFIG_PAYMENT_METHOD";
-    private static final String PLUGIN_FRAGMENT = PluginFragment.class.getName();
+    private static final String PLUGIN_FRAGMENT = PaymentMethodPluginFragment.class.getName();
 
     public static Intent getIntent(@NonNull final Context context) {
         return new Intent(context, PaymentMethodPluginActivity.class);
@@ -53,7 +54,7 @@ public class PaymentMethodPluginActivity extends AppCompatActivity implements Pl
             new PaymentMethodPlugin.CheckoutData(CheckoutStore.getInstance().getPaymentData(),
                 configurationModule.getPaymentSettings().getCheckoutPreference());
 
-        final PluginFragment fragment = plugin.getFragment(checkoutData, this);
+        final PaymentMethodPluginFragment fragment = plugin.getFragment(checkoutData, this);
 
         if (fragment == null) {
             next();

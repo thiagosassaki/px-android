@@ -17,7 +17,7 @@ public abstract class PaymentMethodPlugin implements Serializable {
         TOP, BOTTOM
     }
 
-    public static class CheckoutData {
+    /* default */ static final class CheckoutData {
         public final PaymentData paymentData;
         public final CheckoutPreference checkoutPreference;
 
@@ -86,8 +86,16 @@ public abstract class PaymentMethodPlugin implements Serializable {
     public abstract Bundle getFragmentBundle(@NonNull final CheckoutData data,
         @NonNull final Context context);
 
+    /**
+     * Fragment that will appear if {@link #shouldShowFragmentOnSelection()} is true
+     * when user clicks this payment method.
+     *
+     * @param data checkout data to the moment it's called.
+     * @param context that you may need to fill information.
+     * @return plugin fragment
+     */
     @Nullable
-    public abstract PluginFragment getFragment(
+    public abstract PaymentMethodPluginFragment getFragment(
         @NonNull final CheckoutData data,
         @NonNull final Context context);
 

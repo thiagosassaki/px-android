@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.mercadopago.android.px.util.TextUtils;
 import com.mercadopago.example.R;
 
-public class SamplePluginFragment extends PluginFragment {
+public class SamplePluginFragment extends PaymentMethodPluginFragment {
 
     private View progressbar;
     private TextView errorLabel;

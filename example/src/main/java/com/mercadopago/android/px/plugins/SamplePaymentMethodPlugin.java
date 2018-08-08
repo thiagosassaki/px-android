@@ -43,7 +43,7 @@ public class SamplePaymentMethodPlugin extends PaymentMethodPlugin {
 
     @Nullable
     @Override
-    public PluginFragment getFragment(@NonNull final CheckoutData data,
+    public PaymentMethodPluginFragment getFragment(@NonNull final CheckoutData data,
         @NonNull final Context context) {
         return new SamplePluginFragment();
     }

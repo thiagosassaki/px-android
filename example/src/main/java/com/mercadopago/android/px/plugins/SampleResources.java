@@ -1,4 +1,4 @@
-package com.mercadopago.android.px.plugins.components;
+package com.mercadopago.android.px.plugins;
 
 /**
  * Created by nfortuna on 1/10/18.

@@ -10,7 +10,7 @@ import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.model.commission.ChargeRule;
 import com.mercadopago.android.px.model.commission.PaymentMethodChargeRule;
 import com.mercadopago.android.px.model.commission.PaymentTypeChargeRule;
-import com.mercadopago.android.px.plugins.MainPaymentProcessor;
+import com.mercadopago.android.px.plugins.SamplePaymentProcessor;
 import com.mercadopago.android.px.preferences.DiscountConfiguration;
 import com.mercadopago.android.px.preferences.PaymentConfiguration;
 import java.math.BigDecimal;
@@ -44,7 +44,7 @@ final class ChargesSamples {
         final Collection<ChargeRule> charges = new ArrayList<>();
         charges.add(new PaymentTypeChargeRule(type, BigDecimal.TEN));
         return new MercadoPagoCheckout.Builder(PK, PREF).setPaymentConfiguration(
-            new PaymentConfiguration.Builder(new MainPaymentProcessor(BusinessSamples.getBusinessRejected()))
+            new PaymentConfiguration.Builder(new SamplePaymentProcessor(BusinessSamples.getBusinessRejected()))
                 .addChargeRules(charges)
                 .build());
     }
@@ -56,7 +56,7 @@ final class ChargesSamples {
 
     @NonNull
     private static PaymentConfiguration.Builder getPaymentConfig(final String paymentMethodId) {
-        return new PaymentConfiguration.Builder(new MainPaymentProcessor(BusinessSamples.getBusinessRejected()))
+        return new PaymentConfiguration.Builder(new SamplePaymentProcessor(BusinessSamples.getBusinessRejected()))
             .addChargeRules(getCharge(paymentMethodId));
     }
 

@@ -2,7 +2,6 @@ package com.mercadopago.android.px.plugins;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.mercadopago.android.px.plugins.components.SampleResources;
 import com.mercadopago.android.px.util.TextUtils;
 
 public class SamplePaymentMethodPresenter {
@@ -44,7 +43,7 @@ public class SamplePaymentMethodPresenter {
 
                     if (PASSWORD.equals(password)) {
                         if (samplePluginFragment != null) {
-                            samplePluginFragment.getActions().next();
+                            samplePluginFragment.getPaymentMethodActions().next();
                         }
                     } else {
                         state = new SampleState(false, resources.getPasswordErrorMessage(), password);

@@ -1,7 +1,6 @@
 package com.mercadopago.android.px.plugins;
 
 import android.content.Context;
-import com.mercadopago.android.px.plugins.components.SampleResources;
 import com.mercadopago.example.R;
 
 public class SampleResourcesProvider implements SampleResources {

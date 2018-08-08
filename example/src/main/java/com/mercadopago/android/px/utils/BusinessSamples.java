@@ -6,7 +6,7 @@ import android.support.v4.util.Pair;
 import com.mercadopago.SampleTopFragment;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.model.Payment;
-import com.mercadopago.android.px.plugins.MainPaymentProcessor;
+import com.mercadopago.android.px.plugins.SamplePaymentProcessor;
 import com.mercadopago.android.px.plugins.SamplePaymentMethodPlugin;
 import com.mercadopago.android.px.plugins.model.BusinessPayment;
 import com.mercadopago.android.px.plugins.model.ExitAction;
@@ -118,8 +118,8 @@ final class BusinessSamples {
     }
 
     private static MercadoPagoCheckout.Builder customBusinessPayment(final BusinessPayment businessPayment) {
-        final MainPaymentProcessor mainPaymentProcessor = new MainPaymentProcessor(businessPayment);
-        return createBase().setPaymentConfiguration(new PaymentConfiguration.Builder(mainPaymentProcessor)
+        final SamplePaymentProcessor samplePaymentProcessor = new SamplePaymentProcessor(businessPayment);
+        return createBase().setPaymentConfiguration(new PaymentConfiguration.Builder(samplePaymentProcessor)
             .addPaymentMethodPlugin(new SamplePaymentMethodPlugin())
             .build());
     }

@@ -6,23 +6,25 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import com.mercadopago.android.px.components.Action;
-import com.mercadopago.android.px.components.ActionDispatcher;
-import com.mercadopago.android.px.components.ComponentManager;
+import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.internal.di.ConfigurationModule;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.model.Payment;
+import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.plugins.model.BusinessPayment;
 import com.mercadopago.android.px.plugins.model.GenericPayment;
 import com.mercadopago.android.px.plugins.model.PluginPayment;
 import com.mercadopago.android.px.plugins.model.Processor;
+import com.mercadopago.android.px.preferences.CheckoutPreference;
 
-public final class PaymentProcessorPluginActivity extends AppCompatActivity implements ActionDispatcher, Processor {
+public final class PaymentProcessorPluginActivity extends AppCompatActivity
+    implements PaymentProcessor.OnPaymentListener, Processor {
 
     private static final String EXTRA_BUSINESS_PAYMENT = "extra_business_payment";
+    private static final String PROCESSOR_FRAGMENT = "PROCESSOR_FRAGMENT";
 
     public static Intent getIntent(@NonNull final Context context) {
         return new Intent(context, PaymentProcessorPluginActivity.class);
@@ -40,6 +42,8 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity impl
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.px_activity_payment_processor);
+
         final CheckoutStore store = CheckoutStore.getInstance();
         final Session session = Session.getSession(getApplicationContext());
         final ConfigurationModule configurationModule = session.getConfigurationModule();
@@ -48,33 +52,38 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity impl
                 .getPaymentConfiguration()
                 .getPaymentProcessor();
 
-        //TODO construct payment data based on session.
-        final PluginComponent.Props props = new PluginComponent.Props.Builder()
-            .setData(store.getData())
-            .setPaymentData(store.getPaymentData())
-            .setCheckoutPreference(configurationModule.getPaymentSettings().getCheckoutPreference())
-            .build();
+        final PaymentData paymentData = store.getPaymentData();
+        final CheckoutPreference checkoutPreference = configurationModule.getPaymentSettings().getCheckoutPreference();
+        final PaymentProcessor.CheckoutData checkoutData =
+            new PaymentProcessor.CheckoutData(paymentData, checkoutPreference);
 
-        final PluginComponent component = paymentProcessor.createPaymentComponent(props, this);
-        final ComponentManager componentManager = new ComponentManager(this);
+        final PaymentProcessorFragment fragment = paymentProcessor.getFragment(checkoutData, this);
+        final Bundle fragmentBundle = paymentProcessor.getFragmentBundle(checkoutData, this);
 
-        component.setDispatcher(this);
-        componentManager.render(component);
-    }
-
-    private void cancel() {
-        setResult(RESULT_CANCELED);
-        finish();
-    }
-
-    @Override
-    public void dispatch(final Action action) {
-        if (action instanceof PaymentPluginProcessorResultAction) {
-            final PluginPayment pluginResult = ((PaymentPluginProcessorResultAction) action).getPluginPaymentResult();
-            pluginResult.process(this);
-        } else {
-            throw new UnsupportedOperationException("Not action with payment processor plugin");
+        if (fragmentBundle != null) {
+            fragment.setArguments(fragmentBundle);
         }
+
+        getSupportFragmentManager().beginTransaction()
+            .replace(R.id.main_container, fragment, PROCESSOR_FRAGMENT)
+            .commit();
+    }
+
+    private PaymentResult toPaymentResult(@NonNull final GenericPayment genericPayment) {
+
+        final Payment payment = new Payment();
+        payment.setId(genericPayment.paymentId);
+        payment.setPaymentMethodId(genericPayment.paymentData.getPaymentMethod().getId());
+        payment.setPaymentTypeId(PaymentTypes.PLUGIN);
+        payment.setStatus(genericPayment.status);
+        payment.setStatusDetail(genericPayment.statusDetail);
+
+        return new PaymentResult.Builder()
+            .setPaymentData(genericPayment.paymentData)
+            .setPaymentId(payment.getId())
+            .setPaymentStatus(payment.getStatus())
+            .setPaymentStatusDetail(payment.getStatusDetail())
+            .build();
     }
 
     @Override
@@ -93,20 +102,24 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity impl
         finish();
     }
 
-    private PaymentResult toPaymentResult(@NonNull final GenericPayment genericPayment) {
+    @Override
+    public void onPaymentFinished(@NonNull final PluginPayment payment) {
+        payment.process(this);
+    }
 
-        final Payment payment = new Payment();
-        payment.setId(genericPayment.paymentId);
-        payment.setPaymentMethodId(genericPayment.paymentData.getPaymentMethod().getId());
-        payment.setPaymentTypeId(PaymentTypes.PLUGIN);
-        payment.setStatus(genericPayment.status);
-        payment.setStatusDetail(genericPayment.statusDetail);
+    @Override
+    public void onPaymentFinished(@NonNull final GenericPayment genericPayment) {
+        process(genericPayment);
+    }
 
-        return new PaymentResult.Builder()
-            .setPaymentData(genericPayment.paymentData)
-            .setPaymentId(payment.getId())
-            .setPaymentStatus(payment.getStatus())
-            .setPaymentStatusDetail(payment.getStatusDetail())
-            .build();
+    @Override
+    public void onPaymentFinished(@NonNull final BusinessPayment businessPayment) {
+        process(businessPayment);
+    }
+
+    @Override
+    public void cancelPayment() {
+        setResult(RESULT_CANCELED);
+        finish();
     }
 }
