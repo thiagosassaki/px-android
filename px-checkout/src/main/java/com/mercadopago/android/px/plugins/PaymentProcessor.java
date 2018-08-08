@@ -12,7 +12,7 @@ import com.mercadopago.android.px.preferences.CheckoutPreference;
 
 public abstract class PaymentProcessor {
 
-    /* default */ static final class CheckoutData {
+    public static final class CheckoutData {
 
         public final PaymentData paymentData;
         public final CheckoutPreference checkoutPreference;
