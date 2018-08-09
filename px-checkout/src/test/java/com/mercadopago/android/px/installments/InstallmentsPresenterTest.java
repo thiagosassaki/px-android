@@ -58,6 +58,7 @@ public class InstallmentsPresenterTest {
     @Before
     public void setUp() {
         //Simulation no charge - no discount
+        when(checkoutPreference.getSite()).thenReturn(Sites.ARGENTINA);
         when(configuration.getCheckoutPreference()).thenReturn(checkoutPreference);
         when(amountRepository.getAmountToPay()).thenReturn(new BigDecimal(1000));
         presenter = new InstallmentsPresenter(amountRepository, configuration, userSelectionRepository,
@@ -253,10 +254,10 @@ public class InstallmentsPresenterTest {
     @Test
     public void whenPayerCostsSizeIsOneThenFinishWithResult() {
 
-        PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-        Issuer issuer = Issuers.getIssuerMLA();
-        PaymentPreference paymentPreference = new PaymentPreference();
-        List<PayerCost> payerCosts = PayerCosts.getOnePayerCostList();
+        final PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
+        final Issuer issuer = Issuers.getIssuerMLA();
+        final PaymentPreference paymentPreference = new PaymentPreference();
+        final List<PayerCost> payerCosts = PayerCosts.getOnePayerCostList();
         presenter.setPaymentPreference(paymentPreference);
         presenter.setCardInfo(getCardInfo());
         presenter.setPayerCosts(payerCosts);
@@ -354,7 +355,6 @@ public class InstallmentsPresenterTest {
         PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
         Issuer issuer = Issuers.getIssuers().get(0);
         when(checkoutPreference.getSite()).thenReturn(Sites.COLOMBIA);
-        when(checkoutPreference.getSiteId()).thenReturn(Sites.COLOMBIA.getId());
         presenter.setCardInfo(getCardInfo());
         presenter.setPaymentMethod(paymentMethod);
         presenter.setIssuer(issuer);

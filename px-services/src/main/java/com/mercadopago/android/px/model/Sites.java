@@ -1,8 +1,12 @@
 package com.mercadopago.android.px.model;
 
 import android.support.annotation.NonNull;
+import java.util.Arrays;
 
-public class Sites {
+/**
+ * Utility class for sites.
+ */
+public final class Sites {
 
     public static final Site ARGENTINA =
         new Site("MLA", "ARS", "https://www.mercadopago.com.ar/ayuda/terminos-y-condiciones_299");
@@ -20,31 +24,34 @@ public class Sites {
     public static final Site PERU =
         new Site("MPE", "PEN", "https://www.mercadopago.com.pe/ayuda/terminos-condiciones-uso_2483");
 
+    private static final Iterable<Site> SITES = Arrays.asList(
+        ARGENTINA,
+        BRASIL,
+        CHILE,
+        MEXICO,
+        COLOMBIA,
+        VENEZUELA,
+        USA,
+        PERU
+    );
+
     private Sites() {
     }
 
+    /**
+     * Given a site id returns a {@link Site} or throws.
+     *
+     * @param siteId searched site id.
+     * @return site
+     * @throws IllegalArgumentException if it does not exists.
+     */
     @NonNull
-    public static Site getById(@NonNull final String siteId) {
-        Site site;
-        if (Sites.ARGENTINA.getId().equals(siteId)) {
-            site = Sites.ARGENTINA;
-        } else if (Sites.BRASIL.getId().equals(siteId)) {
-            site = Sites.BRASIL;
-        } else if (Sites.CHILE.getId().equals(siteId)) {
-            site = Sites.CHILE;
-        } else if (Sites.MEXICO.getId().equals(siteId)) {
-            site = Sites.MEXICO;
-        } else if (Sites.COLOMBIA.getId().equals(siteId)) {
-            site = Sites.COLOMBIA;
-        } else if (Sites.VENEZUELA.getId().equals(siteId)) {
-            site = Sites.VENEZUELA;
-        } else if (Sites.USA.getId().equals(siteId)) {
-            site = Sites.USA;
-        } else if (Sites.PERU.getId().equals(siteId)) {
-            site = Sites.PERU;
-        } else {
-            throw new IllegalArgumentException("There is no site for that id");
+    public static Site getById(@NonNull final String siteId) throws IllegalArgumentException {
+        for (final Site site : SITES) {
+            if (site.getId().equals(siteId)) {
+                return site;
+            }
         }
-        return site;
+        throw new IllegalArgumentException("There is no site for that id");
     }
 }

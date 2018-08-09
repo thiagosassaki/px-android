@@ -2,7 +2,6 @@ package com.mercadopago.android.px.paymentresult.props;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.model.Instruction;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentResult;
@@ -16,18 +15,20 @@ public class PaymentResultProps {
     public final boolean loading;
     public final String processingMode;
     public final String currencyId;
+    @NonNull private final PaymentResultScreenPreference paymentResultScreenPreferences;
 
-    public PaymentResultProps(@NonNull final Builder builder) {
+    /* default */ PaymentResultProps(@NonNull final Builder builder) {
         paymentResult = builder.paymentResult;
         headerMode = builder.headerMode;
         instruction = builder.instruction;
         loading = builder.loading;
         processingMode = builder.processingMode;
         currencyId = builder.currencyId;
+        paymentResultScreenPreferences = builder.paymentResultScreenPreference;
     }
 
     public Builder toBuilder() {
-        return new Builder()
+        return new Builder(paymentResultScreenPreferences)
             .setCurrencyId(currencyId)
             .setPaymentResult(paymentResult)
             .setHeaderMode(headerMode)
@@ -37,16 +38,16 @@ public class PaymentResultProps {
     }
 
     public boolean hasCustomizedTitle() {
-        final PaymentResultScreenPreference preferences = CheckoutStore.getInstance()
-            .getPaymentResultScreenPreference();
-        if (preferences != null) {
-            if (isApprovedTitleValidState()) {
-                return preferences.getApprovedTitle() != null && !preferences.getApprovedTitle().isEmpty();
-            } else if (isPendingTitleValidState()) {
-                return preferences.getPendingTitle() != null && !preferences.getPendingTitle().isEmpty();
-            } else if (isRejectedTitleValidState()) {
-                return preferences.getRejectedTitle() != null && !preferences.getRejectedTitle().isEmpty();
-            }
+
+        if (isApprovedTitleValidState()) {
+            return paymentResultScreenPreferences.getApprovedTitle() != null &&
+                !paymentResultScreenPreferences.getApprovedTitle().isEmpty();
+        } else if (isPendingTitleValidState()) {
+            return paymentResultScreenPreferences.getPendingTitle() != null &&
+                !paymentResultScreenPreferences.getPendingTitle().isEmpty();
+        } else if (isRejectedTitleValidState()) {
+            return paymentResultScreenPreferences.getRejectedTitle() != null &&
+                !paymentResultScreenPreferences.getRejectedTitle().isEmpty();
         }
         return false;
     }
@@ -59,16 +60,15 @@ public class PaymentResultProps {
     }
 
     public String getPreferenceTitle() {
-        PaymentResultScreenPreference preferences = CheckoutStore.getInstance().getPaymentResultScreenPreference();
-        if (preferences != null) {
-            if (isApprovedTitleValidState()) {
-                return preferences.getApprovedTitle();
-            } else if (isPendingTitleValidState()) {
-                return preferences.getPendingTitle();
-            } else if (isRejectedTitleValidState()) {
-                return preferences.getRejectedTitle();
-            }
+
+        if (isApprovedTitleValidState()) {
+            return paymentResultScreenPreferences.getApprovedTitle();
+        } else if (isPendingTitleValidState()) {
+            return paymentResultScreenPreferences.getPendingTitle();
+        } else if (isRejectedTitleValidState()) {
+            return paymentResultScreenPreferences.getRejectedTitle();
         }
+
         return "";
     }
 
@@ -96,26 +96,23 @@ public class PaymentResultProps {
     }
 
     public boolean hasCustomizedLabel() {
-        final PaymentResultScreenPreference preferences =
-            CheckoutStore.getInstance().getPaymentResultScreenPreference();
-        if (preferences != null) {
-            if (isApprovedLabelValidState()) {
-                return preferences.getApprovedLabelText() != null && !preferences.getApprovedLabelText().isEmpty();
-            } else if (isRejectedLabelValidState()) {
-                return !preferences.isRejectedLabelTextEnabled();
-            }
+
+        if (isApprovedLabelValidState()) {
+            return paymentResultScreenPreferences.getApprovedLabelText() != null &&
+                !paymentResultScreenPreferences.getApprovedLabelText().isEmpty();
+        } else if (isRejectedLabelValidState()) {
+            return !paymentResultScreenPreferences.isRejectedLabelTextEnabled();
         }
+
         return false;
     }
 
     public String getPreferenceLabel() {
-        PaymentResultScreenPreference preferences = CheckoutStore.getInstance().getPaymentResultScreenPreference();
-        if (preferences != null) {
-            if (isApprovedLabelValidState()) {
-                return preferences.getApprovedLabelText();
-            } else if (isRejectedLabelValidState() && !preferences.isRejectedLabelTextEnabled()) {
-                return "";
-            }
+
+        if (isApprovedLabelValidState()) {
+            return paymentResultScreenPreferences.getApprovedLabelText();
+        } else if (isRejectedLabelValidState() && !paymentResultScreenPreferences.isRejectedLabelTextEnabled()) {
+            return "";
         }
         return "";
     }
@@ -129,17 +126,16 @@ public class PaymentResultProps {
     }
 
     public boolean hasCustomizedBadge() {
-        PaymentResultScreenPreference preferences = CheckoutStore.getInstance().getPaymentResultScreenPreference();
-        if (preferences != null && isStatusApproved()) {
-            return preferences.getApprovedBadge() != null && !preferences.getApprovedBadge().isEmpty();
+        if (isStatusApproved()) {
+            return paymentResultScreenPreferences.getApprovedBadge() != null &&
+                !paymentResultScreenPreferences.getApprovedBadge().isEmpty();
         }
         return false;
     }
 
     public String getPreferenceBadge() {
-        PaymentResultScreenPreference preferences = CheckoutStore.getInstance().getPaymentResultScreenPreference();
-        if (preferences != null && isStatusApproved()) {
-            return preferences.getApprovedBadge();
+        if (isStatusApproved()) {
+            return paymentResultScreenPreferences.getApprovedBadge();
         }
         return "";
     }
@@ -156,14 +152,24 @@ public class PaymentResultProps {
         }
     }
 
+    @NonNull
+    public PaymentResultScreenPreference getPaymentResultScreenPreference() {
+        return paymentResultScreenPreferences;
+    }
+
     public static class Builder {
 
-        private PaymentResult paymentResult;
-        private Instruction instruction;
-        private String headerMode = HeaderProps.HEADER_MODE_WRAP;
-        private boolean loading = true;
-        private String processingMode;
-        private String currencyId;
+        /* default */ @NonNull final PaymentResultScreenPreference paymentResultScreenPreference;
+        /* default */ PaymentResult paymentResult;
+        /* default */ Instruction instruction;
+        /* default */ String headerMode = HeaderProps.HEADER_MODE_WRAP;
+        /* default */ boolean loading = true;
+        /* default */ String processingMode;
+        /* default */ String currencyId;
+
+        public Builder(@NonNull final PaymentResultScreenPreference paymentResultScreenPreference) {
+            this.paymentResultScreenPreference = paymentResultScreenPreference;
+        }
 
         public Builder setPaymentResult(@NonNull final PaymentResult paymentResult) {
             this.paymentResult = paymentResult;

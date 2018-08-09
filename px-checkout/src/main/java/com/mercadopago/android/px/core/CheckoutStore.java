@@ -9,8 +9,6 @@ import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.plugins.DataInitializationTask;
 import com.mercadopago.android.px.plugins.PaymentMethodPlugin;
 import com.mercadopago.android.px.plugins.PaymentProcessor;
-import com.mercadopago.android.px.preferences.PaymentResultScreenPreference;
-import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
 import com.mercadopago.android.px.util.TextUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,11 +21,6 @@ import static com.mercadopago.android.px.plugins.PaymentProcessor.PAYMENT_PROCES
 public final class CheckoutStore {
 
     private static final CheckoutStore INSTANCE = new CheckoutStore();
-
-    //Preferences
-    private PaymentResultScreenPreference paymentResultScreenPreference;
-
-    private ReviewAndConfirmPreferences reviewAndConfirmPreferences;
 
     //Config
     private DataInitializationTask dataInitializationTask;
@@ -51,19 +44,6 @@ public final class CheckoutStore {
 
     public static CheckoutStore getInstance() {
         return INSTANCE;
-    }
-
-    public PaymentResultScreenPreference getPaymentResultScreenPreference() {
-        return paymentResultScreenPreference;
-    }
-
-    @NonNull
-    public ReviewAndConfirmPreferences getReviewAndConfirmPreferences() {
-        return reviewAndConfirmPreferences;
-    }
-
-    public void setPaymentResultScreenPreference(final PaymentResultScreenPreference paymentResultScreenPreference) {
-        this.paymentResultScreenPreference = paymentResultScreenPreference;
     }
 
     public DataInitializationTask getDataInitializationTask() {
@@ -197,10 +177,6 @@ public final class CheckoutStore {
 
     public void setPaymentResult(PaymentResult paymentResult) {
         this.paymentResult = paymentResult;
-    }
-
-    public void setReviewAndConfirmPreferences(final ReviewAndConfirmPreferences reviewAndConfirmPreferences) {
-        this.reviewAndConfirmPreferences = reviewAndConfirmPreferences;
     }
 
     public void reset() {

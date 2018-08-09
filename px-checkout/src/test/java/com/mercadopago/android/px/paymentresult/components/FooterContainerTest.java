@@ -4,7 +4,6 @@ import com.mercadopago.android.px.components.ActionDispatcher;
 import com.mercadopago.android.px.components.Footer;
 import com.mercadopago.android.px.components.NextAction;
 import com.mercadopago.android.px.components.RecoverPaymentAction;
-import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.mocks.PaymentResults;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.paymentresult.PaymentResultProvider;
@@ -33,6 +32,8 @@ public class FooterContainerTest {
 
     private ActionDispatcher dispatcher;
     private PaymentResultProvider provider;
+    private PaymentResultScreenPreference paymentResultScreenPreference =
+        new PaymentResultScreenPreference.Builder().build();
 
     @Before
     public void setup() {
@@ -51,7 +52,7 @@ public class FooterContainerTest {
     public void whenAskForFooterIsNotNull() {
         final PaymentResult paymentResult = PaymentResults.getStatusApprovedPaymentResult();
         final FooterContainer footerContainer = new FooterContainer(
-            new FooterContainer.Props(paymentResult), dispatcher, provider);
+            new FooterContainer.Props(paymentResult, paymentResultScreenPreference), dispatcher, provider);
         Footer footer = footerContainer.getFooter();
         assertNotNull(footer);
     }
@@ -61,7 +62,7 @@ public class FooterContainerTest {
 
         final PaymentResult paymentResult = PaymentResults.getStatusApprovedPaymentResult();
         final FooterContainer footerContainer = new FooterContainer(
-            new FooterContainer.Props(paymentResult), dispatcher, provider);
+            new FooterContainer.Props(paymentResult, paymentResultScreenPreference), dispatcher, provider);
 
         final Footer.Props props = footerContainer.getFooterProps();
 
@@ -78,14 +79,10 @@ public class FooterContainerTest {
 
         final PaymentResult paymentResult = PaymentResults.getStatusApprovedPaymentResult();
 
-        final PaymentResultScreenPreference preference = new PaymentResultScreenPreference.Builder()
-            .setExitButtonTitle(EXIT_TITLE)
-            .build();
-
-        CheckoutStore.getInstance().setPaymentResultScreenPreference(preference);
-
         final FooterContainer footerContainer = new FooterContainer(
-            new FooterContainer.Props(paymentResult), dispatcher, provider);
+            new FooterContainer.Props(paymentResult, new PaymentResultScreenPreference.Builder()
+                .setExitButtonTitle(EXIT_TITLE)
+                .build()), dispatcher, provider);
 
         final Footer.Props props = footerContainer.getFooterProps();
 
@@ -99,12 +96,10 @@ public class FooterContainerTest {
 
     @Test
     public void testRejectedBadFilledDatePaymentResult() {
-        //TODO remove
-        CheckoutStore.getInstance()
-            .setPaymentResultScreenPreference(new PaymentResultScreenPreference.Builder().build());
+
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedBadFilledDatePaymentResult();
         final FooterContainer footerContainer = new FooterContainer(
-            new FooterContainer.Props(paymentResult), dispatcher, provider);
+            new FooterContainer.Props(paymentResult, paymentResultScreenPreference), dispatcher, provider);
 
         final Footer.Props props = footerContainer.getFooterProps();
 
@@ -125,10 +120,7 @@ public class FooterContainerTest {
 
         final PaymentResult paymentResult = PaymentResults.getStatusCallForAuthPaymentResult();
         final FooterContainer footerContainer = new FooterContainer(
-            new FooterContainer.Props(paymentResult), dispatcher, provider);
-
-        CheckoutStore.getInstance().setPaymentResultScreenPreference(new PaymentResultScreenPreference.Builder().build());
-
+            new FooterContainer.Props(paymentResult, paymentResultScreenPreference), dispatcher, provider);
         final Footer.Props props = footerContainer.getFooterProps();
 
         Assert.assertNotNull(props);
@@ -148,9 +140,7 @@ public class FooterContainerTest {
 
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedOtherPaymentResult();
         final FooterContainer footerContainer = new FooterContainer(
-            new FooterContainer.Props(paymentResult), dispatcher, provider);
-
-        CheckoutStore.getInstance().setPaymentResultScreenPreference(new PaymentResultScreenPreference.Builder().build());
+            new FooterContainer.Props(paymentResult, paymentResultScreenPreference), dispatcher, provider);
 
         final Footer.Props props = footerContainer.getFooterProps();
 
@@ -170,14 +160,11 @@ public class FooterContainerTest {
     public void testRejectedDisableSecondaryExitButton() {
 
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedOtherPaymentResult();
-        final PaymentResultScreenPreference preference = new PaymentResultScreenPreference.Builder()
-            .disableRejectedSecondaryExitButton()
-            .build();
-
-        CheckoutStore.getInstance().setPaymentResultScreenPreference(preference);
 
         final FooterContainer footerContainer = new FooterContainer(
-            new FooterContainer.Props(paymentResult), dispatcher, provider);
+            new FooterContainer.Props(paymentResult, new PaymentResultScreenPreference.Builder()
+                .disableRejectedSecondaryExitButton()
+                .build()), dispatcher, provider);
 
         final Footer.Props props = footerContainer.getFooterProps();
 

@@ -10,7 +10,6 @@ import com.mercadopago.android.px.components.NextAction;
 import com.mercadopago.android.px.components.RecoverPaymentAction;
 import com.mercadopago.android.px.components.RendererFactory;
 import com.mercadopago.android.px.components.ResultCodeAction;
-import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.paymentresult.PaymentResultProvider;
@@ -41,47 +40,46 @@ public class FooterContainer extends Component<FooterContainer.Props, Void> {
     @VisibleForTesting
     Footer.Props getFooterProps() {
 
-        final PaymentResultScreenPreference preferences = CheckoutStore.getInstance()
-            .getPaymentResultScreenPreference();
+        final PaymentResultScreenPreference paymentResultScreenPreference = props.paymentResultScreenPreference;
 
         Button.Props buttonAction = null;
         Button.Props linkAction = null;
 
         if (props.paymentResult.isStatusApproved()) {
 
-            if (!preferences.isCongratsSecondaryExitButtonEnabled() ||
-                preferences.getSecondaryCongratsExitButtonTitle() == null
-                || preferences.getSecondaryCongratsExitResultCode() == null) {
+            if (!paymentResultScreenPreference.isCongratsSecondaryExitButtonEnabled() ||
+                paymentResultScreenPreference.getSecondaryCongratsExitButtonTitle() == null
+                || paymentResultScreenPreference.getSecondaryCongratsExitResultCode() == null) {
                 buttonAction = null;
             } else {
                 buttonAction = new Button.Props(
-                    preferences.getSecondaryCongratsExitButtonTitle(),
-                    new ResultCodeAction(preferences.getSecondaryCongratsExitResultCode())
+                    paymentResultScreenPreference.getSecondaryCongratsExitButtonTitle(),
+                    new ResultCodeAction(paymentResultScreenPreference.getSecondaryCongratsExitResultCode())
                 );
             }
 
-            if (TextUtils.isEmpty(preferences.getExitButtonTitle())) {
+            if (TextUtils.isEmpty(paymentResultScreenPreference.getExitButtonTitle())) {
                 linkAction = new Button.Props(resourcesProvider.getContinueShopping(), new NextAction());
             } else {
-                linkAction = new Button.Props(preferences.getExitButtonTitle(), new NextAction());
+                linkAction = new Button.Props(paymentResultScreenPreference.getExitButtonTitle(), new NextAction());
             }
         } else if (props.paymentResult.isStatusPending() || props.paymentResult.isStatusInProcess()) {
 
-            if (!preferences.isPendingSecondaryExitButtonEnabled() ||
-                preferences.getSecondaryPendingExitButtonTitle() == null
-                || preferences.getSecondaryPendingExitResultCode() == null) {
+            if (!paymentResultScreenPreference.isPendingSecondaryExitButtonEnabled() ||
+                paymentResultScreenPreference.getSecondaryPendingExitButtonTitle() == null
+                || paymentResultScreenPreference.getSecondaryPendingExitResultCode() == null) {
                 buttonAction = null;
             } else {
                 buttonAction = new Button.Props(
-                    preferences.getSecondaryPendingExitButtonTitle(),
-                    new ResultCodeAction(preferences.getSecondaryPendingExitResultCode())
+                    paymentResultScreenPreference.getSecondaryPendingExitButtonTitle(),
+                    new ResultCodeAction(paymentResultScreenPreference.getSecondaryPendingExitResultCode())
                 );
             }
 
-            if (TextUtils.isEmpty(preferences.getExitButtonTitle())) {
+            if (TextUtils.isEmpty(paymentResultScreenPreference.getExitButtonTitle())) {
                 linkAction = new Button.Props(resourcesProvider.getContinueShopping(), new NextAction());
             } else {
-                linkAction = new Button.Props(preferences.getExitButtonTitle(), new NextAction());
+                linkAction = new Button.Props(paymentResultScreenPreference.getExitButtonTitle(), new NextAction());
             }
         } else if (props.paymentResult.isStatusRejected()) {
 
@@ -138,7 +136,7 @@ public class FooterContainer extends Component<FooterContainer.Props, Void> {
             }
 
             // Remove the button by user preference
-            if (!preferences.isRejectedSecondaryExitButtonEnabled()) {
+            if (!paymentResultScreenPreference.isRejectedSecondaryExitButtonEnabled()) {
                 buttonAction = null;
             }
         }
@@ -151,9 +149,12 @@ public class FooterContainer extends Component<FooterContainer.Props, Void> {
     public static class Props {
 
         public final PaymentResult paymentResult;
+        public final PaymentResultScreenPreference paymentResultScreenPreference;
 
-        public Props(PaymentResult paymentResult) {
+        public Props(PaymentResult paymentResult,
+            final PaymentResultScreenPreference paymentResultScreenPreference) {
             this.paymentResult = paymentResult;
+            this.paymentResultScreenPreference = paymentResultScreenPreference;
         }
     }
 }

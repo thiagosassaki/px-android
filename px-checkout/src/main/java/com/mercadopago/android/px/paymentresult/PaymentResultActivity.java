@@ -11,9 +11,10 @@ import com.mercadopago.android.px.components.LoadingComponent;
 import com.mercadopago.android.px.components.LoadingRenderer;
 import com.mercadopago.android.px.components.RendererFactory;
 import com.mercadopago.android.px.core.MercadoPagoComponents;
-import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.internal.di.Session;
+import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.PaymentResult;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.paymentresult.components.AccreditationComment;
 import com.mercadopago.android.px.paymentresult.components.AccreditationCommentRenderer;
 import com.mercadopago.android.px.paymentresult.components.AccreditationTime;
@@ -43,6 +44,7 @@ import com.mercadopago.android.px.paymentresult.components.InstructionsSubtitleR
 import com.mercadopago.android.px.paymentresult.components.InstructionsTertiaryInfo;
 import com.mercadopago.android.px.paymentresult.components.InstructionsTertiaryInfoRenderer;
 import com.mercadopago.android.px.paymentresult.components.PaymentResultContainer;
+import com.mercadopago.android.px.paymentresult.props.PaymentResultProps;
 import com.mercadopago.android.px.preferences.PaymentResultScreenPreference;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.tracker.MPTrackingContext;
@@ -56,7 +58,7 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
 
 
     public static final String CONGRATS_DISPLAY_BUNDLE = "congratsDisplay";
-    public static final String PAYMENT_RESULT_SCREEN_PREFERENCE_BUNDLE = "paymentResultScreenPreference";
+
     public static final String PAYMENT_RESULT_BUNDLE = "paymentResult";
     public static final String AMOUNT_BUNDLE = "amount";
 
@@ -64,15 +66,22 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
 
     private PaymentResultPresenter presenter;
     private Integer congratsDisplay;
-    private PaymentResultScreenPreference paymentResultScreenPreference;
+
     private PaymentResultPropsMutator mutator;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mutator = new PaymentResultPropsMutator();
-        presenter = new PaymentResultPresenter(this, Session.getSession(this).getConfigurationModule().getPaymentSettings());
+        final PaymentSettingRepository paymentSettings =
+            Session.getSession(this).getConfigurationModule().getPaymentSettings();
+        final PaymentResultScreenPreference paymentResultScreenPreference =
+            paymentSettings.getAdvancedConfiguration().getPaymentResultScreenPreference();
+        presenter = new PaymentResultPresenter(this,
+            paymentSettings);
+
+        mutator = new PaymentResultPropsMutator(new PaymentResultProps.Builder(
+            paymentResultScreenPreference).build());
 
         getActivityParameters();
 
@@ -98,10 +107,12 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
         RendererFactory.register(InstructionsAction.class, InstructionsActionRenderer.class);
         RendererFactory.register(BodyError.class, BodyErrorRenderer.class);
 
-        final Component root = new PaymentResultContainer(componentManager, paymentResultProvider);
+        final Component root = new PaymentResultContainer(componentManager,
+            new PaymentResultProps.Builder(
+                paymentResultScreenPreference).build(),
+            paymentResultProvider);
         componentManager.setActionsListener(presenter);
         componentManager.setComponent(root);
-
         mutator.setPropsListener(componentManager);
         mutator.renderDefaultProps();
     }
@@ -136,8 +147,6 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
         }
 
         outState.putInt(CONGRATS_DISPLAY_BUNDLE, congratsDisplay);
-        outState.putString(PAYMENT_RESULT_SCREEN_PREFERENCE_BUNDLE,
-            JsonUtil.getInstance().toJson(paymentResultScreenPreference));
     }
 
     @Override
@@ -149,10 +158,6 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
             JsonUtil.getInstance().fromJson(savedInstanceState.getString(AMOUNT_BUNDLE), BigDecimal.class);
 
         congratsDisplay = savedInstanceState.getInt(CONGRATS_DISPLAY_BUNDLE, -1);
-
-        paymentResultScreenPreference = JsonUtil.getInstance()
-            .fromJson(savedInstanceState.getString(PAYMENT_RESULT_SCREEN_PREFERENCE_BUNDLE),
-                PaymentResultScreenPreference.class);
 
         presenter = new PaymentResultPresenter(this,
             Session.getSession(this).getConfigurationModule().getPaymentSettings());
@@ -179,9 +184,6 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
         presenter.setPaymentResult(paymentResult);
 
         congratsDisplay = intent.getIntExtra("congratsDisplay", -1);
-        paymentResultScreenPreference = JsonUtil.getInstance()
-            .fromJson(intent.getExtras().getString("paymentResultScreenPreference"),
-                PaymentResultScreenPreference.class);
     }
 
     @Override

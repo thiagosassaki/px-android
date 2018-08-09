@@ -3,7 +3,6 @@ package com.mercadopago.android.px.onetap.components;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.components.Action;
 import com.mercadopago.android.px.components.Button;
@@ -19,12 +18,11 @@ import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.onetap.OneTap;
 import com.mercadopago.android.px.review_and_confirm.models.LineSeparatorType;
+import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
 import com.mercadopago.android.px.review_and_confirm.models.TermsAndConditionsModel;
-import com.mercadopago.android.px.viewmodel.OneTapModel;
 import com.mercadopago.android.px.util.ViewUtils;
-
+import com.mercadopago.android.px.viewmodel.OneTapModel;
 import java.util.List;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -52,9 +50,13 @@ public class OneTapContainer extends CompactComponent<OneTapModel, OneTap.Action
     }
 
     private void addItem(final ViewGroup parent, final List<Item> items) {
+        final ReviewAndConfirmPreferences reviewAndConfirmPreferences =
+            Session.getSession(parent.getContext()).getConfigurationModule().getPaymentSettings()
+                .getAdvancedConfiguration().getReviewAndConfirmPreferences();
+
+        final Integer collectorIcon = reviewAndConfirmPreferences.getCollectorIcon();
         final String defaultMultipleTitle = parent.getContext().getString(R.string.px_review_summary_products);
-        final int icon =
-                props.getCollectorIcon() == null ? R.drawable.px_review_item_default : props.getCollectorIcon();
+        final int icon = collectorIcon == null ? R.drawable.px_review_item_default : collectorIcon;
         final String itemsTitle = com.mercadopago.android.px.model.Item
                 .getItemsTitle(items, defaultMultipleTitle);
         final View render = new CollapsedItem(new CollapsedItem.Props(icon, itemsTitle)).render(parent);

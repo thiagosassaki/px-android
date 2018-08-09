@@ -118,7 +118,7 @@ public class GroupsService implements GroupsRepository {
                 excludedPaymentTypesAppended,
                 excludedPaymentMethodsAppended,
                 groupsIntent,
-                checkoutPreference.getSiteId(),
+                checkoutPreference.getSite().getId(),
                 PAYMENT_METHODS_OPTIONS_API_VERSION,
                 ProcessingModes.AGGREGATOR,
                 cardsWithEscAppended,

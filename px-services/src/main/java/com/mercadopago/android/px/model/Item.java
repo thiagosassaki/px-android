@@ -106,7 +106,7 @@ public class Item implements Serializable {
         return unitPrice;
     }
 
-    public void setUnitPrice(BigDecimal unitPrice) {
+    public void setUnitPrice(final BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
     }
 
@@ -128,16 +128,16 @@ public class Item implements Serializable {
 
     private static boolean haveAllSameCurrency(@Size(min = 1) @NonNull final List<Item> items) {
         boolean areAllTheSameCurrency = true;
-        String currencyId = items.get(0).getCurrencyId();
+        final String currencyId = items.get(0).getCurrencyId();
         for (int i = 1; i < items.size(); i++) {
             areAllTheSameCurrency = areAllTheSameCurrency && currencyId.equals(items.get(i).getCurrencyId());
         }
         return areAllTheSameCurrency;
     }
 
-    private static boolean eachIsValid(@NonNull final List<Item> items) {
+    private static boolean eachIsValid(@NonNull final Iterable<Item> items) {
         boolean areAllValid = true;
-        for (Item item : items) {
+        for (final Item item : items) {
             areAllValid = areAllValid && item.isValid();
         }
         return areAllValid;
@@ -147,15 +147,15 @@ public class Item implements Serializable {
         return !items.isEmpty() && eachIsValid(items) && haveAllSameCurrency(items);
     }
 
-    public static BigDecimal getTotalAmountWith(@NonNull final List<Item> items) {
+    public static BigDecimal getTotalAmountWith(@NonNull final Iterable<Item> items) {
         BigDecimal totalAmount = BigDecimal.ZERO;
-        for (Item item : items) {
+        for (final Item item : items) {
             totalAmount = totalAmount.add(getItemTotalAmount(item));
         }
         return totalAmount;
     }
 
-    public static String getItemsTitle(@NonNull @Size(min = 1) List<Item> items, final String multipleDefault) {
+    public static String getItemsTitle(@NonNull @Size(min = 1) final List<Item> items, final String multipleDefault) {
         return items.size() > 1 ? multipleDefault : items.get(0).getTitle();
     }
 }

@@ -18,8 +18,8 @@ import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.components.Action;
 import com.mercadopago.android.px.components.ActionDispatcher;
 import com.mercadopago.android.px.components.ComponentManager;
-import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.core.MercadoPagoComponents;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.plugins.model.ExitAction;
 import com.mercadopago.android.px.review_and_confirm.components.ReviewAndConfirmContainer;
 import com.mercadopago.android.px.review_and_confirm.components.actions.CancelPaymentAction;
@@ -159,11 +159,13 @@ public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity impl
     }
 
     private void initContent(final ViewGroup mainContent) {
-        ReviewAndConfirmContainer.Props props = getActivityParameters();
+        final ReviewAndConfirmContainer.Props props = getActivityParameters();
         final ComponentManager manager = new ComponentManager(this);
 
-        ReviewAndConfirmPreferences reviewAndConfirmPreferences =
-            CheckoutStore.getInstance().getReviewAndConfirmPreferences();
+        final ReviewAndConfirmPreferences reviewAndConfirmPreferences =
+            Session.getSession(this).getConfigurationModule().getPaymentSettings()
+                .getAdvancedConfiguration().getReviewAndConfirmPreferences();
+
         final ReviewAndConfirmContainer container =
             new ReviewAndConfirmContainer(props, this, new SummaryProviderImpl(this, reviewAndConfirmPreferences));
 
@@ -182,13 +184,17 @@ public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity impl
             final ItemsModel itemsModel = extras.getParcelable(EXTRA_ITEMS);
             final TermsAndConditionsModel discountTermsAndConditions =
                 extras.getParcelable(EXTRA_DISCOUNT_TERMS_AND_CONDITIONS);
-            final ReviewAndConfirmPreferences preferences = CheckoutStore
-                .getInstance()
-                .getReviewAndConfirmPreferences();
+
+            final ReviewAndConfirmPreferences reviewAndConfirmPreferences =
+                Session.getSession(this).getConfigurationModule().getPaymentSettings()
+                    .getAdvancedConfiguration().getReviewAndConfirmPreferences();
 
             Tracker.trackReviewAndConfirmScreen(getApplicationContext(), getIntent().getStringExtra(EXTRA_PUBLIC_KEY),
                 paymentModel);
-            return new ReviewAndConfirmContainer.Props(termsAndConditionsModel, paymentModel, summaryModel, preferences,
+            return new ReviewAndConfirmContainer.Props(termsAndConditionsModel,
+                paymentModel,
+                summaryModel,
+                reviewAndConfirmPreferences,
                 itemsModel, discountTermsAndConditions);
         }
 
