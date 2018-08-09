@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.internal.di.ConfigurationModule;
@@ -42,7 +44,10 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.px_activity_payment_processor);
+        final FrameLayout frameLayout = new FrameLayout(this);
+        frameLayout.setId(R.id.px_main_container);
+        setContentView(frameLayout,
+            new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         final CheckoutStore store = CheckoutStore.getInstance();
         final Session session = Session.getSession(getApplicationContext());
@@ -65,7 +70,7 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity
         }
 
         getSupportFragmentManager().beginTransaction()
-            .replace(R.id.main_container, fragment, PROCESSOR_FRAGMENT)
+            .replace(R.id.px_main_container, fragment, PROCESSOR_FRAGMENT)
             .commit();
     }
 

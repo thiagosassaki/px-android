@@ -9,15 +9,13 @@ import com.mercadopago.android.px.plugins.model.PaymentMethodInfo;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.io.Serializable;
 
-import static com.mercadopago.android.px.plugins.PaymentMethodPlugin.PluginPosition.TOP;
+public interface PaymentMethodPlugin extends Serializable {
 
-public abstract class PaymentMethodPlugin implements Serializable {
-
-    public enum PluginPosition {
+    enum PluginPosition {
         TOP, BOTTOM
     }
 
-    public static final class CheckoutData {
+    /* default */ final class CheckoutData {
         public final PaymentData paymentData;
         public final CheckoutPreference checkoutPreference;
 
@@ -28,14 +26,10 @@ public abstract class PaymentMethodPlugin implements Serializable {
         }
     }
 
-    public PaymentMethodPlugin() {
-        //Constructor needed for serialization.
-    }
-
     /**
      * Init method to be called in a background thread to init this plugin.
      */
-    public abstract void init();
+    void init();
 
     /**
      * This method returns {@link PluginPosition#TOP} or
@@ -44,9 +38,7 @@ public abstract class PaymentMethodPlugin implements Serializable {
      *
      * @return the position where the plugin will be placed
      */
-    public PluginPosition getPluginPosition() {
-        return TOP;
-    }
+    PluginPosition getPluginPosition();
 
     /**
      * Returns the plugin id
@@ -54,7 +46,7 @@ public abstract class PaymentMethodPlugin implements Serializable {
      * @return id
      */
     @NonNull
-    public abstract String getId();
+    String getId();
 
     /**
      * method to know if the plugin should show a view on selection.
@@ -62,7 +54,7 @@ public abstract class PaymentMethodPlugin implements Serializable {
      *
      * @return if it should show view
      */
-    public abstract boolean shouldShowFragmentOnSelection();
+    boolean shouldShowFragmentOnSelection();
 
     /**
      * This method returns the minimum amount of information required
@@ -72,7 +64,7 @@ public abstract class PaymentMethodPlugin implements Serializable {
      * @return PaymentMethodInfo {@link PaymentMethodInfo}
      */
     @NonNull
-    public abstract PaymentMethodInfo getPaymentMethodInfo(@NonNull final Context context);
+    PaymentMethodInfo getPaymentMethodInfo(@NonNull final Context context);
 
     /**
      * This bundle will be attached to the fragment that you expose in
@@ -83,7 +75,7 @@ public abstract class PaymentMethodPlugin implements Serializable {
      * @return fragment.
      */
     @Nullable
-    public abstract Bundle getFragmentBundle(@NonNull final CheckoutData data,
+    Bundle getFragmentBundle(@NonNull final CheckoutData data,
         @NonNull final Context context);
 
     /**
@@ -95,7 +87,7 @@ public abstract class PaymentMethodPlugin implements Serializable {
      * @return plugin fragment
      */
     @Nullable
-    public abstract PaymentMethodPluginFragment getFragment(
+    PaymentMethodPluginFragment getFragment(
         @NonNull final CheckoutData data,
         @NonNull final Context context);
 
@@ -105,5 +97,5 @@ public abstract class PaymentMethodPlugin implements Serializable {
      *
      * @return if the plugin is available to use.
      */
-    public abstract boolean isEnabled();
+    boolean isEnabled();
 }

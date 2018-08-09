@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import com.mercadopago.android.px.BuildConfig;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.CheckoutStore;
@@ -31,7 +33,10 @@ public class PaymentMethodPluginActivity extends AppCompatActivity implements
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.px_activity_payment_method_plugin);
+        final FrameLayout frameLayout = new FrameLayout(this);
+        frameLayout.setId(R.id.px_main_container);
+        setContentView(frameLayout,
+            new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         final Session session = Session.getSession(this);
         final ConfigurationModule configurationModule = session.getConfigurationModule();
@@ -62,7 +67,7 @@ public class PaymentMethodPluginActivity extends AppCompatActivity implements
             final Bundle fragmentBundle = plugin.getFragmentBundle(checkoutData, this);
             fragment.setArguments(fragmentBundle);
             getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_container, fragment, PLUGIN_FRAGMENT)
+                .replace(R.id.px_main_container, fragment, PLUGIN_FRAGMENT)
                 .commit();
         }
 

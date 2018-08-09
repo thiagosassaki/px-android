@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import com.mercadopago.android.px.plugins.model.PaymentMethodInfo;
 import com.mercadopago.example.R;
 
-public class SamplePaymentMethodPlugin extends PaymentMethodPlugin {
+public class SamplePaymentMethodPlugin implements PaymentMethodPlugin {
 
     public SamplePaymentMethodPlugin() {
         super();

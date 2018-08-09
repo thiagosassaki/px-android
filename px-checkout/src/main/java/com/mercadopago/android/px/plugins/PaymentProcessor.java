@@ -9,10 +9,11 @@ import com.mercadopago.android.px.plugins.model.BusinessPayment;
 import com.mercadopago.android.px.plugins.model.GenericPayment;
 import com.mercadopago.android.px.plugins.model.PluginPayment;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
+import java.io.Serializable;
 
-public abstract class PaymentProcessor {
+public interface PaymentProcessor extends Serializable {
 
-    public static final class CheckoutData {
+    /* default */ final class CheckoutData {
 
         public final PaymentData paymentData;
         public final CheckoutPreference checkoutPreference;
@@ -24,7 +25,7 @@ public abstract class PaymentProcessor {
         }
     }
 
-    public interface OnPaymentListener {
+    interface OnPaymentListener {
 
         /**
          * Most generic way to process a payment.
@@ -49,7 +50,7 @@ public abstract class PaymentProcessor {
      * @param paymentListener when you have processed your payment
      * you should call {@link OnPaymentListener}
      */
-    public abstract void startPayment(
+    void startPayment(
         @NonNull final PaymentProcessor.CheckoutData data,
         @NonNull final Context context,
         @NonNull final OnPaymentListener paymentListener);
@@ -61,9 +62,7 @@ public abstract class PaymentProcessor {
      *
      * @return time in milliseconds
      */
-    public int getPaymentTimeout() {
-        return 0;
-    }
+    int getPaymentTimeout();
 
     /**
      * method to know if the payment processor should pay through
@@ -72,7 +71,7 @@ public abstract class PaymentProcessor {
      *
      * @return if it should show view
      */
-    public abstract boolean shouldShowFragmentOnPayment();
+    boolean shouldShowFragmentOnPayment();
 
     /**
      * This bundle will be attached to the fragment that you expose in
@@ -83,7 +82,7 @@ public abstract class PaymentProcessor {
      * @return fragment.
      */
     @Nullable
-    public abstract Bundle getFragmentBundle(@NonNull final PaymentProcessor.CheckoutData data,
+    Bundle getFragmentBundle(@NonNull final PaymentProcessor.CheckoutData data,
         @NonNull final Context context);
 
     /**
@@ -95,7 +94,7 @@ public abstract class PaymentProcessor {
      * @return plugin fragment
      */
     @Nullable
-    public abstract PaymentProcessorFragment getFragment(
+    PaymentProcessorFragment getFragment(
         @NonNull final PaymentProcessor.CheckoutData data,
         @NonNull final Context context);
 }
