@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.plugins.model.PluginPayment;
 
-public class SamplePaymentProcessor extends PaymentProcessor {
+public class SamplePaymentProcessor implements PaymentProcessor {
 
     private static final int CONSTANT_DELAY_MILLIS = 2000;
     private final PluginPayment pluginPayment;
