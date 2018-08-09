@@ -69,7 +69,7 @@ final class ChargesSamples {
         return chargeWithBusiness(paymentMethodId)
             .setPaymentConfiguration(getPaymentConfig(paymentMethodId)
                 .setDiscountConfiguration(
-                    new DiscountConfiguration(new Discount
+                    DiscountConfiguration.withDiscount(new Discount
                     .Builder("12344", Sites.ARGENTINA.getCurrencyId(), BigDecimal.TEN)
                     .setAmountOff(BigDecimal.TEN)
                     .build(),
