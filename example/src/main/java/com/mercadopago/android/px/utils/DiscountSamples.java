@@ -1,10 +1,10 @@
 package com.mercadopago.android.px.utils;
 
 import android.support.v4.util.Pair;
-
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
-
-import com.mercadopago.android.px.plugins.MainPaymentProcessor;
+import com.mercadopago.android.px.plugins.SamplePaymentProcessor;
+import com.mercadopago.android.px.preferences.DiscountConfiguration;
+import com.mercadopago.android.px.preferences.PaymentConfiguration;
 import java.util.Collection;
 
 import static com.mercadopago.android.px.utils.ExamplesUtils.getBusinessPaymentApproved;
@@ -34,10 +34,10 @@ final class DiscountSamples {
     private static MercadoPagoCheckout.Builder getMercadoPagoBuilderWithNotAvailableDiscount(final String publicKey,
         final String prefId) {
 
-        final MainPaymentProcessor mainPaymentProcessor = new MainPaymentProcessor(getBusinessPaymentApproved());
+        final SamplePaymentProcessor mainPaymentProcessor = new SamplePaymentProcessor(getBusinessPaymentApproved());
         return getMercadoPagoBuilder(publicKey, prefId)
-            .discountNotAvailable()
-            .setPaymentProcessor(mainPaymentProcessor);
+            .setPaymentConfiguration(new PaymentConfiguration.Builder(mainPaymentProcessor).setDiscountConfiguration(
+                DiscountConfiguration.forNotAvailableDiscount()).build());
     }
 
     private static MercadoPagoCheckout.Builder getMercadoPagoBuilder(final String publicKey, final String prefId) {
