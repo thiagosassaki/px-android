@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
+import com.mercadopago.android.px.model.Campaign;
+import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentData;
@@ -49,6 +51,9 @@ public final class OneTapSamples {
         "APP_USR-a9fbcb43-4d5a-41c6-a42e-56e8b153f142";
     private static final String PAYER_EMAIL_DUMMY = "prueba@gmail.com";
 
+    private static final String MERCHANT_DISCOUNT_ID = "77";
+    private static final String MERCHANT_DISCOUNT_CURRENCY = "ARS";
+
     private OneTapSamples() {
 
     }
@@ -92,6 +97,17 @@ public final class OneTapSamples {
         options
             .add(new Pair<>("18 - One tap - Should suggest credit card (no account money) with not available discount",
                 startOneTapNoAccountMoneyWithCreditCardAndNoAvailableDiscount()));
+        options
+            .add(new Pair<>(
+                "19 - One tap - Should suggest credit card (no account money) with always on discount with percent off",
+                startOneTapWithCreditCardAndAlwaysOnDiscountWithPercentOff()));
+        options
+            .add(new Pair<>(
+                "20 - One tap - Should suggest credit card (no account money) with always on discount with amount off",
+                startOneTapWithCreditCardAndAlwaysOnDiscountWithAmountOff()));
+        options
+            .add(new Pair<>("21 - One tap - Should suggest credit card (no account money) with one shot discount",
+                startOneTapWithCreditCardAndOneShotDiscount()));
     }
 
     // It should suggest one tap with account money
@@ -290,7 +306,58 @@ public final class OneTapSamples {
             .setPaymentProcessor(mainPaymentProcessor);
     }
 
-    // It should suggest one tap with credit card
+    // It should suggest one tap with credit card and always on discount with percent off
+    private static MercadoPagoCheckout.Builder startOneTapWithCreditCardAndAlwaysOnDiscountWithPercentOff() {
+        final Discount discount =
+            new Discount.Builder(MERCHANT_DISCOUNT_ID, MERCHANT_DISCOUNT_CURRENCY, new BigDecimal(50))
+                .setPercentOff(BigDecimal.TEN).build();
+        final Campaign campaign =
+            new Campaign.Builder(MERCHANT_DISCOUNT_ID).setMaxCouponAmount(new BigDecimal(200)).setMaxRedeemPerUser(5)
+                .build();
+
+        final MainPaymentProcessor mainPaymentProcessor = new MainPaymentProcessor(getBusinessPaymentApproved());
+        return new MercadoPagoCheckout.Builder(ONE_TAP_DIRECT_DISCOUNT_MERCHANT_PUBLIC_KEY,
+            getCheckoutPreferenceWithPayerEmail(new ArrayList<String>(), 120))
+            .setPrivateKey(ONE_TAP_PAYER_3_ACCESS_TOKEN)
+            .setDiscount(discount, campaign)
+            .setPaymentProcessor(mainPaymentProcessor);
+    }
+
+    // It should suggest one tap with credit card and always on discount with amount off
+    private static MercadoPagoCheckout.Builder startOneTapWithCreditCardAndAlwaysOnDiscountWithAmountOff() {
+        final Discount discount =
+            new Discount.Builder(MERCHANT_DISCOUNT_ID, MERCHANT_DISCOUNT_CURRENCY, new BigDecimal(50))
+                .setAmountOff(new BigDecimal(50)).build();
+        final Campaign campaign =
+            new Campaign.Builder(MERCHANT_DISCOUNT_ID).setMaxCouponAmount(new BigDecimal(200)).setMaxRedeemPerUser(5)
+                .build();
+
+        final MainPaymentProcessor mainPaymentProcessor = new MainPaymentProcessor(getBusinessPaymentApproved());
+        return new MercadoPagoCheckout.Builder(ONE_TAP_DIRECT_DISCOUNT_MERCHANT_PUBLIC_KEY,
+            getCheckoutPreferenceWithPayerEmail(new ArrayList<String>(), 120))
+            .setPrivateKey(ONE_TAP_PAYER_3_ACCESS_TOKEN)
+            .setDiscount(discount, campaign)
+            .setPaymentProcessor(mainPaymentProcessor);
+    }
+
+    // It should suggest one tap with credit card and one shot discount
+    private static MercadoPagoCheckout.Builder startOneTapWithCreditCardAndOneShotDiscount() {
+        final Discount discount =
+            new Discount.Builder(MERCHANT_DISCOUNT_ID, MERCHANT_DISCOUNT_CURRENCY, new BigDecimal(50))
+                .setPercentOff(BigDecimal.TEN).build();
+        final Campaign campaign =
+            new Campaign.Builder(MERCHANT_DISCOUNT_ID).setMaxCouponAmount(new BigDecimal(200)).setMaxRedeemPerUser(1)
+                .build();
+
+        final MainPaymentProcessor mainPaymentProcessor = new MainPaymentProcessor(getBusinessPaymentApproved());
+        return new MercadoPagoCheckout.Builder(ONE_TAP_DIRECT_DISCOUNT_MERCHANT_PUBLIC_KEY,
+            getCheckoutPreferenceWithPayerEmail(new ArrayList<String>(), 120))
+            .setPrivateKey(ONE_TAP_PAYER_3_ACCESS_TOKEN)
+            .setDiscount(discount, campaign)
+            .setPaymentProcessor(mainPaymentProcessor);
+    }
+
+    // It should suggest one tap with credit card and code discount
     private static MercadoPagoCheckout.Builder startOneTapNoAccountMoneyWithCreditCardAndCodeDiscount() {
 
         return new MercadoPagoCheckout.Builder(ONE_TAP_CODE_DISCOUNT_MERCHANT_PUBLIC_KEY,

@@ -188,7 +188,8 @@ public final class ExamplesUtils {
         return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, DUMMY_PREFERENCE_ID_WITH_ITEM_LONG_TITLE);
     }
 
-    /* default */ static BusinessPayment getBusinessPaymentApproved() {
+    /* default */
+    static BusinessPayment getBusinessPaymentApproved() {
         return new BusinessPayment.Builder(BusinessPayment.Decorator.APPROVED, Payment.StatusCodes.STATUS_APPROVED,
             Payment.StatusDetail.STATUS_DETAIL_ACCREDITED,
             R.drawable.px_icon_card, "Title")
