@@ -39,7 +39,7 @@ public class DiscountServiceImp implements DiscountRepository {
             final DiscountConfiguration discountConfiguration = paymentConfiguration.getDiscountConfiguration();
             //TODO Merchant discount // TODO ADD ERROR
             discountStorageService.configureDiscountManually(discountConfiguration.getDiscount(),
-                discountConfiguration.getCampaign(), false);
+                discountConfiguration.getCampaign(), discountConfiguration.isNotAvailable());
         }
     }
 

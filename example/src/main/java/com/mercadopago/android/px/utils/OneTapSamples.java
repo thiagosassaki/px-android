@@ -12,6 +12,7 @@ import com.mercadopago.android.px.plugins.SamplePaymentMethodPlugin;
 import com.mercadopago.android.px.plugins.SamplePaymentProcessor;
 import com.mercadopago.android.px.plugins.model.GenericPayment;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
+import com.mercadopago.android.px.preferences.DiscountConfiguration;
 import com.mercadopago.android.px.preferences.PaymentConfiguration;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -296,12 +297,13 @@ public final class OneTapSamples {
 
     // It should suggest one tap with credit card and not available discount
     private static MercadoPagoCheckout.Builder startOneTapNoAccountMoneyWithCreditCardAndNoAvailableDiscount() {
-        //TODO FIX
+
         final SamplePaymentProcessor samplePaymentProcessor = new SamplePaymentProcessor(getBusinessPaymentApproved());
         return new MercadoPagoCheckout.Builder(ONE_TAP_DIRECT_DISCOUNT_MERCHANT_PUBLIC_KEY,
             getCheckoutPreferenceWithPayerEmail(new ArrayList<String>(), 120))
             .setPrivateKey(ONE_TAP_PAYER_3_ACCESS_TOKEN)
             .setPaymentConfiguration(new PaymentConfiguration.Builder(samplePaymentProcessor)
+                .setDiscountConfiguration(DiscountConfiguration.forNotAvailableDiscount())
                 .build());
     }
 
