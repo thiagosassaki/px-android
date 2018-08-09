@@ -243,6 +243,9 @@
     <string name="px_always_on_discount_detail">With each payment to this brand you will consume the discounts until you reach the limit.</string>
     <string name="px_one_shot_discount_detail">The limit is available for one single payment.</string>
     <string name="px_discount_detail_end_date">Valid until %s.</string>
+    <string name="px_used_up_discount_row">You reached the discount limit</string>
+    <string name="px_used_up_discount_title">You reached the limit</string>
+    <string name="px_used_up_discount_detail">This discount is not applicable, because you have reached the limit.</string>
 
     <string name="px_interest_label">Does\'t include bank interest</string>
     <string name="px_excellent">¡Excellent!</string>

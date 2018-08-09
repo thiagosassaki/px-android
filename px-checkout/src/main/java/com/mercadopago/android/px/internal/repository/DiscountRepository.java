@@ -12,7 +12,8 @@ import java.math.BigDecimal;
 
 public interface DiscountRepository extends ResourcesProvider {
 
-    void configureMerchantDiscountManually(@Nullable final Discount discount, @Nullable final Campaign campaign);
+    void configureMerchantDiscountManually(@Nullable final Discount discount, @Nullable final Campaign campaign,
+        final boolean notAvailableDiscount);
 
     void configureDiscountManually(@Nullable final Discount discount, @Nullable final Campaign campaign);
 
@@ -33,6 +34,8 @@ public interface DiscountRepository extends ResourcesProvider {
 
     @Nullable
     Campaign getCampaign(String discountId);
+
+    boolean isNotAvailableDiscount();
 
     boolean hasCodeCampaign();
 

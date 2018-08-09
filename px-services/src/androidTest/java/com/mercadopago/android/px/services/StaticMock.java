@@ -6,7 +6,7 @@ import com.mercadopago.android.px.model.Cardholder;
 import com.mercadopago.android.px.model.Identification;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.PaymentMethod;
-import com.mercadopago.services.util.JsonUtil;
+import com.mercadopago.android.px.services.util.JsonUtil;
 import java.io.InputStream;
 
 public class StaticMock {
@@ -78,23 +78,8 @@ public class StaticMock {
     public final static String DUMMY_DISCOUNT_CODE = "PRUEBA";
 
     public static CardToken getCardToken() {
-        CardToken cardToken = new CardToken();
-        Cardholder cardholder = new Cardholder();
-        Identification identification = new Identification();
-
-        identification.setType(DUMMY_IDENTIFICATION_TYPE);
-        identification.setNumber(DUMMY_IDENTIFICATION_NUMBER);
-
-        cardholder.setName(DUMMY_CARDHOLDER_NAME);
-        cardholder.setIdentification(identification);
-
-        cardToken.setCardholder(cardholder);
-        cardToken.setSecurityCode(DUMMY_SECURITY_CODE);
-        cardToken.setExpirationMonth(DUMMY_EXPIRATION_MONTH);
-        cardToken.setExpirationYear(DUMMY_EXPIRATION_YEAR_LONG);
-        cardToken.setCardNumber(DUMMY_CARD_NUMBER);
-
-        return cardToken;
+        return new CardToken(DUMMY_CARD_NUMBER, DUMMY_EXPIRATION_MONTH, DUMMY_EXPIRATION_YEAR_LONG,
+            DUMMY_SECURITY_CODE, DUMMY_CARDHOLDER_NAME, DUMMY_IDENTIFICATION_TYPE, DUMMY_IDENTIFICATION_NUMBER);
     }
 
     public static PaymentMethod getPaymentMethod(Context context) {

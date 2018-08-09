@@ -54,6 +54,8 @@ public class MercadoPagoCheckout {
     @Nullable
     private final Campaign campaign;
 
+    private final boolean notAvailableDiscount;
+
     @Nullable
     private final String privateKey;
 
@@ -68,6 +70,7 @@ public class MercadoPagoCheckout {
         advancedConfiguration = builder.advancedConfiguration;
         discount = builder.discount;
         campaign = builder.campaign;
+        notAvailableDiscount = builder.notAvailableDiscount;
         charges = builder.charges;
         preferenceId = builder.preferenceId;
         privateKey = builder.privateKey;
@@ -127,6 +130,10 @@ public class MercadoPagoCheckout {
         return campaign;
     }
 
+    public boolean isNotAvailableDiscount() {
+        return notAvailableDiscount;
+    }
+
     @NonNull
     public List<ChargeRule> getCharges() {
         return charges;
@@ -169,6 +176,8 @@ public class MercadoPagoCheckout {
 
         @NonNull
         AdvancedConfiguration advancedConfiguration = new AdvancedConfiguration.Builder().build();
+
+        Boolean notAvailableDiscount = false;
 
         @Nullable
         String privateKey;
@@ -216,6 +225,16 @@ public class MercadoPagoCheckout {
         public Builder setDiscount(@NonNull final Discount discount, @NonNull final Campaign campaign) {
             this.discount = discount;
             this.campaign = campaign;
+            return this;
+        }
+
+        /**
+         * By enabling this feature you'll inform that payer's discount is no more applicable,
+         * because payer has reached the limit.
+         * You have to set a payment processor to apply this feature.
+         */
+        public Builder discountNotAvailable() {
+            notAvailableDiscount = true;
             return this;
         }
 
