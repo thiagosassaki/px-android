@@ -131,7 +131,7 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
 
         if (intent.getStringExtra("selectedSearchItem") != null) {
             presenter.setSelectedSearchItem(instance
-                    .fromJson(intent.getStringExtra("selectedSearchItem"), PaymentMethodSearchItem.class));
+                .fromJson(intent.getStringExtra("selectedSearchItem"), PaymentMethodSearchItem.class));
         }
     }
 
@@ -187,32 +187,32 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
         mSearchItemsRecyclerView = findViewById(R.id.mpsdkGroupsList);
         mSearchItemsRecyclerView.setLayoutManager(new GridLayoutManager(this, columns));
         mSearchItemsRecyclerView.addItemDecoration(
-                new GridSpacingItemDecoration(columns, ScaleUtil.getPxFromDp(COLUMN_SPACING_DP_VALUE, this), true));
+            new GridSpacingItemDecoration(columns, ScaleUtil.getPxFromDp(COLUMN_SPACING_DP_VALUE, this), true));
         PaymentMethodSearchItemAdapter groupsAdapter = new PaymentMethodSearchItemAdapter();
         mSearchItemsRecyclerView.setAdapter(groupsAdapter);
     }
 
     protected void populateSearchList(List<PaymentMethodSearchItem> items,
-                                      OnSelectedCallback<PaymentMethodSearchItem> onSelectedCallback) {
+        OnSelectedCallback<PaymentMethodSearchItem> onSelectedCallback) {
         PaymentMethodSearchItemAdapter adapter = (PaymentMethodSearchItemAdapter) mSearchItemsRecyclerView.getAdapter();
         List<PaymentMethodSearchViewController> customViewControllers =
-                createSearchItemsViewControllers(items, onSelectedCallback);
+            createSearchItemsViewControllers(items, onSelectedCallback);
         adapter.addItems(customViewControllers);
         adapter.notifyItemInserted();
     }
 
     @Deprecated
     private void populateCustomOptionsList(List<CustomSearchItem> customSearchItems,
-                                           OnSelectedCallback<CustomSearchItem> onSelectedCallback) {
+        OnSelectedCallback<CustomSearchItem> onSelectedCallback) {
         PaymentMethodSearchItemAdapter adapter = (PaymentMethodSearchItemAdapter) mSearchItemsRecyclerView.getAdapter();
         List<PaymentMethodSearchViewController> customViewControllers =
-                createCustomSearchItemsViewControllers(customSearchItems, onSelectedCallback);
+            createCustomSearchItemsViewControllers(customSearchItems, onSelectedCallback);
         adapter.addItems(customViewControllers);
         adapter.notifyItemInserted();
     }
 
     private List<PaymentMethodSearchViewController> createSearchItemsViewControllers(
-            List<PaymentMethodSearchItem> items, final OnSelectedCallback<PaymentMethodSearchItem> onSelectedCallback) {
+        List<PaymentMethodSearchItem> items, final OnSelectedCallback<PaymentMethodSearchItem> onSelectedCallback) {
         final List<PaymentMethodSearchViewController> customViewControllers = new ArrayList<>();
         for (final PaymentMethodSearchItem item : items) {
             PaymentMethodSearchViewController viewController = new PaymentMethodSearchOption(this, item);
@@ -229,7 +229,7 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
 
     @Deprecated
     private List<PaymentMethodSearchViewController> createCustomSearchItemsViewControllers(
-            final List<CustomSearchItem> customSearchItems, final OnSelectedCallback<CustomSearchItem> onSelectedCallback) {
+        final List<CustomSearchItem> customSearchItems, final OnSelectedCallback<CustomSearchItem> onSelectedCallback) {
         final List<PaymentMethodSearchViewController> customViewControllers = new ArrayList<>();
         for (final CustomSearchItem item : customSearchItems) {
             final PaymentMethodSearchCustomOption viewController = new PaymentMethodSearchCustomOption(this, item);
@@ -254,7 +254,7 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
             if (plugin.isEnabled()) {
                 final PluginPaymentMethodInfo pluginPaymentMethodInfo = new PluginPaymentMethodInfo(infoItem);
                 final PaymentMethodSearchViewController viewController =
-                        new PaymentMethodInfoController(this, pluginPaymentMethodInfo);
+                    new PaymentMethodInfoController(this, pluginPaymentMethodInfo);
                 viewController.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(final View v) {
@@ -393,7 +393,7 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
     @Override
     public void cleanPaymentMethodOptions() {
         final PaymentMethodSearchItemAdapter adapter =
-                (PaymentMethodSearchItemAdapter) mSearchItemsRecyclerView.getAdapter();
+            (PaymentMethodSearchItemAdapter) mSearchItemsRecyclerView.getAdapter();
         adapter.clear();
     }
 
@@ -483,13 +483,13 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
     @Deprecated
     @Override
     public void showCustomOptions(List<CustomSearchItem> customSearchItems,
-                                  OnSelectedCallback<CustomSearchItem> customSearchItemOnSelectedCallback) {
+        OnSelectedCallback<CustomSearchItem> customSearchItemOnSelectedCallback) {
         populateCustomOptionsList(customSearchItems, customSearchItemOnSelectedCallback);
     }
 
     @Override
     public void showSearchItems(List<PaymentMethodSearchItem> searchItems,
-                                OnSelectedCallback<PaymentMethodSearchItem> paymentMethodSearchItemSelectionCallback) {
+        OnSelectedCallback<PaymentMethodSearchItem> paymentMethodSearchItemSelectionCallback) {
         populateSearchList(searchItems, paymentMethodSearchItemSelectionCallback);
     }
 
@@ -506,9 +506,9 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
         }
 
         final PaymentMethodSearchItemAdapter adapter =
-                (PaymentMethodSearchItemAdapter) mSearchItemsRecyclerView.getAdapter();
+            (PaymentMethodSearchItemAdapter) mSearchItemsRecyclerView.getAdapter();
         final List<PaymentMethodSearchViewController> customViewControllers =
-                createPluginItemsViewControllers(toInsert);
+            createPluginItemsViewControllers(toInsert);
         adapter.addItems(customViewControllers);
         adapter.notifyItemInserted();
     }
@@ -580,8 +580,8 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
     }
 
     @Override
-    public void showDetailDialog(@NonNull final Discount discount, @NonNull final Campaign campaign) {
-        DiscountDetailDialog.showDialog(discount, campaign, getSupportFragmentManager());
+    public void showDetailDialog() {
+        DiscountDetailDialog.showDialog(getSupportFragmentManager());
     }
 
     @Override
@@ -591,8 +591,8 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
 
     @Override
     public void showAmount(@NonNull final DiscountRepository discountRepository,
-                           @NonNull final BigDecimal totalAmount,
-                           @NonNull final Site site) {
+        @NonNull final BigDecimal totalAmount,
+        @NonNull final Site site) {
         amountView.setOnClickListener(presenter);
         amountView.show(discountRepository, totalAmount, site);
     }

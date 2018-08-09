@@ -236,6 +236,9 @@
     <string name="px_always_on_discount_detail">A cada pagamento para esta marca, você terá descontos até atingir o limite.</string>
     <string name="px_one_shot_discount_detail">Limite disponível para consumo em um único pagamento.</string>
     <string name="px_discount_detail_end_date">Válido até %s.</string>
+    <string name="px_used_up_discount_row">Você alcançou o limite do desconto</string>
+    <string name="px_used_up_discount_title">Você atingiu o limite</string>
+    <string name="px_used_up_discount_detail">Este desconto não é aplicável, porque você atingiu o limite.</string>
 
     <!-- Unlock Card -->
     <string name="px_text_unlock_card_start">Lembre-se de</string>

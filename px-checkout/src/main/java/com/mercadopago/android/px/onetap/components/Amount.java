@@ -54,7 +54,7 @@ class Amount extends CompactComponent<Amount.Props, OneTap.Actions> {
         }
 
         /* default */ boolean hasDiscount() {
-            return discountRepository.getDiscount() != null;
+            return discountRepository.getDiscount() != null && !discountRepository.isNotAvailableDiscount();
         }
 
         /* default */ boolean shouldShowPercentOff() {
@@ -73,6 +73,10 @@ class Amount extends CompactComponent<Amount.Props, OneTap.Actions> {
         /* default */ String getCurrencyId() {
             return config.getCheckoutPreference().getSite().getCurrencyId();
         }
+
+        public boolean isNotAvailableDiscount() {
+            return discountRepository.isNotAvailableDiscount();
+        }
     }
 
     /* default */ Amount(final Props props, final OneTap.Actions callBack) {
@@ -85,10 +89,29 @@ class Amount extends CompactComponent<Amount.Props, OneTap.Actions> {
         final ViewGroup discountLayout = content.findViewById(R.id.discount_detail_layout);
         resolveSmallAmountPlusDiscount(content);
         resolveBigAmount(content);
-        resolveOffAmount(discountLayout);
-        resolveMaxDiscount(discountLayout);
+        resolveDiscount(discountLayout);
         resolveArrow(content);
         return content;
+    }
+
+    private void resolveDiscount(ViewGroup discountLayout) {
+        if (props.isNotAvailableDiscount()) {
+            resolveNotAvailableDiscount(discountLayout);
+        } else {
+            resolveOffAmount(discountLayout);
+            resolveMaxDiscount(discountLayout);
+        }
+    }
+
+    private void resolveNotAvailableDiscount(ViewGroup discountLayout) {
+        final TextView discountMessage = discountLayout.findViewById(R.id.discount_message);
+        final TextView discountMaxLabel = discountLayout.findViewById(R.id.discount_max_label);
+        discountMessage.setVisibility(View.VISIBLE);
+        discountLayout.setVisibility(View.VISIBLE);
+        discountMaxLabel.setVisibility(View.GONE);
+
+        discountMessage.setTextColor(discountLayout.getContext().getResources().getColor(R.color.px_color_payer_costs));
+        discountMessage.setText(R.string.px_used_up_discount_row);
     }
 
     private void resolveArrow(@NonNull final View content) {

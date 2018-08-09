@@ -10,7 +10,6 @@ import com.mercadopago.android.px.mocks.Installments;
 import com.mercadopago.android.px.mocks.Issuers;
 import com.mercadopago.android.px.mocks.PayerCosts;
 import com.mercadopago.android.px.mocks.PaymentMethods;
-import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.Discount;
@@ -516,7 +515,7 @@ public class InstallmentsPresenterTest {
         }
 
         @Override
-        public void showDetailDialog(@NonNull final Discount discount, @NonNull final Campaign campaign) {
+        public void showDetailDialog() {
             // do nothing
         }
 

@@ -9,7 +9,7 @@ import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Sites;
-import com.mercadopago.android.px.model.requests.PayerIntent;
+import com.mercadopago.android.px.model.requests.GroupsIntent;
 import com.mercadopago.android.px.plugins.PaymentMethodPlugin;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentConfiguration;
@@ -102,7 +102,7 @@ public class GroupsService implements GroupsRepository {
 
         final Collection<String> excludedPaymentTypesSet = new HashSet<>(checkoutPreference.getExcludedPaymentTypes());
         excludedPaymentTypesSet.addAll(getUnsupportedPaymentTypes(checkoutPreference.getSite()));
-        final PayerIntent payerIntent = new PayerIntent(checkoutPreference.getPayer());
+        final GroupsIntent groupsIntent = new GroupsIntent(paymentSettingRepository.getPrivateKey());
 
         final String excludedPaymentTypesAppended =
             getListAsString(new ArrayList<>(excludedPaymentTypesSet), SEPARATOR);
@@ -121,7 +121,7 @@ public class GroupsService implements GroupsRepository {
                 amountRepository.getAmountToPay(),
                 excludedPaymentTypesAppended,
                 excludedPaymentMethodsAppended,
-                payerIntent,
+                groupsIntent,
                 checkoutPreference.getSite().getId(),
                 PAYMENT_METHODS_OPTIONS_API_VERSION,
                 ProcessingModes.AGGREGATOR,
