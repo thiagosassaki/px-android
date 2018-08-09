@@ -235,6 +235,9 @@
     <string name="px_always_on_discount_detail">Con cada pago en esta marca vas a consumir el tope hasta agotarlo.</string>
     <string name="px_one_shot_discount_detail">Tope disponible para consumir en un único pago.</string>
     <string name="px_discount_detail_end_date">Válido hasta el %s.</string>
+    <string name="px_used_up_discount_row">Alcanzaste el tope de descuento</string>
+    <string name="px_used_up_discount_title">Alcanzaste el tope</string>
+    <string name="px_used_up_discount_detail">Este descuento ya no aplica porque consumiste el tope máximo.</string>
 
     <!-- Unlock Card -->
     <string name="px_text_unlock_card_start">Recuerda</string>

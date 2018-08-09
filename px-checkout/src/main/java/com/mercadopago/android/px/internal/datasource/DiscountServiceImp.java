@@ -37,14 +37,15 @@ public class DiscountServiceImp implements DiscountRepository {
     public void configureMerchantDiscountManually(@Nullable final PaymentConfiguration paymentConfiguration) {
         if (paymentConfiguration != null && paymentConfiguration.getDiscountConfiguration() != null) {
             final DiscountConfiguration discountConfiguration = paymentConfiguration.getDiscountConfiguration();
+            //TODO Merchant discount // TODO ADD ERROR
             discountStorageService.configureDiscountManually(discountConfiguration.getDiscount(),
-                discountConfiguration.getCampaign());
+                discountConfiguration.getCampaign(), false);
         }
     }
 
     @Override
     public void configureDiscountManually(@Nullable final Discount discount, @Nullable final Campaign campaign) {
-        discountStorageService.configureDiscountManually(discount, campaign);
+        discountStorageService.configureDiscountManually(discount, campaign, false);
     }
 
     @Override
@@ -95,6 +96,10 @@ public class DiscountServiceImp implements DiscountRepository {
         }
 
         return discountCampaign;
+    }
+
+    public boolean isNotAvailableDiscount() {
+        return discountStorageService.isNotAvailableDiscount();
     }
 
     @Override
@@ -178,7 +183,7 @@ public class DiscountServiceImp implements DiscountRepository {
         }
 
         private void getFromNetwork(final Callback<Boolean> callback, @NonNull final Callable campaignsCall)
-                throws Exception {
+            throws Exception {
             final List<Campaign> storage = discountStorageService.getCampaigns();
             if (storage.isEmpty()) {
                 campaignsCall.call();
@@ -188,7 +193,7 @@ public class DiscountServiceImp implements DiscountRepository {
         }
 
         /* default */ Callback<List<Campaign>> campaignCache(final Callback<Boolean> callback,
-                                                             final Callable discountCall) {
+            final Callable discountCall) {
             return new Callback<List<Campaign>>() {
                 @Override
                 public void success(final List<Campaign> campaigns) {
@@ -241,7 +246,8 @@ public class DiscountServiceImp implements DiscountRepository {
             return new Callback<Discount>() {
                 @Override
                 public void success(final Discount discount) {
-                    discountStorageService.configureDiscountManually(discount, directCampaign);
+                    discountStorageService.configureDiscountManually(discount, directCampaign, DiscountServiceImp.this
+                        .isNotAvailableDiscount());
                     callback.success(true);
                 }
 

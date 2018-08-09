@@ -11,7 +11,6 @@ import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.mocks.PaymentMethodSearchs;
-import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CustomSearchItem;
 import com.mercadopago.android.px.model.Discount;
@@ -735,7 +734,7 @@ public class PaymentVaultPresenterTest {
         }
 
         @Override
-        public void showDetailDialog(@NonNull final Discount discount, @NonNull final Campaign campaign) {
+        public void showDetailDialog() {
             //Do nothing
         }
 

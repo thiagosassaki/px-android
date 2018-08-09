@@ -46,10 +46,8 @@ public class PaymentDetailContainer extends CompactComponent<PaymentDetailContai
     }
 
     private void addDiscount(@NonNull final ViewGroup parent) {
-        final Discount discount = props.discountRepository.getDiscount();
-        final Campaign campaign = props.discountRepository.getCampaign();
-        if (props.discountRepository.hasValidDiscount()) {
-            final DiscountDetailContainer discountDetailContainer = new DiscountDetailContainer(new DiscountDetailContainer.Props(DialogTitleType.SMALL, discount, campaign));
+        if (props.discountRepository.hasValidDiscount() || props.discountRepository.isNotAvailableDiscount()) {
+             final DiscountDetailContainer discountDetailContainer = new DiscountDetailContainer(new DiscountDetailContainer.Props(DialogTitleType.SMALL, props.discountRepository));
             discountDetailContainer.render(parent);
         }
     }

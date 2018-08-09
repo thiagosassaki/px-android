@@ -66,7 +66,8 @@ public class MercadoPagoCheckout {
      * will return on {@link Activity#onActivityResult(int, int, Intent)}
      *
      * @param context context needed to start checkout.
-     * @param requestCode it's the number that identifies the checkout flow request for {@link Activity#onActivityResult(int, int, Intent)}
+     * @param requestCode it's the number that identifies the checkout flow request for
+     * {@link Activity#onActivityResult(int, int, Intent)}
      */
     public void startPayment(@NonNull final Context context, final int requestCode) {
         startIntent(context, CheckoutActivity.getIntent(context), requestCode);
@@ -123,28 +124,24 @@ public class MercadoPagoCheckout {
     @SuppressWarnings("unused")
     public static final class Builder {
 
-        @NonNull final String publicKey;
+        /* default */ @NonNull final String publicKey;
 
-        @Nullable final String preferenceId;
+        /* default */ @Nullable final String preferenceId;
 
-        @Nullable final CheckoutPreference checkoutPreference;
+        /* default */ @Nullable final CheckoutPreference checkoutPreference;
 
-        @NonNull
-        AdvancedConfiguration advancedConfiguration = new AdvancedConfiguration.Builder().build();
+        /* default */ @NonNull AdvancedConfiguration advancedConfiguration =
+            new AdvancedConfiguration.Builder().build();
 
-        @Nullable private PaymentConfiguration paymentConfiguration;
+        /* default */ @Nullable PaymentConfiguration paymentConfiguration;
 
-        @Nullable
-        String privateKey;
+        /* default */ @Nullable String privateKey;
 
-        @Deprecated
-        String regularFontPath;
+        /* default */ @Deprecated String regularFontPath;
 
-        @Deprecated
-        String lightFontPath;
+        /* default */ @Deprecated String lightFontPath;
 
-        @Deprecated
-        String monoFontPath;
+        /* default */ @Deprecated String monoFontPath;
 
         /**
          * Checkout builder allow you to create a {@link MercadoPagoCheckout}

@@ -21,6 +21,7 @@ public class DiscountStorageService {
     private static final String PREF_DISCOUNT = "pref_discount";
     private static final String PREF_DISCOUNT_CODE = "pref_discount_code";
     private static final String PREF_CAMPAIGNS = "pref_campaigns";
+    private static final String PREF_NOT_AVAILABLE_DISCOUNT = "pref_not_available_discount";
 
     @NonNull
     private final SharedPreferences sharedPreferences;
@@ -28,14 +29,16 @@ public class DiscountStorageService {
     private final JsonUtil jsonUtil;
 
     public DiscountStorageService(@NonNull final SharedPreferences sharedPreferences,
-                                  @NonNull final JsonUtil jsonUtil) {
+        @NonNull final JsonUtil jsonUtil) {
         this.sharedPreferences = sharedPreferences;
         this.jsonUtil = jsonUtil;
     }
 
-    public void configureDiscountManually(@Nullable final Discount discount, @Nullable final Campaign campaign) {
+    public void configureDiscountManually(@Nullable final Discount discount, @Nullable final Campaign campaign,
+        final boolean notAvailableDiscount) {
         configure(campaign);
         configure(discount);
+        configure(notAvailableDiscount);
     }
 
     public void reset() {
@@ -43,6 +46,7 @@ public class DiscountStorageService {
         sharedPreferences.edit().remove(PREF_CAMPAIGN).apply();
         sharedPreferences.edit().remove(PREF_DISCOUNT).apply();
         sharedPreferences.edit().remove(PREF_DISCOUNT_CODE).apply();
+        sharedPreferences.edit().remove(PREF_NOT_AVAILABLE_DISCOUNT).apply();
     }
 
     @Nullable
@@ -58,6 +62,10 @@ public class DiscountStorageService {
     @Nullable
     public Campaign getCampaign() {
         return jsonUtil.fromJson(sharedPreferences.getString(PREF_CAMPAIGN, ""), Campaign.class);
+    }
+
+    public boolean isNotAvailableDiscount() {
+        return sharedPreferences.getBoolean(PREF_NOT_AVAILABLE_DISCOUNT, false);
     }
 
     private void configure(@Nullable final Discount discount) {
@@ -80,6 +88,12 @@ public class DiscountStorageService {
         }
     }
 
+    private void configure(final boolean notAvailableDiscount) {
+            final SharedPreferences.Editor edit = sharedPreferences.edit();
+            edit.putBoolean(PREF_NOT_AVAILABLE_DISCOUNT, notAvailableDiscount);
+            edit.apply();
+    }
+
     public void saveDiscountCode(@Nullable final String code) {
         sharedPreferences.edit().putString(PREF_DISCOUNT_CODE, code).apply();
     }
@@ -99,7 +113,7 @@ public class DiscountStorageService {
         final Type listType = new TypeToken<List<Campaign>>() {
         }.getType();
         return isEmpty(stringCampaigns) ? new ArrayList<Campaign>()
-                : (List<Campaign>) jsonUtil.fromJson(stringCampaigns, listType);
+            : (List<Campaign>) jsonUtil.fromJson(stringCampaigns, listType);
     }
 
     public void saveCampaigns(@NonNull final List<Campaign> campaigns) {

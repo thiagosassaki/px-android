@@ -33,6 +33,8 @@ public interface DiscountRepository extends ResourcesProvider {
     @Nullable
     Campaign getCampaign(String discountId);
 
+    boolean isNotAvailableDiscount();
+
     boolean hasCodeCampaign();
 
     boolean hasValidDiscount();
