@@ -89,6 +89,9 @@ public interface PaymentMethodPlugin extends Serializable {
      * Fragment that will appear if {@link #shouldShowFragmentOnSelection()} is true
      * when user clicks this payment method.
      *
+     *  inside {@link android.support.v4.app.Fragment#onAttach(Context)}
+     * context will be an instance of {@link PaymentMethodPlugin.OnPaymentMethodListener}
+     *
      * @param data checkout data to the moment it's called.
      * @param context that you may need to fill information.
      * @return plugin fragment
