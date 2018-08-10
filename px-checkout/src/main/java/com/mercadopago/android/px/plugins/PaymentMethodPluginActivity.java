@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -22,10 +23,10 @@ import com.mercadopago.android.px.tracker.MPTrackingContext;
 import com.mercadopago.android.px.tracking.model.ScreenViewEvent;
 
 public class PaymentMethodPluginActivity extends AppCompatActivity implements
-    PaymentMethodPluginFragment.onPaymentMethodActions {
+    PaymentMethodPlugin.OnPaymentMethodListener {
 
     private static final String SCREEN_NAME_CONFIG_PAYMENT_METHOD_PLUGIN = "CONFIG_PAYMENT_METHOD";
-    private static final String PLUGIN_FRAGMENT = PaymentMethodPluginFragment.class.getName();
+    private static final String PLUGIN_FRAGMENT = PaymentMethodPluginActivity.class.getName() + "_fragment";
 
     public static Intent getIntent(@NonNull final Context context) {
         return new Intent(context, PaymentMethodPluginActivity.class);
@@ -59,7 +60,7 @@ public class PaymentMethodPluginActivity extends AppCompatActivity implements
             new PaymentMethodPlugin.CheckoutData(CheckoutStore.getInstance().getPaymentData(),
                 configurationModule.getPaymentSettings().getCheckoutPreference());
 
-        final PaymentMethodPluginFragment fragment = plugin.getFragment(checkoutData, this);
+        final Fragment fragment = plugin.getFragment(checkoutData, this);
 
         if (fragment == null) {
             next();

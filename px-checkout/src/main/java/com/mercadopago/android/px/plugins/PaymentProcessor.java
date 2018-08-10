@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.plugins.model.BusinessPayment;
 import com.mercadopago.android.px.plugins.model.GenericPayment;
@@ -88,13 +89,16 @@ public interface PaymentProcessor extends Serializable {
     /**
      * Fragment that will appear if {@link #shouldShowFragmentOnPayment()} is true
      * when user clicks this payment method.
+
+     * inside {@link android.support.v4.app.Fragment#onAttach(Context)}
+     * context will be an instance of {@link OnPaymentListener}
      *
      * @param data checkout data to the moment it's called.
      * @param context that you may need to fill information.
-     * @return plugin fragment
+     * @return fragment
      */
     @Nullable
-    PaymentProcessorFragment getFragment(
+    Fragment getFragment(
         @NonNull final PaymentProcessor.CheckoutData data,
         @NonNull final Context context);
 }

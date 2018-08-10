@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import com.mercadopago.android.px.plugins.model.PluginPayment;
 
 public class SamplePaymentProcessor implements PaymentProcessor {
@@ -47,7 +48,7 @@ public class SamplePaymentProcessor implements PaymentProcessor {
 
     @Nullable
     @Override
-    public PaymentProcessorFragment getFragment(@NonNull final CheckoutData data,
+    public Fragment getFragment(@NonNull final CheckoutData data,
         @NonNull final Context context) {
         final SamplePaymentProcessorFragment samplePaymentProcessorFragment = new SamplePaymentProcessorFragment();
         //TODO warning, dont you really do this.

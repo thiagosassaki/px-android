@@ -7,7 +7,8 @@ import com.mercadopago.android.px.util.TextUtils;
 public class SamplePaymentMethodPresenter {
 
     private static final String PASSWORD = "123";
-    /* default */ @Nullable SamplePluginFragment samplePluginFragment;
+    private static final int DELAY_MILLIS = 2000;
+    /* default */ @Nullable SamplePaymentMethodPluginFragment samplePaymentMethodPluginFragment;
     /* default */ final SampleResources resources;
     /* default */ SampleState state;
 
@@ -36,14 +37,14 @@ public class SamplePaymentMethodPresenter {
                 public void run() {
 
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(DELAY_MILLIS);
                     } catch (final InterruptedException e) {
                         //nada
                     }
 
                     if (PASSWORD.equals(password)) {
-                        if (samplePluginFragment != null) {
-                            samplePluginFragment.getPaymentMethodActions().next();
+                        if (samplePaymentMethodPluginFragment != null) {
+                            samplePaymentMethodPluginFragment.next();
                         }
                     } else {
                         state = new SampleState(false, resources.getPasswordErrorMessage(), password);
@@ -55,14 +56,14 @@ public class SamplePaymentMethodPresenter {
     }
 
     /* default */ void update() {
-        if (samplePluginFragment != null) {
-            samplePluginFragment.update(state);
+        if (samplePaymentMethodPluginFragment != null) {
+            samplePaymentMethodPluginFragment.update(state);
         }
     }
 
-    public void init(final SamplePluginFragment samplePluginFragment) {
-        this.samplePluginFragment = samplePluginFragment;
-        this.samplePluginFragment.update(state);
+    public void init(final SamplePaymentMethodPluginFragment samplePaymentMethodPluginFragment) {
+        this.samplePaymentMethodPluginFragment = samplePaymentMethodPluginFragment;
+        this.samplePaymentMethodPluginFragment.update(state);
     }
 
     public static class SampleState {

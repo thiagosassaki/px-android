@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -62,16 +63,19 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity
         final PaymentProcessor.CheckoutData checkoutData =
             new PaymentProcessor.CheckoutData(paymentData, checkoutPreference);
 
-        final PaymentProcessorFragment fragment = paymentProcessor.getFragment(checkoutData, this);
+        final Fragment fragment = paymentProcessor.getFragment(checkoutData, this);
         final Bundle fragmentBundle = paymentProcessor.getFragmentBundle(checkoutData, this);
 
-        if (fragmentBundle != null) {
-            fragment.setArguments(fragmentBundle);
-        }
+        if (fragment != null) {
 
-        getSupportFragmentManager().beginTransaction()
-            .replace(R.id.px_main_container, fragment, PROCESSOR_FRAGMENT)
-            .commit();
+            if (fragmentBundle != null) {
+                fragment.setArguments(fragmentBundle);
+            }
+
+            getSupportFragmentManager().beginTransaction()
+                .replace(R.id.px_main_container, fragment, PROCESSOR_FRAGMENT)
+                .commit();
+        }
     }
 
     private PaymentResult toPaymentResult(@NonNull final GenericPayment genericPayment) {

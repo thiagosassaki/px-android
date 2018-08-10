@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,7 @@ import android.widget.TextView;
 import com.mercadopago.android.px.util.TextUtils;
 import com.mercadopago.example.R;
 
-public class SamplePluginFragment extends PaymentMethodPluginFragment {
+public class SamplePaymentMethodPluginFragment extends Fragment {
 
     private View progressbar;
     private TextView errorLabel;
@@ -22,6 +23,7 @@ public class SamplePluginFragment extends PaymentMethodPluginFragment {
     private EditText passwordView;
     private SamplePaymentMethodPresenter presenter;
     private SampleResourcesProvider sampleResourcesProvider;
+    private PaymentMethodPlugin.OnPaymentMethodListener listener;
 
     @Nullable
     @Override
@@ -69,6 +71,9 @@ public class SamplePluginFragment extends PaymentMethodPluginFragment {
     @Override
     public void onAttach(final Context context) {
         super.onAttach(context);
+        if (context instanceof PaymentMethodPlugin.OnPaymentMethodListener) {
+            listener = (PaymentMethodPlugin.OnPaymentMethodListener) context;
+        }
         sampleResourcesProvider = new SampleResourcesProvider(context);
         presenter = new SamplePaymentMethodPresenter(sampleResourcesProvider);
     }
@@ -89,5 +94,11 @@ public class SamplePluginFragment extends PaymentMethodPluginFragment {
         errorLabel.setText(presenter.state.errorMessage);
         progressbar.setVisibility(presenter.state.authenticating ? View.VISIBLE : View.GONE);
         continueButton.setVisibility(presenter.state.authenticating ? View.GONE : View.VISIBLE);
+    }
+
+    public void next() {
+        if (listener != null) {
+            listener.next();
+        }
     }
 }

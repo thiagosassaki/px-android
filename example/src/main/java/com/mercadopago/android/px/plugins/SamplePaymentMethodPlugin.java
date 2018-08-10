@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import com.mercadopago.android.px.plugins.model.PaymentMethodInfo;
 import com.mercadopago.example.R;
 
@@ -43,9 +44,9 @@ public class SamplePaymentMethodPlugin implements PaymentMethodPlugin {
 
     @Nullable
     @Override
-    public PaymentMethodPluginFragment getFragment(@NonNull final CheckoutData data,
+    public Fragment getFragment(@NonNull final CheckoutData data,
         @NonNull final Context context) {
-        return new SamplePluginFragment();
+        return new SamplePaymentMethodPluginFragment();
     }
 
     @Override
