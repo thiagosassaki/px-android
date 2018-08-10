@@ -1,5 +1,6 @@
 package com.mercadopago.android.px.preferences;
 
+import android.support.annotation.NonNull;
 import com.google.gson.annotations.SerializedName;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.PayerCost;
@@ -50,6 +51,7 @@ public class PaymentPreference implements Serializable {
         return maxInstallments;
     }
 
+    @NonNull
     public List<String> getExcludedPaymentMethodIds() {
         if (excludedPaymentMethods != null) {
             List<String> excludedPaymentMethodIds = new ArrayList<>();
@@ -58,7 +60,7 @@ public class PaymentPreference implements Serializable {
             }
             return excludedPaymentMethodIds;
         } else {
-            return null;
+            return new ArrayList<>();
         }
     }
 
@@ -66,25 +68,26 @@ public class PaymentPreference implements Serializable {
         return defaultInstallments;
     }
 
-    public void setExcludedPaymentMethodIds(List<String> excludedPaymentMethodIds) {
+    public void setExcludedPaymentMethodIds(final List<String> excludedPaymentMethodIds) {
         if (excludedPaymentMethodIds != null) {
             excludedPaymentMethods = new ArrayList<>();
-            for (String paymentMethodId : excludedPaymentMethodIds) {
-                PaymentMethod excludedPaymentMethod = new PaymentMethod(paymentMethodId);
+            for (final String paymentMethodId : excludedPaymentMethodIds) {
+                final PaymentMethod excludedPaymentMethod = new PaymentMethod(paymentMethodId);
                 excludedPaymentMethods.add(excludedPaymentMethod);
             }
         }
     }
 
+    @NonNull
     public List<String> getExcludedPaymentTypes() {
         if (excludedPaymentTypes != null) {
-            List<String> excludedPaymentTypeIds = new ArrayList<>();
-            for (PaymentType paymentType : excludedPaymentTypes) {
+            final List<String> excludedPaymentTypeIds = new ArrayList<>();
+            for (final PaymentType paymentType : excludedPaymentTypes) {
                 excludedPaymentTypeIds.add(paymentType.getId());
             }
             return excludedPaymentTypeIds;
         } else {
-            return null;
+            return new ArrayList<>();
         }
     }
 
@@ -96,9 +99,9 @@ public class PaymentPreference implements Serializable {
         return defaultPaymentTypeId;
     }
 
-    public List<PayerCost> getInstallmentsBelowMax(List<PayerCost> payerCosts) {
+    public List<PayerCost> getInstallmentsBelowMax(final List<PayerCost> payerCosts) {
 
-        List<PayerCost> validPayerCosts = new ArrayList<>();
+        final List<PayerCost> validPayerCosts = new ArrayList<>();
 
         if (maxInstallments != null) {
             for (PayerCost currentPayerCost : payerCosts) {

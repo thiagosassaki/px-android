@@ -6,13 +6,12 @@ import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.commission.ChargeRule;
 import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
+import com.mercadopago.android.px.preferences.PaymentConfiguration;
 import java.util.List;
 
 public interface PaymentSettingRepository {
 
     void reset();
-
-    void configure(@NonNull List<ChargeRule> charges);
 
     void configure(@NonNull final AdvancedConfiguration advancedConfiguration);
 
@@ -20,14 +19,17 @@ public interface PaymentSettingRepository {
 
     void configure(@Nullable CheckoutPreference checkoutPreference);
 
-    void configurePreferenceId(@Nullable String preferenceId);
-
-    void configure(boolean binaryMode);
+    void configure(@Nullable final PaymentConfiguration paymentConfiguration);
 
     void configure(@NonNull Token token);
 
+    void configurePreferenceId(@Nullable String preferenceId);
+
     @NonNull
     List<ChargeRule> chargeRules();
+
+    @Nullable
+    PaymentConfiguration getPaymentConfiguration();
 
     @Nullable
     CheckoutPreference getCheckoutPreference();
@@ -52,5 +54,7 @@ public interface PaymentSettingRepository {
 
     void configurePrivateKey(@Nullable final String privateKey);
 
-    boolean isBinaryMode();
+    boolean hasPaymentConfiguration();
+
+
 }

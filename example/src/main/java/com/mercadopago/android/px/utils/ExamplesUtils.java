@@ -2,22 +2,26 @@ package com.mercadopago.android.px.utils;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.util.Log;
 import android.widget.Toast;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.core.MercadoPagoCheckout.Builder;
-import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Sites;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.plugins.model.BusinessPayment;
+import com.mercadopago.android.px.plugins.model.ExitAction;
+import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
 import com.mercadopago.android.px.tracking.listeners.TracksListener;
 import com.mercadopago.android.px.tracking.tracker.MPTracker;
-import com.mercadopago.android.px.util.JsonUtil;
 import com.mercadopago.android.px.util.ViewUtils;
 import com.mercadopago.example.R;
 import java.math.BigDecimal;
@@ -126,7 +130,15 @@ public final class ExamplesUtils {
     }
 
     private static Builder customExitReviewAndConfirm() {
-        return createBaseWithDecimals();
+
+        final ReviewAndConfirmPreferences preferences = new ReviewAndConfirmPreferences.Builder()
+            .setTopFragment(Fragment.class, new Bundle())
+            .build();
+
+        return createBaseWithDecimals().setAdvancedConfiguration(
+            new AdvancedConfiguration.Builder()
+                .setReviewAndConfirmPreferences(preferences)
+                .build());
     }
 
     private static Builder startBaseFlowWithTrackListener() {
@@ -176,10 +188,21 @@ public final class ExamplesUtils {
             .build();
 
         return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, DUMMY_PREFERENCE_ID_WITH_TWO_ITEMS)
-            .setReviewAndConfirmPreferences(preferences);
+            .setAdvancedConfiguration(new AdvancedConfiguration.Builder()
+                .setReviewAndConfirmPreferences(preferences)
+                .build());
     }
 
     private static Builder createBaseWithOneItemLongTitle() {
         return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, DUMMY_PREFERENCE_ID_WITH_ITEM_LONG_TITLE);
+    }
+
+    /* default */
+    static BusinessPayment getBusinessPaymentApproved() {
+        return new BusinessPayment.Builder(BusinessPayment.Decorator.APPROVED, Payment.StatusCodes.STATUS_APPROVED,
+            Payment.StatusDetail.STATUS_DETAIL_ACCREDITED,
+            R.drawable.px_icon_card, "Title")
+            .setPrimaryButton(new ExitAction("Button Name", 23))
+            .build();
     }
 }

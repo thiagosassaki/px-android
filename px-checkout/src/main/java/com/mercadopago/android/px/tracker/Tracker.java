@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import com.mercadopago.android.px.BuildConfig;
-import com.mercadopago.android.px.core.CheckoutStore;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.model.CardPaymentMetadata;
 import com.mercadopago.android.px.model.OneTapMetadata;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
@@ -18,6 +18,7 @@ import com.mercadopago.android.px.tracking.model.ScreenViewEvent;
 import com.mercadopago.android.px.tracking.utils.TrackingUtil;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -254,7 +255,8 @@ public class Tracker {
 
     private static String getFormattedPaymentMethodsForTracking(final Context context,
         @NonNull final PaymentMethodSearch paymentMethodSearch, final Set<String> escCardIds) {
-        List<PaymentMethodPlugin> paymentMethodPluginList = CheckoutStore.getInstance().getPaymentMethodPluginList();
+        final Collection<PaymentMethodPlugin> paymentMethodPluginList =
+            Session.getSession(context).getPluginRepository().getEnabledPlugins();
         return TrackingFormatter
             .getFormattedPaymentMethodsForTracking(paymentMethodSearch, paymentMethodPluginList, escCardIds);
     }

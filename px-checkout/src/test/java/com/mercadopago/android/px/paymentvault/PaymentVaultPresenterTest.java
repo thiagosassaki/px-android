@@ -2,7 +2,7 @@ package com.mercadopago.android.px.paymentvault;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.callbacks.OnSelectedCallback;
-import com.mercadopago.android.px.constants.PaymentMethods;
+import com.mercadopago.android.px.model.PaymentMethods;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.hooks.Hook;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
@@ -11,7 +11,6 @@ import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.mocks.PaymentMethodSearchs;
-import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CustomSearchItem;
 import com.mercadopago.android.px.model.Discount;
@@ -34,6 +33,7 @@ import com.mercadopago.android.px.views.PaymentVaultView;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -668,7 +668,8 @@ public class PaymentVaultPresenterTest {
         }
 
         @Override
-        public void showPluginOptions(List<PaymentMethodPlugin> items, String position) {
+        public void showPluginOptions(final Collection<PaymentMethodPlugin> items,
+            final PaymentMethodPlugin.PluginPosition position) {
 
         }
 
@@ -733,7 +734,7 @@ public class PaymentVaultPresenterTest {
         }
 
         @Override
-        public void showDetailDialog(@NonNull final Discount discount, @NonNull final Campaign campaign) {
+        public void showDetailDialog() {
             //Do nothing
         }
 

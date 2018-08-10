@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.customviews.MPTextView;
-import com.mercadopago.android.px.model.Campaign;
+import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.util.textformatter.TextFormatter;
 
@@ -18,19 +18,16 @@ public class DiscountDetailContainer extends CompactComponent<DiscountDetailCont
         @NonNull
         /* default */ final DialogTitleType dialogTitleType;
         @NonNull
-        /* default */ final Discount discount;
-        @NonNull
-        /* default */ final Campaign campaign;
+        /* default */ final DiscountRepository discountRepository;
 
-
-        public Props(@NonNull final DialogTitleType dialogTitleType, @NonNull final Discount discount, @NonNull final Campaign campaign) {
+        public Props(@NonNull final DialogTitleType dialogTitleType,
+            @Nonnull final DiscountRepository discountRepository) {
             this.dialogTitleType = dialogTitleType;
-            this.discount = discount;
-            this.campaign = campaign;
+            this.discountRepository = discountRepository;
         }
 
         public enum DialogTitleType {
-            BIG,SMALL
+            BIG, SMALL
         }
     }
 
@@ -47,36 +44,45 @@ public class DiscountDetailContainer extends CompactComponent<DiscountDetailCont
 
     private void addDiscountDetail(@NonNull final ViewGroup parent) {
         final View discountView =
-                new DiscountDetail(new DiscountDetail.Props(props.discount, props.campaign))
-                        .render(parent);
+            new DiscountDetail(new DiscountDetail.Props(props.discountRepository))
+                .render(parent);
 
         parent.addView(discountView);
     }
 
     private void addDiscountTitle(final ViewGroup parent) {
         MPTextView title = getTitleTextView(parent);
-        configureOffMessage(title);
 
+        if (props.discountRepository.isNotAvailableDiscount()) {
+            configureNotAvailableDiscountTitle(title);
+        } else {
+            configureOffTitle(title, props.discountRepository.getDiscount());
+        }
         parent.addView(title);
     }
 
-    private void configureOffMessage(final MPTextView textView) {
-        if (props.discount.hasPercentOff()) {
+    private void configureNotAvailableDiscountTitle(final MPTextView textView) {
+        textView.setText(R.string.px_used_up_discount_title);
+    }
+
+    private void configureOffTitle(final MPTextView textView, final Discount discount) {
+        if (discount.hasPercentOff()) {
             textView.setText(textView.getContext()
-                    .getString(R.string.px_discount_percent_off, props.discount.getPercentOff()));
+                .getString(R.string.px_discount_percent_off, props.discountRepository.getDiscount().getPercentOff()));
         } else {
-            TextFormatter.withCurrencyId(props.discount.getCurrencyId())
-                    .withSpace()
-                    .amount(props.discount.getAmountOff())
-                    .normalDecimals()
-                    .into(textView)
-                    .holder(R.string.px_discount_amount_off);
+            TextFormatter.withCurrencyId(discount.getCurrencyId())
+                .withSpace()
+                .amount(discount.getAmountOff())
+                .normalDecimals()
+                .into(textView)
+                .holder(R.string.px_discount_amount_off);
         }
     }
 
     private MPTextView getTitleTextView(final ViewGroup parent) {
-        return props.dialogTitleType.equals(Props.DialogTitleType.BIG) ? (MPTextView) inflate(parent, R.layout.px_view_big_modal_title)
-                : (MPTextView) inflate(parent, R.layout.px_view_small_modal_title);
+        return props.dialogTitleType.equals(Props.DialogTitleType.BIG) ? (MPTextView) inflate(parent,
+            R.layout.px_view_big_modal_title)
+            : (MPTextView) inflate(parent, R.layout.px_view_small_modal_title);
     }
 }
 

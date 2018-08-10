@@ -3,7 +3,6 @@ package com.mercadopago.android.px.internal.di;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
 import com.mercadopago.android.px.internal.datasource.AmountService;
@@ -23,9 +22,11 @@ import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
+import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.plugins.PaymentProcessor;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
+import com.mercadopago.android.px.preferences.PaymentConfiguration;
 import com.mercadopago.android.px.services.CheckoutService;
 import com.mercadopago.android.px.services.util.LocaleUtil;
 import com.mercadopago.android.px.util.MercadoPagoESCImpl;
@@ -46,6 +47,7 @@ public final class Session extends ApplicationModule
     private GroupsRepository groupsRepository;
     private PaymentRepository paymentRepository;
     private GroupsCache groupsCache;
+    private PluginService pluginRepository;
 
     private Session(@NonNull final Context context) {
         super(context.getApplicationContext());
@@ -61,31 +63,34 @@ public final class Session extends ApplicationModule
     /**
      * Initialize Session with MercadoPagoCheckout information.
      *
-     * @param mercadoPagoCheckout
+     * @param mercadoPagoCheckout non mutable checkout intent.
      */
     public void init(@NonNull final MercadoPagoCheckout mercadoPagoCheckout) {
         //TODO add session mapping object.
         // delete old data.
         clear();
-        // Store persistent configuration
+        // Store persistent paymentSetting
         final ConfigurationModule configurationModule = getConfigurationModule();
         final DiscountRepository discountRepository = getDiscountRepository();
 
-        final PaymentSettingRepository configuration = configurationModule.getPaymentSettings();
-        configuration.configure(mercadoPagoCheckout.getMerchantPublicKey());
-        configuration.configure(mercadoPagoCheckout.getCharges());
-        configuration.configure(mercadoPagoCheckout.getAdvancedConfiguration());
-        configuration.configurePrivateKey(mercadoPagoCheckout.getPrivateKey());
-        discountRepository
-            .configureMerchantDiscountManually(mercadoPagoCheckout.getDiscount(), mercadoPagoCheckout.getCampaign());
+        final PaymentConfiguration paymentConfiguration = mercadoPagoCheckout.getPaymentConfiguration();
+
+        final PaymentSettingRepository paymentSetting = configurationModule.getPaymentSettings();
+        paymentSetting.configure(mercadoPagoCheckout.getPublicKey());
+
+        paymentSetting.configure(mercadoPagoCheckout.getAdvancedConfiguration());
+        paymentSetting.configurePrivateKey(mercadoPagoCheckout.getPrivateKey());
+        paymentSetting.configure(paymentConfiguration);
+
+        discountRepository.configureMerchantDiscountManually(paymentConfiguration);
 
         final CheckoutPreference checkoutPreference = mercadoPagoCheckout.getCheckoutPreference();
         if (checkoutPreference != null) {
-            configuration.configure(checkoutPreference);
+            paymentSetting.configure(checkoutPreference);
         } else {
-            configuration.configurePreferenceId(mercadoPagoCheckout.getPreferenceId());
+            paymentSetting.configurePreferenceId(mercadoPagoCheckout.getPreferenceId());
         }
-        // end Store persistent configuration
+        // end Store persistent paymentSetting
     }
 
     private void clear() {
@@ -138,10 +143,12 @@ public final class Session extends ApplicationModule
     public DiscountRepository getDiscountRepository() {
         if (discountRepository == null) {
             final ConfigurationModule configurationModule = getConfigurationModule();
+            final PaymentSettingRepository paymentSettings = configurationModule.getPaymentSettings();
             discountRepository =
                 new DiscountServiceImp(new DiscountStorageService(getSharedPreferences(), getJsonUtil()),
                     new DiscountApiService(getRetrofitClient(),
-                        configurationModule.getPaymentSettings()));
+                        paymentSettings),
+                    paymentSettings);
         }
         return discountRepository;
     }
@@ -165,21 +172,25 @@ public final class Session extends ApplicationModule
     }
 
     @NonNull
+    public PluginRepository getPluginRepository() {
+        if (pluginRepository == null) {
+            pluginRepository = new PluginService(getContext(), getConfigurationModule().getPaymentSettings());
+        }
+        return pluginRepository;
+    }
+
+    @NonNull
     public PaymentRepository getPaymentRepository() {
+        //TODO fix getPaymentProcessor / default payment processor.
         if (paymentRepository == null) {
             final ConfigurationModule configurationModule = getConfigurationModule();
-            //TODO arreglar el param payment processor, sacar el checkout store y arreglar el mapa de procesadoras
-            String paymentMethodIdSelected = configurationModule.getUserSelectionRepository().getPaymentMethod() == null
-                ? "" : configurationModule.getUserSelectionRepository().getPaymentMethod().getId();
-            PaymentProcessor processor = CheckoutStore.getInstance()
-                .doesPaymentProcessorSupportPaymentMethodSelected(paymentMethodIdSelected);
-
+            final PaymentProcessor paymentProcessor =
+                getConfigurationModule().getPaymentSettings().getPaymentConfiguration().getPaymentProcessor();
             paymentRepository = new PaymentService(getRetrofitClient().create(CheckoutService.class),
-                getMercadoPagoServiceAdapter(),
                 configurationModule.getUserSelectionRepository(),
                 configurationModule.getPaymentSettings(),
-                new PluginService(getContext()), getDiscountRepository(), getAmountRepository(),
-                processor, getContext());
+                getPluginRepository(), getDiscountRepository(), getAmountRepository(),
+                paymentProcessor);
         }
 
         return paymentRepository;

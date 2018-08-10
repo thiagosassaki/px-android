@@ -4,33 +4,25 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-
 import com.mercadopago.android.px.core.CheckoutStore;
-import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.core.MercadoPagoComponents;
-import com.mercadopago.android.px.internal.repository.PaymentHandler;
-import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.hooks.Hook;
 import com.mercadopago.android.px.hooks.HookActivity;
 import com.mercadopago.android.px.internal.di.ConfigurationModule;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.Card;
-import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.Token;
-import com.mercadopago.android.px.mvp.TaggedCallback;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.onetap.OneTapFragment;
 import com.mercadopago.android.px.plugins.BusinessPaymentResultActivity;
 import com.mercadopago.android.px.plugins.PaymentProcessorPluginActivity;
 import com.mercadopago.android.px.plugins.model.BusinessPayment;
 import com.mercadopago.android.px.plugins.model.BusinessPaymentModel;
-import com.mercadopago.android.px.plugins.model.PluginPayment;
 import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.presenters.CheckoutPresenter;
 import com.mercadopago.android.px.providers.CheckoutProvider;
@@ -42,7 +34,6 @@ import com.mercadopago.android.px.tracker.MPTrackingContext;
 import com.mercadopago.android.px.tracking.model.ActionEvent;
 import com.mercadopago.android.px.tracking.tracker.MPTracker;
 import com.mercadopago.android.px.tracking.utils.TrackingUtil;
-import com.mercadopago.android.px.util.ApiUtil;
 import com.mercadopago.android.px.util.ErrorUtil;
 import com.mercadopago.android.px.util.JsonUtil;
 import com.mercadopago.android.px.util.MercadoPagoESCImpl;
@@ -74,7 +65,6 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
     private static final String EXTRA_CARD = "card";
     private static final String EXTRA_PAYER = "payer";
 
-    private static final String EXTRA_CHECKOUT_CONFIGURATION = "extra_mercadopago_checkout";
     private static final String EXTRA_PERSISTENT_DATA = "extra_persistent_data";
     private static final String EXTRA_PRIVATE_KEY = "extra_private_key";
     private static final String EXTRA_PUBLIC_KEY = "extra_public_key";
@@ -84,10 +74,8 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
     private String privateKey;
     private Intent customDataBundle;
 
-    public static Intent getIntent(@NonNull final Context context,
-        @NonNull final MercadoPagoCheckout mercadoPagoCheckout) {
+    public static Intent getIntent(@NonNull final Context context) {
         final Intent checkoutIntent = new Intent(context, CheckoutActivity.class);
-        checkoutIntent.putExtra(EXTRA_CHECKOUT_CONFIGURATION, mercadoPagoCheckout);
         return checkoutIntent;
     }
 
@@ -128,10 +116,11 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
             final ConfigurationModule configurationModule = session.getConfigurationModule();
             presenter =
                     new CheckoutPresenter((CheckoutStateModel) savedInstanceState.getSerializable(EXTRA_PERSISTENT_DATA),
-                            configurationModule.getPaymentSettings(), session.getAmountRepository(),
-                            configurationModule.getUserSelectionRepository(),
-                            session.getDiscountRepository(),
-                            session.getGroupsRepository());
+                        configurationModule.getPaymentSettings(), session.getAmountRepository(),
+                        configurationModule.getUserSelectionRepository(),
+                        session.getDiscountRepository(),
+                        session.getGroupsRepository(),
+                        session.getPluginRepository());
             privateKey = savedInstanceState.getString(EXTRA_PRIVATE_KEY);
             merchantPublicKey = savedInstanceState.getString(EXTRA_PUBLIC_KEY);
             configurePresenter();
@@ -140,26 +129,25 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
     }
 
     protected CheckoutPresenter getActivityParameters() {
-        final Intent intent = getIntent();
-        final MercadoPagoCheckout mercadoPagoCheckout =
-                (MercadoPagoCheckout) intent.getSerializableExtra(EXTRA_CHECKOUT_CONFIGURATION);
 
         final Session session = Session.getSession(this);
         final ConfigurationModule configurationModule = session.getConfigurationModule();
         final PaymentSettingRepository configuration = configurationModule.getPaymentSettings();
 
-
-        //privateKey =  mercadoPagoCheckout.getPrivateKey();
-        privateKey = configurationModule.getPaymentSettings().getPrivateKey();
+        privateKey = configuration.getPrivateKey();
 
         final CheckoutStateModel
-            persistentData = new CheckoutStateModel(mercadoPagoCheckout);
+            persistentData = new CheckoutStateModel();
 
-        merchantPublicKey = mercadoPagoCheckout.getMerchantPublicKey();
-        return new CheckoutPresenter(persistentData, configuration, session.getAmountRepository(),
-                configurationModule.getUserSelectionRepository(),
-                session.getDiscountRepository(),
-                session.getGroupsRepository());
+        merchantPublicKey = configuration.getPublicKey();
+
+        return new CheckoutPresenter(persistentData,
+            configuration,
+            session.getAmountRepository(),
+            configurationModule.getUserSelectionRepository(),
+            session.getDiscountRepository(),
+            session.getGroupsRepository(),
+            session.getPluginRepository());
     }
 
     @Override
@@ -186,9 +174,10 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
     public void showOneTap(@NonNull final OneTapModel oneTapModel) {
         final OneTapFragment instance = OneTapFragment.getInstance(oneTapModel);
         getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.one_tap_fragment, instance)
-                .commit();
+            .beginTransaction()
+            .setCustomAnimations(R.anim.px_slide_right_to_left_in, R.anim.px_slide_right_to_left_out)
+            .replace(R.id.one_tap_fragment, instance)
+            .commit();
     }
 
     @Override
@@ -411,7 +400,6 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
             .setActivity(this)
             .setPaymentResult(paymentResult)
             .setDiscount(presenter.getDiscount())
-            .setPaymentResultScreenPreference(presenter.getPaymentResultScreenPreference())
             .setAmount(amount)
             .startActivity();
 

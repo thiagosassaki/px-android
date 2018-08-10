@@ -2,15 +2,15 @@ package com.mercadopago.android.px.internal.datasource;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
-import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
+import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
+import com.mercadopago.android.px.preferences.DiscountConfiguration;
+import com.mercadopago.android.px.preferences.PaymentConfiguration;
 import com.mercadopago.android.px.services.adapters.MPCall;
 import com.mercadopago.android.px.services.callbacks.Callback;
 import com.mercadopago.android.px.services.exceptions.ApiException;
-
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
@@ -20,28 +20,32 @@ public class DiscountServiceImp implements DiscountRepository {
 
     @NonNull /* default */ final DiscountStorageService discountStorageService;
     @NonNull /* default */ final DiscountApiService discountApiService;
+    @NonNull /* default */ final PaymentSettingRepository paymentSettingRepository;
 
     /* default */ volatile boolean fetched;
 
     public DiscountServiceImp(@NonNull final DiscountStorageService discountStorageService,
-                              @NonNull final DiscountApiService discountApiService) {
+        @NonNull final DiscountApiService discountApiService,
+        @NonNull final PaymentSettingRepository paymentSettingRepository) {
         this.discountStorageService = discountStorageService;
         this.discountApiService = discountApiService;
+        this.paymentSettingRepository = paymentSettingRepository;
         fetched = false;
     }
 
     @Override
-    public void configureMerchantDiscountManually(@Nullable final Discount discount, @Nullable final Campaign campaign) {
-        final CheckoutStore store = CheckoutStore.getInstance();
-        //TODO remove when discount signature change.
-        if (store.hasPaymentProcessor() || !store.getPaymentMethodPluginList().isEmpty()) {
-            discountStorageService.configureDiscountManually(discount, campaign);
+    public void configureMerchantDiscountManually(@Nullable final PaymentConfiguration paymentConfiguration) {
+        if (paymentConfiguration != null && paymentConfiguration.getDiscountConfiguration() != null) {
+            final DiscountConfiguration discountConfiguration = paymentConfiguration.getDiscountConfiguration();
+            //TODO Merchant discount // TODO ADD ERROR
+            discountStorageService.configureDiscountManually(discountConfiguration.getDiscount(),
+                discountConfiguration.getCampaign(), discountConfiguration.isNotAvailable());
         }
     }
 
     @Override
     public void configureDiscountManually(@Nullable final Discount discount, @Nullable final Campaign campaign) {
-        discountStorageService.configureDiscountManually(discount, campaign);
+        discountStorageService.configureDiscountManually(discount, campaign, false);
     }
 
     @Override
@@ -92,6 +96,10 @@ public class DiscountServiceImp implements DiscountRepository {
         }
 
         return discountCampaign;
+    }
+
+    public boolean isNotAvailableDiscount() {
+        return discountStorageService.isNotAvailableDiscount();
     }
 
     @Override
@@ -171,13 +179,11 @@ public class DiscountServiceImp implements DiscountRepository {
         }
 
         private boolean shouldGetDiscount() {
-            //TODO remove when discount signature change.
-            final CheckoutStore store = CheckoutStore.getInstance();
-            return !fetched && (store.getPaymentMethodPluginList().isEmpty() && !store.hasPaymentProcessor());
+            return !fetched && !paymentSettingRepository.hasPaymentConfiguration();
         }
 
         private void getFromNetwork(final Callback<Boolean> callback, @NonNull final Callable campaignsCall)
-                throws Exception {
+            throws Exception {
             final List<Campaign> storage = discountStorageService.getCampaigns();
             if (storage.isEmpty()) {
                 campaignsCall.call();
@@ -187,7 +193,7 @@ public class DiscountServiceImp implements DiscountRepository {
         }
 
         /* default */ Callback<List<Campaign>> campaignCache(final Callback<Boolean> callback,
-                                                             final Callable discountCall) {
+            final Callable discountCall) {
             return new Callback<List<Campaign>>() {
                 @Override
                 public void success(final List<Campaign> campaigns) {
@@ -240,7 +246,8 @@ public class DiscountServiceImp implements DiscountRepository {
             return new Callback<Discount>() {
                 @Override
                 public void success(final Discount discount) {
-                    discountStorageService.configureDiscountManually(discount, directCampaign);
+                    discountStorageService.configureDiscountManually(discount, directCampaign, DiscountServiceImp.this
+                        .isNotAvailableDiscount());
                     callback.success(true);
                 }
 

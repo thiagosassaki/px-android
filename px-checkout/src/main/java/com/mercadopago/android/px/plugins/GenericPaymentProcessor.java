@@ -1,8 +1,10 @@
 package com.mercadopago.android.px.plugins;
 
 import android.content.Context;
-import android.os.Parcel;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
@@ -16,51 +18,27 @@ import com.mercadopago.android.px.plugins.model.PluginPayment;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.util.ApiUtil;
 
-public class GenericPaymentProcessor extends PaymentProcessor {
+public class GenericPaymentProcessor implements PaymentProcessor {
 
+    //TODO remove - ADD paymentAPI service.
     private MercadoPagoServicesAdapter mercadoPagoServiceAdapter;
 
-    /* default */ GenericPaymentProcessor(final Parcel in) {
-
-        //Do nothing
-    }
-
     @Override
-    public void writeToParcel(final Parcel dest, final int flags) {
-        //Do nothing
-    }
-
-    public static final Creator<GenericPaymentProcessor> CREATOR = new Creator<GenericPaymentProcessor>() {
-        @Override
-        public GenericPaymentProcessor createFromParcel(final Parcel in) {
-            return new GenericPaymentProcessor(in);
-        }
-
-        @Override
-        public GenericPaymentProcessor[] newArray(final int size) {
-            return new GenericPaymentProcessor[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void initPayment(@NonNull final Context appContext, @NonNull final Props props,
+    public void startPayment(@NonNull final CheckoutData data, @NonNull final Context context,
         @NonNull final OnPaymentListener paymentListener) {
-        final Session session = Session.getSession(appContext);
+
+        final Session session = Session.getSession(context);
         final PaymentSettingRepository paymentSettings = session.getConfigurationModule().getPaymentSettings();
         final String publicKey = paymentSettings.getPublicKey();
         mercadoPagoServiceAdapter = session.getMercadoPagoServiceAdapter();
-        //TODO idempotency key, binary mode, customer id?
-        createPaymentInMercadoPago("123", props.checkoutPreference, props.paymentData,
-            paymentSettings.isBinaryMode(), publicKey,
+        //TODO idempotency key, customer id?
+        //TODO payer identification - in 40.0.0 it;s mutable for brasil.
+        createPaymentInMercadoPago(paymentSettings.getTransactionId(), data.checkoutPreference, data.paymentData,
+            paymentSettings.getAdvancedConfiguration().isBinaryMode(), publicKey,
             new TaggedCallback<Payment>(ApiUtil.RequestOrigin.CREATE_PAYMENT) {
                 @Override
                 public void onSuccess(final Payment payment) {
-                    paymentListener.onPaymentFinished(mapPayment(payment, props));
+                    paymentListener.onPaymentFinished(mapPayment(payment, data));
                 }
 
                 @Override
@@ -70,10 +48,33 @@ public class GenericPaymentProcessor extends PaymentProcessor {
             });
     }
 
+    @Override
+    public int getPaymentTimeout() {
+        return 0;
+    }
+
+    @Override
+    public boolean shouldShowFragmentOnPayment() {
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public Bundle getFragmentBundle(@NonNull final CheckoutData data, @NonNull final Context context) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public Fragment getFragment(@NonNull final CheckoutData data, @NonNull final Context context) {
+        return null;
+    }
+
+    /* default */
     @NonNull
-    private PluginPayment mapPayment(final Payment payment, @NonNull final Props props) {
+    PluginPayment mapPayment(final Payment payment, @NonNull final CheckoutData data) {
         return new GenericPayment(payment.getId(), payment.getStatus(),
-            payment.getStatusDetail(), props.paymentData);
+            payment.getStatusDetail(), data.paymentData);
     }
 
     private void createPaymentInMercadoPago(@NonNull final String transactionId,

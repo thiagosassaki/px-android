@@ -3,8 +3,9 @@ package com.mercadopago.android.px.plugins.model;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.uicontrollers.paymentmethodsearch.PaymentMethodInfoModel;
+import java.io.Serializable;
 
-public class PaymentMethodInfo implements PaymentMethodInfoModel {
+public class PaymentMethodInfo implements PaymentMethodInfoModel, Serializable {
     private final String id;
     private final String name;
     private final String description;
@@ -26,7 +27,7 @@ public class PaymentMethodInfo implements PaymentMethodInfoModel {
         @DrawableRes final int icon) {
         this.id = id;
         this.name = name;
-        this.description = null;
+        description = null;
         this.icon = icon;
     }
 

@@ -18,7 +18,6 @@ import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.model.Token;
-import com.mercadopago.android.px.model.commission.ChargeRule;
 import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.services.util.FakeAPI;
@@ -65,7 +64,6 @@ public class CardVaultActivityTest {
         configuration.configure(new AdvancedConfiguration.Builder().build());
         configuration.configure(new CheckoutPreference.Builder(Sites.ARGENTINA, "a@a.a",
             Collections.singletonList(item)).build());
-        configuration.configure(new ArrayList<ChargeRule>());
 
         validStartIntent = new Intent();
         validStartIntent.putExtra("merchantPublicKey", "1234");

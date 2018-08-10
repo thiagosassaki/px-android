@@ -1,9 +1,9 @@
 package com.mercadopago.android.px.paymentresult.props;
 
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.model.Instruction;
 import com.mercadopago.android.px.model.PaymentData;
+import com.mercadopago.android.px.preferences.PaymentResultScreenPreference;
 import java.math.BigDecimal;
 
 public class PaymentResultBodyProps {
@@ -17,6 +17,7 @@ public class PaymentResultBodyProps {
     public final Long paymentId;
     public final String currencyId;
     public final BigDecimal amount;
+    public PaymentResultScreenPreference paymentResultScreenPreference;
 
     public PaymentResultBodyProps(@NonNull final Builder builder) {
         status = builder.status;
@@ -28,10 +29,11 @@ public class PaymentResultBodyProps {
         paymentId = builder.paymentId;
         currencyId = builder.currencyId;
         amount = builder.amount;
+        paymentResultScreenPreference = builder.paymentResultScreenPreference;
     }
 
     public Builder toBuilder() {
-        return new Builder()
+        return new Builder(paymentResultScreenPreference)
             .setStatus(status)
             .setCurrencyId(currencyId)
             .setAmount(amount)
@@ -41,11 +43,6 @@ public class PaymentResultBodyProps {
             .setDisclaimer(disclaimer)
             .setProcessingMode(processingMode)
             .setPaymentId(paymentId);
-    }
-
-    public boolean isReceiptEnabled() {
-        return CheckoutStore.getInstance().getPaymentResultScreenPreference() == null ||
-            CheckoutStore.getInstance().getPaymentResultScreenPreference().isApprovedReceiptEnabled();
     }
 
     public static class Builder {
@@ -59,6 +56,11 @@ public class PaymentResultBodyProps {
         public Long paymentId;
         public String currencyId;
         public BigDecimal amount;
+        public PaymentResultScreenPreference paymentResultScreenPreference;
+
+        public Builder(@NonNull final PaymentResultScreenPreference paymentResultScreenPreference) {
+            this.paymentResultScreenPreference = paymentResultScreenPreference;
+        }
 
         public Builder setStatus(@NonNull final String status) {
             this.status = status;

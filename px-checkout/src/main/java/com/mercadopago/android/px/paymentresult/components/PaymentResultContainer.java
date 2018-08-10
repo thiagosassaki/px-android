@@ -2,13 +2,13 @@ package com.mercadopago.android.px.paymentresult.components;
 
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.components.ActionDispatcher;
 import com.mercadopago.android.px.components.Component;
 import com.mercadopago.android.px.components.LoadingComponent;
 import com.mercadopago.android.px.components.RendererFactory;
-import com.mercadopago.android.px.constants.PaymentMethods;
-import com.mercadopago.android.px.core.CheckoutStore;
+import com.mercadopago.android.px.model.PaymentMethods;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.PaymentTypes;
@@ -47,8 +47,9 @@ public class PaymentResultContainer extends Component<PaymentResultProps, Void> 
     public PaymentResultProvider paymentResultProvider;
 
     public PaymentResultContainer(@NonNull final ActionDispatcher dispatcher,
+        @NonNull final PaymentResultProps props,
         @NonNull final PaymentResultProvider paymentResultProvider) {
-        super(new PaymentResultProps.Builder().build(), dispatcher);
+        super(props, dispatcher);
         this.paymentResultProvider = paymentResultProvider;
     }
 
@@ -100,7 +101,8 @@ public class PaymentResultContainer extends Component<PaymentResultProps, Void> 
         Body body = null;
         if (props.paymentResult != null) {
             //TODO fix amount.
-            final PaymentResultBodyProps bodyProps = new PaymentResultBodyProps.Builder()
+            final PaymentResultBodyProps bodyProps =
+                new PaymentResultBodyProps.Builder(props.getPaymentResultScreenPreference())
                 .setStatus(props.paymentResult.getPaymentStatus())
                 .setStatusDetail(props.paymentResult.getPaymentStatusDetail())
                 .setPaymentData(props.paymentResult.getPaymentData())
@@ -118,7 +120,7 @@ public class PaymentResultContainer extends Component<PaymentResultProps, Void> 
 
     public FooterContainer getFooterContainer() {
         return new FooterContainer(new FooterContainer.Props(
-            props.paymentResult),
+            props.paymentResult, props.getPaymentResultScreenPreference()),
             getDispatcher(),
             paymentResultProvider
         );
@@ -199,20 +201,18 @@ public class PaymentResultContainer extends Component<PaymentResultProps, Void> 
                     statusDetail.equals(Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_INSUFFICIENT_AMOUNT)));
     }
 
+    @Nullable
     private String getIconUrl(@NonNull final PaymentResultProps props) {
-        PaymentResultScreenPreference paymentResultScreenPreference =
-            CheckoutStore.getInstance().getPaymentResultScreenPreference();
-        String paymentStatus = props.paymentResult.getPaymentStatus();
-        String paymentStatusDetail = props.paymentResult.getPaymentStatusDetail();
+        final PaymentResultScreenPreference paymentResultScreenPreference = props.getPaymentResultScreenPreference();
+        final String paymentStatus = props.paymentResult.getPaymentStatus();
+        final String paymentStatusDetail = props.paymentResult.getPaymentStatusDetail();
         return paymentResultScreenPreference.getPreferenceUrlIcon(paymentStatus, paymentStatusDetail);
     }
 
     private int getIconImage(@NonNull final PaymentResultProps props) {
-        PaymentResultScreenPreference paymentResultScreenPreference =
-            CheckoutStore.getInstance().getPaymentResultScreenPreference();
-
-        String paymentStatus = props.paymentResult.getPaymentStatus();
-        String paymentStatusDetail = props.paymentResult.getPaymentStatusDetail();
+        final PaymentResultScreenPreference paymentResultScreenPreference = props.getPaymentResultScreenPreference();
+        final String paymentStatus = props.paymentResult.getPaymentStatus();
+        final String paymentStatusDetail = props.paymentResult.getPaymentStatusDetail();
 
         if (paymentResultScreenPreference.hasCustomizedImageIcon(paymentStatus, paymentStatusDetail)) {
             return paymentResultScreenPreference.getPreferenceIcon(paymentStatus, paymentStatusDetail);

@@ -37,7 +37,7 @@ public class AmountView extends LinearLayoutCompat {
 
     public interface OnClick {
 
-        void onDetailClicked(@NonNull final Discount discount, @NonNull final Campaign campaign);
+        void onDetailClicked();
 
         void onInputRequestClicked();
     }
@@ -62,10 +62,13 @@ public class AmountView extends LinearLayoutCompat {
     }
 
     public void show(@NonNull final DiscountRepository discountRepository,
-                     @NonNull final BigDecimal totalAmount, @NonNull final Site site) {
+        @NonNull final BigDecimal totalAmount, @NonNull final Site site) {
         final Discount discount = discountRepository.getDiscount();
         final Campaign campaign = discountRepository.getCampaign();
-        if (discount != null && campaign != null) {
+
+        if (discountRepository.isNotAvailableDiscount()) {
+            showNotAvailableDiscount(totalAmount, site);
+        } else if (discountRepository.hasValidDiscount()) {
             show(discount, campaign, totalAmount, site);
         } else if (discountRepository.hasCodeCampaign()) {
             showCouponInput(totalAmount, site);
@@ -98,9 +101,10 @@ public class AmountView extends LinearLayoutCompat {
     }
 
     private void show(@NonNull final Discount discount,
-                      @NonNull final Campaign campaign,
-                      @NonNull final BigDecimal totalAmount,
-                      @NonNull final Site site) {
+        @NonNull final Campaign campaign,
+        @NonNull final BigDecimal totalAmount,
+        @NonNull final Site site) {
+
         showDiscount(discount, campaign, totalAmount, site);
         showEffectiveAmount(totalAmount.subtract(discount.getCouponAmount()), site);
     }
@@ -119,11 +123,26 @@ public class AmountView extends LinearLayoutCompat {
         });
     }
 
+    private void showNotAvailableDiscount(@NonNull final BigDecimal totalAmount,
+        @NonNull final Site site) {
+        configureViewsVisibilityWhenNotAvailableDiscount();
+        amountDescription.setText(R.string.px_used_up_discount_row);
+        amountDescription.setTextColor(getResources().getColor(R.color.px_form_text));
+        showEffectiveAmount(totalAmount, site);
+    }
+
     private void show(@NonNull final BigDecimal totalAmount, @NonNull final Site site) {
         configureViewsVisibilityDefault();
         amountDescription.setText(R.string.px_total_to_pay);
         amountDescription.setTextColor(getResources().getColor(R.color.px_form_text));
         showEffectiveAmount(totalAmount, site);
+    }
+
+    private void configureViewsVisibilityWhenNotAvailableDiscount() {
+        amountBeforeDiscount.setVisibility(GONE);
+        maxCouponAmount.setVisibility(GONE);
+        arrow.setVisibility(VISIBLE);
+        configureOnOnDetailClickedEvent();
     }
 
     private void configureViewsVisibilityDefault() {
@@ -148,32 +167,36 @@ public class AmountView extends LinearLayoutCompat {
     }
 
     private void showDiscount(@NonNull final Discount discount,
-                              @NonNull final Campaign campaign,
-                              @NonNull final BigDecimal totalAmount,
-                              @NonNull final Site site) {
+        @NonNull final Campaign campaign,
+        @NonNull final BigDecimal totalAmount,
+        @NonNull final Site site) {
         configureDiscountAmountDescription(discount, campaign);
 
         configureViewsVisibilityWhenDiscount(totalAmount, site);
 
+        configureOnOnDetailClickedEvent();
+    }
+
+    private void configureOnOnDetailClickedEvent() {
         mainContainer.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(final View v) {
                 if (callback != null) {
-                    callback.onDetailClicked(discount, campaign);
+                    callback.onDetailClicked();
                 }
             }
         });
     }
 
     private void configureViewsVisibilityWhenDiscount(@NonNull final BigDecimal totalAmount,
-                                                      @NonNull final Site site) {
+        @NonNull final Site site) {
         arrow.setVisibility(VISIBLE);
         amountBeforeDiscount.setVisibility(VISIBLE);
         TextFormatter.withCurrencyId(site.getCurrencyId())
-                .withSpace()
-                .amount(totalAmount)
-                .normalDecimals()
-                .into(amountBeforeDiscount);
+            .withSpace()
+            .amount(totalAmount)
+            .normalDecimals()
+            .into(amountBeforeDiscount);
     }
 
     private void configureDiscountAmountDescription(final Discount discount, final Campaign campaign) {
@@ -185,10 +208,10 @@ public class AmountView extends LinearLayoutCompat {
 
     private void showEffectiveAmount(@NonNull final BigDecimal totalAmount, @NonNull final Site site) {
         TextFormatter.withCurrencyId(site.getCurrencyId())
-                .withSpace()
-                .amount(totalAmount)
-                .normalDecimals()
-                .into(finalAmount);
+            .withSpace()
+            .amount(totalAmount)
+            .normalDecimals()
+            .into(finalAmount);
     }
 
     private void configureMaxCouponAmountMessage(final Campaign campaign) {
@@ -203,18 +226,18 @@ public class AmountView extends LinearLayoutCompat {
     private void configureDiscountOffMessage(final Discount discount) {
         if (discount.hasPercentOff()) {
             TextFormatter.withCurrencyId(discount.getCurrencyId())
-                    .noSpace().noSymbol()
-                    .amount(discount.getPercentOff())
-                    .normalDecimals()
-                    .into(amountDescription)
-                    .holder(R.string.px_discount_percent_off_percent);
+                .noSpace().noSymbol()
+                .amount(discount.getPercentOff())
+                .normalDecimals()
+                .into(amountDescription)
+                .holder(R.string.px_discount_percent_off_percent);
         } else {
             TextFormatter.withCurrencyId(discount.getCurrencyId())
-                    .withSpace()
-                    .amount(discount.getAmountOff())
-                    .normalDecimals()
-                    .into(amountDescription)
-                    .holder(R.string.px_discount_amount_off);
+                .withSpace()
+                .amount(discount.getAmountOff())
+                .normalDecimals()
+                .into(amountDescription)
+                .holder(R.string.px_discount_amount_off);
         }
     }
 }

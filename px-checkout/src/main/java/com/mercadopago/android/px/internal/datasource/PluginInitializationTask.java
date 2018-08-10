@@ -1,20 +1,17 @@
-package com.mercadopago.android.px.plugins;
+package com.mercadopago.android.px.internal.datasource;
 
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.core.CheckoutStore;
-import java.util.Map;
+import com.mercadopago.android.px.plugins.PaymentMethodPlugin;
 
-public abstract class DataInitializationTask {
+public class PluginInitializationTask {
 
     public static final String KEY_INIT_SUCCESS = "init_success";
+    @NonNull private final Iterable<PaymentMethodPlugin> plugins;
 
-    private final Map<String, Object> data;
     private Thread taskThread;
 
-    public DataInitializationTask(@NonNull final Map<String, Object> defaultData) {
-        data = CheckoutStore.getInstance().getData();
-        data.clear();
-        data.putAll(defaultData);
+    public PluginInitializationTask(@NonNull final Iterable<PaymentMethodPlugin> plugins) {
+        this.plugins = plugins;
     }
 
     /* async init */
@@ -31,12 +28,14 @@ public abstract class DataInitializationTask {
     /* sync init */
     public void initPlugins(final DataInitializationCallbacks callback) {
         try {
-            onLoadData(data);
+            for (final PaymentMethodPlugin plugin : plugins) {
+                plugin.init();
+            }
             if (!taskThread.isInterrupted()) {
-                callback.onDataInitialized(data);
+                callback.onDataInitialized();
             }
         } catch (final Exception e) {
-            callback.onFailure(e, data);
+            callback.onFailure(e);
         }
     }
 
@@ -46,11 +45,9 @@ public abstract class DataInitializationTask {
         }
     }
 
-    public abstract void onLoadData(@NonNull final Map<String, Object> data);
-
     public interface DataInitializationCallbacks {
-        void onDataInitialized(@NonNull final Map<String, Object> data);
+        void onDataInitialized();
 
-        void onFailure(@NonNull final Exception e, @NonNull final Map<String, Object> data);
+        void onFailure(@NonNull final Exception e);
     }
 }

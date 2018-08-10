@@ -436,7 +436,6 @@ public class MercadoPagoComponents {
             private Discount discount;
             private PaymentResult paymentResult;
             private BigDecimal amount;
-            private PaymentResultScreenPreference paymentResultScreenPreference;
 
             public PaymentResultActivityBuilder setActivity(Activity activity) {
                 this.activity = activity;
@@ -450,12 +449,6 @@ public class MercadoPagoComponents {
 
             public PaymentResultActivityBuilder setAmount(BigDecimal amount) {
                 this.amount = amount;
-                return this;
-            }
-
-            public PaymentResultActivityBuilder setPaymentResultScreenPreference(
-                PaymentResultScreenPreference preference) {
-                paymentResultScreenPreference = preference;
                 return this;
             }
 
@@ -478,8 +471,6 @@ public class MercadoPagoComponents {
                 final Intent resultIntent = new Intent(activity, PaymentResultActivity.class);
                 resultIntent.putExtra("discount", JsonUtil.getInstance().toJson(discount));
                 resultIntent.putExtra("paymentResult", JsonUtil.getInstance().toJson(paymentResult));
-                resultIntent.putExtra("paymentResultScreenPreference",
-                    JsonUtil.getInstance().toJson(paymentResultScreenPreference));
                 if (amount != null) {
                     resultIntent.putExtra("amount", amount.toString());
                 }

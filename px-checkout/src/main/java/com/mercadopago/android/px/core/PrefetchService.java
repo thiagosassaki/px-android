@@ -3,17 +3,16 @@ package com.mercadopago.android.px.core;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import com.mercadopago.android.px.internal.datasource.PluginInitializationTask;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
-import com.mercadopago.android.px.plugins.DataInitializationTask;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.services.CheckoutService;
 import com.mercadopago.android.px.services.callbacks.Callback;
 import com.mercadopago.android.px.services.core.Settings;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.util.TextUtils;
-import java.util.Map;
 
 class PrefetchService {
 
@@ -97,25 +96,18 @@ class PrefetchService {
 
     /* default */ void initPlugins() {
         //TODO refactor - muy turbio todo.
-        final DataInitializationTask dataInitializationTask =
-            CheckoutStore.getInstance().getDataInitializationTask();
-        if (dataInitializationTask != null) {
-            dataInitializationTask.initPlugins(new DataInitializationTask.DataInitializationCallbacks() {
-                @Override
-                public void onDataInitialized(@NonNull final Map<String, Object> data) {
-                    data.put(DataInitializationTask.KEY_INIT_SUCCESS, true);
-                    fetchGroups();
-                }
+        final PluginInitializationTask initTask = session.getPluginRepository().getInitTask();
+        initTask.initPlugins(new PluginInitializationTask.DataInitializationCallbacks() {
+            @Override
+            public void onDataInitialized() {
+                fetchGroups();
+            }
 
-                @Override
-                public void onFailure(@NonNull final Exception e, @NonNull final Map<String, Object> data) {
-                    data.put(DataInitializationTask.KEY_INIT_SUCCESS, false);
-                    fetchGroups();
-                }
-            });
-        } else {
-            fetchGroups();
-        }
+            @Override
+            public void onFailure(@NonNull final Exception e) {
+                fetchGroups();
+            }
+        });
     }
 
     /* default */ void fetchGroups() {

@@ -2,12 +2,12 @@ package com.mercadopago.android.px.presenters;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.core.CheckoutStore;
-import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.hooks.Hook;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
+import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.mocks.Cards;
 import com.mercadopago.android.px.mocks.Customers;
@@ -38,10 +38,12 @@ import com.mercadopago.android.px.plugins.model.BusinessPayment;
 import com.mercadopago.android.px.plugins.model.BusinessPaymentModel;
 import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
+import com.mercadopago.android.px.preferences.PaymentResultScreenPreference;
 import com.mercadopago.android.px.providers.CheckoutProvider;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.services.exceptions.CheckoutPreferenceException;
 import com.mercadopago.android.px.util.TextUtils;
+import com.mercadopago.android.px.utils.PluginInitializationSuccess;
 import com.mercadopago.android.px.utils.StubSuccessMpCall;
 import com.mercadopago.android.px.viewmodel.CheckoutStateModel;
 import com.mercadopago.android.px.viewmodel.OneTapModel;
@@ -58,7 +60,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static com.mercadopago.android.px.utils.StubCheckoutPreferenceUtils.stubExpiredPreference;
 import static com.mercadopago.android.px.utils.StubCheckoutPreferenceUtils.stubPreferenceOneItem;
 import static com.mercadopago.android.px.utils.StubCheckoutPreferenceUtils.stubPreferenceOneItemAndPayer;
-import static com.mercadopago.android.px.utils.StubPaymentResult.stubApprovedOffPaymentResult;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
@@ -73,20 +74,15 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 @RunWith(MockitoJUnitRunner.class)
 public class CheckoutPresenterTest {
 
-    private static final String PREF_ID = "123";
-
-    private static final int REQUESTED_RESULT = 0x20;
-
-    @Mock private MercadoPagoCheckout mercadoPagoCheckout;
     @Mock private CheckoutView checkoutView;
     @Mock private CheckoutProvider checkoutProvider;
     @Mock private PaymentSettingRepository configuration;
     @Mock private AmountRepository amountRepository;
     @Mock private UserSelectionRepository userSelectionRepository;
     @Mock private DiscountRepository discountRepository;
-    @Mock private PaymentMethod paymentMethod;
     @Mock private GroupsRepository groupsRepository;
     @Mock private AdvancedConfiguration advancedConfiguration;
+    @Mock private PluginRepository pluginRepository;
 
     private MockedView view;
     private MockedProvider provider;
@@ -108,6 +104,7 @@ public class CheckoutPresenterTest {
     private CheckoutPresenter getPaymentPresenterWithDefaultAdvancedConfigurationMla() {
         final CheckoutPreference preference = stubPreferenceOneItem();
         when(configuration.getCheckoutPreference()).thenReturn(preference);
+
         provider.setCheckoutPreferenceResponse(preference);
         when(groupsRepository.getGroups())
             .thenReturn(new StubSuccessMpCall<>(PaymentMethodSearchs.getCompletePaymentMethodSearchMLA()));
@@ -126,12 +123,17 @@ public class CheckoutPresenterTest {
         final CheckoutView view,
         final CheckoutProvider provider) {
         when(configuration.getAdvancedConfiguration()).thenReturn(advancedConfiguration);
+        when(advancedConfiguration.getPaymentResultScreenPreference())
+            .thenReturn(new PaymentResultScreenPreference.Builder().build());
         when(advancedConfiguration.isBinaryMode()).thenReturn(false);
 
-        final CheckoutStateModel model = new CheckoutStateModel(mercadoPagoCheckout);
+        when(pluginRepository.getInitTask()).thenReturn(new PluginInitializationSuccess());
+
+        final CheckoutStateModel model = new CheckoutStateModel();
         final CheckoutPresenter presenter = new CheckoutPresenter(model, configuration, amountRepository,
             userSelectionRepository, discountRepository,
-            groupsRepository);
+            groupsRepository,
+            pluginRepository);
         presenter.attachResourcesProvider(provider);
         presenter.attachView(view);
         return presenter;
@@ -235,7 +237,6 @@ public class CheckoutPresenterTest {
             .setEscEnabled(true)
             .build();
 
-        when(mercadoPagoCheckout.getCheckoutPreference()).thenReturn(checkoutPreference);
         when(configuration.getAdvancedConfiguration()).thenReturn(advancedConfiguration);
         CheckoutPresenter presenter = getBasePresenter(view, provider);
 
@@ -566,7 +567,6 @@ public class CheckoutPresenterTest {
     @Test
     public void ifPaymentMethodEditionRequestedAndUserPressesBackTwiceCancelCheckout() {
         final CheckoutPresenter presenter = getPaymentPresenterWithDefaultAdvancedConfigurationMla();
-
         presenter.initialize();
         assertTrue(view.showingPaymentMethodSelection);
 
@@ -819,19 +819,19 @@ public class CheckoutPresenterTest {
     @Test
     public void ifPayerDataCollectedAndPayerInPreferenceThenUseBothForPayment() {
 
-        String firstName = "FirstName";
-        String lastName = "LastName";
-        Identification identification = new Identification();
+        final String firstName = "FirstName";
+        final String lastName = "LastName";
+        final Identification identification = new Identification();
         identification.setType("cpf");
         identification.setNumber("111");
 
-        Payer collectedPayer = new Payer();
+        final Payer collectedPayer = new Payer();
         collectedPayer.setFirstName(firstName);
         collectedPayer.setLastName(lastName);
         collectedPayer.setIdentification(identification);
 
         provider.setPaymentResponse(Payments.getCallForAuthPayment());
-        CheckoutPreference preference = stubPreferenceOneItem();
+        final CheckoutPreference preference = stubPreferenceOneItem();
 
         when(configuration.getCheckoutPreference()).thenReturn(preference);
         provider.setCheckoutPreferenceResponse(preference);

@@ -2,4 +2,5 @@
 <resources>
     <item name="px_fragmen_container_top" type="id">0x2222222</item>
     <item name="px_fragmen_container_bottom" type="id">0x2222223</item>
+    <item name="px_main_container" type="id">0x2222224</item>
 </resources>

@@ -7,9 +7,14 @@ import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Sites;
+import com.mercadopago.android.px.model.commission.ChargeRule;
 import com.mercadopago.android.px.model.commission.PaymentMethodChargeRule;
 import com.mercadopago.android.px.model.commission.PaymentTypeChargeRule;
+import com.mercadopago.android.px.plugins.SamplePaymentProcessor;
+import com.mercadopago.android.px.preferences.DiscountConfiguration;
+import com.mercadopago.android.px.preferences.PaymentConfiguration;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import static com.mercadopago.android.px.utils.BusinessSamples.startCompleteApprovedBusiness;
@@ -36,33 +41,48 @@ final class ChargesSamples {
     }
 
     private static MercadoPagoCheckout.Builder chargeType(final String type) {
-        return new MercadoPagoCheckout.Builder(PK, PREF)
-            .addChargeRule(new PaymentTypeChargeRule(type, BigDecimal.TEN));
+        final Collection<ChargeRule> charges = new ArrayList<>();
+        charges.add(new PaymentTypeChargeRule(type, BigDecimal.TEN));
+        return new MercadoPagoCheckout.Builder(PK, PREF).setPaymentConfiguration(
+            new PaymentConfiguration.Builder(new SamplePaymentProcessor(BusinessSamples.getBusinessRejected()))
+                .addChargeRules(charges)
+                .build());
     }
 
     private static MercadoPagoCheckout.Builder chargeWithBusiness(final String paymentMethodId) {
-        return startCompleteApprovedBusiness().addChargeRule(getCharge(paymentMethodId));
+        return startCompleteApprovedBusiness().setPaymentConfiguration(
+            getPaymentConfig(paymentMethodId).build());
+    }
+
+    @NonNull
+    private static PaymentConfiguration.Builder getPaymentConfig(final String paymentMethodId) {
+        return new PaymentConfiguration.Builder(new SamplePaymentProcessor(BusinessSamples.getBusinessRejected()))
+            .addChargeRules(getCharge(paymentMethodId));
     }
 
     private static MercadoPagoCheckout.Builder charge(final String paymentMethodId) {
-        return new MercadoPagoCheckout.Builder(PK, PREF)
-            .addChargeRule(getCharge(paymentMethodId));
+        return new MercadoPagoCheckout.Builder(PK, PREF).setPaymentConfiguration(
+            getPaymentConfig(paymentMethodId).build());
     }
 
     private static MercadoPagoCheckout.Builder chargeAndDiscount(final String paymentMethodId) {
         return chargeWithBusiness(paymentMethodId)
-            .setDiscount(new Discount
+            .setPaymentConfiguration(getPaymentConfig(paymentMethodId)
+                .setDiscountConfiguration(
+                    DiscountConfiguration.withDiscount(new Discount
                     .Builder("12344", Sites.ARGENTINA.getCurrencyId(), BigDecimal.TEN)
                     .setAmountOff(BigDecimal.TEN)
                     .build(),
                 new Campaign.Builder("12344")
                     .setMaxCouponAmount(BigDecimal.TEN)
-                    .build()
-            );
+                    .build())
+                ).build());
     }
 
     @NonNull
-    private static PaymentMethodChargeRule getCharge(final String paymentMethodId) {
-        return new PaymentMethodChargeRule(paymentMethodId, new BigDecimal(100));
+    private static Collection<ChargeRule> getCharge(final String paymentMethodId) {
+        final Collection<ChargeRule> charges = new ArrayList<>();
+        charges.add(new PaymentMethodChargeRule(paymentMethodId, new BigDecimal(100)));
+        return charges;
     }
 }
