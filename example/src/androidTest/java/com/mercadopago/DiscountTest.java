@@ -1,11 +1,8 @@
 package com.mercadopago;
 
-import android.support.annotation.NonNull;
-import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
-import android.view.View;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
@@ -14,7 +11,7 @@ import com.mercadopago.android.px.plugins.MainPaymentProcessor;
 import com.mercadopago.android.px.plugins.SamplePaymentMethodPlugin;
 import com.mercadopago.android.px.plugins.model.BusinessPayment;
 import com.mercadopago.android.px.plugins.model.ExitAction;
-import com.mercadopago.android.px.testcheckout.assertions.DefaultValidator;
+import com.mercadopago.android.px.testcheckout.assertions.AlwaysOnDiscountValidator;
 import com.mercadopago.android.px.testcheckout.assertions.OneShotDiscountValidator;
 import com.mercadopago.android.px.testcheckout.flows.DiscountTestFlow;
 import com.mercadopago.android.px.testcheckout.idleresources.CheckoutResource;
@@ -22,23 +19,12 @@ import com.mercadopago.android.px.testcheckout.input.Country;
 import com.mercadopago.android.px.testcheckout.input.FakeCard;
 import com.mercadopago.android.px.testcheckout.input.Visa;
 import com.mercadopago.android.px.testcheckout.pages.CongratsPage;
-import com.mercadopago.android.px.testcheckout.pages.DiscountDetailPage;
-import com.mercadopago.android.px.testcheckout.pages.PaymentMethodPage;
 import com.mercadopago.android.testlib.HttpResource;
-import com.mercadopago.example.R;
 import java.math.BigDecimal;
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static junit.framework.Assert.assertNotNull;
 
 @RunWith(AndroidJUnit4.class)
@@ -117,40 +103,8 @@ public class DiscountTest {
         discountTestFlow = new DiscountTestFlow(builder.build(), activityRule.getActivity());
 
         final CongratsPage congratsPage =
-            discountTestFlow.runCreditCardPaymentFlowWithMerchantDiscountApplied(card, 1, new DefaultValidator() {
-                @Override
-                public void validate(@NonNull final DiscountDetailPage discountDetailPage) {
-                    super.validate(discountDetailPage);
-                    final Matcher<View> detail = withId(com.mercadopago.android.px.R.id.detail);
-
-                    onView(detail)
-                        .check(matches(withText(com.mercadopago.android.px.R.string.px_always_on_discount_detail)));
-
-                    final Matcher<View> subtitle = withId(com.mercadopago.android.px.R.id.subtitle);
-                    final String maxCouponAmount = "$ " + campaign.getMaxCouponAmount();
-                    final String maxCouponAmountSubtitle = getInstrumentation().getTargetContext()
-                        .getString(R.string.px_max_coupon_amount, maxCouponAmount);
-                    onView(subtitle).check(matches(withText(maxCouponAmountSubtitle)));
-                }
-
-                @Override
-                public void validate(@NonNull final PaymentMethodPage paymentMethodPage) {
-                    super.validate(paymentMethodPage);
-
-                    //TODO
-                    final Matcher<View> amountDescription = withId(com.mercadopago.android.px.R.id.amount_description);
-                    final Matcher<View> maxCouponAmount = withId(com.mercadopago.android.px.R.id.max_coupon_amount);
-                    final Matcher<View> amountBeforeDiscount =
-                        withId(com.mercadopago.android.px.R.id.amount_before_discount);
-                    final Matcher<View> finalAmount = withId(com.mercadopago.android.px.R.id.final_amount);
-
-                    onView(amountDescription).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
-                    onView(maxCouponAmount).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
-                    onView(amountBeforeDiscount)
-                        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
-                    onView(finalAmount).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
-                }
-            });
+            discountTestFlow
+                .runCreditCardPaymentFlowWithMerchantDiscountApplied(card, 1, new AlwaysOnDiscountValidator(campaign));
         assertNotNull(congratsPage);
     }
 
