@@ -6,11 +6,14 @@ import android.test.suitebuilder.annotation.LargeTest;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
+import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.Payment;
+import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.plugins.MainPaymentProcessor;
 import com.mercadopago.android.px.plugins.SamplePaymentMethodPlugin;
 import com.mercadopago.android.px.plugins.model.BusinessPayment;
 import com.mercadopago.android.px.plugins.model.ExitAction;
+import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.testcheckout.assertions.AlwaysOnDiscountValidator;
 import com.mercadopago.android.px.testcheckout.assertions.OneShotDiscountValidator;
 import com.mercadopago.android.px.testcheckout.flows.DiscountTestFlow;
@@ -21,10 +24,13 @@ import com.mercadopago.android.px.testcheckout.input.Visa;
 import com.mercadopago.android.px.testcheckout.pages.CongratsPage;
 import com.mercadopago.android.testlib.HttpResource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import static junit.framework.Assert.assertNotNull;
 
 @RunWith(AndroidJUnit4.class)
@@ -48,6 +54,16 @@ public class DiscountTest {
     private static final String MERCHANT_DISCOUNT_ID = "77";
     private static final String MERCHANT_DISCOUNT_CURRENCY = "ARS";
 
+    private static final String ONE_TAP_MERCHANT_PUBLIC_KEY = "APP_USR-648a260d-6fd9-4ad7-9284-90f22262c18d";
+    private static final String ONE_TAP_DIRECT_DISCOUNT_MERCHANT_PUBLIC_KEY =
+        "APP_USR-ef65214d-59a2-4c82-be23-6cf6eb945d4c";
+    private static final String ONE_TAP_PAYER_3_ACCESS_TOKEN =
+        "TEST-244508097630521-031308-7b8b58d617aec50b3e528ca98606b116__LC_LA__-150216849";
+    private static final String PAYER_EMAIL_DUMMY = "prueba@gmail.com";
+    private static final String ITEM_DESCRIPTION = "Descripción del producto";
+    private static final String ITEM_TITLE = "Título del producto";
+    private static final String ITEM_ID = "1234";
+
     @Rule
     public HttpResource httpResource = new CheckoutResource();
 
@@ -61,6 +77,7 @@ public class DiscountTest {
     private Discount discount;
     private Campaign campaign;
     private Visa card;
+    private CheckoutPreference checkoutPreferenceWithPayerEmail;
 
     @Before
     public void setUp() {
@@ -86,6 +103,16 @@ public class DiscountTest {
                 .build();
 
         card = new Visa(FakeCard.CardState.APRO, Country.ARGENTINA);
+
+        final List<Item> items = new ArrayList<>();
+        final Item item = new Item(ITEM_DESCRIPTION, 1, new BigDecimal(120));
+        item.setId(ITEM_ID);
+        item.setTitle(ITEM_TITLE);
+        item.setCurrencyId(Sites.ARGENTINA.getCurrencyId());
+        items.add(item);
+        checkoutPreferenceWithPayerEmail = new CheckoutPreference.Builder(Sites.ARGENTINA,
+            PAYER_EMAIL_DUMMY, items)
+            .build();
     }
 
     @Test
@@ -105,6 +132,28 @@ public class DiscountTest {
         final CongratsPage congratsPage =
             discountTestFlow
                 .runCreditCardPaymentFlowWithMerchantDiscountApplied(card, 1, new AlwaysOnDiscountValidator(campaign));
+        assertNotNull(congratsPage);
+    }
+
+    @Test
+    public void whenMerchantDiscountIsAlwaysOnHasPaymentProcessorAndPayerHasOneTapThenShowMerchantDiscountAndGetCongrats() {
+        final MercadoPagoCheckout.Builder builder =
+            new MercadoPagoCheckout.Builder(ONE_TAP_MERCHANT_PUBLIC_KEY,
+                checkoutPreferenceWithPayerEmail)
+                .setPaymentProcessor(mainPaymentProcessor)
+                .setDiscount(discount, campaign)
+                .setPrivateKey(ONE_TAP_PAYER_3_ACCESS_TOKEN);;
+
+        campaign =
+            new Campaign.Builder(MERCHANT_DISCOUNT_ID).setMaxCouponAmount(new BigDecimal(200)).setMaxRedeemPerUser(2)
+                .build();
+
+        discountTestFlow = new DiscountTestFlow(builder.build(), activityRule.getActivity());
+
+        final CongratsPage congratsPage =
+            discountTestFlow
+                .runCreditCardWithOneTapWithoutESCPaymentFlowWithMerchantDiscountApplied(card,
+                    new AlwaysOnDiscountValidator(campaign));
         assertNotNull(congratsPage);
     }
 

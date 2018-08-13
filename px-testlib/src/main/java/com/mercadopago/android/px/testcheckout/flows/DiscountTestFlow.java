@@ -6,6 +6,7 @@ import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.testcheckout.assertions.CheckoutValidator;
 import com.mercadopago.android.px.testcheckout.input.Card;
 import com.mercadopago.android.px.testcheckout.pages.CongratsPage;
+import com.mercadopago.android.px.testcheckout.pages.OneTapPage;
 import com.mercadopago.android.px.testcheckout.pages.PaymentMethodPage;
 
 public class DiscountTestFlow extends TestFlow {
@@ -138,5 +139,20 @@ public class DiscountTestFlow extends TestFlow {
             .pressCloseToInstallments()
             .selectInstallments(installmentsOption)
             .pressConfirmButton();
+    }
+
+    public CongratsPage runCreditCardWithOneTapWithoutESCPaymentFlowWithMerchantDiscountApplied(final Card card) {
+        return runCreditCardWithOneTapWithoutESCPaymentFlowWithMerchantDiscountApplied(card, null);
+    }
+
+    public CongratsPage runCreditCardWithOneTapWithoutESCPaymentFlowWithMerchantDiscountApplied(final Card card,
+        final CheckoutValidator validator) {
+        startCheckout();
+
+        return new OneTapPage(validator)
+            .pressOnDiscountDetail()
+            .pressCloseToOneTap()
+            .pressConfirmButton()
+            .enterSecurityCode(card.escNumber());
     }
 }

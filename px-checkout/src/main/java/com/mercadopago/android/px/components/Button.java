@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 import com.mercadolibre.android.ui.widgets.MeliButton;
+import com.mercadopago.android.px.R;
 import javax.annotation.Nonnull;
 
 public abstract class Button extends CompactComponent<Button.Props, Button.Actions> {
@@ -38,6 +39,7 @@ public abstract class Button extends CompactComponent<Button.Props, Button.Actio
     @Override
     public View render(@Nonnull final ViewGroup parent) {
         final MeliButton view = getButtonView(parent.getContext());
+        view.setId(R.id.px_button);
         view.setText(props.label);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
