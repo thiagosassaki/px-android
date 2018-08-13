@@ -15,6 +15,7 @@ import com.mercadopago.android.px.plugins.SamplePaymentMethodPlugin;
 import com.mercadopago.android.px.plugins.model.BusinessPayment;
 import com.mercadopago.android.px.plugins.model.ExitAction;
 import com.mercadopago.android.px.testcheckout.assertions.DefaultValidator;
+import com.mercadopago.android.px.testcheckout.assertions.OneShotDiscountValidator;
 import com.mercadopago.android.px.testcheckout.flows.DiscountTestFlow;
 import com.mercadopago.android.px.testcheckout.idleresources.CheckoutResource;
 import com.mercadopago.android.px.testcheckout.input.Country;
@@ -94,7 +95,9 @@ public class DiscountTest {
 
         discount = new Discount.Builder(MERCHANT_DISCOUNT_ID, MERCHANT_DISCOUNT_CURRENCY, new BigDecimal(50))
             .setPercentOff(BigDecimal.TEN).build();
-        campaign = new Campaign.Builder(MERCHANT_DISCOUNT_ID).setMaxCouponAmount(new BigDecimal(200)).setMaxRedeemPerUser(2).build();
+        campaign =
+            new Campaign.Builder(MERCHANT_DISCOUNT_ID).setMaxCouponAmount(new BigDecimal(200)).setMaxRedeemPerUser(2)
+                .build();
 
         card = new Visa(FakeCard.CardState.APRO, Country.ARGENTINA);
     }
@@ -107,7 +110,9 @@ public class DiscountTest {
                 .addPaymentMethodPlugin(new SamplePaymentMethodPlugin(), mainPaymentProcessor)
                 .setDiscount(discount, campaign);
 
-        campaign = new Campaign.Builder(MERCHANT_DISCOUNT_ID).setMaxCouponAmount(new BigDecimal(200)).setMaxRedeemPerUser(2).build();
+        campaign =
+            new Campaign.Builder(MERCHANT_DISCOUNT_ID).setMaxCouponAmount(new BigDecimal(200)).setMaxRedeemPerUser(2)
+                .build();
 
         discountTestFlow = new DiscountTestFlow(builder.build(), activityRule.getActivity());
 
@@ -118,11 +123,13 @@ public class DiscountTest {
                     super.validate(discountDetailPage);
                     final Matcher<View> detail = withId(com.mercadopago.android.px.R.id.detail);
 
-                    onView(detail).check(matches(withText(com.mercadopago.android.px.R.string.px_always_on_discount_detail)));
+                    onView(detail)
+                        .check(matches(withText(com.mercadopago.android.px.R.string.px_always_on_discount_detail)));
 
                     final Matcher<View> subtitle = withId(com.mercadopago.android.px.R.id.subtitle);
                     final String maxCouponAmount = "$ " + campaign.getMaxCouponAmount();
-                    final String maxCouponAmountSubtitle = getInstrumentation().getTargetContext().getString(R.string.px_max_coupon_amount, maxCouponAmount);
+                    final String maxCouponAmountSubtitle = getInstrumentation().getTargetContext()
+                        .getString(R.string.px_max_coupon_amount, maxCouponAmount);
                     onView(subtitle).check(matches(withText(maxCouponAmountSubtitle)));
                 }
 
@@ -133,12 +140,14 @@ public class DiscountTest {
                     //TODO
                     final Matcher<View> amountDescription = withId(com.mercadopago.android.px.R.id.amount_description);
                     final Matcher<View> maxCouponAmount = withId(com.mercadopago.android.px.R.id.max_coupon_amount);
-                    final Matcher<View> amountBeforeDiscount = withId(com.mercadopago.android.px.R.id.amount_before_discount);
+                    final Matcher<View> amountBeforeDiscount =
+                        withId(com.mercadopago.android.px.R.id.amount_before_discount);
                     final Matcher<View> finalAmount = withId(com.mercadopago.android.px.R.id.final_amount);
 
                     onView(amountDescription).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
                     onView(maxCouponAmount).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
-                    onView(amountBeforeDiscount).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
+                    onView(amountBeforeDiscount)
+                        .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
                     onView(finalAmount).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
                 }
             });
@@ -147,7 +156,9 @@ public class DiscountTest {
 
     @Test
     public void whenMerchantDiscountIsOneShotAndHasPaymentProcessorThenShowMerchantDiscountAndGetCongrats() {
-        campaign = new Campaign.Builder(MERCHANT_DISCOUNT_ID).setMaxCouponAmount(new BigDecimal(200)).setMaxRedeemPerUser(1).build();
+        campaign =
+            new Campaign.Builder(MERCHANT_DISCOUNT_ID).setMaxCouponAmount(new BigDecimal(200)).setMaxRedeemPerUser(1)
+                .build();
 
         final MercadoPagoCheckout.Builder builder =
             new MercadoPagoCheckout.Builder(MERCHANT_PUBLIC_KEY, PREFERENCE_ID)
@@ -158,36 +169,8 @@ public class DiscountTest {
         discountTestFlow = new DiscountTestFlow(builder.build(), activityRule.getActivity());
 
         final CongratsPage congratsPage =
-            discountTestFlow.runCreditCardPaymentFlowWithMerchantDiscountApplied(card, 1, new DefaultValidator() {
-                @Override
-                public void validate(@NonNull final DiscountDetailPage discountDetailPage) {
-                    super.validate(discountDetailPage);
-                    final Matcher<View> detail = withId(com.mercadopago.android.px.R.id.detail);
-
-                    onView(detail).check(matches(withText(com.mercadopago.android.px.R.string.px_one_shot_discount_detail)));
-
-                    final Matcher<View> subtitle = withId(com.mercadopago.android.px.R.id.subtitle);
-                    final String maxCouponAmount = "$ " + campaign.getMaxCouponAmount();
-                    final String maxCouponAmountSubtitle = getInstrumentation().getTargetContext().getString(R.string.px_max_coupon_amount, maxCouponAmount);
-                    onView(subtitle).check(matches(withText(maxCouponAmountSubtitle)));
-                }
-
-                @Override
-                public void validate(@NonNull final PaymentMethodPage paymentMethodPage) {
-                    super.validate(paymentMethodPage);
-
-                    //TODO
-                    final Matcher<View> amountDescription = withId(com.mercadopago.android.px.R.id.amount_description);
-                    final Matcher<View> maxCouponAmount = withId(com.mercadopago.android.px.R.id.max_coupon_amount);
-                    final Matcher<View> amountBeforeDiscount = withId(com.mercadopago.android.px.R.id.amount_before_discount);
-                    final Matcher<View> finalAmount = withId(com.mercadopago.android.px.R.id.final_amount);
-
-                    onView(amountDescription).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
-                    onView(maxCouponAmount).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
-                    onView(amountBeforeDiscount).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
-                    onView(finalAmount).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
-                }
-            });
+            discountTestFlow
+                .runCreditCardPaymentFlowWithMerchantDiscountApplied(card, 1, new OneShotDiscountValidator(campaign));
         assertNotNull(congratsPage);
     }
 
