@@ -19,7 +19,14 @@ public class DiscountTestFlow extends TestFlow {
     }
 
     @NonNull
-    public CongratsPage runCreditCardPaymentFlowWithMerchantDiscountApplied(@NonNull final Card card, final int installmentsOption,
+    public CongratsPage runCreditCardPaymentFlowWithMerchantDiscountApplied(@NonNull final Card card,
+        final int installmentsOption) {
+        return runCreditCardPaymentFlowWithMerchantDiscountApplied(card, installmentsOption, null);
+    }
+
+    @NonNull
+    public CongratsPage runCreditCardPaymentFlowWithMerchantDiscountApplied(@NonNull final Card card,
+        final int installmentsOption,
         final CheckoutValidator validator) {
         startCheckout();
 
@@ -39,7 +46,14 @@ public class DiscountTestFlow extends TestFlow {
     }
 
     @NonNull
-    public CongratsPage runCreditCardPaymentFlowWithDiscountApplied(@NonNull final Card card, final int installmentsOption,
+    public CongratsPage runCreditCardPaymentFlowWithDiscountApplied(@NonNull final Card card,
+        final int installmentsOption) {
+        return runCreditCardPaymentFlowWithDiscountApplied(card, installmentsOption, null);
+    }
+
+    @NonNull
+    public CongratsPage runCreditCardPaymentFlowWithDiscountApplied(@NonNull final Card card,
+        final int installmentsOption,
         final CheckoutValidator validator) {
         startCheckout();
 
@@ -56,6 +70,11 @@ public class DiscountTestFlow extends TestFlow {
             .pressCloseToInstallments()
             .selectInstallments(installmentsOption)
             .pressConfirmButton();
+    }
+
+    @NonNull
+    public CongratsPage runCashPaymentFlowWithDiscountApplied() {
+        return runCashPaymentFlowWithDiscountApplied(null);
     }
 
     @NonNull
@@ -70,7 +89,15 @@ public class DiscountTestFlow extends TestFlow {
     }
 
     @NonNull
-    public CongratsPage runCreditCardPaymentFlowWithoutPaymentProcessorWithMerchantDiscountApplied(@NonNull final Card card, final int installmentsOption,
+    public CongratsPage runCreditCardPaymentFlowWithoutPaymentProcessorWithMerchantDiscountApplied(
+        @NonNull final Card card, final int installmentsOption) {
+        return runCreditCardPaymentFlowWithoutPaymentProcessorWithMerchantDiscountApplied(card, installmentsOption,
+            null);
+    }
+
+    @NonNull
+    public CongratsPage runCreditCardPaymentFlowWithoutPaymentProcessorWithMerchantDiscountApplied(
+        @NonNull final Card card, final int installmentsOption,
         final CheckoutValidator validator) {
         startCheckout();
 
@@ -84,6 +111,12 @@ public class DiscountTestFlow extends TestFlow {
             .enterIdentificationNumberToInstallments(card.cardHolderIdentityNumber())
             .selectInstallments(installmentsOption)
             .pressConfirmButton();
+    }
+
+    @NonNull
+    public CongratsPage runCreditCardPaymentFlowWithCodeDiscount(@NonNull final Card card,
+        final int installmentsOption) {
+        return runCreditCardPaymentFlowWithCodeDiscount(card, installmentsOption, null);
     }
 
     @NonNull

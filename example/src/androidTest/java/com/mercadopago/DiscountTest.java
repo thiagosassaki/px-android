@@ -200,7 +200,7 @@ public class DiscountTest {
         discountTestFlow = new DiscountTestFlow(builder.build(), activityRule.getActivity());
 
         final CongratsPage congratsPage =
-            discountTestFlow.runCreditCardPaymentFlowWithoutPaymentProcessorWithMerchantDiscountApplied(card, 1, null);
+            discountTestFlow.runCreditCardPaymentFlowWithoutPaymentProcessorWithMerchantDiscountApplied(card, 1);
         assertNotNull(congratsPage);
     }
 
@@ -211,7 +211,7 @@ public class DiscountTest {
         discountTestFlow = new DiscountTestFlow(builder.build(), activityRule.getActivity());
 
         final Visa card = new Visa(FakeCard.CardState.APRO, Country.ARGENTINA);
-        final CongratsPage congratsPage = discountTestFlow.runCreditCardPaymentFlowWithDiscountApplied(card, 1, null);
+        final CongratsPage congratsPage = discountTestFlow.runCreditCardPaymentFlowWithDiscountApplied(card, 1);
         assertNotNull(congratsPage);
     }
 
@@ -221,7 +221,7 @@ public class DiscountTest {
             new MercadoPagoCheckout.Builder(DIRECT_DISCOUNT_PUBLIC_KEY, DIRECT_DISCOUNT_PREFERENCE_ID);
         discountTestFlow = new DiscountTestFlow(builder.build(), activityRule.getActivity());
 
-        final CongratsPage congratsPage = discountTestFlow.runCashPaymentFlowWithDiscountApplied(null);
+        final CongratsPage congratsPage = discountTestFlow.runCashPaymentFlowWithDiscountApplied();
         assertNotNull(congratsPage);
     }
 }
