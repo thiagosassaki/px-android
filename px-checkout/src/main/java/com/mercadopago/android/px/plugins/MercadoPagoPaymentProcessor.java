@@ -14,43 +14,19 @@ import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.mvp.TaggedCallback;
 import com.mercadopago.android.px.plugins.model.GenericPayment;
-import com.mercadopago.android.px.plugins.model.PluginPayment;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.util.ApiUtil;
 
-public class GenericPaymentProcessor implements PaymentProcessor {
+public class MercadoPagoPaymentProcessor implements PaymentProcessor {
+
+    private static final int TIMEOUT = 30000;
 
     //TODO remove - ADD paymentAPI service.
     private MercadoPagoServicesAdapter mercadoPagoServiceAdapter;
 
     @Override
-    public void startPayment(@NonNull final CheckoutData data, @NonNull final Context context,
-        @NonNull final OnPaymentListener paymentListener) {
-
-        final Session session = Session.getSession(context);
-        final PaymentSettingRepository paymentSettings = session.getConfigurationModule().getPaymentSettings();
-        final String publicKey = paymentSettings.getPublicKey();
-        mercadoPagoServiceAdapter = session.getMercadoPagoServiceAdapter();
-        //TODO idempotency key, customer id?
-        //TODO payer identification - in 40.0.0 it;s mutable for brasil.
-        createPaymentInMercadoPago(paymentSettings.getTransactionId(), data.checkoutPreference, data.paymentData,
-            paymentSettings.getAdvancedConfiguration().isBinaryMode(), publicKey,
-            new TaggedCallback<Payment>(ApiUtil.RequestOrigin.CREATE_PAYMENT) {
-                @Override
-                public void onSuccess(final Payment payment) {
-                    paymentListener.onPaymentFinished(mapPayment(payment, data));
-                }
-
-                @Override
-                public void onFailure(final MercadoPagoError error) {
-                    paymentListener.onPaymentError(error);
-                }
-            });
-    }
-
-    @Override
     public int getPaymentTimeout() {
-        return 0;
+        return TIMEOUT;
     }
 
     @Override
@@ -70,9 +46,36 @@ public class GenericPaymentProcessor implements PaymentProcessor {
         return null;
     }
 
+    @Override
+    public void startPayment(@NonNull final CheckoutData data,
+        @NonNull final Context context,
+        @NonNull final OnPaymentListener paymentListener) {
+
+        final Session session = Session.getSession(context);
+        final PaymentSettingRepository paymentSettings = session.getConfigurationModule().getPaymentSettings();
+        final String publicKey = paymentSettings.getPublicKey();
+        mercadoPagoServiceAdapter = session.getMercadoPagoServiceAdapter();
+
+        //TODO idempotency key, customer id?
+        //TODO payer identification - in 40.0.0 it;s mutable for brasil.
+        createPaymentInMercadoPago(paymentSettings.getTransactionId(), data.checkoutPreference, data.paymentData,
+            paymentSettings.getAdvancedConfiguration().isBinaryMode(), publicKey,
+            new TaggedCallback<Payment>(ApiUtil.RequestOrigin.CREATE_PAYMENT) {
+                @Override
+                public void onSuccess(final Payment payment) {
+                    paymentListener.onPaymentFinished(mapPayment(payment, data));
+                }
+
+                @Override
+                public void onFailure(final MercadoPagoError error) {
+                    paymentListener.onPaymentError(error);
+                }
+            });
+    }
+
     /* default */
     @NonNull
-    PluginPayment mapPayment(final Payment payment, @NonNull final CheckoutData data) {
+    GenericPayment mapPayment(final Payment payment, @NonNull final CheckoutData data) {
         return new GenericPayment(payment.getId(), payment.getStatus(),
             payment.getStatusDetail(), data.paymentData);
     }

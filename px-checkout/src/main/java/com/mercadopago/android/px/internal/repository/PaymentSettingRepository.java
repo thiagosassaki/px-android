@@ -25,10 +25,12 @@ public interface PaymentSettingRepository {
 
     void configurePreferenceId(@Nullable String preferenceId);
 
+    void configurePrivateKey(@Nullable final String privateKey);
+
     @NonNull
     List<ChargeRule> chargeRules();
 
-    @Nullable
+    @NonNull
     PaymentConfiguration getPaymentConfiguration();
 
     @Nullable
@@ -51,10 +53,5 @@ public interface PaymentSettingRepository {
 
     @Nullable
     Token getToken();
-
-    void configurePrivateKey(@Nullable final String privateKey);
-
-    boolean hasPaymentConfiguration();
-
 
 }

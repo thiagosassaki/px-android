@@ -8,6 +8,7 @@ import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.Sites;
+import com.mercadopago.android.px.plugins.MercadoPagoPaymentProcessor;
 import com.mercadopago.android.px.plugins.SamplePaymentMethodPlugin;
 import com.mercadopago.android.px.plugins.SamplePaymentProcessor;
 import com.mercadopago.android.px.plugins.model.GenericPayment;
@@ -102,9 +103,12 @@ public final class OneTapSamples {
         final SamplePaymentProcessor samplePaymentProcessor = new SamplePaymentProcessor(payment);
         return new MercadoPagoCheckout.Builder(ONE_TAP_MERCHANT_PUBLIC_KEY,
             getCheckoutPreferenceWithPayerEmail(new ArrayList<String>(), 120))
-            .setPaymentConfiguration(new PaymentConfiguration.Builder(samplePaymentProcessor)
-                .addPaymentMethodPlugin(new SamplePaymentMethodPlugin())
-                .build())
+            //TODO
+//            .setPaymentConfiguration(new PaymentConfiguration.Builder(samplePaymentProcessor)
+//                .addPaymentMethodPlugin(new SamplePaymentMethodPlugin())
+//                .build())
+            .setPaymentConfiguration(new PaymentConfiguration.Builder(new MercadoPagoPaymentProcessor())
+                .addPaymentMethodPlugin(new SamplePaymentMethodPlugin()).build())
             .setPrivateKey(ONE_TAP_PAYER_1_ACCESS_TOKEN);
     }
 
@@ -117,7 +121,7 @@ public final class OneTapSamples {
 
         return new MercadoPagoCheckout.Builder(ONE_TAP_MERCHANT_PUBLIC_KEY,
             getCheckoutPreferenceWithPayerEmail(new ArrayList<String>(), 120))
-            .setPaymentConfiguration(new PaymentConfiguration.Builder(samplePaymentProcessor)
+            .setPaymentConfiguration(new PaymentConfiguration.Builder(new MercadoPagoPaymentProcessor())
                 .addPaymentMethodPlugin(new SamplePaymentMethodPlugin())
                 .build())
             .setPrivateKey(ONE_TAP_PAYER_2_ACCESS_TOKEN);
@@ -132,9 +136,6 @@ public final class OneTapSamples {
         excludedPaymentTypes.add("account_money");
         return new MercadoPagoCheckout.Builder(ONE_TAP_MERCHANT_PUBLIC_KEY,
             getCheckoutPreferenceWithPayerEmail(excludedPaymentTypes, 120))
-            .setPaymentConfiguration(new PaymentConfiguration.Builder(samplePaymentProcessor)
-                .addPaymentMethodPlugin(new SamplePaymentMethodPlugin())
-                .build())
             .setPrivateKey(ONE_TAP_PAYER_2_ACCESS_TOKEN);
     }
 

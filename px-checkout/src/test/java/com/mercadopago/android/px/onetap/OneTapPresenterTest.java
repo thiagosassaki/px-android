@@ -1,6 +1,6 @@
 package com.mercadopago.android.px.onetap;
 
-import com.mercadopago.android.px.internal.repository.PluginRepository;
+import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CardPaymentMetadata;
 import com.mercadopago.android.px.model.Issuer;
@@ -51,7 +51,7 @@ public class OneTapPresenterTest {
     @Mock
     private CardPaymentMetadata cardMetadata;
 
-    @Mock private PluginRepository pluginRepository;
+    @Mock private PaymentRepository paymentRepository;
 
     private OneTapPresenter oneTapPresenter;
 
@@ -60,36 +60,16 @@ public class OneTapPresenterTest {
         when(metadata.getCard()).thenReturn(cardMetadata);
         when(model.getPaymentMethods()).thenReturn(paymentMethodSearch);
         when(paymentMethodSearch.getOneTapMetadata()).thenReturn(metadata);
-        oneTapPresenter = new OneTapPresenter(model, pluginRepository);
+        oneTapPresenter = new OneTapPresenter(model, paymentRepository);
         oneTapPresenter.attachView(view);
     }
 
     @Test
-    public void whenConfirmPaymentCardShowCardFlow() {
-        cardConfig();
-        oneTapPresenter.confirmPayment();
-        verify(view).showCardFlow(model, card);
-        verify(view).trackConfirm(model);
-        verifyNoMoreInteractions(view);
-    }
-
-    @Test
-    public void whenConfirmPaymentPluginShowPaymentPluginFlow() {
+    public void whenConfirmStartPayment() {
         configPlugin();
-        when(pluginRepository.getPluginAsPaymentMethod(PLUGIN_ID, PaymentTypes.PLUGIN)).thenReturn(paymentMethod);
         oneTapPresenter.confirmPayment();
-        verify(pluginRepository).getPluginAsPaymentMethod(PLUGIN_ID, PaymentTypes.PLUGIN);
-        verify(view).showPaymentFlow(paymentMethod);
         verify(view).trackConfirm(model);
-        verifyNoMoreInteractions(view);
-    }
-
-    @Test
-    public void whenConfirmPaymentUnknownTypeShowPaymentFlow() {
-        configOther();
-        oneTapPresenter.confirmPayment();
-        verify(view).showPaymentFlow(paymentMethod);
-        verify(view).trackConfirm(model);
+        verify(paymentRepository).doPayment(model, oneTapPresenter);
         verifyNoMoreInteractions(view);
     }
 

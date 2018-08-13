@@ -1,31 +1,27 @@
 package com.mercadopago.android.px.onetap;
 
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.util.Log;
-import com.mercadopago.android.px.core.CheckoutStore;
-import com.mercadopago.android.px.internal.repository.PaymentHandler;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
+import com.mercadopago.android.px.internal.repository.PaymentServiceHandler;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.PaymentTypes;
-import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.mvp.MvpPresenter;
 import com.mercadopago.android.px.mvp.ResourcesProvider;
 import com.mercadopago.android.px.plugins.model.BusinessPayment;
 import com.mercadopago.android.px.plugins.model.GenericPayment;
-import com.mercadopago.android.px.plugins.model.PluginPayment;
-import com.mercadopago.android.px.plugins.model.Processor;
 import com.mercadopago.android.px.viewmodel.OneTapModel;
 
-class OneTapPresenter extends MvpPresenter<OneTap.View, ResourcesProvider> implements OneTap.Actions, Processor {
+/* default */ class OneTapPresenter extends MvpPresenter<OneTap.View, ResourcesProvider>
+    implements OneTap.Actions, PaymentServiceHandler {
 
     @NonNull private final OneTapModel model;
     @NonNull private final PaymentRepository paymentRepository;
 
-    OneTapPresenter(@NonNull final OneTapModel model,
+    /* default */ OneTapPresenter(@NonNull final OneTapModel model,
         @NonNull final PaymentRepository paymentRepository) {
         this.model = model;
         this.paymentRepository = paymentRepository;
@@ -34,65 +30,7 @@ class OneTapPresenter extends MvpPresenter<OneTap.View, ResourcesProvider> imple
     @Override
     public void confirmPayment() {
         getView().trackConfirm(model);
-
-        paymentRepository.doPayment(model, new PaymentHandler() {
-            @Override
-            public void onPaymentFinished(final PluginPayment payment) {
-                Log.d("refactor", "payment finished");
-                payment.process(OneTapPresenter.this);
-            }
-
-            @Override
-            public void onPaymentError(final MercadoPagoError error) {
-                //TODO same thing -> activity
-                Log.d("refactor", "payment error");
-            }
-
-            @Override
-            public void onPaymentMethodRequired() {
-                //TODO no debería pasar.
-                Log.d("refactor", "payment method required");
-            }
-
-            @Override
-            public void onCvvRequired(@NonNull final Card card) {
-                Log.d("refactor", "cvv required");
-                getView().showCardFlow(model, card);
-            }
-
-            @Override
-            public void onCardError() {
-                Log.d("refactor", "card error");
-                getView().showCardFlow(model, null);
-            }
-
-            @Override
-            public void onVisualPayment(final Fragment fragment) {
-                Log.d("refactor", "visual payment");
-                //TODO - Caso instores vending machine.
-            }
-
-            @Override
-            public void onIssuerRequired() {
-
-            }
-
-            @Override
-            public void onPayerCostRequired() {
-
-            }
-
-            @Override
-            public void onTokenRequired() {
-
-            }
-        });
-    }
-
-    @Override
-    public void onReceived(@NonNull final Token token) {
-        //TODO REMOVE
-        confirmPayment();
+        paymentRepository.startOneTapPayment(model, this);
     }
 
     @Override
@@ -107,28 +45,20 @@ class OneTapPresenter extends MvpPresenter<OneTap.View, ResourcesProvider> imple
     }
 
     public void cancel() {
-        getView().cancel();
-        getView().trackCancel(model.getPublicKey());
+        if (isViewAttached()) {
+            getView().cancel();
+            getView().trackCancel(model.getPublicKey());
+        }
     }
 
     @Override
-    public void process(final BusinessPayment businessPayment) {
-
-    }
-
-    @Override
-    public void process(final GenericPayment genericPayment) {
-        final PaymentResult paymentResult = toPaymentResult(genericPayment);
-        CheckoutStore.getInstance().setPaymentResult(paymentResult);
-        //TODO hacer algo en la vista al terminar el pago
-        //getView().onPaymentProcessed(paymentResult);
-        //setResult(RESULT_OK);
-        //finish();
-        //TODO same thing Activity.
+    public void onTokenResolved() {
+        if (isViewAttached()) {
+            confirmPayment();
+        }
     }
 
     private PaymentResult toPaymentResult(@NonNull final GenericPayment genericPayment) {
-
         final Payment payment = new Payment();
         payment.setId(genericPayment.paymentId);
         payment.setPaymentMethodId(genericPayment.paymentData.getPaymentMethod().getId());
@@ -142,6 +72,95 @@ class OneTapPresenter extends MvpPresenter<OneTap.View, ResourcesProvider> imple
             .setPaymentStatus(payment.getStatus())
             .setPaymentStatusDetail(payment.getStatusDetail())
             .build();
+    }
+
+    /**
+     * When there is no visual interaction needed this callback is called.
+     *
+     * @param genericPayment plugin payment.
+     */
+    @Override
+    public void onPaymentFinished(@NonNull final GenericPayment genericPayment) {
+        //TODO add esc logic.
+        if (isViewAttached()) {
+            getView().showPaymentResult(toPaymentResult(genericPayment));
+        }
+    }
+
+    /**
+     * When there is no visual interaction needed this callback is called.
+     *
+     * @param businessPayment plugin payment.
+     */
+    @Override
+    public void onPaymentFinished(@NonNull final BusinessPayment businessPayment) {
+        //TODO add esc logic.
+        if (isViewAttached()) {
+            getView().showBusinessResult(businessPayment);
+        }
+    }
+
+    @Override
+    public void onPaymentError(@NonNull final MercadoPagoError error) {
+        if (isViewAttached()) {
+            getView().showErrorView(error);
+        }
+    }
+
+    @Override
+    public void onVisualPayment() {
+        if (isViewAttached()) {
+            getView().showPaymentProcessor();
+        }
+    }
+
+    @Override
+    public void cancelPayment() {
+        if (isViewAttached()) {
+            //TODO cancel - loading.
+        }
+    }
+
+    @Override
+    public void onCvvRequired(@NonNull final Card card) {
+        if (isViewAttached()) {
+            getView().showCardFlow(model, card);
+        }
+    }
+
+    @Override
+    public void onPaymentMethodRequired() {
+        //TODO definition
+        Log.d(OneTapPresenter.class.getName(), "Should not happen. - onPaymentMethodRequired");
+        cancel();
+    }
+
+    @Override
+    public void onCardError() {
+        //TODO definition
+        Log.d(OneTapPresenter.class.getName(), "Should not happen. - onCardError");
+        cancel();
+    }
+
+    @Override
+    public void onIssuerRequired() {
+        //TODO definition
+        Log.d(OneTapPresenter.class.getName(), "Should not happen. - onIssuerRequired");
+        cancel();
+    }
+
+    @Override
+    public void onPayerCostRequired() {
+        //TODO definition
+        Log.d(OneTapPresenter.class.getName(), "Should not happen. - onPayerCostRequired");
+        cancel();
+    }
+
+    @Override
+    public void onTokenRequired() {
+        //TODO definition
+        Log.d(OneTapPresenter.class.getName(), "Should not happen. - onPayerCostRequired");
+        cancel();
     }
 
 }

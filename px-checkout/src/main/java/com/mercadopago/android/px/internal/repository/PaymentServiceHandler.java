@@ -1,11 +1,10 @@
 package com.mercadopago.android.px.internal.repository;
 
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import com.mercadopago.android.px.model.Card;
-import com.mercadopago.android.px.plugins.OnPaymentListener;
+import com.mercadopago.android.px.plugins.PaymentProcessor;
 
-public interface PaymentHandler extends OnPaymentListener {
+public interface PaymentServiceHandler extends PaymentProcessor.OnPaymentListener {
 
     void onPaymentMethodRequired();
 
@@ -13,7 +12,7 @@ public interface PaymentHandler extends OnPaymentListener {
 
     void onCardError();
 
-    void onVisualPayment(Fragment fragment);
+    void onVisualPayment();
 
     void onIssuerRequired();
 

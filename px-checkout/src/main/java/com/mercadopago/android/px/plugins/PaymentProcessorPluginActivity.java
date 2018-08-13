@@ -1,6 +1,6 @@
 package com.mercadopago.android.px.plugins;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,7 +20,6 @@ import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.plugins.model.BusinessPayment;
 import com.mercadopago.android.px.plugins.model.GenericPayment;
-import com.mercadopago.android.px.plugins.model.PluginPayment;
 import com.mercadopago.android.px.plugins.model.Processor;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 
@@ -30,8 +29,14 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity
     private static final String EXTRA_BUSINESS_PAYMENT = "extra_business_payment";
     private static final String PROCESSOR_FRAGMENT = "PROCESSOR_FRAGMENT";
 
-    public static Intent getIntent(@NonNull final Context context) {
-        return new Intent(context, PaymentProcessorPluginActivity.class);
+    public static void start(@NonNull final Activity activity, final int reqCode) {
+        final Intent intent = new Intent(activity, PaymentProcessorPluginActivity.class);
+        activity.startActivityForResult(intent, reqCode);
+    }
+
+    public static void start(@NonNull final Fragment fragment, final int reqCode) {
+        final Intent intent = new Intent(fragment.getContext(), PaymentProcessorPluginActivity.class);
+        fragment.startActivityForResult(intent, reqCode);
     }
 
     public static boolean isBusiness(@Nullable final Intent intent) {
@@ -113,11 +118,6 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity
     }
 
     @Override
-    public void onPaymentFinished(@NonNull final PluginPayment payment) {
-        payment.process(this);
-    }
-
-    @Override
     public void onPaymentFinished(@NonNull final GenericPayment genericPayment) {
         process(genericPayment);
     }
@@ -129,6 +129,7 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity
 
     @Override
     public void onPaymentError(@NonNull final MercadoPagoError error) {
+        //TODO add error
         //TODO add error screen after payment like it was in CheckoutPresenter.
     }
 

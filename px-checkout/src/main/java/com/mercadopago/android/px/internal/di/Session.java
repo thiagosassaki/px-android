@@ -186,11 +186,11 @@ public final class Session extends ApplicationModule
             final ConfigurationModule configurationModule = getConfigurationModule();
             final PaymentProcessor paymentProcessor =
                 getConfigurationModule().getPaymentSettings().getPaymentConfiguration().getPaymentProcessor();
-            paymentRepository = new PaymentService(getRetrofitClient().create(CheckoutService.class),
-                configurationModule.getUserSelectionRepository(),
+            paymentRepository = new PaymentService(configurationModule.getUserSelectionRepository(),
                 configurationModule.getPaymentSettings(),
                 getPluginRepository(), getDiscountRepository(), getAmountRepository(),
-                paymentProcessor);
+                paymentProcessor,
+                getContext());
         }
 
         return paymentRepository;

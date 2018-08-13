@@ -2,8 +2,10 @@ package com.mercadopago.android.px.onetap;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.model.Card;
-import com.mercadopago.android.px.model.Token;
+import com.mercadopago.android.px.model.PaymentResult;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.mvp.MvpView;
+import com.mercadopago.android.px.plugins.model.BusinessPayment;
 import com.mercadopago.android.px.viewmodel.OneTapModel;
 
 public interface OneTap {
@@ -23,13 +25,21 @@ public interface OneTap {
         void trackCancel(final String publicKey);
 
         void trackModal(final OneTapModel model);
+
+        void showPaymentProcessor();
+
+        void showErrorView(@NonNull final MercadoPagoError error);
+
+        void showBusinessResult(final BusinessPayment businessPayment);
+
+        void showPaymentResult(final PaymentResult paymentResult);
     }
 
     interface Actions {
 
         void confirmPayment();
 
-        void onReceived(@NonNull final Token token);
+        void onTokenResolved();
 
         void changePaymentMethod();
 

@@ -3,8 +3,6 @@ package com.mercadopago.android.px.presenters;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import com.mercadopago.android.px.callbacks.FailureRecovery;
 import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.core.MercadoPagoComponents;
@@ -14,8 +12,6 @@ import com.mercadopago.android.px.internal.datasource.PluginInitializationTask;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
-import com.mercadopago.android.px.internal.repository.PaymentHandler;
-import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
@@ -36,8 +32,6 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.mvp.MvpPresenter;
 import com.mercadopago.android.px.mvp.TaggedCallback;
 import com.mercadopago.android.px.plugins.model.BusinessPayment;
-import com.mercadopago.android.px.plugins.model.BusinessPaymentModel;
-import com.mercadopago.android.px.plugins.model.PluginPayment;
 import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentResultScreenPreference;
@@ -50,6 +44,7 @@ import com.mercadopago.android.px.util.JsonUtil;
 import com.mercadopago.android.px.util.TextUtils;
 import com.mercadopago.android.px.viewmodel.CheckoutStateModel;
 import com.mercadopago.android.px.viewmodel.OneTapModel;
+import com.mercadopago.android.px.viewmodel.mappers.BusinessModelMapper;
 import com.mercadopago.android.px.views.CheckoutView;
 import java.io.Serializable;
 import java.util.List;
@@ -298,17 +293,14 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     }
 
     public void createPayment() {
+        //TODO
+        //TODO add payment handling
         getView().showProgress();
         final PaymentData paymentData = createPaymentData();
+        CheckoutStore.getInstance().setPaymentData(paymentData);
+        getView().showPaymentProcessor();
 
-        if (paymentSettingRepository.getPaymentConfiguration() != null) {
-            CheckoutStore.getInstance().setPaymentData(paymentData);
-            getView().showPaymentProcessor();
-        } else {
-
-            getView().createPaymentInMercadoPago();
-
-            /*getResourcesProvider().createPayment(paymentSettingRepository.getTransactionId(),
+            /* getResourcesProvider().createPayment(paymentSettingRepository.getTransactionId(),
                 getCheckoutPreference(),
                 paymentData,
                 paymentSettingRepository.getAdvancedConfiguration().isBinaryMode(),
@@ -331,8 +323,9 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
                             resolvePaymentError(error, paymentData);
                         }
                     }
-                });*/
-        }
+                });
+
+                */
     }
 
     @VisibleForTesting
@@ -685,20 +678,13 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     public void onBusinessResult(final BusinessPayment businessPayment) {
         //TODO look for a better option than singleton, it make it not testeable.
         final PaymentData paymentData = CheckoutStore.getInstance().getPaymentData();
-
         getResourcesProvider().manageEscForPayment(paymentData,
             businessPayment.getPaymentStatus(),
             businessPayment.getPaymentStatusDetail());
 
-        final String lastFourDigits =
-            paymentData.getToken() != null ? paymentData.getToken().getLastFourDigits() : null;
-
-        final BusinessPaymentModel model =
-            new BusinessPaymentModel(businessPayment, discountRepository.getDiscount(), paymentData.getPaymentMethod(),
-                paymentData.getPayerCost(),
-                getCheckoutPreference().getSite().getCurrencyId(),
-                amountRepository.getAmountToPay(), lastFourDigits);
-        getView().showBusinessResult(model);
+        getView().showBusinessResult(
+            new BusinessModelMapper(discountRepository, paymentSettingRepository, amountRepository)
+                .map(businessPayment));
     }
 
     private void finishCheckout() {
@@ -762,70 +748,5 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
 
     public boolean isUniquePaymentMethod() {
         return state.isUniquePaymentMethod;
-    }
-
-    public void createPaymentInMercadoPago(final PaymentRepository paymentRepository) {
-
-        paymentRepository.doPayment(new PaymentHandler() {
-            @Override
-            public void onPaymentMethodRequired() {
-
-            }
-
-            @Override
-            public void onCvvRequired(@NonNull final Card card) {
-
-            }
-
-            @Override
-            public void onCardError() {
-
-            }
-
-            @Override
-            public void onVisualPayment(final Fragment fragment) {
-
-            }
-
-            @Override
-            public void onIssuerRequired() {
-
-            }
-
-            @Override
-            public void onPayerCostRequired() {
-
-            }
-
-            @Override
-            public void onTokenRequired() {
-
-            }
-
-            @Override
-            public void onPaymentFinished(final PluginPayment payment) {
-
-                Log.d("refactor", "payment finished");
-                Log.d("refactor", JsonUtil.getInstance().toJson(payment));
-//                    if (isViewAttached()) {
-//                        getView().hideProgress();
-//                        state.createdPayment = payment;
-//                        PaymentResult paymentResult = createPaymentResult(payment, paymentData);
-//                        checkStartPaymentResultActivity(paymentResult);
-//                    }
-            }
-
-            @Override
-            public void onPaymentError(final MercadoPagoError error) {
-
-                Log.d("refactor", "payment error");
-                Log.d("refactor", JsonUtil.getInstance().toJson(error));
-//                if (isViewAttached()) {
-//                    getView().hideProgress();
-//                    resolvePaymentError(error, paymentData);
-//                }
-            }
-        });
-
     }
 }

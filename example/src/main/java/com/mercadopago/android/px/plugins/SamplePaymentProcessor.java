@@ -6,6 +6,8 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import com.mercadopago.android.px.plugins.model.BusinessPayment;
+import com.mercadopago.android.px.plugins.model.GenericPayment;
 import com.mercadopago.android.px.plugins.model.PluginPayment;
 
 public class SamplePaymentProcessor implements PaymentProcessor {
@@ -25,7 +27,11 @@ public class SamplePaymentProcessor implements PaymentProcessor {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                paymentListener.onPaymentFinished(pluginPayment);
+                if (pluginPayment instanceof BusinessPayment) {
+                    paymentListener.onPaymentFinished((BusinessPayment) pluginPayment);
+                } else {
+                    paymentListener.onPaymentFinished((GenericPayment) pluginPayment);
+                }
             }
         }, CONSTANT_DELAY_MILLIS);
     }

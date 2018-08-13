@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.CheckoutActivity;
 import com.mercadopago.android.px.callbacks.CallbackHolder;
+import com.mercadopago.android.px.internal.datasource.MercadoPagoPaymentConfiguration;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.preferences.AdvancedConfiguration;
@@ -40,7 +41,7 @@ public class MercadoPagoCheckout {
     @Nullable
     private final String privateKey;
 
-    @Nullable
+    @NonNull
     private final PaymentConfiguration paymentConfiguration;
 
     /* default */ boolean prefetch = false;
@@ -116,7 +117,7 @@ public class MercadoPagoCheckout {
         return isEmpty(privateKey) ? "" : privateKey;
     }
 
-    @Nullable
+    @NonNull
     public PaymentConfiguration getPaymentConfiguration() {
         return paymentConfiguration;
     }
@@ -133,7 +134,7 @@ public class MercadoPagoCheckout {
         /* default */ @NonNull AdvancedConfiguration advancedConfiguration =
             new AdvancedConfiguration.Builder().build();
 
-        /* default */ @Nullable PaymentConfiguration paymentConfiguration;
+        /* default */ @NonNull PaymentConfiguration paymentConfiguration = new MercadoPagoPaymentConfiguration();
 
         /* default */ @Nullable String privateKey;
 

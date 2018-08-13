@@ -5,14 +5,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.Token;
-import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.commission.ChargeRule;
 import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentConfiguration;
 import com.mercadopago.android.px.util.JsonUtil;
-import java.util.ArrayList;
-import java.lang.reflect.Type;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -87,11 +84,6 @@ public class PaymentSettingService implements PaymentSettingRepository {
     }
 
     @Override
-    public boolean hasPaymentConfiguration() {
-        return getPaymentConfiguration() != null;
-    }
-
-    @Override
     public void configure(@Nullable final CheckoutPreference checkoutPreference) {
         final SharedPreferences.Editor edit = sharedPreferences.edit();
         if (checkoutPreference == null) {
@@ -107,11 +99,10 @@ public class PaymentSettingService implements PaymentSettingRepository {
     @Override
     public List<ChargeRule> chargeRules() {
         final PaymentConfiguration paymentConfiguration = getPaymentConfiguration();
-        return paymentConfiguration == null ? new ArrayList<ChargeRule>() :
-            paymentConfiguration.getCharges();
+        return paymentConfiguration.getCharges();
     }
 
-    @Nullable
+    @NonNull
     @Override
     public PaymentConfiguration getPaymentConfiguration() {
         return paymentConfiguration;

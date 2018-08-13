@@ -6,6 +6,7 @@ import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
+import com.mercadopago.android.px.plugins.MercadoPagoPaymentProcessor;
 import com.mercadopago.android.px.preferences.DiscountConfiguration;
 import com.mercadopago.android.px.preferences.PaymentConfiguration;
 import com.mercadopago.android.px.services.adapters.MPCall;
@@ -179,7 +180,8 @@ public class DiscountServiceImp implements DiscountRepository {
         }
 
         private boolean shouldGetDiscount() {
-            return !fetched && !paymentSettingRepository.hasPaymentConfiguration();
+            return !fetched && !(paymentSettingRepository.getPaymentConfiguration()
+                .getPaymentProcessor() instanceof MercadoPagoPaymentProcessor);
         }
 
         private void getFromNetwork(final Callback<Boolean> callback, @NonNull final Callable campaignsCall)

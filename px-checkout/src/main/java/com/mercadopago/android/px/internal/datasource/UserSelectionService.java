@@ -15,10 +15,11 @@ public class UserSelectionService implements UserSelectionRepository {
     private static final String PREF_SELECTED_PM = "PREF_SELECTED_PAYMENT_METHOD";
     private static final String PREF_SELECTED_PAYER_COST = "PREF_SELECTED_INSTALLMENT";
     private static final String PREF_SELECTED_ISSUER = "PREF_SELECTED_ISSUER";
-    private static final String PREF_SELECTED_CARD = "PREF_SELECTED_CARD";
 
     @NonNull private final SharedPreferences sharedPreferences;
     @NonNull private final JsonUtil jsonUtil;
+
+    private Card card;
 
     public UserSelectionService(@NonNull final SharedPreferences sharedPreferences,
         @NonNull final JsonUtil jsonUtil) {
@@ -42,7 +43,7 @@ public class UserSelectionService implements UserSelectionRepository {
     }
 
     private void removeCardSelection() {
-        sharedPreferences.edit().remove(PREF_SELECTED_CARD).apply();
+        card = null;
         removePaymentMethodSelection();
         removeIssuerSelection();
         removePayerCostSelection();
@@ -92,7 +93,7 @@ public class UserSelectionService implements UserSelectionRepository {
 
     @Override
     public void select(@NonNull final Card card) {
-        sharedPreferences.edit().putString(PREF_SELECTED_CARD, jsonUtil.toJson(card)).apply();
+        this.card = card;
         select(card.getPaymentMethod());
         select(card.getIssuer());
     }
@@ -118,7 +119,7 @@ public class UserSelectionService implements UserSelectionRepository {
     @Nullable
     @Override
     public Card getCard() {
-        return jsonUtil.fromJson(sharedPreferences.getString(PREF_SELECTED_CARD, ""), Card.class);
+        return card;
     }
 
     @Override

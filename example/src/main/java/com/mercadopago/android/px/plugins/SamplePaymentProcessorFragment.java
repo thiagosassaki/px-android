@@ -8,6 +8,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.mercadopago.android.px.plugins.model.BusinessPayment;
+import com.mercadopago.android.px.plugins.model.GenericPayment;
 import com.mercadopago.android.px.plugins.model.PluginPayment;
 import com.mercadopago.example.R;
 
@@ -50,7 +52,11 @@ public class SamplePaymentProcessorFragment extends Fragment {
             @Override
             public void run() {
                 if (paymentListener != null) {
-                    paymentListener.onPaymentFinished(payment);
+                    if (payment instanceof BusinessPayment) {
+                        paymentListener.onPaymentFinished((BusinessPayment) payment);
+                    } else {
+                        paymentListener.onPaymentFinished((GenericPayment) payment);
+                    }
                 }
             }
         }, CONST_TIME_MILLIS);

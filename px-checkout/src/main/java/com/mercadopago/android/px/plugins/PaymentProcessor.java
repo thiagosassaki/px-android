@@ -9,7 +9,6 @@ import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.plugins.model.BusinessPayment;
 import com.mercadopago.android.px.plugins.model.GenericPayment;
-import com.mercadopago.android.px.plugins.model.PluginPayment;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.io.Serializable;
 
@@ -20,7 +19,7 @@ public interface PaymentProcessor extends Serializable {
         public final PaymentData paymentData;
         public final CheckoutPreference checkoutPreference;
 
-        /* default */ CheckoutData(final PaymentData paymentData,
+        public CheckoutData(final PaymentData paymentData,
             final CheckoutPreference checkoutPreference) {
             this.paymentData = paymentData;
             this.checkoutPreference = checkoutPreference;
@@ -28,13 +27,6 @@ public interface PaymentProcessor extends Serializable {
     }
 
     interface OnPaymentListener {
-
-        /**
-         * Most generic way to process a payment.
-         *
-         * @param payment plugin payment.
-         */
-        void onPaymentFinished(@NonNull final PluginPayment payment);
 
         void onPaymentFinished(@NonNull final GenericPayment genericPayment);
 

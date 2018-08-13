@@ -1,11 +1,11 @@
 package com.mercadopago.android.px.views;
 
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.hooks.Hook;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.mvp.MvpView;
 import com.mercadopago.android.px.plugins.model.BusinessPaymentModel;
 import com.mercadopago.android.px.viewmodel.OneTapModel;
@@ -61,6 +61,4 @@ public interface CheckoutView extends MvpView {
     void exitCheckout(int resCode);
 
     void transitionOut();
-
-    void createPaymentInMercadoPago();
 }
