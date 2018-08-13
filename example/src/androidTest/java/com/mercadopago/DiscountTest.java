@@ -1,7 +1,5 @@
 package com.mercadopago;
 
-import android.app.Instrumentation;
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
@@ -29,7 +27,6 @@ import com.mercadopago.android.testlib.HttpResource;
 import com.mercadopago.example.R;
 import java.math.BigDecimal;
 import org.hamcrest.Matcher;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -204,23 +201,6 @@ public class DiscountTest {
 
         final CongratsPage congratsPage =
             discountTestFlow.runCreditCardPaymentFlowWithoutPaymentProcessorWithMerchantDiscountApplied(card, 1, null);
-        assertNotNull(congratsPage);
-    }
-
-    @Test
-    public void whenMerchantDiscountWithMaxCouponAmountIsAppliedThenShowDiscountMaxCouponAmountAndGetCongrats() {
-        final Campaign campaign = new Campaign.Builder("77").setMaxCouponAmount(new BigDecimal(200)).build();
-
-        final MercadoPagoCheckout.Builder builder =
-            new MercadoPagoCheckout.Builder(MERCHANT_PUBLIC_KEY, PREFERENCE_ID)
-                .setPaymentProcessor(mainPaymentProcessor)
-                .addPaymentMethodPlugin(new SamplePaymentMethodPlugin(), mainPaymentProcessor)
-                .setDiscount(discount, campaign);
-
-        discountTestFlow = new DiscountTestFlow(builder.build(), activityRule.getActivity());
-
-        final CongratsPage congratsPage =
-            discountTestFlow.runCreditCardPaymentFlowWithMerchantDiscountApplied(card, 1, null);
         assertNotNull(congratsPage);
     }
 
