@@ -8,7 +8,7 @@ import com.mercadopago.android.px.components.RendererFactory;
 import com.mercadopago.android.px.model.Summary;
 import com.mercadopago.android.px.model.SummaryDetail;
 import com.mercadopago.android.px.review_and_confirm.SummaryProvider;
-import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
+import com.mercadopago.android.px.preferences.ReviewAndConfirmPreferences;
 import com.mercadopago.android.px.review_and_confirm.props.AmountDescriptionProps;
 
 import java.math.BigDecimal;

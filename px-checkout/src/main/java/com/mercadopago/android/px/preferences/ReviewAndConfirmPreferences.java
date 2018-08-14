@@ -1,15 +1,12 @@
-package com.mercadopago.android.px.review_and_confirm.models;
+package com.mercadopago.android.px.preferences;
 
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import com.mercadopago.android.px.model.Campaign;
-import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.ExternalFragment;
 import com.mercadopago.android.px.model.Item;
-import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -272,7 +269,7 @@ public class ReviewAndConfirmPreferences implements Serializable {
          *
          * @param collectorIcon drawable that will be shown in items view
          * @return builder
-         * @deprecated As of release 4.0.0-beta-35.0.0, replaced by {@link Item#getPictureUrl()}
+         * @deprecated As of release {@version 4.0.0}, replaced by {@link Item#getPictureUrl()}
          */
         @Deprecated
         public Builder setCollectorIcon(@DrawableRes final int collectorIcon) {
@@ -287,7 +284,7 @@ public class ReviewAndConfirmPreferences implements Serializable {
          *
          * @param unitPriceLabel the text that will be shown in the unit price label
          * @return builder
-         * @deprecated As of release 4.0.0-beta-35.0.0, replaced by {@link Item#getUnitPrice()}
+         * @deprecated As of release {@version 4.0.0}, replaced by {@link Item#getUnitPrice()}
          */
         @Deprecated
         public Builder setUnitPriceLabel(final String unitPriceLabel) {
@@ -300,7 +297,7 @@ public class ReviewAndConfirmPreferences implements Serializable {
          *
          * @param productTitle the product title
          * @return builder
-         * @deprecated As of release 4.0.0-beta-35.0.0, replaced by {@link Item#getTitle()}
+         * @deprecated As of release {@version 4.0.0}, replaced by {@link Item#getTitle()}
          */
         @Deprecated
         public Builder setProductTitle(final String productTitle) {
@@ -313,7 +310,7 @@ public class ReviewAndConfirmPreferences implements Serializable {
          *
          * @param productAmount the product amount
          * @return builder
-         * @deprecated As of release 4.0.0-beta-35.0.0, replaced by {@link CheckoutPreference#getTotalAmount()}
+         * @deprecated As of release {@version 4.0.0}, replaced by {@link CheckoutPreference#getTotalAmount()}
          */
         @Deprecated
         public Builder setProductAmount(final BigDecimal productAmount) {
@@ -326,7 +323,7 @@ public class ReviewAndConfirmPreferences implements Serializable {
          *
          * @param shippingAmount the shipping amount
          * @return builder
-         * @deprecated As of release 4.0.0-beta-35.0.0, replaced by {@link } TODO see where we will place this.
+         * @deprecated As of release {@version 4.0.0}
          */
         @Deprecated
         public Builder setShippingAmount(final BigDecimal shippingAmount) {
@@ -339,7 +336,7 @@ public class ReviewAndConfirmPreferences implements Serializable {
          *
          * @param arrearsAmount the arrears amount
          * @return builder
-         * @deprecated As of release 4.0.0-beta-35.0.0, replaced by {@link } TODO see where we will place this.
+         * @deprecated As of release {@version 4.0.0}
          */
         @Deprecated
         public Builder setArrearsAmount(final BigDecimal arrearsAmount) {
@@ -352,7 +349,7 @@ public class ReviewAndConfirmPreferences implements Serializable {
          *
          * @param taxesAmount the taxes amount
          * @return builder
-         * @deprecated As of release 4.0.0-beta-35.0.0, replaced by {@link } TODO see where we will place this.
+         * @deprecated As of release {@version 4.0.0}
          */
         @Deprecated
         public Builder setTaxesAmount(final BigDecimal taxesAmount) {
@@ -365,7 +362,7 @@ public class ReviewAndConfirmPreferences implements Serializable {
          *
          * @param discountAmount the discount amount
          * @return builder
-         * @deprecated As of release 4.0.0-beta-35.0.0, replaced by {@link com.mercadopago.android.px.core.MercadoPagoCheckout.Builder#setDiscount(Discount, Campaign)}
+         * @deprecated As of release {@version 4.0.0}
          */
         @Deprecated
         public Builder setDiscountAmount(final BigDecimal discountAmount) {
@@ -379,7 +376,7 @@ public class ReviewAndConfirmPreferences implements Serializable {
          *
          * @param quantityLabel the text that will be shown in the quantity label
          * @return builder
-         * @deprecated As of release 4.0.0-beta-35.0.0, replaced by {@link Item#getQuantity()}
+         * @deprecated As of release {@version 4.0.0}, replaced by {@link Item#getQuantity()}
          */
         @Deprecated
         public Builder setQuantityLabel(final String quantityLabel) {
@@ -392,7 +389,7 @@ public class ReviewAndConfirmPreferences implements Serializable {
          *
          * @param disclaimerTextColor the disclaimer text color in hex with hashtag
          * @return builder
-         * @deprecated As of release 4.0.0-beta-35.0.0. It will not be configurable.
+         * @deprecated As of release {@version 4.0.0}. It will not be configurable.
          */
         @Deprecated
         public Builder setDisclaimerTextColor(final String disclaimerTextColor) {

@@ -27,7 +27,7 @@ import com.mercadopago.android.px.review_and_confirm.components.actions.ChangePa
 import com.mercadopago.android.px.review_and_confirm.components.actions.ConfirmPaymentAction;
 import com.mercadopago.android.px.review_and_confirm.models.ItemsModel;
 import com.mercadopago.android.px.review_and_confirm.models.PaymentModel;
-import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
+import com.mercadopago.android.px.preferences.ReviewAndConfirmPreferences;
 import com.mercadopago.android.px.review_and_confirm.models.SummaryModel;
 import com.mercadopago.android.px.review_and_confirm.models.TermsAndConditionsModel;
 import com.mercadopago.android.px.tracker.Tracker;

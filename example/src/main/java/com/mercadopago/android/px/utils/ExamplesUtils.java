@@ -17,7 +17,7 @@ import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
+import com.mercadopago.android.px.preferences.ReviewAndConfirmPreferences;
 import com.mercadopago.android.px.tracking.listeners.TracksListener;
 import com.mercadopago.android.px.tracking.tracker.MPTracker;
 import com.mercadopago.android.px.util.ViewUtils;

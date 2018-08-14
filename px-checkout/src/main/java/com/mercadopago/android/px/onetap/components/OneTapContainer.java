@@ -18,7 +18,7 @@ import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.onetap.OneTap;
 import com.mercadopago.android.px.review_and_confirm.models.LineSeparatorType;
-import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
+import com.mercadopago.android.px.preferences.ReviewAndConfirmPreferences;
 import com.mercadopago.android.px.review_and_confirm.models.TermsAndConditionsModel;
 import com.mercadopago.android.px.util.ViewUtils;
 import com.mercadopago.android.px.viewmodel.OneTapModel;

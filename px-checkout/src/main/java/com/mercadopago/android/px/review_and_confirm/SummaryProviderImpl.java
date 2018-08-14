@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import com.mercadopago.android.px.R;
-import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
+import com.mercadopago.android.px.preferences.ReviewAndConfirmPreferences;
 
 import static com.mercadopago.android.px.util.TextUtils.isEmpty;
 

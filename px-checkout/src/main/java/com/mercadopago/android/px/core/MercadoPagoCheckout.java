@@ -17,6 +17,10 @@ import com.mercadopago.android.px.uicontrollers.FontCache;
 
 import static com.mercadopago.android.px.util.TextUtils.isEmpty;
 
+/**
+ * Main class of this project.
+ * It provides access to most of the checkout experience.
+ */
 @SuppressWarnings("unused")
 public class MercadoPagoCheckout {
 
@@ -133,8 +137,9 @@ public class MercadoPagoCheckout {
 
         /**
          * Checkout builder allow you to create a {@link MercadoPagoCheckout}
+         * {@see  <a href="http://developers.mercadopago.com/">our developers site</a>}
          *
-         * @param publicKey merchant public key.
+         * @param publicKey merchant public key / collector public key {@see <a href="https://www.mercadopago.com/mla/account/credentials">credentials</a>}
          * @param paymentConfiguration the payment configuration for this checkout.
          */
         public Builder(@NonNull final String publicKey, @NonNull final PaymentConfiguration paymentConfiguration) {
@@ -145,8 +150,10 @@ public class MercadoPagoCheckout {
 
         /**
          * Checkout builder allow you to create a {@link MercadoPagoCheckout}
-         *
-         * @param publicKey merchant public key.
+         * For more information check the following links
+         * {@see <a href="https://www.mercadopago.com/mla/account/credentials">credentials</a>}
+         * {@see <a href="https://www.mercadopago.com.ar/developers/es/reference/preferences/_preferences/post/">create preference</a>}
+         * @param publicKey merchant public key / collector public key
          * @param preferenceId the preference id that represents the payment information.
          */
         public Builder(@NonNull final String publicKey, @NonNull final String preferenceId) {
@@ -165,11 +172,21 @@ public class MercadoPagoCheckout {
             return this;
         }
 
+        /**
+         * It provides support for custom checkout functionality/ configure special behaviour
+         * You can enable/disable several functionality.
+         *
+         * @param advancedConfiguration your configuration.
+         * @return builder to keep operating
+         */
         public Builder setAdvancedConfiguration(@NonNull final AdvancedConfiguration advancedConfiguration) {
             this.advancedConfiguration = advancedConfiguration;
             return this;
         }
 
+        /**
+         * @return {@link MercadoPagoCheckout} instance
+         */
         public MercadoPagoCheckout build() {
             return new MercadoPagoCheckout(this);
         }

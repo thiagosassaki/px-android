@@ -66,6 +66,10 @@ public class PaymentConfiguration {
         /* default */ @NonNull ArrayList<ChargeRule> charges;
         /* default */ @Nullable DiscountConfiguration discountConfiguration;
 
+        /**
+         * @param checkoutPreference your custom preference.
+         * @param paymentProcessor your custom payment processor.
+         */
         public Builder(@NonNull final CheckoutPreference checkoutPreference,
             @NonNull final PaymentProcessor paymentProcessor) {
             this.paymentProcessor = paymentProcessor;
@@ -75,6 +79,12 @@ public class PaymentConfiguration {
             this.checkoutPreference = checkoutPreference;
         }
 
+        /**
+         * {@see <a href="https://www.mercadopago.com.ar/developers/es/reference/preferences/_preferences/post/">create preference</a>}
+         *
+         * @param preferenceId the preference id that represents the payment information.
+         * @param paymentProcessor your custom payment processor.
+         */
         public Builder(@NonNull final String preferenceId,
             @NonNull final PaymentProcessor paymentProcessor) {
             this.paymentProcessor = paymentProcessor;

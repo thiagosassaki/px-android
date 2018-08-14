@@ -1,11 +1,10 @@
 package com.mercadopago.android.px.preferences;
 
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
 import java.io.Serializable;
 
 /**
- * Advanced configuration allows you to configure special behaviour
+ * Advanced configuration provides you support for custom checkout functionality/configure special behaviour
  * when checkout is running.
  */
 public class AdvancedConfiguration implements Serializable {

@@ -1,7 +1,7 @@
 package com.mercadopago.android.px.review_and_confirm.components;
 
 import com.mercadopago.android.px.review_and_confirm.SummaryProvider;
-import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
+import com.mercadopago.android.px.preferences.ReviewAndConfirmPreferences;
 import com.mercadopago.android.px.review_and_confirm.models.SummaryModel;
 import org.junit.Before;
 import org.junit.Test;

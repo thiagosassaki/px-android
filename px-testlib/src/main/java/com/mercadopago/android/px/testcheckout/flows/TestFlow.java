@@ -21,7 +21,6 @@ public class TestFlow {
      *
      * @param mercadoPagoCheckout the checkout configuration.
      * @param context context that will start the checkout.
-     * @return
      */
     protected TestFlow(@NonNull final MercadoPagoCheckout mercadoPagoCheckout, @NonNull final Context context) {
         checkout = mercadoPagoCheckout;

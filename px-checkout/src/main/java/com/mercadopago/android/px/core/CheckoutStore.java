@@ -8,6 +8,7 @@ import com.mercadopago.android.px.model.PaymentResult;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public final class CheckoutStore {
 
     private static final CheckoutStore INSTANCE = new CheckoutStore();
@@ -30,7 +31,6 @@ public final class CheckoutStore {
     public static CheckoutStore getInstance() {
         return INSTANCE;
     }
-
 
     public Hook getHook() {
         return hook;
