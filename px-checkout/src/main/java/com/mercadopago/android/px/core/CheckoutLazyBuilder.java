@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.di.Session;
 
+@SuppressWarnings("unused")
 public abstract class CheckoutLazyBuilder {
 
     private final MercadoPagoCheckout.Builder builder;
