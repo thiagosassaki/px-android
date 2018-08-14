@@ -22,10 +22,10 @@ import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
-import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentConfiguration;
 import com.mercadopago.android.px.services.CheckoutService;
 import com.mercadopago.android.px.services.util.LocaleUtil;
+import com.mercadopago.android.px.services.util.TextUtil;
 import com.mercadopago.android.px.util.MercadoPagoESCImpl;
 
 public final class Session extends ApplicationModule
@@ -79,14 +79,33 @@ public final class Session extends ApplicationModule
         paymentSetting.configure(paymentConfiguration);
 
         discountRepository.configureMerchantDiscountManually(paymentConfiguration);
-
-        final CheckoutPreference checkoutPreference = mercadoPagoCheckout.getCheckoutPreference();
-        if (checkoutPreference != null) {
-            paymentSetting.configure(checkoutPreference);
-        } else {
-            paymentSetting.configurePreferenceId(mercadoPagoCheckout.getPreferenceId());
-        }
+        resolvePreference(mercadoPagoCheckout, paymentSetting);
         // end Store persistent paymentSetting
+    }
+
+    private void resolvePreference(@NonNull final MercadoPagoCheckout mercadoPagoCheckout,
+        final PaymentSettingRepository paymentSetting) {
+        final String preferenceId = mercadoPagoCheckout.getPreferenceId();
+
+        if (TextUtil.isEmpty(preferenceId)) {
+
+            if (TextUtil.isEmpty(mercadoPagoCheckout
+                .getPaymentConfiguration()
+                .getPreferenceId())) {
+
+                //Pref abierta
+                paymentSetting.configure(mercadoPagoCheckout.
+                    getPaymentConfiguration()
+                    .getCheckoutPreference());
+            } else {
+                paymentSetting.configurePreferenceId(mercadoPagoCheckout
+                    .getPaymentConfiguration()
+                    .getPreferenceId());
+            }
+        } else {
+            //Pref cerrada.
+            paymentSetting.configurePreferenceId(preferenceId);
+        }
     }
 
     private void clear() {

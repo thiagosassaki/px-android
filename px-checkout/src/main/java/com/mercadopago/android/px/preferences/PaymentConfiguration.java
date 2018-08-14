@@ -15,12 +15,16 @@ public class PaymentConfiguration {
     @NonNull private final ArrayList<PaymentMethodPlugin> paymentMethodPluginList;
     @NonNull private final ArrayList<ChargeRule> charges;
     @Nullable private final DiscountConfiguration discountConfiguration;
+    @Nullable private final String preferenceId;
+    @Nullable private final CheckoutPreference checkoutPreference;
 
     /* default */ PaymentConfiguration(@NonNull final Builder builder) {
         paymentProcessor = builder.paymentProcessor;
         paymentMethodPluginList = builder.paymentMethodPluginList;
         charges = builder.charges;
         discountConfiguration = builder.discountConfiguration;
+        checkoutPreference = builder.checkoutPreference;
+        preferenceId = builder.preferenceId;
     }
 
     @NonNull
@@ -43,17 +47,41 @@ public class PaymentConfiguration {
         return discountConfiguration;
     }
 
+    @Nullable
+    public String getPreferenceId() {
+        return preferenceId;
+    }
+
+    @Nullable
+    public CheckoutPreference getCheckoutPreference() {
+        return checkoutPreference;
+    }
+
     public static final class Builder {
 
         /* default */ @NonNull final PaymentProcessor paymentProcessor;
         /* default */ @NonNull final ArrayList<PaymentMethodPlugin> paymentMethodPluginList;
+        /* default */ @Nullable final String preferenceId;
+        /* default */ @Nullable final CheckoutPreference checkoutPreference;
         /* default */ @NonNull ArrayList<ChargeRule> charges;
         /* default */ @Nullable DiscountConfiguration discountConfiguration;
 
-        public Builder(@NonNull final PaymentProcessor paymentProcessor) {
+        public Builder(@NonNull final CheckoutPreference checkoutPreference,
+            @NonNull final PaymentProcessor paymentProcessor) {
             this.paymentProcessor = paymentProcessor;
             paymentMethodPluginList = new ArrayList<>();
             charges = new ArrayList<>();
+            preferenceId = null;
+            this.checkoutPreference = checkoutPreference;
+        }
+
+        public Builder(@NonNull final String preferenceId,
+            @NonNull final PaymentProcessor paymentProcessor) {
+            this.paymentProcessor = paymentProcessor;
+            paymentMethodPluginList = new ArrayList<>();
+            charges = new ArrayList<>();
+            this.preferenceId = preferenceId;
+            checkoutPreference = null;
         }
 
         /**

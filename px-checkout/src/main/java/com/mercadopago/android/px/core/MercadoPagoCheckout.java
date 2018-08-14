@@ -11,7 +11,6 @@ import com.mercadopago.android.px.callbacks.CallbackHolder;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.preferences.AdvancedConfiguration;
-import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentConfiguration;
 import com.mercadopago.android.px.tracker.FlowHandler;
 import com.mercadopago.android.px.uicontrollers.FontCache;
@@ -27,9 +26,6 @@ public class MercadoPagoCheckout {
 
     @NonNull
     private final String publicKey;
-
-    @Nullable
-    private final CheckoutPreference checkoutPreference;
 
     @NonNull
     private final AdvancedConfiguration advancedConfiguration;
@@ -47,7 +43,6 @@ public class MercadoPagoCheckout {
 
     /* default */ MercadoPagoCheckout(final Builder builder) {
         publicKey = builder.publicKey;
-        checkoutPreference = builder.checkoutPreference;
         advancedConfiguration = builder.advancedConfiguration;
         preferenceId = builder.preferenceId;
         privateKey = builder.privateKey;
@@ -106,11 +101,6 @@ public class MercadoPagoCheckout {
         return preferenceId;
     }
 
-    @Nullable
-    public CheckoutPreference getCheckoutPreference() {
-        return checkoutPreference;
-    }
-
     @NonNull
     public String getPrivateKey() {
         return isEmpty(privateKey) ? "" : privateKey;
@@ -127,8 +117,6 @@ public class MercadoPagoCheckout {
         /* default */ @NonNull final String publicKey;
 
         /* default */ @Nullable final String preferenceId;
-
-        /* default */ @Nullable final CheckoutPreference checkoutPreference;
 
         /* default */ @NonNull AdvancedConfiguration advancedConfiguration =
             new AdvancedConfiguration.Builder().build();
@@ -147,12 +135,12 @@ public class MercadoPagoCheckout {
          * Checkout builder allow you to create a {@link MercadoPagoCheckout}
          *
          * @param publicKey merchant public key.
-         * @param checkoutPreference the preference that represents the payment information.
+         * @param paymentConfiguration the payment configuration for this checkout.
          */
-        public Builder(@NonNull final String publicKey, @NonNull final CheckoutPreference checkoutPreference) {
+        public Builder(@NonNull final String publicKey, @NonNull final PaymentConfiguration paymentConfiguration) {
             preferenceId = null;
             this.publicKey = publicKey;
-            this.checkoutPreference = checkoutPreference;
+            this.paymentConfiguration = paymentConfiguration;
         }
 
         /**
@@ -164,7 +152,6 @@ public class MercadoPagoCheckout {
         public Builder(@NonNull final String publicKey, @NonNull final String preferenceId) {
             this.publicKey = publicKey;
             this.preferenceId = preferenceId;
-            checkoutPreference = null;
         }
 
         /**
@@ -183,11 +170,6 @@ public class MercadoPagoCheckout {
             return this;
         }
 
-        public Builder setPaymentConfiguration(@NonNull final PaymentConfiguration paymentConfiguration) {
-            this.paymentConfiguration = paymentConfiguration;
-            return this;
-        }
-
         public MercadoPagoCheckout build() {
             return new MercadoPagoCheckout(this);
         }
@@ -198,11 +180,9 @@ public class MercadoPagoCheckout {
          * @deprecated we will not support this mechanism anymore.
          */
         @Deprecated
-        public Builder setCustomLightFont(final String lightFontPath, final Context context) {
+        public Builder setCustomLightFont(@NonNull final String lightFontPath, @NonNull final Context context) {
             this.lightFontPath = lightFontPath;
-            if (lightFontPath != null) {
-                setCustomFont(context, FontCache.CUSTOM_LIGHT_FONT, this.lightFontPath);
-            }
+            setCustomFont(context, FontCache.CUSTOM_LIGHT_FONT, this.lightFontPath);
             return this;
         }
 
@@ -212,11 +192,9 @@ public class MercadoPagoCheckout {
          * @deprecated we will not support this mechanism anymore.
          */
         @Deprecated
-        public Builder setCustomRegularFont(final String regularFontPath, final Context context) {
+        public Builder setCustomRegularFont(@NonNull final String regularFontPath, @NonNull final Context context) {
             this.regularFontPath = regularFontPath;
-            if (regularFontPath != null) {
-                setCustomFont(context, FontCache.CUSTOM_REGULAR_FONT, this.regularFontPath);
-            }
+            setCustomFont(context, FontCache.CUSTOM_REGULAR_FONT, this.regularFontPath);
             return this;
         }
 
@@ -226,11 +204,9 @@ public class MercadoPagoCheckout {
          * @deprecated we will not support this mechanism anymore.
          */
         @Deprecated
-        public Builder setCustomMonoFont(final String monoFontPath, final Context context) {
+        public Builder setCustomMonoFont(@NonNull final String monoFontPath, final Context context) {
             this.monoFontPath = monoFontPath;
-            if (monoFontPath != null) {
-                setCustomFont(context, FontCache.CUSTOM_MONO_FONT, this.monoFontPath);
-            }
+            setCustomFont(context, FontCache.CUSTOM_MONO_FONT, this.monoFontPath);
             return this;
         }
 
@@ -239,7 +215,7 @@ public class MercadoPagoCheckout {
          * @deprecated we will not support this mechanism anymore.
          */
         @Deprecated
-        private void setCustomFont(final Context context, final String fontType, final String fontPath) {
+        private void setCustomFont(@NonNull final Context context, final String fontType, final String fontPath) {
             final Typeface typeFace;
             if (!FontCache.hasTypeface(fontType)) {
                 typeFace = Typeface.createFromAsset(context.getAssets(), fontPath);
