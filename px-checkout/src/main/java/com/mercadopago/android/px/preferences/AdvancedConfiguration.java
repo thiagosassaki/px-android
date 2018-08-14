@@ -12,7 +12,6 @@ public class AdvancedConfiguration implements Serializable {
 
     private final boolean bankDealsEnabled;
     private final boolean escEnabled;
-    private final boolean isBinaryMode; //TODO
     @NonNull private final PaymentResultScreenPreference paymentResultScreenPreference;
     @NonNull private final ReviewAndConfirmPreferences reviewAndConfirmPreferences;
 
@@ -20,7 +19,6 @@ public class AdvancedConfiguration implements Serializable {
     /* default */ AdvancedConfiguration(final Builder builder) {
         bankDealsEnabled = builder.bankDealsEnabled;
         escEnabled = builder.escEnabled;
-        isBinaryMode = builder.isBinaryMode;
         paymentResultScreenPreference = builder.paymentResultScreenPreference;
         reviewAndConfirmPreferences = builder.reviewAndConfirmPreferences;
     }
@@ -31,10 +29,6 @@ public class AdvancedConfiguration implements Serializable {
 
     public boolean isEscEnabled() {
         return escEnabled;
-    }
-
-    public boolean isBinaryMode() {
-        return isBinaryMode;
     }
 
     @NonNull
@@ -51,7 +45,6 @@ public class AdvancedConfiguration implements Serializable {
     public static class Builder {
         /* default */ boolean bankDealsEnabled = true;
         /* default */ boolean escEnabled = false;
-        /* default */ boolean isBinaryMode = false;
         /* default */ @NonNull PaymentResultScreenPreference paymentResultScreenPreference =
             new PaymentResultScreenPreference.Builder().build();
         /* default */ @NonNull ReviewAndConfirmPreferences reviewAndConfirmPreferences =
@@ -80,21 +73,6 @@ public class AdvancedConfiguration implements Serializable {
          */
         public Builder setEscEnabled(final boolean escEnabled) {
             this.escEnabled = escEnabled;
-            return this;
-        }
-
-        /**
-         * If enableBinaryMode is called, processed payment can only be APPROVED or REJECTED.
-         * Default value is false.
-         * <p>
-         * Non compatible with PaymentProcessor.
-         * <p>
-         * Non compatible with off payments methods
-         *
-         * @return builder to keep operating
-         */
-        public Builder setBinaryMode(final boolean isBinaryMode) {
-            this.isBinaryMode = isBinaryMode;
             return this;
         }
 

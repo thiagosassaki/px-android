@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import com.mercadopago.android.px.plugins.model.PluginPayment;
 
+import static com.mercadopago.android.px.utils.PaymentUtils.getBusinessPaymentApproved;
+
 public class SamplePaymentProcessor implements PaymentProcessor {
 
     private static final int CONSTANT_DELAY_MILLIS = 2000;
@@ -16,6 +18,10 @@ public class SamplePaymentProcessor implements PaymentProcessor {
 
     public SamplePaymentProcessor(final PluginPayment pluginPayment) {
         this.pluginPayment = pluginPayment;
+    }
+
+    public SamplePaymentProcessor() {
+        pluginPayment = getBusinessPaymentApproved();
     }
 
     @Override

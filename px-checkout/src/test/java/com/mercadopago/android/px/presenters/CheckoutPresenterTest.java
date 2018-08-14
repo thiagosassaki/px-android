@@ -125,7 +125,6 @@ public class CheckoutPresenterTest {
         when(configuration.getAdvancedConfiguration()).thenReturn(advancedConfiguration);
         when(advancedConfiguration.getPaymentResultScreenPreference())
             .thenReturn(new PaymentResultScreenPreference.Builder().build());
-        when(advancedConfiguration.isBinaryMode()).thenReturn(false);
 
         when(pluginRepository.getInitTask()).thenReturn(new PluginInitializationSuccess());
 
