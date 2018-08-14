@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import android.view.inputmethod.InputMethodManager;
 import com.mercadopago.android.px.adapters.PaymentMethodSearchItemAdapter;
 import com.mercadopago.android.px.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.callbacks.OnCodeDiscountCallback;
@@ -23,6 +24,7 @@ import com.mercadopago.android.px.controllers.CheckoutTimer;
 import com.mercadopago.android.px.core.CheckoutStore;
 import com.mercadopago.android.px.core.MercadoPagoComponents;
 import com.mercadopago.android.px.customviews.GridSpacingItemDecoration;
+import com.mercadopago.android.px.customviews.MPEditText;
 import com.mercadopago.android.px.customviews.MPTextView;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.hooks.Hook;

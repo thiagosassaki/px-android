@@ -110,7 +110,7 @@ public class PaymentMethodSearch implements Serializable {
     }
 
     @Nullable
-    public PaymentMethod getPaymentMethodById(String paymentMethodId) {
+    public PaymentMethod getPaymentMethodById(@Nullable String paymentMethodId) {
         PaymentMethod foundPaymentMethod = null;
         if (paymentMethods != null) {
             for (PaymentMethod paymentMethod : paymentMethods) {

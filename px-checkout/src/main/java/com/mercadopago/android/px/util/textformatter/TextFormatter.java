@@ -17,7 +17,7 @@ public class TextFormatter {
     TextFormatter(@NonNull final TextView textView, @NonNull final Style style) {
         this.textView = textView;
         this.style = style;
-        this.holder = R.string.px_string_holder;
+        holder = R.string.px_string_holder;
         setFormatted();
     }
 

@@ -1,6 +1,7 @@
 package com.mercadopago.android.px.preferences;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.PayerCost;
@@ -18,7 +19,13 @@ public class PaymentPreference implements Serializable {
     private Integer defaultInstallments;
     private List<PaymentMethod> excludedPaymentMethods;
     private List<PaymentType> excludedPaymentTypes;
+
+    @SerializedName("default_payment_method_id")
     private String defaultPaymentMethodId;
+
+    @SerializedName("default_card_id")
+    private String defaultCardId;
+
     private String defaultPaymentTypeId;
 
     public void setMaxAcceptedInstallments(Integer installments) {
@@ -91,6 +98,7 @@ public class PaymentPreference implements Serializable {
         }
     }
 
+    @Nullable
     public String getDefaultPaymentMethodId() {
         return defaultPaymentMethodId;
     }
@@ -196,5 +204,14 @@ public class PaymentPreference implements Serializable {
             }
         }
         return supportedCards;
+    }
+
+    public void setDefaultCardId(String defaultCardId){
+        this.defaultCardId = defaultCardId;
+    }
+
+    @Nullable
+    public String getDefaultCardId() {
+        return defaultCardId;
     }
 }
