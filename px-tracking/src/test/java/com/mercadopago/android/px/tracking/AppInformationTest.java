@@ -1,7 +1,10 @@
-package com.mercadopago.tracking;
+package com.mercadopago.android.px.tracking;
 
-import com.mercadopago.tracking.model.AppInformation;
+import com.mercadopago.android.px.tracking.model.AppInformation;
 import org.junit.Test;
+
+import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * Created by vaserber on 7/13/17.

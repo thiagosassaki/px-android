@@ -1,14 +1,14 @@
 package com.mercadopago;
 
-import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.test.suitebuilder.annotation.LargeTest;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.testcheckout.flows.CreditCardTestFlow;
 import com.mercadopago.android.px.testcheckout.flows.DebitCardTestFlow;
+import com.mercadopago.android.px.testcheckout.flows.SavedCardTestFlow;
 import com.mercadopago.android.px.testcheckout.idleresources.CheckoutResource;
 import com.mercadopago.android.px.testcheckout.input.Amex;
-import com.mercadopago.android.px.testcheckout.input.Card;
 import com.mercadopago.android.px.testcheckout.input.Country;
 import com.mercadopago.android.px.testcheckout.input.FakeCard;
 import com.mercadopago.android.px.testcheckout.input.Maestro;
@@ -22,7 +22,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.assertNotNull;
+import static junit.framework.TestCase.assertNotNull;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -48,57 +48,66 @@ public class NewCardTest {
 
     @Test
     public void withValidVisaCreditCardNoInstallmentsFlowIsOk() {
-        Card card = new Visa(FakeCard.CardState.APRO, Country.ARGENTINA);
+        Visa card = new Visa(FakeCard.CardState.APRO, Country.ARGENTINA);
         CongratsPage congratsPage = creditCardTestFlow.runCreditCardPaymentFlowInstallmentsFirstOption(card);
         assertNotNull(congratsPage);
     }
 
     @Test
     public void withValidMasterCreditCardNoInstallmentsFlowIsOk() {
-        Card card = new Master(FakeCard.CardState.APRO, Country.ARGENTINA);
+        Master card = new Master(FakeCard.CardState.APRO, Country.ARGENTINA);
         CongratsPage congratsPage = creditCardTestFlow.runCreditCardPaymentFlowInstallmentsFirstOption(card);
         assertNotNull(congratsPage);
     }
 
     @Test
     public void withValidAmericanExpressCreditCardNoInstallmentsFlowIsOk() {
-        Card card = new Amex(FakeCard.CardState.APRO, Country.ARGENTINA);
+        Amex card = new Amex(FakeCard.CardState.APRO, Country.ARGENTINA);
         CongratsPage congratsPage = creditCardTestFlow.runCreditCardPaymentFlowWithInstallments(card);
         assertNotNull(congratsPage);
     }
 
     @Test
     public void withValidVisaCreditCardInstallmentsFlowIsOk() {
-        Card card = new Visa(FakeCard.CardState.APRO, Country.ARGENTINA);
+        Visa card = new Visa(FakeCard.CardState.APRO, Country.ARGENTINA);
         CongratsPage congratsPage = creditCardTestFlow.runCreditCardPaymentFlowWithInstallments(card);
         assertNotNull(congratsPage);
     }
 
     @Test
     public void withValidMasterCreditCardInstallmentsFlowIsOk() {
-        Card card = new Master(FakeCard.CardState.APRO, Country.ARGENTINA);
+        Master card = new Master(FakeCard.CardState.APRO, Country.ARGENTINA);
         CongratsPage congratsPage = creditCardTestFlow.runCreditCardPaymentFlowWithInstallments(card);
         assertNotNull(congratsPage);
     }
 
     @Test
     public void withValidAmericanExpressCreditCardInstallmentsFlowIsOk() {
-        Card card = new Amex(FakeCard.CardState.APRO, Country.ARGENTINA);
+        Amex card = new Amex(FakeCard.CardState.APRO, Country.ARGENTINA);
         CongratsPage congratsPage = creditCardTestFlow.runCreditCardPaymentFlowWithInstallments(card);
         assertNotNull(congratsPage);
     }
 
     @Test
     public void withValidMaestroDebitCardFlowIsOk() {
-        Card card = new Maestro(FakeCard.CardState.APRO, Country.ARGENTINA);
+        Maestro card = new Maestro(FakeCard.CardState.APRO, Country.ARGENTINA);
         CongratsPage congratsPage = debitCardTestFlow.runDebitCardPaymentFlow(card);
         assertNotNull(congratsPage);
     }
 
     @Test
     public void withValidVisaDebitCardFlowIsOk() {
-        Card card = new VisaDebit(FakeCard.CardState.APRO, Country.ARGENTINA);
+        VisaDebit card = new VisaDebit(FakeCard.CardState.APRO, Country.ARGENTINA);
         CongratsPage congratsPage = debitCardTestFlow.runDebitCardPaymentFlow(card);
         assertNotNull(congratsPage);
+    }
+
+    @Test
+    public void withNewCardWithSavedCardFlowIsOk() {
+        final Card card = new Card("123", "Test", "6042013076608231", "123456789", "1234");
+        final SavedCardTestFlow savedCardTestFlow =
+            new SavedCardTestFlow("debit_card", activityRule.getActivity());
+        CongratsPage congratsPageSavedCard = savedCardTestFlow.runNewCardPaymentFlow(card);
+        assertNotNull(congratsPageSavedCard);
     }
 }

@@ -30,6 +30,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:focusable="true"
+            android:clickable="true"
             custom:ui_textFieldMaxLines="1"/>
 
         <com.mercadolibre.android.ui.widgets.MeliSpinner

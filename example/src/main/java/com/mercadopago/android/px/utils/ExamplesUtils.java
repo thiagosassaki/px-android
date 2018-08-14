@@ -94,6 +94,7 @@ public final class ExamplesUtils {
         OneTapSamples.addAll(options);
         ChargesSamples.addAll(options);
         DiscountSamples.addAll(options);
+        options.add(new Pair<>("Saved Card Selected Automatically", defaultCardIdSelected()));
         options.add(new Pair<>("Review and Confirm - Custom exit", customExitReviewAndConfirm()));
         options.add(new Pair<>("Base flow - Tracks with listener", startBaseFlowWithTrackListener()));
         options.add(new Pair<>("All but debit card", allButDebitCard()));
@@ -125,6 +126,13 @@ public final class ExamplesUtils {
 
         return new CheckoutPreference.Builder(Sites.ARGENTINA, "a@a.a",
             Collections.singletonList(item));
+    }
+
+    private static Builder defaultCardIdSelected() {
+        final CheckoutPreference checkoutPre = getBasePreferenceBuilder().build();
+        checkoutPre.getPaymentPreference().setDefaultPaymentMethodId("debcabal");
+        checkoutPre.getPaymentPreference().setDefaultCardId("260077840");
+        return createBase(checkoutPre).setPrivateKey("APP_USR-1505-080815-c6ea450de1bf828e39add499237d727f-312667294");
     }
 
     private static Builder customExitReviewAndConfirm() {

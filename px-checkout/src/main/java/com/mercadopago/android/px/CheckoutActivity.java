@@ -405,6 +405,19 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
         overrideTransitionFadeInFadeOut();
     }
 
+    @Override
+    public void showSavedCardFlow(final Card card) {
+        new MercadoPagoComponents.Activities.CardVaultActivityBuilder()
+            .setCard(card)
+            .startActivity(this, MercadoPagoComponents.Activities.CARD_VAULT_REQUEST_CODE);
+    }
+
+    @Override
+    public void showNewCardFlow() {
+        new MercadoPagoComponents.Activities.CardVaultActivityBuilder()
+            .startActivity(this, MercadoPagoComponents.Activities.CARD_VAULT_REQUEST_CODE);
+    }
+
     private void resolvePaymentResultRequest(final int resultCode, final Intent data) {
         if (resultCode == RESULT_CANCELED && data != null) {
             final String nextAction = data.getStringExtra(EXTRA_NEXT_ACTION);
@@ -423,14 +436,8 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
 
     @Override
     public void startPaymentRecoveryFlow(final PaymentRecovery paymentRecovery) {
-        PaymentPreference paymentPreference = presenter.getCheckoutPreference().getPaymentPreference();
-
-        if (paymentPreference == null) {
-            paymentPreference = new PaymentPreference();
-        }
-
+        final PaymentPreference paymentPreference = presenter.getCheckoutPreference().getPaymentPreference();
         paymentPreference.setDefaultPaymentTypeId(presenter.getSelectedPaymentMethod().getPaymentTypeId());
-
         new MercadoPagoComponents.Activities.CardVaultActivityBuilder()
             .setPaymentRecovery(paymentRecovery)
             .setCard(presenter.getSelectedCard())

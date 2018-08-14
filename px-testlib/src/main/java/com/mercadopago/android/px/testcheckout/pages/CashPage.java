@@ -26,7 +26,7 @@ public class CashPage extends PageObject<CheckoutValidator> {
     }
 
     @Override
-    public CashPage validate(CheckoutValidator validator) {
+    public CashPage validate(final CheckoutValidator validator) {
         validator.validate(this);
         return this;
     }
