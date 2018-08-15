@@ -34,7 +34,7 @@
         android:orientation="horizontal"
         android:weightSum="1">
 
-        <com.mercadopago.android.px.customviews.MPTextView
+        <com.mercadopago.android.px.internal.view.MPTextView
             android:layout_width="@dimen/px_zero_height"
             android:layout_height="wrap_content"
             android:layout_gravity="start|center_vertical"
@@ -67,7 +67,7 @@
         android:orientation="horizontal"
         android:weightSum="1">
 
-        <com.mercadopago.android.px.customviews.MPTextView
+        <com.mercadopago.android.px.internal.view.MPTextView
             android:layout_width="@dimen/px_zero_height"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
@@ -76,7 +76,7 @@
             android:textColor="@color/px_summary_text_color"
             android:textSize="@dimen/px_m_text"/>
 
-        <com.mercadopago.android.px.customviews.MPTextView
+        <com.mercadopago.android.px.internal.view.MPTextView
             android:id="@+id/mpsdkReviewSummaryTotalText"
             android:layout_width="@dimen/px_zero_height"
             android:layout_height="wrap_content"
@@ -87,7 +87,7 @@
             tools:text="$124"/>
     </LinearLayout>
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/mpsdkDisclaimer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -144,7 +144,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <com.mercadopago.android.px.customviews.MPTextView
+                <com.mercadopago.android.px.internal.view.MPTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/px_text_unlock_card_start"
@@ -152,7 +152,7 @@
                     android:textSize="@dimen/px_small_text"
                     app:font_style="light"/>
 
-                <com.mercadopago.android.px.customviews.MPTextView
+                <com.mercadopago.android.px.internal.view.MPTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/px_xxxs_alternative_margin"
@@ -162,7 +162,7 @@
                     app:font_style="regular"/>
             </LinearLayout>
 
-            <com.mercadopago.android.px.customviews.MPTextView
+            <com.mercadopago.android.px.internal.view.MPTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/px_text_unlock_card_end"

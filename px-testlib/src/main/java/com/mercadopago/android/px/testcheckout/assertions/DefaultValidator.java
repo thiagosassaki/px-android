@@ -23,7 +23,7 @@ import com.mercadopago.android.px.testcheckout.pages.PaymentMethodPage;
 import com.mercadopago.android.px.testcheckout.pages.ReviewAndConfirmPage;
 import com.mercadopago.android.px.testcheckout.pages.ReviewPaymentMethodsPage;
 import com.mercadopago.android.px.testcheckout.pages.SecurityCodePage;
-import com.mercadopago.android.px.util.textformatter.TextFormatter;
+import com.mercadopago.android.px.internal.util.textformatter.TextFormatter;
 import org.hamcrest.Matcher;
 
 import static android.support.test.espresso.Espresso.onView;

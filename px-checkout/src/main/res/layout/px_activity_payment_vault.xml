@@ -22,7 +22,7 @@
             android:layout_height="150dp"
             android:fitsSystemWindows="true"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:layout_behavior="com.mercadopago.android.px.views.FixAppBarLayoutBehavior">
+            app:layout_behavior="com.mercadopago.android.px.internal.view.FixAppBarLayoutBehavior">
 
             <android.support.design.widget.CollapsingToolbarLayout
                 android:id="@+id/mpsdkCollapsingToolbar"
@@ -44,7 +44,7 @@
                     android:theme="@style/ToolbarTheme"
                     app:layout_collapseMode="pin">
 
-                    <com.mercadopago.android.px.customviews.MPTextView
+                    <com.mercadopago.android.px.internal.view.MPTextView
                         android:id="@+id/mpsdkTimerTextView"
                         style="@style/px_title_text"
                         android:layout_width="wrap_content"
@@ -79,7 +79,7 @@
 
     </android.support.design.widget.CoordinatorLayout>
 
-    <com.mercadopago.android.px.views.AmountView
+    <com.mercadopago.android.px.internal.view.AmountView
         android:id="@+id/amount_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

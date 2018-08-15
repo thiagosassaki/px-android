@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.mercadopago.android.px.customviews.MPTextView
+<com.mercadopago.android.px.internal.view.MPTextView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -14,4 +14,4 @@
     android:textAppearance="@style/MLFont.Light"
     app:font_style="light">
 
-</com.mercadopago.android.px.customviews.MPTextView>
+</com.mercadopago.android.px.internal.view.MPTextView>

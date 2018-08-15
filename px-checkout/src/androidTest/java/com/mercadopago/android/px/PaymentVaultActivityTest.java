@@ -5,6 +5,8 @@ import android.support.test.espresso.intent.Intents;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import com.mercadopago.android.px.internal.features.cardvault.CardVaultActivity;
+import com.mercadopago.android.px.internal.features.PaymentVaultActivity;
 import com.mercadopago.android.px.model.Customer;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.services.util.FakeAPI;

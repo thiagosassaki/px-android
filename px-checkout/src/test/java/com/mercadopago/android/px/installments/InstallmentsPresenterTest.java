@@ -1,7 +1,7 @@
 package com.mercadopago.android.px.installments;
 
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.callbacks.OnSelectedCallback;
+import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
@@ -20,12 +20,12 @@ import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import com.mercadopago.android.px.mvp.TaggedCallback;
+import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentPreference;
-import com.mercadopago.android.px.presenters.InstallmentsPresenter;
-import com.mercadopago.android.px.providers.InstallmentsProvider;
-import com.mercadopago.android.px.views.InstallmentsActivityView;
+import com.mercadopago.android.px.internal.features.InstallmentsPresenter;
+import com.mercadopago.android.px.internal.features.providers.InstallmentsProvider;
+import com.mercadopago.android.px.internal.features.InstallmentsActivityView;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static com.mercadopago.android.px.util.TextUtils.isEmpty;
+import static com.mercadopago.android.px.internal.util.TextUtils.isEmpty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;

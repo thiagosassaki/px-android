@@ -6,16 +6,17 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.mercadopago.android.px.CheckoutActivity;
-import com.mercadopago.android.px.callbacks.CallbackHolder;
+import com.mercadopago.android.px.configuration.AdvancedConfiguration;
+import com.mercadopago.android.px.configuration.PaymentConfiguration;
+import com.mercadopago.android.px.internal.callbacks.CallbackHolder;
+import com.mercadopago.android.px.internal.datasource.CheckoutStore;
 import com.mercadopago.android.px.internal.di.Session;
+import com.mercadopago.android.px.internal.features.CheckoutActivity;
+import com.mercadopago.android.px.internal.features.uicontrollers.FontCache;
+import com.mercadopago.android.px.internal.tracker.FlowHandler;
 import com.mercadopago.android.px.model.PaymentResult;
-import com.mercadopago.android.px.preferences.AdvancedConfiguration;
-import com.mercadopago.android.px.preferences.PaymentConfiguration;
-import com.mercadopago.android.px.tracker.FlowHandler;
-import com.mercadopago.android.px.uicontrollers.FontCache;
 
-import static com.mercadopago.android.px.util.TextUtils.isEmpty;
+import static com.mercadopago.android.px.internal.util.TextUtils.isEmpty;
 
 /**
  * Main class of this project.

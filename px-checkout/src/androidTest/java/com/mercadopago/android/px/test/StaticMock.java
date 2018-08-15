@@ -21,7 +21,7 @@ import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.services.exceptions.ApiException;
-import com.mercadopago.android.px.util.JsonUtil;
+import com.mercadopago.android.px.internal.util.JsonUtil;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.List;

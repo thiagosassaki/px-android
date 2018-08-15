@@ -26,7 +26,7 @@
                 android:background="@drawable/px_form_input_button"
                 android:focusable="true">
 
-                <com.mercadopago.android.px.customviews.MPTextView
+                <com.mercadopago.android.px.internal.view.MPTextView
                     android:id="@+id/mpsdkBackButtonText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
                 android:background="@color/px_very_light_gray"
                 android:visibility="gone">
 
-                <com.mercadopago.android.px.customviews.MPTextView
+                <com.mercadopago.android.px.internal.view.MPTextView
                     android:id="@+id/mpsdkBackInactiveButtonText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
             android:background="@drawable/px_form_input_button"
             android:focusable="true">
 
-            <com.mercadopago.android.px.customviews.MPTextView
+            <com.mercadopago.android.px.internal.view.MPTextView
                 android:id="@+id/mpsdkNextButtonText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
         android:background="@color/px_very_light_gray"
         android:visibility="gone">
 
-        <com.mercadopago.android.px.customviews.MPTextView
+        <com.mercadopago.android.px.internal.view.MPTextView
             android:id="@+id/mpsdkErrorTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
         android:background="@color/px_error_red_pink"
         android:visibility="gone">
 
-        <com.mercadopago.android.px.customviews.MPTextView
+        <com.mercadopago.android.px.internal.view.MPTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|center_vertical"
@@ -105,7 +105,7 @@
             android:textColor="@color/px_white"
             android:textSize="12sp"/>
 
-        <com.mercadopago.android.px.customviews.MPTextView
+        <com.mercadopago.android.px.internal.view.MPTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
@@ -124,7 +124,7 @@
         android:background="@color/ui_meli_black"
         android:visibility="gone">
 
-        <com.mercadopago.android.px.customviews.MPTextView
+        <com.mercadopago.android.px.internal.view.MPTextView
             android:id="@+id/mpsdkBlackInfoTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

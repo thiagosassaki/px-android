@@ -35,7 +35,7 @@
 
                 </android.support.v7.widget.Toolbar>
 
-                <com.mercadopago.android.px.customviews.MPTextView
+                <com.mercadopago.android.px.internal.view.MPTextView
                     android:id="@+id/mpsdkTimerTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -88,7 +88,7 @@
                         android:paddingStart="10dp"
                         android:visibility="visible">
 
-                        <com.mercadopago.android.px.customviews.MPTextView
+                        <com.mercadopago.android.px.internal.view.MPTextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:lines="1"
@@ -96,7 +96,7 @@
                             android:textColor="@color/px_color_new_card_text"
                             android:textSize="14dp"/>
 
-                        <com.mercadopago.android.px.customviews.MPEditText
+                        <com.mercadopago.android.px.internal.view.MPEditText
                             android:id="@+id/mpsdkCardSecurityCode"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -158,7 +158,7 @@
                             android:background="@drawable/px_form_input_button"
                             android:focusable="true">
 
-                            <com.mercadopago.android.px.customviews.MPTextView
+                            <com.mercadopago.android.px.internal.view.MPTextView
                                 android:id="@+id/mpsdkBackButtonText"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -176,7 +176,7 @@
                         android:background="@drawable/px_form_input_button"
                         android:focusable="true">
 
-                        <com.mercadopago.android.px.customviews.MPTextView
+                        <com.mercadopago.android.px.internal.view.MPTextView
                             android:id="@+id/mpsdkNextButtonText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -194,7 +194,7 @@
                     android:background="@color/px_very_light_gray"
                     android:visibility="gone">
 
-                    <com.mercadopago.android.px.customviews.MPTextView
+                    <com.mercadopago.android.px.internal.view.MPTextView
                         android:id="@+id/mpsdkErrorTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

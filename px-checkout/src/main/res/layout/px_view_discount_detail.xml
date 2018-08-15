@@ -10,7 +10,7 @@
               android:orientation="vertical"
               android:padding="@dimen/px_m_margin">
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/subtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,7 +21,7 @@
         app:font_style="bold"
         tools:text="Tope de descuento $ 250"/>
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/detail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
         android:layout_marginTop="@dimen/px_s_margin"
         android:background="@color/px_med_light_gray"/>
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/px_discount_sub_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

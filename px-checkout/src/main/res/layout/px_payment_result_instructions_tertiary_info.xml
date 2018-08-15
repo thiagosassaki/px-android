@@ -9,7 +9,7 @@
              android:paddingRight="@dimen/px_xl_margin"
              android:paddingStart="@dimen/px_xl_margin">
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/msdpkTertiaryInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -4,9 +4,9 @@ import android.support.annotation.NonNull;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.PaymentMethod;
-import com.mercadopago.android.px.plugins.model.BusinessPayment;
-import com.mercadopago.android.px.plugins.model.ExitAction;
-import com.mercadopago.android.px.plugins.model.GenericPayment;
+import com.mercadopago.android.px.model.BusinessPayment;
+import com.mercadopago.android.px.model.ExitAction;
+import com.mercadopago.android.px.model.GenericPayment;
 import com.mercadopago.example.R;
 import java.math.BigDecimal;
 

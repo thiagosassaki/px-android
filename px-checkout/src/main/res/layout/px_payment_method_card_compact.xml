@@ -31,7 +31,7 @@
             android:layout_marginStart="@dimen/px_s_margin"
             android:orientation="vertical">
 
-            <com.mercadopago.android.px.customviews.MPTextView
+            <com.mercadopago.android.px.internal.view.MPTextView
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
                 android:orientation="horizontal"
                 android:paddingTop="@dimen/px_xxxs_margin">
 
-                <com.mercadopago.android.px.customviews.MPTextView
+                <com.mercadopago.android.px.internal.view.MPTextView
                     android:id="@+id/amount_less_discount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
                     app:autoSizeTextType="uniform"
                     tools:text="$ 2222222222222"/>
 
-                <com.mercadopago.android.px.customviews.MPTextView
+                <com.mercadopago.android.px.internal.view.MPTextView
                     android:id="@+id/total_amount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -81,7 +81,7 @@
 
             </LinearLayout>
 
-            <com.mercadopago.android.px.customviews.MPTextView
+            <com.mercadopago.android.px.internal.view.MPTextView
                 android:id="@+id/cft"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

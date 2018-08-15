@@ -2,10 +2,10 @@ package com.mercadopago.android.px.internal.repository;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.mercadopago.android.px.configuration.AdvancedConfiguration;
+import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import com.mercadopago.android.px.model.commission.ChargeRule;
-import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.preferences.PaymentConfiguration;
 import java.util.List;
 
 public interface PaymentSettingRepository {
