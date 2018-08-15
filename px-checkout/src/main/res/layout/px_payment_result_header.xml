@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/px_xxxl_margin"/>
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/mpsdkHeaderLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
         android:textSize="@dimen/px_s_text"
         tools:text="Lorem ipsum dolor sit"/>
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/mpsdkHeaderTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -1,6 +1,6 @@
 package com.mercadopago.android.px.model;
 
-import com.mercadopago.android.px.CheckoutActivity;
+import com.mercadopago.android.px.internal.features.CheckoutActivity;
 import com.mercadopago.android.px.test.BaseTest;
 import com.mercadopago.android.px.test.StaticMock;
 

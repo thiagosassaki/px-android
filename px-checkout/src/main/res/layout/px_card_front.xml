@@ -98,7 +98,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"/>
 
-                    <com.mercadopago.android.px.customviews.MPTextView
+                    <com.mercadopago.android.px.internal.view.MPTextView
                         android:id="@+id/mpsdkCardSecurityCodeViewFront"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -124,7 +124,7 @@
                         android:paddingRight="15dp"
                         android:paddingStart="15dp">
 
-                        <com.mercadopago.android.px.customviews.MPTextView
+                        <com.mercadopago.android.px.internal.view.MPTextView
                             android:id="@+id/mpsdkCardNumberTextView"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -154,7 +154,7 @@
                         android:layout_height="match_parent"
                         android:weightSum="1">
 
-                        <com.mercadopago.android.px.customviews.MPTextView
+                        <com.mercadopago.android.px.internal.view.MPTextView
                             android:id="@+id/mpsdkCardholderNameView"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -175,7 +175,7 @@
                             android:paddingEnd="15dp"
                             android:paddingRight="15dp">
 
-                            <com.mercadopago.android.px.customviews.MPTextView
+                            <com.mercadopago.android.px.internal.view.MPTextView
                                 android:id="@+id/mpsdkCardHolderExpiryMonth"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -183,7 +183,7 @@
                                 android:textColor="@color/px_base_text"
                                 android:textSize="14dp"/>
 
-                            <com.mercadopago.android.px.customviews.MPTextView
+                            <com.mercadopago.android.px.internal.view.MPTextView
                                 android:id="@+id/mpsdkCardHolderDateDivider"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -191,7 +191,7 @@
                                 android:textColor="@color/px_base_text"
                                 android:textSize="14dp"/>
 
-                            <com.mercadopago.android.px.customviews.MPTextView
+                            <com.mercadopago.android.px.internal.view.MPTextView
                                 android:id="@+id/mpsdkCardHolderExpiryYear"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"

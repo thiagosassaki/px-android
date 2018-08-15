@@ -1,6 +1,6 @@
 package com.mercadopago.android.px.model;
 
-import com.mercadopago.android.px.util.TextUtils;
+import com.mercadopago.android.px.internal.util.TextUtils;
 import java.io.Serializable;
 import java.math.BigDecimal;
 

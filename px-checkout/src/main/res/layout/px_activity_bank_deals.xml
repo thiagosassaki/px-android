@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.mercadopago.android.px.customviews.MPTextView
+        <com.mercadopago.android.px.internal.view.MPTextView
             style="@style/px_big_text_light"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

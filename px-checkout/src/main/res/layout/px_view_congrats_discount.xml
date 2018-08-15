@@ -16,7 +16,7 @@
         android:layout_marginBottom="@dimen/px_xs_margin"
         android:src="@drawable/px_check"/>
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -29,7 +29,7 @@
         app:font_style="bold"
         tools:text="¡Excelente!"/>
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/subtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

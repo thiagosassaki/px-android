@@ -4,7 +4,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import com.mercadopago.android.px.CheckoutActivity;
+import com.mercadopago.android.px.internal.features.CheckoutActivity;
 import com.mercadopago.android.px.test.StaticMock;
 import java.util.ArrayList;
 import org.junit.Rule;

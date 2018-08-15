@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName;
 import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Sites;
-import com.mercadopago.android.px.preferences.AdvancedConfiguration;
-import com.mercadopago.android.px.util.TextUtils;
+import com.mercadopago.android.px.configuration.AdvancedConfiguration;
+import com.mercadopago.android.px.internal.util.TextUtils;
 import java.util.List;
 
 public class CheckoutConfiguration {

@@ -1,10 +1,10 @@
 package com.mercadopago.android.px.paymentvault;
 
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.callbacks.OnSelectedCallback;
+import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.model.PaymentMethods;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import com.mercadopago.android.px.hooks.Hook;
+import com.mercadopago.android.px.internal.features.hooks.Hook;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
@@ -20,19 +20,20 @@ import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentMethodSearchItem;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Site;
-import com.mercadopago.android.px.plugins.PaymentMethodPlugin;
+import com.mercadopago.android.px.core.PaymentMethodPlugin;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentPreference;
-import com.mercadopago.android.px.presenters.PaymentVaultPresenter;
-import com.mercadopago.android.px.providers.PaymentVaultProvider;
+import com.mercadopago.android.px.internal.features.PaymentVaultPresenter;
+import com.mercadopago.android.px.internal.features.providers.PaymentVaultProvider;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.utils.Discounts;
 import com.mercadopago.android.px.utils.StubFailMpCall;
 import com.mercadopago.android.px.utils.StubSuccessMpCall;
-import com.mercadopago.android.px.views.PaymentVaultView;
+import com.mercadopago.android.px.internal.features.PaymentVaultView;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -667,7 +668,8 @@ public class PaymentVaultPresenterTest {
         }
 
         @Override
-        public void showPluginOptions(List<PaymentMethodPlugin> items, String position) {
+        public void showPluginOptions(final Collection<PaymentMethodPlugin> items,
+            final PaymentMethodPlugin.PluginPosition position) {
 
         }
 

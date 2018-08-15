@@ -19,7 +19,7 @@
         android:paddingRight="@dimen/px_xl_margin"
         android:paddingStart="@dimen/px_xl_margin">
 
-        <com.mercadopago.android.px.customviews.MPTextView
+        <com.mercadopago.android.px.internal.view.MPTextView
             android:id="@+id/paymentResultBodyErrorTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
             android:textSize="@dimen/px_l_text"
             tools:text="Title"/>
 
-        <com.mercadopago.android.px.customviews.MPTextView
+        <com.mercadopago.android.px.internal.view.MPTextView
             android:id="@+id/paymentResultBodyErrorDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
             android:textSize="@dimen/px_s_text"
             tools:text="Description"/>
 
-        <com.mercadopago.android.px.customviews.MPTextView
+        <com.mercadopago.android.px.internal.view.MPTextView
             android:id="@+id/paymentResultBodyErrorSecondDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
         android:background="@color/px_med_light_gray"
         android:visibility="gone"/>
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/bodyErrorSecondaryTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

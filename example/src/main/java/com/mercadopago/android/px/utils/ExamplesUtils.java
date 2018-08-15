@@ -8,21 +8,19 @@ import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.util.Log;
 import android.widget.Toast;
+import com.mercadopago.android.px.configuration.AdvancedConfiguration;
+import com.mercadopago.android.px.configuration.ReviewAndConfirmConfiguration;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.core.MercadoPagoCheckout.Builder;
+import com.mercadopago.android.px.internal.util.ViewUtils;
 import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import com.mercadopago.android.px.plugins.model.BusinessPayment;
-import com.mercadopago.android.px.plugins.model.ExitAction;
-import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
 import com.mercadopago.android.px.tracking.listeners.TracksListener;
 import com.mercadopago.android.px.tracking.tracker.MPTracker;
-import com.mercadopago.android.px.util.ViewUtils;
 import com.mercadopago.example.R;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -96,7 +94,6 @@ public final class ExamplesUtils {
         OneTapSamples.addAll(options);
         ChargesSamples.addAll(options);
         DiscountSamples.addAll(options);
-        options.add(new Pair<>("Saved Card Selected Automatically", defaultCardIdSelected()));
         options.add(new Pair<>("Review and Confirm - Custom exit", customExitReviewAndConfirm()));
         options.add(new Pair<>("Base flow - Tracks with listener", startBaseFlowWithTrackListener()));
         options.add(new Pair<>("All but debit card", allButDebitCard()));
@@ -117,7 +114,7 @@ public final class ExamplesUtils {
             }
         }
 
-        return createBase(builder.build());
+        return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, PaymentConfigurationUtils.create(builder.build()));
     }
 
     @NonNull
@@ -130,22 +127,15 @@ public final class ExamplesUtils {
             Collections.singletonList(item));
     }
 
-    private static Builder defaultCardIdSelected() {
-        final CheckoutPreference checkoutPre = getBasePreferenceBuilder().build();
-        checkoutPre.getPaymentPreference().setDefaultPaymentMethodId("debcabal");
-        checkoutPre.getPaymentPreference().setDefaultCardId("260077840");
-        return createBase(checkoutPre).setPrivateKey("APP_USR-1505-080815-c6ea450de1bf828e39add499237d727f-312667294");
-    }
-
     private static Builder customExitReviewAndConfirm() {
 
-        final ReviewAndConfirmPreferences preferences = new ReviewAndConfirmPreferences.Builder()
+        final ReviewAndConfirmConfiguration preferences = new ReviewAndConfirmConfiguration.Builder()
             .setTopFragment(Fragment.class, new Bundle())
             .build();
 
         return createBaseWithDecimals().setAdvancedConfiguration(
             new AdvancedConfiguration.Builder()
-                .setReviewAndConfirmPreferences(preferences)
+                .setReviewAndConfirmConfiguration(preferences)
                 .build());
     }
 
@@ -170,10 +160,6 @@ public final class ExamplesUtils {
         return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, "99628543-518e6477-ac0d-4f4a-8097-51c2fcc00b71");
     }
 
-    private static Builder createBase(@NonNull final CheckoutPreference checkoutPreference) {
-        return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, checkoutPreference);
-    }
-
     public static Builder createBase() {
         return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, DUMMY_PREFERENCE_ID);
     }
@@ -191,26 +177,17 @@ public final class ExamplesUtils {
     }
 
     private static Builder createBaseWithTwoItemsAndCollectorIcon() {
-        final ReviewAndConfirmPreferences preferences = new ReviewAndConfirmPreferences.Builder()
+        final ReviewAndConfirmConfiguration preferences = new ReviewAndConfirmConfiguration.Builder()
             .setCollectorIcon(R.drawable.px_collector_icon)
             .build();
 
         return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, DUMMY_PREFERENCE_ID_WITH_TWO_ITEMS)
             .setAdvancedConfiguration(new AdvancedConfiguration.Builder()
-                .setReviewAndConfirmPreferences(preferences)
+                .setReviewAndConfirmConfiguration(preferences)
                 .build());
     }
 
     private static Builder createBaseWithOneItemLongTitle() {
         return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, DUMMY_PREFERENCE_ID_WITH_ITEM_LONG_TITLE);
-    }
-
-    /* default */
-    static BusinessPayment getBusinessPaymentApproved() {
-        return new BusinessPayment.Builder(BusinessPayment.Decorator.APPROVED, Payment.StatusCodes.STATUS_APPROVED,
-            Payment.StatusDetail.STATUS_DETAIL_ACCREDITED,
-            R.drawable.px_icon_card, "Title")
-            .setPrimaryButton(new ExitAction("Button Name", 23))
-            .build();
     }
 }

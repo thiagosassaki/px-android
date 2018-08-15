@@ -9,6 +9,7 @@ import com.mercadopago.android.px.testcheckout.flows.DebitCardTestFlow;
 import com.mercadopago.android.px.testcheckout.flows.SavedCardTestFlow;
 import com.mercadopago.android.px.testcheckout.idleresources.CheckoutResource;
 import com.mercadopago.android.px.testcheckout.input.Amex;
+import com.mercadopago.android.px.testcheckout.input.Card;
 import com.mercadopago.android.px.testcheckout.input.Country;
 import com.mercadopago.android.px.testcheckout.input.FakeCard;
 import com.mercadopago.android.px.testcheckout.input.Maestro;

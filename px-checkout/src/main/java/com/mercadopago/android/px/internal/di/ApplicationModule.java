@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.datasource.cache.FileManager;
-import com.mercadopago.android.px.util.JsonUtil;
+import com.mercadopago.android.px.internal.util.JsonUtil;
 import java.io.File;
 import retrofit2.Retrofit;
 

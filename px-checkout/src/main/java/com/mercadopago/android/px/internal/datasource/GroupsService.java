@@ -1,7 +1,8 @@
 package com.mercadopago.android.px.internal.datasource;
 
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.core.CheckoutStore;
+import com.mercadopago.android.px.configuration.PaymentConfiguration;
+import com.mercadopago.android.px.core.PaymentMethodPlugin;
 import com.mercadopago.android.px.internal.datasource.cache.GroupsCache;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
@@ -18,7 +19,6 @@ import com.mercadopago.android.px.services.callbacks.Callback;
 import com.mercadopago.android.px.services.constants.ProcessingModes;
 import com.mercadopago.android.px.services.core.Settings;
 import com.mercadopago.android.px.services.exceptions.ApiException;
-import com.mercadopago.android.px.util.MercadoPagoESC;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -93,20 +93,23 @@ public class GroupsService implements GroupsRepository {
         };
     }
 
-    @NonNull /* default */ MPCall<PaymentMethodSearch> newRequest() {
+    /* default */
+    @NonNull
+    MPCall<PaymentMethodSearch> newRequest() {
         //TODO add preference service.
         final CheckoutPreference checkoutPreference = paymentSettingRepository.getCheckoutPreference();
+
         final Collection<String> excludedPaymentTypesSet = new HashSet<>(checkoutPreference.getExcludedPaymentTypes());
         excludedPaymentTypesSet.addAll(getUnsupportedPaymentTypes(checkoutPreference.getSite()));
         final GroupsIntent groupsIntent = new GroupsIntent(paymentSettingRepository.getPrivateKey());
 
         final String excludedPaymentTypesAppended =
             getListAsString(new ArrayList<>(excludedPaymentTypesSet), SEPARATOR);
+        final String supportedPluginsAppended = getListAsString(getPluginIds(), SEPARATOR);
+
         final String excludedPaymentMethodsAppended =
             getListAsString(checkoutPreference.getExcludedPaymentMethods(), SEPARATOR);
         final String cardsWithEscAppended = getListAsString(new ArrayList<>(mercadoPagoESC.getESCCardIds()), SEPARATOR);
-        final String supportedPluginsAppended =
-            getListAsString(CheckoutStore.getInstance().getEnabledPaymentMethodPluginsIds(), SEPARATOR);
 
         final Integer differentialPricingId =
             checkoutPreference.getDifferentialPricing() != null ? checkoutPreference.getDifferentialPricing()
@@ -126,6 +129,22 @@ public class GroupsService implements GroupsRepository {
                 differentialPricingId);
     }
 
+    @NonNull
+    private List<String> getPluginIds() {
+        final PaymentConfiguration paymentConfiguration = paymentSettingRepository.getPaymentConfiguration();
+        if (paymentConfiguration != null) {
+            final Collection<PaymentMethodPlugin> paymentMethodPluginList =
+                paymentConfiguration.getPaymentMethodPluginList();
+            final List<String> ids = new ArrayList<>();
+            for (final PaymentMethodPlugin plugin : paymentMethodPluginList) {
+                ids.add(plugin.getId());
+            }
+            return ids;
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
     private Collection<String> getUnsupportedPaymentTypes(@NonNull final Site site) {
 
         final Collection<String> unsupportedTypesForSite = new ArrayList<>();
@@ -142,14 +161,12 @@ public class GroupsService implements GroupsRepository {
 
     private String getListAsString(@NonNull final List<String> list, final String separator) {
         final StringBuilder stringBuilder = new StringBuilder();
-
         for (final String typeId : list) {
             stringBuilder.append(typeId);
             if (!typeId.equals(list.get(list.size() - 1))) {
                 stringBuilder.append(separator);
             }
         }
-
         return stringBuilder.toString();
     }
 }

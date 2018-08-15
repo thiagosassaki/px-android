@@ -32,7 +32,7 @@
             android:layout_toStartOf="@+id/amount_container"
             android:orientation="vertical">
 
-            <com.mercadopago.android.px.customviews.MPTextView
+            <com.mercadopago.android.px.internal.view.MPTextView
                 android:id="@+id/amount_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
                 android:textSize="@dimen/px_xs_text"/>
 
 
-            <com.mercadopago.android.px.customviews.MPTextView
+            <com.mercadopago.android.px.internal.view.MPTextView
                 android:id="@+id/max_coupon_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
             android:orientation="vertical"
             android:visibility="visible">
 
-            <com.mercadopago.android.px.customviews.MPTextView
+            <com.mercadopago.android.px.internal.view.MPTextView
                 android:id="@+id/amount_before_discount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
                 android:textSize="@dimen/px_xs_text"
                 tools:text="$ 1143"/>
 
-            <com.mercadopago.android.px.customviews.MPTextView
+            <com.mercadopago.android.px.internal.view.MPTextView
                 android:id="@+id/final_amount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

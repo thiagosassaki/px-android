@@ -1,8 +1,14 @@
 package com.mercadopago.android.px.testcheckout.flows;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
+import com.mercadopago.android.px.core.PaymentProcessor;
+import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
@@ -38,15 +44,8 @@ public class SavedCardTestFlow extends TestFlow {
         this.checkout = getMercadoPagoCheckout().build();
     }
 
-    //TODO: Should replace thread.sleep with IdlingResource
-    //Thread.sleep is needed to wait lazy checkout to finish loading
 
     public CongratsPage runDefaultCardIdPaymentFlow() {
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         startCheckout();
         new SecurityCodePage(null)
             .enterSecurityCode(ESC_NUMBER);
@@ -55,11 +54,6 @@ public class SavedCardTestFlow extends TestFlow {
 
     public CongratsPage runInvalidDefaultCardIdPaymentFlow() {
         PaymentMethodPage paymentMethodPage = new PaymentMethodPage(null);
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         startCheckout();
         paymentMethodPage.selectSavedDebitCard()
             .enterSecurityCode(ESC_NUMBER);
@@ -84,7 +78,39 @@ public class SavedCardTestFlow extends TestFlow {
 
     private MercadoPagoCheckout.Builder getMercadoPagoCheckout() {
         final CheckoutPreference checkoutPreference = getCheckoutPreference(getFakeItem());
-        return new MercadoPagoCheckout.Builder(PUBLIC_KEY, checkoutPreference)
+        return new MercadoPagoCheckout.Builder(PUBLIC_KEY, new PaymentConfiguration.Builder(checkoutPreference,
+            new PaymentProcessor() {
+                @Override
+                public void startPayment(@NonNull final CheckoutData data, @NonNull final Context context,
+                    @NonNull final OnPaymentListener paymentListener) {
+                    paymentListener.onPaymentFinished(new BusinessPayment.Builder(
+                        BusinessPayment.Decorator.APPROVED,
+                        "", "", "", ""
+                    ).build());
+                }
+
+                @Override
+                public int getPaymentTimeout() {
+                    return 0;
+                }
+
+                @Override
+                public boolean shouldShowFragmentOnPayment() {
+                    return false;
+                }
+
+                @Nullable
+                @Override
+                public Bundle getFragmentBundle(@NonNull final CheckoutData data, @NonNull final Context context) {
+                    return null;
+                }
+
+                @Nullable
+                @Override
+                public Fragment getFragment(@NonNull final CheckoutData data, @NonNull final Context context) {
+                    return null;
+                }
+            }).build())
             .setPrivateKey(userWithCardAccessToken);
     }
 

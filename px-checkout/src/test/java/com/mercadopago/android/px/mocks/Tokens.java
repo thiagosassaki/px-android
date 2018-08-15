@@ -3,7 +3,7 @@ package com.mercadopago.android.px.mocks;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.utils.ResourcesUtil;
-import com.mercadopago.android.px.util.JsonUtil;
+import com.mercadopago.android.px.internal.util.JsonUtil;
 
 public class Tokens {
     private Tokens() {

@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/px_s_alternative_1_margin"/>
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/mpsdkPaymentMethodDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
         android:textSize="@dimen/px_s_text"
         tools:text="Master terminada en 1234"/>
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/mpsdkStatementDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

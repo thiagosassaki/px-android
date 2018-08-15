@@ -2,7 +2,7 @@ package com.mercadopago.android.px.mocks;
 
 import com.mercadopago.android.px.model.Instruction;
 import com.mercadopago.android.px.utils.ResourcesUtil;
-import com.mercadopago.android.px.util.JsonUtil;
+import com.mercadopago.android.px.internal.util.JsonUtil;
 
 /**
  * Created by vaserber on 11/2/17.

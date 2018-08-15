@@ -6,29 +6,22 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.mercadopago.android.px.CheckoutActivity;
-import com.mercadopago.android.px.callbacks.CallbackHolder;
+import com.mercadopago.android.px.configuration.AdvancedConfiguration;
+import com.mercadopago.android.px.configuration.PaymentConfiguration;
+import com.mercadopago.android.px.internal.callbacks.CallbackHolder;
+import com.mercadopago.android.px.internal.datasource.CheckoutStore;
 import com.mercadopago.android.px.internal.di.Session;
-import com.mercadopago.android.px.model.Campaign;
-import com.mercadopago.android.px.model.Discount;
+import com.mercadopago.android.px.internal.features.CheckoutActivity;
+import com.mercadopago.android.px.internal.features.uicontrollers.FontCache;
+import com.mercadopago.android.px.internal.tracker.FlowHandler;
 import com.mercadopago.android.px.model.PaymentResult;
-import com.mercadopago.android.px.model.commission.ChargeRule;
-import com.mercadopago.android.px.plugins.DataInitializationTask;
-import com.mercadopago.android.px.plugins.PaymentMethodPlugin;
-import com.mercadopago.android.px.plugins.PaymentProcessor;
-import com.mercadopago.android.px.preferences.AdvancedConfiguration;
-import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.tracker.FlowHandler;
-import com.mercadopago.android.px.uicontrollers.FontCache;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import static com.mercadopago.android.px.plugins.PaymentProcessor.PAYMENT_PROCESSOR_KEY;
-import static com.mercadopago.android.px.util.TextUtils.isEmpty;
+import static com.mercadopago.android.px.internal.util.TextUtils.isEmpty;
 
+/**
+ * Main class of this project.
+ * It provides access to most of the checkout experience.
+ */
 @SuppressWarnings("unused")
 public class MercadoPagoCheckout {
 
@@ -39,9 +32,6 @@ public class MercadoPagoCheckout {
     @NonNull
     private final String publicKey;
 
-    @Nullable
-    private final CheckoutPreference checkoutPreference;
-
     @NonNull
     private final AdvancedConfiguration advancedConfiguration;
 
@@ -49,31 +39,19 @@ public class MercadoPagoCheckout {
     private final String preferenceId;
 
     @Nullable
-    private final Discount discount;
-
-    @Nullable
-    private final Campaign campaign;
-
-    private final boolean notAvailableDiscount;
-
-    @Nullable
     private final String privateKey;
 
-    @NonNull
-    private final ArrayList<ChargeRule> charges;
+    @Nullable
+    private final PaymentConfiguration paymentConfiguration;
 
     /* default */ boolean prefetch = false;
 
     /* default */ MercadoPagoCheckout(final Builder builder) {
         publicKey = builder.publicKey;
-        checkoutPreference = builder.checkoutPreference;
         advancedConfiguration = builder.advancedConfiguration;
-        discount = builder.discount;
-        campaign = builder.campaign;
-        notAvailableDiscount = builder.notAvailableDiscount;
-        charges = builder.charges;
         preferenceId = builder.preferenceId;
         privateKey = builder.privateKey;
+        paymentConfiguration = builder.paymentConfiguration;
         configureCheckoutStore(builder);
         FlowHandler.getInstance().generateFlowId();
         CallbackHolder.getInstance().clean();
@@ -88,7 +66,8 @@ public class MercadoPagoCheckout {
      * will return on {@link Activity#onActivityResult(int, int, Intent)}
      *
      * @param context context needed to start checkout.
-     * @param requestCode it's the number that identifies the checkout flow request for {@link Activity#onActivityResult(int, int, Intent)}
+     * @param requestCode it's the number that identifies the checkout flow request for
+     * {@link Activity#onActivityResult(int, int, Intent)}
      */
     public void startPayment(@NonNull final Context context, final int requestCode) {
         startIntent(context, CheckoutActivity.getIntent(context), requestCode);
@@ -97,9 +76,6 @@ public class MercadoPagoCheckout {
     private void configureCheckoutStore(final Builder builder) {
         final CheckoutStore store = CheckoutStore.getInstance();
         store.reset();
-        store.setPaymentMethodPluginList(builder.paymentMethodPluginList);
-        store.setPaymentPlugins(builder.paymentPlugins);
-        store.setDataInitializationTask(builder.dataInitializationTask);
     }
 
     private void startIntent(@NonNull final Context context, @NonNull final Intent checkoutIntent,
@@ -120,27 +96,8 @@ public class MercadoPagoCheckout {
         return advancedConfiguration;
     }
 
-    @Nullable
-    public Discount getDiscount() {
-        return discount;
-    }
-
-    @Nullable
-    public Campaign getCampaign() {
-        return campaign;
-    }
-
-    public boolean isNotAvailableDiscount() {
-        return notAvailableDiscount;
-    }
-
     @NonNull
-    public List<ChargeRule> getCharges() {
-        return charges;
-    }
-
-    @NonNull
-    public String getMerchantPublicKey() {
+    public String getPublicKey() {
         return publicKey;
     }
 
@@ -149,93 +106,60 @@ public class MercadoPagoCheckout {
         return preferenceId;
     }
 
-    @Nullable
-    public CheckoutPreference getCheckoutPreference() {
-        return checkoutPreference;
-    }
-
     @NonNull
     public String getPrivateKey() {
         return isEmpty(privateKey) ? "" : privateKey;
     }
 
+    @Nullable
+    public PaymentConfiguration getPaymentConfiguration() {
+        return paymentConfiguration;
+    }
+
     @SuppressWarnings("unused")
     public static final class Builder {
 
-        final String publicKey;
+        /* default */ @NonNull final String publicKey;
 
-        final String preferenceId;
+        /* default */ @Nullable final String preferenceId;
 
-        final CheckoutPreference checkoutPreference;
+        /* default */ @NonNull AdvancedConfiguration advancedConfiguration =
+            new AdvancedConfiguration.Builder().build();
 
-        @NonNull final ArrayList<ChargeRule> charges = new ArrayList<>();
+        /* default */ @Nullable PaymentConfiguration paymentConfiguration;
 
-        final Map<String, PaymentProcessor> paymentPlugins = new HashMap<>();
+        /* default */ @Nullable String privateKey;
 
-        final List<PaymentMethodPlugin> paymentMethodPluginList = new ArrayList<>();
+        /* default */ @Deprecated String regularFontPath;
 
-        @NonNull
-        AdvancedConfiguration advancedConfiguration = new AdvancedConfiguration.Builder().build();
+        /* default */ @Deprecated String lightFontPath;
 
-        Boolean notAvailableDiscount = false;
-
-        @Nullable
-        String privateKey;
-
-        Discount discount;
-        Campaign campaign;
-        DataInitializationTask dataInitializationTask;
-        String regularFontPath;
-        String lightFontPath;
-        String monoFontPath;
+        /* default */ @Deprecated String monoFontPath;
 
         /**
          * Checkout builder allow you to create a {@link MercadoPagoCheckout}
+         * {@see  <a href="http://developers.mercadopago.com/">our developers site</a>}
          *
-         * @param publicKey merchant public key.
-         * @param checkoutPreference the preference that represents the payment information.
+         * @param publicKey merchant public key / collector public key {@see <a href="https://www.mercadopago.com/mla/account/credentials">credentials</a>}
+         * @param paymentConfiguration the payment configuration for this checkout.
          */
-        public Builder(@NonNull final String publicKey, @NonNull final CheckoutPreference checkoutPreference) {
+        public Builder(@NonNull final String publicKey, @NonNull final PaymentConfiguration paymentConfiguration) {
             preferenceId = null;
             this.publicKey = publicKey;
-            this.checkoutPreference = checkoutPreference;
+            this.paymentConfiguration = paymentConfiguration;
         }
 
         /**
          * Checkout builder allow you to create a {@link MercadoPagoCheckout}
-         *
-         * @param publicKey merchant public key.
+         * For more information check the following links
+         * {@see <a href="https://www.mercadopago.com/mla/account/credentials">credentials</a>}
+         * {@see <a href="https://www.mercadopago.com.ar/developers/es/reference/preferences/_preferences/post/">create preference</a>}
+         * @param publicKey merchant public key / collector public key
          * @param preferenceId the preference id that represents the payment information.
          */
         public Builder(@NonNull final String publicKey, @NonNull final String preferenceId) {
             this.publicKey = publicKey;
             this.preferenceId = preferenceId;
-            checkoutPreference = null;
-        }
-
-        /**
-         * Set Mercado Pago discount that will be applied to total amount.
-         * When you set a discount with its campaign, we do not check in discount service.
-         * You have to set a payment processor for discount be applied.
-         *
-         * @param discount Mercado Pago discount.
-         * @param campaign Discount campaign with discount data.
-         * @return builder to keep operating
-         */
-        public Builder setDiscount(@NonNull final Discount discount, @NonNull final Campaign campaign) {
-            this.discount = discount;
-            this.campaign = campaign;
-            return this;
-        }
-
-        /**
-         * By enabling this feature you'll inform that payer's discount is no more applicable,
-         * because payer has reached the limit.
-         * You have to set a payment processor to apply this feature.
-         */
-        public Builder discountNotAvailable() {
-            notAvailableDiscount = true;
-            return this;
         }
 
         /**
@@ -250,49 +174,20 @@ public class MercadoPagoCheckout {
         }
 
         /**
-         * Add extra charges that will apply to total amount.
+         * It provides support for custom checkout functionality/ configure special behaviour
+         * You can enable/disable several functionality.
          *
-         * @param charge Extra charge that you could collect.
+         * @param advancedConfiguration your configuration.
          * @return builder to keep operating
          */
-        public Builder addChargeRule(@NonNull final ChargeRule charge) {
-            charges.add(charge);
-            return this;
-        }
-
-        /**
-         * Add extra charges that will apply to total amount.
-         *
-         * @param charges the list of chargest that could apply.
-         * @return builder to keep operating
-         */
-        public Builder addChargeRules(@NonNull final Collection<ChargeRule> charges) {
-            this.charges.addAll(charges);
-            return this;
-        }
-
         public Builder setAdvancedConfiguration(@NonNull final AdvancedConfiguration advancedConfiguration) {
             this.advancedConfiguration = advancedConfiguration;
             return this;
         }
 
-        public Builder addPaymentMethodPlugin(@NonNull final PaymentMethodPlugin paymentMethodPlugin,
-            @NonNull final PaymentProcessor paymentProcessor) {
-            paymentMethodPluginList.add(paymentMethodPlugin);
-            paymentPlugins.put(paymentMethodPlugin.getId(), paymentProcessor);
-            return this;
-        }
-
-        public Builder setPaymentProcessor(@NonNull final PaymentProcessor paymentProcessor) {
-            paymentPlugins.put(PAYMENT_PROCESSOR_KEY, paymentProcessor);
-            return this;
-        }
-
-        public Builder setDataInitializationTask(@NonNull final DataInitializationTask dataInitializationTask) {
-            this.dataInitializationTask = dataInitializationTask;
-            return this;
-        }
-
+        /**
+         * @return {@link MercadoPagoCheckout} instance
+         */
         public MercadoPagoCheckout build() {
             return new MercadoPagoCheckout(this);
         }
@@ -303,11 +198,9 @@ public class MercadoPagoCheckout {
          * @deprecated we will not support this mechanism anymore.
          */
         @Deprecated
-        public Builder setCustomLightFont(final String lightFontPath, final Context context) {
+        public Builder setCustomLightFont(@NonNull final String lightFontPath, @NonNull final Context context) {
             this.lightFontPath = lightFontPath;
-            if (lightFontPath != null) {
-                setCustomFont(context, FontCache.CUSTOM_LIGHT_FONT, this.lightFontPath);
-            }
+            setCustomFont(context, FontCache.CUSTOM_LIGHT_FONT, this.lightFontPath);
             return this;
         }
 
@@ -317,11 +210,9 @@ public class MercadoPagoCheckout {
          * @deprecated we will not support this mechanism anymore.
          */
         @Deprecated
-        public Builder setCustomRegularFont(final String regularFontPath, final Context context) {
+        public Builder setCustomRegularFont(@NonNull final String regularFontPath, @NonNull final Context context) {
             this.regularFontPath = regularFontPath;
-            if (regularFontPath != null) {
-                setCustomFont(context, FontCache.CUSTOM_REGULAR_FONT, this.regularFontPath);
-            }
+            setCustomFont(context, FontCache.CUSTOM_REGULAR_FONT, this.regularFontPath);
             return this;
         }
 
@@ -331,11 +222,9 @@ public class MercadoPagoCheckout {
          * @deprecated we will not support this mechanism anymore.
          */
         @Deprecated
-        public Builder setCustomMonoFont(final String monoFontPath, final Context context) {
+        public Builder setCustomMonoFont(@NonNull final String monoFontPath, final Context context) {
             this.monoFontPath = monoFontPath;
-            if (monoFontPath != null) {
-                setCustomFont(context, FontCache.CUSTOM_MONO_FONT, this.monoFontPath);
-            }
+            setCustomFont(context, FontCache.CUSTOM_MONO_FONT, this.monoFontPath);
             return this;
         }
 
@@ -344,7 +233,7 @@ public class MercadoPagoCheckout {
          * @deprecated we will not support this mechanism anymore.
          */
         @Deprecated
-        private void setCustomFont(final Context context, final String fontType, final String fontPath) {
+        private void setCustomFont(@NonNull final Context context, final String fontType, final String fontPath) {
             final Typeface typeFace;
             if (!FontCache.hasTypeface(fontType)) {
                 typeFace = Typeface.createFromAsset(context.getAssets(), fontPath);

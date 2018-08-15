@@ -22,6 +22,7 @@ import static com.mercadopago.android.px.services.util.TextUtil.isEmpty;
 /**
  * Model that represents curl -X OPTIONS "https://api.mercadopago.com/checkout/preferences" | json_pp
  * It can be not exactly the same because exists custom configurations for open Preference.
+ * Some values like: binary mode are not present on API call.
  */
 @SuppressWarnings("unused")
 public class CheckoutPreference implements Serializable {
@@ -62,6 +63,9 @@ public class CheckoutPreference implements Serializable {
     @Nullable private final BigDecimal conceptAmount;
 
     @Nullable private final String conceptId;
+
+    @SerializedName("binary_mode")
+    private boolean isBinaryMode = false;
     //endregion support external integrations
 
     /* default */ CheckoutPreference(final Builder builder) {
@@ -77,6 +81,7 @@ public class CheckoutPreference implements Serializable {
         conceptId = builder.conceptId;
         payer = new Payer();
         payer.setEmail(builder.payerEmail);
+        isBinaryMode = builder.isBinaryMode;
 
         paymentPreference = new PaymentPreference();
         paymentPreference.setExcludedPaymentTypeIds(builder.excludedPaymentTypes);
@@ -209,7 +214,7 @@ public class CheckoutPreference implements Serializable {
         return getPaymentPreference().getExcludedPaymentTypes();
     }
 
-    @Nullable
+    @NonNull
     public List<String> getExcludedPaymentMethods() {
         return getPaymentPreference().getExcludedPaymentMethodIds();
     }
@@ -223,6 +228,10 @@ public class CheckoutPreference implements Serializable {
     @Nullable
     public String getId() {
         return id;
+    }
+
+    public boolean isBinaryMode() {
+        return isBinaryMode;
     }
 
     public static class Builder {
@@ -245,6 +254,8 @@ public class CheckoutPreference implements Serializable {
         /* default */ @Nullable DifferentialPricing differentialPricing;
         /* default */ BigDecimal conceptAmount;
         /* default */ String conceptId;
+        /* default */ boolean isBinaryMode = false;
+
 
         /**
          * Builder for custom CheckoutPreference construction.
@@ -263,6 +274,21 @@ public class CheckoutPreference implements Serializable {
             this.site = site;
             excludedPaymentMethods = new ArrayList<>();
             excludedPaymentTypes = new ArrayList<>();
+        }
+
+        /**
+         * If enableBinaryMode is called, processed payment can only be APPROVED or REJECTED.
+         * Default value is false.
+         * <p>
+         * Non compatible with PaymentProcessor.
+         * <p>
+         * Non compatible with off payments methods
+         *
+         * @return builder to keep operating
+         */
+        public Builder setBinaryMode(final boolean isBinaryMode) {
+            this.isBinaryMode = isBinaryMode;
+            return this;
         }
 
         /**

@@ -2,7 +2,8 @@ package com.mercadopago.android.px.core;
 
 import android.os.Build;
 import android.support.test.InstrumentationRegistry;
-import com.mercadopago.android.px.CheckoutActivity;
+import com.mercadopago.android.px.internal.datasource.MercadoPagoServicesAdapter;
+import com.mercadopago.android.px.internal.features.CheckoutActivity;
 import com.mercadopago.android.px.test.BaseTest;
 import junit.framework.Assert;
 

@@ -14,7 +14,7 @@
     android:paddingLeft="@dimen/px_s_margin"
     android:paddingRight="@dimen/px_s_margin">
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.mercadopago.android.px.customviews.MPTextView
+        <com.mercadopago.android.px.internal.view.MPTextView
             android:id="@+id/amount_with_discount"
             android:layout_width="match_parent"
             android:layout_height="@dimen/px_mm_height"
@@ -68,7 +68,7 @@
         android:gravity="center"
         android:orientation="horizontal">
 
-        <com.mercadopago.android.px.customviews.MPTextView
+        <com.mercadopago.android.px.internal.view.MPTextView
             android:id="@+id/discount_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
             android:textSize="@dimen/px_xs_text"
             tools:text="20 % OFF"/>
 
-        <com.mercadopago.android.px.customviews.MPTextView
+        <com.mercadopago.android.px.internal.view.MPTextView
             android:id="@+id/discount_max_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

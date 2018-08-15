@@ -1,5 +1,8 @@
 package com.mercadopago.android.px.model;
 
+import com.mercadopago.android.px.internal.viewmodel.Summary;
+import com.mercadopago.android.px.internal.viewmodel.SummaryDetail;
+import com.mercadopago.android.px.internal.viewmodel.SummaryItemType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

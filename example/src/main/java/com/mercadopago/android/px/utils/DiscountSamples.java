@@ -1,13 +1,13 @@
 package com.mercadopago.android.px.utils;
 
 import android.support.v4.util.Pair;
-
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
-
-import com.mercadopago.android.px.plugins.MainPaymentProcessor;
+import com.mercadopago.android.px.internal.features.plugins.SamplePaymentProcessor;
+import com.mercadopago.android.px.configuration.DiscountConfiguration;
+import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import java.util.Collection;
 
-import static com.mercadopago.android.px.utils.ExamplesUtils.getBusinessPaymentApproved;
+import static com.mercadopago.android.px.utils.PaymentUtils.getBusinessPaymentApproved;
 
 final class DiscountSamples {
 
@@ -24,8 +24,10 @@ final class DiscountSamples {
 
     public static void addAll(final Collection<Pair<String, MercadoPagoCheckout.Builder>> options) {
         options.add(
-            new Pair<>("Direct discount", getMercadoPagoBuilder(PK_WITH_DIRECT_DISCOUNT, PREF_WITH_DIRECT_DISCOUNT)));
-        options.add(new Pair<>("Code discount", getMercadoPagoBuilder(PK_WITH_CODE_DISCOUNT, PREF_WITH_CODE_DISCOUNT)));
+            new Pair<>("Direct discount",
+                new MercadoPagoCheckout.Builder(PK_WITH_DIRECT_DISCOUNT, PREF_WITH_DIRECT_DISCOUNT)));
+        options.add(new Pair<>("Code discount",
+            new MercadoPagoCheckout.Builder(PK_WITH_CODE_DISCOUNT, PREF_WITH_CODE_DISCOUNT)));
         options.add(new Pair<>("Discount not available",
             getMercadoPagoBuilderWithNotAvailableDiscount(PK_WITH_DIRECT_DISCOUNT_MAX_REDEEM_PER_USER_3,
                 PREF_WITH_USED_UP_DISCOUNT)));
@@ -34,13 +36,9 @@ final class DiscountSamples {
     private static MercadoPagoCheckout.Builder getMercadoPagoBuilderWithNotAvailableDiscount(final String publicKey,
         final String prefId) {
 
-        final MainPaymentProcessor mainPaymentProcessor = new MainPaymentProcessor(getBusinessPaymentApproved());
-        return getMercadoPagoBuilder(publicKey, prefId)
-            .discountNotAvailable()
-            .setPaymentProcessor(mainPaymentProcessor);
-    }
-
-    private static MercadoPagoCheckout.Builder getMercadoPagoBuilder(final String publicKey, final String prefId) {
-        return new MercadoPagoCheckout.Builder(publicKey, prefId);
+        final SamplePaymentProcessor mainPaymentProcessor = new SamplePaymentProcessor(getBusinessPaymentApproved());
+        return new MercadoPagoCheckout.Builder(publicKey,
+            new PaymentConfiguration.Builder(prefId, mainPaymentProcessor).setDiscountConfiguration(
+                DiscountConfiguration.forNotAvailableDiscount()).build());
     }
 }
