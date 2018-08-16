@@ -5,7 +5,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.model.BusinessPayment;
-import com.mercadopago.android.px.services.util.TextUtil;
+import com.mercadopago.android.px.internal.util.TextUtil;
 
 public class HeaderProps {
 

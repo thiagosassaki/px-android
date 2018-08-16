@@ -7,7 +7,7 @@ import com.mercadopago.android.px.internal.features.paymentresult.props.Instruct
 import com.mercadopago.android.px.internal.features.paymentresult.props.InstructionsSubtitleProps;
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.internal.view.Component;
-import com.mercadopago.android.px.services.constants.ProcessingModes;
+import com.mercadopago.android.px.internal.constants.ProcessingModes;
 import java.util.List;
 
 /**

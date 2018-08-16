@@ -8,13 +8,12 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.SummaryModel;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.internal.view.Renderer;
 import com.mercadopago.android.px.internal.view.RendererFactory;
 import com.mercadopago.android.px.model.PaymentTypes;
-import com.mercadopago.android.px.services.util.CurrenciesUtil;
-
-import static com.mercadopago.android.px.internal.util.TextUtils.isEmpty;
+import com.mercadopago.android.px.internal.util.CurrenciesUtil;
 
 public class CompactSummaryRenderer extends Renderer<CompactSummary> {
 
@@ -44,11 +43,11 @@ public class CompactSummaryRenderer extends Renderer<CompactSummary> {
     @VisibleForTesting
     boolean shouldShowCftDisclaimer(final SummaryModel props) {
         return PaymentTypes.isCreditCardPaymentType(props.getPaymentTypeId())
-            && !isEmpty(props.getCftPercent());
+            && !TextUtil.isEmpty(props.getCftPercent());
     }
 
     private String getItemTitle(String itemTitle, Context context) {
-        return isEmpty(itemTitle) ? getDefaultTitle(context) : itemTitle;
+        return TextUtil.isEmpty(itemTitle) ? getDefaultTitle(context) : itemTitle;
     }
 
     private String getDefaultTitle(Context context) {

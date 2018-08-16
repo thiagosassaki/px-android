@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.PaymentModel;
 import com.mercadopago.android.px.internal.util.ResourceUtil;
-import com.mercadopago.android.px.internal.util.TextUtils;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.CompactComponent;
 import java.util.Locale;
 
@@ -66,7 +66,7 @@ class MethodCard extends CompactComponent<MethodCard.Props, Void> {
 
     @VisibleForTesting
     boolean shouldShowSubtitle() {
-        return TextUtils.isNotEmpty(props.bankName) && !props.bankName.equals(props.cardName);
+        return TextUtil.isNotEmpty(props.bankName) && !props.bankName.equals(props.cardName);
     }
 
     private String formatTitle(Context context) {

@@ -28,7 +28,6 @@ import com.mercadopago.android.px.internal.features.card.TicketIdentificationNam
 import com.mercadopago.android.px.internal.features.card.TicketIdentificationNumberTextWatcher;
 import com.mercadopago.android.px.internal.features.providers.PayerInformationProviderImpl;
 import com.mercadopago.android.px.internal.features.uicontrollers.identification.IdentificationTicketView;
-import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.util.ErrorUtil;
 import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.internal.util.ScaleUtil;
@@ -39,7 +38,7 @@ import com.mercadopago.android.px.model.Identification;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import com.mercadopago.android.px.services.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -670,7 +669,7 @@ public class PayerInformationActivity extends MercadoPagoBaseActivity implements
 
     public void showApiException(ApiException apiException, String requestOrigin) {
         if (mActivityActive) {
-            ApiUtil.showApiExceptionError(this, apiException, requestOrigin);
+            ErrorUtil.showApiExceptionError(this, apiException, requestOrigin);
         }
     }
 

@@ -2,7 +2,7 @@ package com.mercadopago.android.px.internal.features.cardvault;
 
 import com.mercadopago.android.px.internal.base.MvpView;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import com.mercadopago.android.px.services.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 
 /**
  * Created by vaserber on 10/12/16.

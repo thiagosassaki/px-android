@@ -8,9 +8,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.util.MPCardMaskUtil;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.MPTextView;
-
-import static com.mercadopago.android.px.internal.util.TextUtils.isEmpty;
 
 /**
  * Created by mromar on 9/27/17.
@@ -68,8 +67,8 @@ public class IdentificationTicketView extends IdentificationView {
     }
 
     private void drawIdentificationName() {
-        if (isEmpty(mName)) {
-            if (isEmpty(mLastName)) {
+        if (TextUtil.isEmpty(mName)) {
+            if (TextUtil.isEmpty(mLastName)) {
                 mNameTextView.setText(mContext.getText(R.string.px_name_and_lastname_identification_label));
             } else {
                 mNameTextView.setText("");
@@ -82,7 +81,7 @@ public class IdentificationTicketView extends IdentificationView {
     }
 
     private void drawIdentificationLastName() {
-        if (isEmpty(mLastName)) {
+        if (TextUtil.isEmpty(mLastName)) {
             mLastNameTextView.setText("");
         } else {
             mLastNameTextView.setText(mLastName);
@@ -90,7 +89,7 @@ public class IdentificationTicketView extends IdentificationView {
     }
 
     public void drawIdentificationTypeName() {
-        if (mIdentificationType != null && !isEmpty(mIdentificationType.getId())) {
+        if (mIdentificationType != null && !TextUtil.isEmpty(mIdentificationType.getId())) {
             mIdentificationTypeIdTextView.setText(mIdentificationType.getId());
         }
     }

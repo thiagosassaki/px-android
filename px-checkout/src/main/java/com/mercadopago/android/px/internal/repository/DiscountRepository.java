@@ -6,7 +6,7 @@ import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import com.mercadopago.android.px.internal.base.ResourcesProvider;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
-import com.mercadopago.android.px.services.adapters.MPCall;
+import com.mercadopago.android.px.internal.callbacks.MPCall;
 import java.math.BigDecimal;
 
 public interface DiscountRepository extends ResourcesProvider {

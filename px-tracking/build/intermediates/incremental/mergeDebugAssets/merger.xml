@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="/Users/vaserber/Documents/Android/px-android/px-tracking/src/main/assets"/><source path="/Users/vaserber/Documents/Android/px-android/px-tracking/build/generated/assets/shaders/debug"/></dataSet><dataSet config="debug"><source path="/Users/vaserber/Documents/Android/px-android/px-tracking/src/debug/assets"/></dataSet></merger>

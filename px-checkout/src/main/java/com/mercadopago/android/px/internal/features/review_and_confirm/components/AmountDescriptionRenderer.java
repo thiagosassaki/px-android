@@ -10,7 +10,7 @@ import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.internal.view.Renderer;
 import com.mercadopago.android.px.internal.viewmodel.SummaryItemType;
-import com.mercadopago.android.px.services.util.CurrenciesUtil;
+import com.mercadopago.android.px.internal.util.CurrenciesUtil;
 
 public class AmountDescriptionRenderer extends Renderer<AmountDescription> {
 

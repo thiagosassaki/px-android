@@ -12,14 +12,13 @@ import android.widget.LinearLayout;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.SummaryModel;
 import com.mercadopago.android.px.internal.features.uicontrollers.payercosts.PayerCostColumn;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.internal.view.Renderer;
 import com.mercadopago.android.px.internal.view.RendererFactory;
 import com.mercadopago.android.px.model.PaymentTypes;
-import com.mercadopago.android.px.services.util.CurrenciesUtil;
+import com.mercadopago.android.px.internal.util.CurrenciesUtil;
 import java.math.BigDecimal;
-
-import static com.mercadopago.android.px.internal.util.TextUtils.isEmpty;
 
 /**
  * Created by mromar on 2/28/18.
@@ -85,7 +84,7 @@ public class FullSummaryRenderer extends Renderer<FullSummary> {
     @VisibleForTesting
     boolean shouldShowCftDisclaimer(final SummaryModel props) {
         return PaymentTypes.isCreditCardPaymentType(props.getPaymentTypeId())
-            && !isEmpty(props.getCftPercent());
+            && !TextUtil.isEmpty(props.getCftPercent());
     }
 
     @VisibleForTesting
@@ -96,7 +95,7 @@ public class FullSummaryRenderer extends Renderer<FullSummary> {
 
     @Nullable
     private Spanned getFormattedAmount(final BigDecimal amount, final String currencyId) {
-        return amount != null && !isEmpty(currencyId) ? CurrenciesUtil
+        return amount != null && !TextUtil.isEmpty(currencyId) ? CurrenciesUtil
             .getSpannedAmountWithCurrencySymbol(amount, currencyId) : null;
     }
 

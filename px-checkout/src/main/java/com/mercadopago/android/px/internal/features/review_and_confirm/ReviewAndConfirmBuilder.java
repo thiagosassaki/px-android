@@ -12,7 +12,7 @@ import com.mercadopago.android.px.internal.features.review_and_confirm.models.Su
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.TermsAndConditionsModel;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
-import com.mercadopago.android.px.internal.util.TextUtils;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.Issuer;
@@ -90,7 +90,7 @@ public class ReviewAndConfirmBuilder {
             activity.getResources().getString(R.string.px_review_summary_products));
 
         final boolean termsAndConditionsEnabled =
-            TextUtils.isEmpty(configurationModule.getPaymentSettings().getPrivateKey());
+            TextUtil.isEmpty(configurationModule.getPaymentSettings().getPrivateKey());
 
         final TermsAndConditionsModel mercadoPagoTermsAndConditions =
             termsAndConditionsEnabled ? new TermsAndConditionsModel(site.getTermsAndConditionsUrl(),

@@ -8,12 +8,11 @@ import android.widget.ImageView;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.internal.util.MercadoPagoUtil;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.model.Card;
 import java.util.List;
 import java.util.Locale;
-
-import static com.mercadopago.android.px.internal.util.TextUtils.isEmpty;
 
 public class CustomerCardItemAdapter extends RecyclerView.Adapter<CustomerCardItemAdapter.ViewHolder> {
 
@@ -72,7 +71,7 @@ public class CustomerCardItemAdapter extends RecyclerView.Adapter<CustomerCardIt
 
     @Override
     public int getItemCount() {
-        return isEmpty((mActionMessage)) ? mCards.size() : mCards.size() + 1;
+        return TextUtil.isEmpty((mActionMessage)) ? mCards.size() : mCards.size() + 1;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -115,7 +114,7 @@ public class CustomerCardItemAdapter extends RecyclerView.Adapter<CustomerCardIt
 
         private void setCardDescription(Card card) {
 
-            if (!isEmpty(card.getLastFourDigits())) {
+            if (!TextUtil.isEmpty(card.getLastFourDigits())) {
                 String digitsLabel = itemView.getContext().getString(R.string.px_last_digits_label);
                 String formattedDigitsLabel = String.format(Locale.getDefault(), "%s%s%s",
                     digitsLabel, "\n", card.getLastFourDigits());

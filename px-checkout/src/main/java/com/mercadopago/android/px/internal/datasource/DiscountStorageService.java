@@ -5,13 +5,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.android.px.internal.util.JsonUtil;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.mercadopago.android.px.internal.util.TextUtils.isEmpty;
 
 public class DiscountStorageService {
 
@@ -110,7 +109,7 @@ public class DiscountStorageService {
         final String stringCampaigns = sharedPreferences.getString(PREF_CAMPAIGNS, "");
         final Type listType = new TypeToken<List<Campaign>>() {
         }.getType();
-        return isEmpty(stringCampaigns) ? new ArrayList<Campaign>()
+        return TextUtil.isEmpty(stringCampaigns) ? new ArrayList<Campaign>()
             : (List<Campaign>) jsonUtil.fromJson(stringCampaigns, listType);
     }
 

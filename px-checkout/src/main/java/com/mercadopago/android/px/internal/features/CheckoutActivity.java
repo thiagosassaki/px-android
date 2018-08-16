@@ -24,7 +24,7 @@ import com.mercadopago.android.px.internal.tracker.FlowHandler;
 import com.mercadopago.android.px.internal.tracker.MPTrackingContext;
 import com.mercadopago.android.px.internal.util.ErrorUtil;
 import com.mercadopago.android.px.internal.util.JsonUtil;
-import com.mercadopago.android.px.internal.util.TextUtils;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.util.ViewUtils;
 import com.mercadopago.android.px.internal.viewmodel.BusinessPaymentModel;
 import com.mercadopago.android.px.internal.viewmodel.CardPaymentModel;
@@ -355,7 +355,7 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
     }
 
     private boolean isErrorResult(final Intent data) {
-        return data != null && !TextUtils.isEmpty(data.getStringExtra(EXTRA_ERROR));
+        return data != null && !TextUtil.isEmpty(data.getStringExtra(EXTRA_ERROR));
     }
 
     @Override

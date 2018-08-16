@@ -24,9 +24,9 @@ import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
-import com.mercadopago.android.px.services.CheckoutService;
-import com.mercadopago.android.px.services.util.LocaleUtil;
-import com.mercadopago.android.px.services.util.TextUtil;
+import com.mercadopago.android.px.internal.services.CheckoutService;
+import com.mercadopago.android.px.internal.util.LocaleUtil;
+import com.mercadopago.android.px.internal.util.TextUtil;
 
 public final class Session extends ApplicationModule
     implements AmountComponent {

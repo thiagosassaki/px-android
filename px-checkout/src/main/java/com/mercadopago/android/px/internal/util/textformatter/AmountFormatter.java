@@ -7,8 +7,8 @@ import com.mercadopago.android.px.model.Discount;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import static com.mercadopago.android.px.services.util.CurrenciesUtil.getLocalizedAmount;
-import static com.mercadopago.android.px.services.util.CurrenciesUtil.getLocalizedAmountNoDecimals;
+import static com.mercadopago.android.px.internal.util.CurrenciesUtil.getLocalizedAmount;
+import static com.mercadopago.android.px.internal.util.CurrenciesUtil.getLocalizedAmountNoDecimals;
 
 public class AmountFormatter extends ChainFormatter {
 

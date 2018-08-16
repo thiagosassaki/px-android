@@ -14,9 +14,8 @@ import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.features.CheckoutActivity;
 import com.mercadopago.android.px.internal.features.uicontrollers.FontCache;
 import com.mercadopago.android.px.internal.tracker.FlowHandler;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.PaymentResult;
-
-import static com.mercadopago.android.px.internal.util.TextUtils.isEmpty;
 
 /**
  * Main class of this project.
@@ -108,7 +107,7 @@ public class MercadoPagoCheckout {
 
     @NonNull
     public String getPrivateKey() {
-        return isEmpty(privateKey) ? "" : privateKey;
+        return TextUtil.isEmpty(privateKey) ? "" : privateKey;
     }
 
     @Nullable

@@ -5,6 +5,7 @@ import android.support.annotation.VisibleForTesting;
 import com.mercadopago.android.px.configuration.ReviewAndConfirmConfiguration;
 import com.mercadopago.android.px.internal.features.review_and_confirm.SummaryProvider;
 import com.mercadopago.android.px.internal.features.review_and_confirm.props.AmountDescriptionProps;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.Component;
 import com.mercadopago.android.px.internal.view.RendererFactory;
 import com.mercadopago.android.px.internal.viewmodel.Summary;
@@ -13,8 +14,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.mercadopago.android.px.internal.util.TextUtils.isEmpty;
-import static com.mercadopago.android.px.internal.util.TextUtils.isNotEmpty;
+import static com.mercadopago.android.px.internal.util.TextUtil.isNotEmpty;
 
 public class FullSummary extends Component<SummaryComponent.SummaryProps, Void> {
 
@@ -77,7 +77,7 @@ public class FullSummary extends Component<SummaryComponent.SummaryProps, Void> 
             summaryBuilder.addSummaryProductDetail(props.summaryModel.getItemsAmount(), getItemTitle(),
                 provider.getDefaultTextColor());
 
-            if (!isEmpty(reviewAndConfirmConfiguration.getDisclaimerText())) {
+            if (!TextUtil.isEmpty(reviewAndConfirmConfiguration.getDisclaimerText())) {
                 summaryBuilder.setDisclaimerText(reviewAndConfirmConfiguration.getDisclaimerText())
                     .setDisclaimerColor(provider.getDisclaimerTextColor());
             }

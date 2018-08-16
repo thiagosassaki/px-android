@@ -2,7 +2,7 @@ package com.mercadopago.android.px.internal.features.paymentresult.formatter;
 
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import com.mercadopago.android.px.services.util.CurrenciesUtil;
+import com.mercadopago.android.px.internal.util.CurrenciesUtil;
 import java.math.BigDecimal;
 
 public class AmountFormat {

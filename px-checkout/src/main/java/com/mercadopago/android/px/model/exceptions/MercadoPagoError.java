@@ -1,6 +1,5 @@
 package com.mercadopago.android.px.model.exceptions;
 
-import com.mercadopago.android.px.services.exceptions.ApiException;
 import java.io.Serializable;
 
 public class MercadoPagoError implements Serializable {

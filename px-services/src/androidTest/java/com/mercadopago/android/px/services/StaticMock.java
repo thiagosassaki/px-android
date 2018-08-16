@@ -1,12 +1,10 @@
 package com.mercadopago.android.px.services;
 
 import android.content.Context;
+import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.model.CardToken;
-import com.mercadopago.android.px.model.Cardholder;
-import com.mercadopago.android.px.model.Identification;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.PaymentMethod;
-import com.mercadopago.android.px.services.util.JsonUtil;
 import java.io.InputStream;
 
 public class StaticMock {

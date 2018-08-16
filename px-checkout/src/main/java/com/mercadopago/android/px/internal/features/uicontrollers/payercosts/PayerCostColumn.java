@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.util.InstallmentsUtil;
 import com.mercadopago.android.px.internal.view.MPTextView;
-import com.mercadopago.android.px.services.util.CurrenciesUtil;
+import com.mercadopago.android.px.internal.util.CurrenciesUtil;
 import java.math.BigDecimal;
 
 /**

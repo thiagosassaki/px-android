@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.mercadopago.android.px.internal.util.TextUtils.isEmpty;
-
 /**
  * Created by marlanti on 4/6/17.
  */
@@ -17,7 +15,7 @@ public class InstallmentsUtil {
 
     public static boolean shouldWarnAboutBankInterests(String siteId) {
         boolean shouldWarn = false;
-        if (!isEmpty(siteId) && getSitesWithBankInterestsNotIncluded().contains(siteId)) {
+        if (!TextUtil.isEmpty(siteId) && getSitesWithBankInterestsNotIncluded().contains(siteId)) {
             shouldWarn = true;
         }
         return shouldWarn;

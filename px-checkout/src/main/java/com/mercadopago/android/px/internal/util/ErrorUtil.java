@@ -2,7 +2,10 @@ package com.mercadopago.android.px.internal.util;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.di.Session;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.internal.features.ErrorActivity;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 
@@ -43,4 +46,21 @@ public final class ErrorUtil {
         intent.putExtra(PUBLIC_KEY_EXTRA, publicKey);
         launcherActivity.startActivityForResult(intent, ERROR_REQUEST_CODE);
     }
+
+    public static void showApiExceptionError(@NonNull final Activity activity,
+        final ApiException apiException,
+        final String requestOrigin) {
+
+        MercadoPagoError mercadoPagoError;
+        String errorMessage;
+
+        if (!ApiUtil.checkConnection(activity)) {
+            errorMessage = activity.getString(R.string.px_no_connection_message);
+            mercadoPagoError = new MercadoPagoError(errorMessage, true);
+        } else {
+            mercadoPagoError = new MercadoPagoError(apiException, requestOrigin);
+        }
+        ErrorUtil.startErrorActivity(activity, mercadoPagoError);
+    }
+
 }

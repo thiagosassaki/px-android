@@ -1,7 +1,7 @@
 package com.mercadopago.android.px.internal.features;
 
 import com.mercadopago.android.px.model.PaymentType;
-import com.mercadopago.android.px.services.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import java.util.List;
 
 /**

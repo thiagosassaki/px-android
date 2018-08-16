@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.util.CircleTransform;
 import com.mercadopago.android.px.internal.util.ScaleUtil;
-import com.mercadopago.android.px.internal.util.TextUtils;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.internal.view.Renderer;
 import com.squareup.picasso.Picasso;
@@ -75,7 +75,7 @@ public class ReviewItemRenderer extends Renderer<ReviewItem> {
         if (props.itemModel.hasToShowQuantity()) {
             //Show quantity
             String productQuantityText;
-            if (TextUtils.isNotEmpty(props.quantityLabel)) {
+            if (TextUtil.isNotEmpty(props.quantityLabel)) {
                 productQuantityText = String.format(Locale.getDefault(),
                     "%s %s",
                     props.quantityLabel,
@@ -97,7 +97,7 @@ public class ReviewItemRenderer extends Renderer<ReviewItem> {
         if (props.itemModel.hasToShowPrice()) {
             //Show price
             String priceText;
-            if (TextUtils.isNotEmpty(props.unitPriceLabel)) {
+            if (TextUtil.isNotEmpty(props.unitPriceLabel)) {
                 priceText = String.format(Locale.getDefault(),
                     "%s %s",
                     props.unitPriceLabel,

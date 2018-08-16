@@ -7,7 +7,7 @@ import com.mercadopago.android.px.internal.features.paymentresult.components.Ins
 import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionsSecondaryInfo;
 import com.mercadopago.android.px.internal.features.paymentresult.components.InstructionsSubtitle;
 import com.mercadopago.android.px.internal.features.paymentresult.props.InstructionsProps;
-import com.mercadopago.android.px.services.constants.ProcessingModes;
+import com.mercadopago.android.px.internal.constants.ProcessingModes;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;

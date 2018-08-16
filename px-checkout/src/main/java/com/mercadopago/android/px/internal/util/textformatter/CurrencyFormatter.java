@@ -7,7 +7,7 @@ import com.mercadopago.android.px.model.Currency;
 import java.math.BigDecimal;
 import java.util.Locale;
 
-import static com.mercadopago.android.px.services.util.CurrenciesUtil.getCurrency;
+import static com.mercadopago.android.px.internal.util.CurrenciesUtil.getCurrency;
 
 public class CurrencyFormatter extends ChainFormatter {
 

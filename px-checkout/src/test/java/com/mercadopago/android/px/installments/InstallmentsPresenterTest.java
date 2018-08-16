@@ -6,6 +6,7 @@ import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.mocks.Installments;
 import com.mercadopago.android.px.mocks.Issuers;
 import com.mercadopago.android.px.mocks.PayerCosts;
@@ -35,7 +36,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static com.mercadopago.android.px.internal.util.TextUtils.isEmpty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -271,7 +271,7 @@ public class InstallmentsPresenterTest {
     }
 
     @Test
-    public void whenPayerCostsIsEmptyThenShowError() {
+    public void whenPayerCostsisEmptyhenShowError() {
 
         List<Installment> installments = Installments.getInstallmentsListWithoutPayerCosts();
         provider.setResponse(installments);
@@ -339,7 +339,7 @@ public class InstallmentsPresenterTest {
     public void whenCardInfoNullThenBinIsNull() {
         CardInfo cardInfo = null;
         presenter.setCardInfo(cardInfo);
-        assertTrue(isEmpty(presenter.getBin()));
+        assertTrue(TextUtil.isEmpty(presenter.getBin()));
     }
 
     @Test

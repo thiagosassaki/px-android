@@ -24,7 +24,7 @@ import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.internal.features.cardvault.CardVaultPresenter;
 import com.mercadopago.android.px.internal.features.providers.CardVaultProvider;
-import com.mercadopago.android.px.services.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.internal.features.cardvault.CardVaultView;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -100,7 +100,7 @@ public class CardVaultPresenterTest {
     }
 
     @Test
-    public void ifInstallmentsForCardIsEmptyThenShowErrorMessage() {
+    public void ifInstallmentsForCardisEmptyhenShowErrorMessage() {
 
         List<Installment> installmentsList = new ArrayList<>();
         provider.setResponse(installmentsList);

@@ -2,7 +2,7 @@ package com.mercadopago.android.px.internal.features.paymentresult.components;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.features.paymentresult.props.IconProps;
-import com.mercadopago.android.px.internal.util.TextUtils;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.internal.view.Component;
 import com.mercadopago.android.px.internal.view.RendererFactory;
@@ -23,6 +23,6 @@ public class Icon extends Component<IconProps, Void> {
     }
 
     public boolean hasIconFromUrl() {
-        return !TextUtils.isEmpty(props.iconUrl);
+        return !TextUtil.isEmpty(props.iconUrl);
     }
 }

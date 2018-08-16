@@ -1,6 +1,6 @@
 package com.mercadopago.android.px.model;
 
-import com.mercadopago.android.px.services.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
@@ -17,7 +17,7 @@ public class ApiExceptionTest {
     }
 
     @Test
-    public void whenCauseIsEmptyThenContainsCauseShouldBeFalse() {
+    public void whenCauseisEmptyhenContainsCauseShouldBeFalse() {
         ApiException apiException = new ApiException();
         apiException.setCause(new ArrayList<Cause>());
         assertFalse(apiException.containsCause("Some cause"));

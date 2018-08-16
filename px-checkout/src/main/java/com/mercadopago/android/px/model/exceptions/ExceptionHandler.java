@@ -2,8 +2,6 @@ package com.mercadopago.android.px.model.exceptions;
 
 import android.content.Context;
 import com.mercadopago.android.px.R;
-import com.mercadopago.android.px.services.exceptions.CardTokenException;
-import com.mercadopago.android.px.services.exceptions.CheckoutPreferenceException;
 
 public class ExceptionHandler {
 

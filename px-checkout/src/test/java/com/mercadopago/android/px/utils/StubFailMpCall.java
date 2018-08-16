@@ -1,8 +1,8 @@
 package com.mercadopago.android.px.utils;
 
-import com.mercadopago.android.px.services.adapters.MPCall;
-import com.mercadopago.android.px.services.callbacks.Callback;
-import com.mercadopago.android.px.services.exceptions.ApiException;
+import com.mercadopago.android.px.internal.callbacks.MPCall;
+import com.mercadopago.android.px.services.Callback;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 
 public class StubFailMpCall<T> implements MPCall<T> {
 

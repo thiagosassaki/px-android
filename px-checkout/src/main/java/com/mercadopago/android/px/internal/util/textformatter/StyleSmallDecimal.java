@@ -8,7 +8,7 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
 import com.mercadopago.android.px.model.Currency;
-import com.mercadopago.android.px.services.util.SuperscriptSpanAdjuster;
+import com.mercadopago.android.px.internal.util.SuperscriptSpanAdjuster;
 
 class StyleSmallDecimal extends Style {
 

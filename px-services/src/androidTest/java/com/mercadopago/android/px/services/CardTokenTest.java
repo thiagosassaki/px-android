@@ -4,7 +4,7 @@ import android.support.test.InstrumentationRegistry;
 import com.mercadopago.android.px.model.CardToken;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.PaymentMethod;
-import com.mercadopago.android.px.services.exceptions.CardTokenException;
+import com.mercadopago.android.px.model.exceptions.CardTokenException;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertTrue;
