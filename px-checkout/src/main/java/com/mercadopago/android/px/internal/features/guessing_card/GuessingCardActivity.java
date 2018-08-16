@@ -75,8 +75,8 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.services.exceptions.CardTokenException;
-import com.mercadopago.android.px.tracking.model.ScreenViewEvent;
-import com.mercadopago.android.px.tracking.utils.TrackingUtil;
+import com.mercadopago.android.px.model.ScreenViewEvent;
+import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
 import java.lang.reflect.Type;
 import java.util.List;
 

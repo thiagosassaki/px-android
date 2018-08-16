@@ -44,12 +44,8 @@ import com.mercadopago.android.px.model.exceptions.ExceptionHandler;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.services.exceptions.CardTokenException;
-import com.mercadopago.android.px.tracking.model.ScreenViewEvent;
-import com.mercadopago.android.px.tracking.utils.TrackingUtil;
-
-/**
- * Created by vaserber on 10/26/16.
- */
+import com.mercadopago.android.px.model.ScreenViewEvent;
+import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
 
 public class SecurityCodeActivity extends MercadoPagoBaseActivity implements SecurityCodeActivityView {
 

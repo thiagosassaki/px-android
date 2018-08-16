@@ -2,18 +2,18 @@ package com.mercadopago.android.px.internal.tracker;
 
 import android.content.Context;
 import android.os.Build;
+import com.mercadopago.android.px.model.AppInformation;
+import com.mercadopago.android.px.model.DeviceInfo;
+import com.mercadopago.android.px.model.Event;
 import com.mercadopago.android.px.model.Fingerprint;
-import com.mercadopago.android.px.services.core.Settings;
-import com.mercadopago.android.px.tracking.model.AppInformation;
-import com.mercadopago.android.px.tracking.model.DeviceInfo;
-import com.mercadopago.android.px.tracking.model.Event;
-import com.mercadopago.android.px.tracking.tracker.MPTracker;
+import com.mercadopago.android.px.tracking.internal.MPTracker;
+import com.mercadopago.android.px.tracking.internal.Settings;
 
 /**
  * Created by vaserber on 6/5/17.
  */
 
-public class MPTrackingContext {
+public final class MPTrackingContext {
 
     private final String publicKey;
     private final Context context;
@@ -21,7 +21,7 @@ public class MPTrackingContext {
     private final DeviceInfo deviceInfo;
     private final String trackingStrategy;
 
-    private MPTrackingContext(Builder builder) {
+    private MPTrackingContext(final Builder builder) {
         context = builder.context;
         deviceInfo = initializeDeviceInfo();
         trackingStrategy = builder.trackingStrategy;
@@ -51,7 +51,7 @@ public class MPTrackingContext {
             .build();
     }
 
-    public void trackEvent(Event event) {
+    public void trackEvent(final Event event) {
         MPTracker.getInstance().trackEvent(publicKey, appInformation, deviceInfo, event, context, trackingStrategy);
     }
 

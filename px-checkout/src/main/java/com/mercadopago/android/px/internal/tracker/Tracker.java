@@ -13,9 +13,10 @@ import com.mercadopago.android.px.model.OneTapMetadata;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentMethodSearchItem;
 import com.mercadopago.android.px.model.PaymentTypes;
-import com.mercadopago.android.px.tracking.model.ActionEvent;
-import com.mercadopago.android.px.tracking.model.ScreenViewEvent;
-import com.mercadopago.android.px.tracking.utils.TrackingUtil;
+import com.mercadopago.android.px.model.ActionEvent;
+import com.mercadopago.android.px.model.ScreenViewEvent;
+import com.mercadopago.android.px.tracking.internal.StrategyMode;
+import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,7 +25,7 @@ import java.util.Set;
 
 public class Tracker {
 
-    private static String trackingStrategy = TrackingUtil.NOOP_STRATEGY;
+    private static String trackingStrategy = StrategyMode.NOOP_STRATEGY;
 
     private static void addProperties(final ScreenViewEvent.Builder builder,
         final List<Pair<String, String>> propertyList) {
@@ -40,9 +41,9 @@ public class Tracker {
     private static MPTrackingContext getTrackerContext(final String merchantPublicKey, final Context context) {
         MPTrackingContext.Builder builder = new MPTrackingContext.Builder(context, merchantPublicKey)
             .setVersion(BuildConfig.VERSION_NAME);
-        if (trackingStrategy.equals(TrackingUtil.REALTIME_STRATEGY)) {
-            builder.setTrackingStrategy(TrackingUtil.REALTIME_STRATEGY);
-            trackingStrategy = TrackingUtil.NOOP_STRATEGY;
+        if (trackingStrategy.equals(StrategyMode.REALTIME_STRATEGY)) {
+            builder.setTrackingStrategy(StrategyMode.REALTIME_STRATEGY);
+            trackingStrategy = StrategyMode.NOOP_STRATEGY;
         }
 
         return builder.build();
@@ -90,7 +91,7 @@ public class Tracker {
 
     public static void trackOneTapScreen(@NonNull final Context context, @NonNull final String merchantPublicKey,
         @NonNull final OneTapMetadata oneTapMetadata, @NonNull final BigDecimal transactionAmount) {
-        trackingStrategy = TrackingUtil.REALTIME_STRATEGY;
+        trackingStrategy = StrategyMode.REALTIME_STRATEGY;
 
         final MPTrackingContext mpTrackingContext = getTrackerContext(merchantPublicKey, context);
 
@@ -115,7 +116,7 @@ public class Tracker {
         @NonNull final String merchantPublicKey,
         @NonNull final OneTapMetadata oneTapMetadata,
         @NonNull final BigDecimal totalAmount) {
-        trackingStrategy = TrackingUtil.REALTIME_STRATEGY;
+        trackingStrategy = StrategyMode.REALTIME_STRATEGY;
 
         final MPTrackingContext mpTrackingContext = getTrackerContext(merchantPublicKey, context);
 
@@ -140,7 +141,7 @@ public class Tracker {
     }
 
     public static void trackOneTapCancel(@NonNull final Context context, @NonNull final String merchantPublicKey) {
-        trackingStrategy = TrackingUtil.REALTIME_STRATEGY;
+        trackingStrategy = StrategyMode.REALTIME_STRATEGY;
 
         final MPTrackingContext mpTrackingContext = getTrackerContext(merchantPublicKey, context);
 
@@ -155,7 +156,7 @@ public class Tracker {
 
     public static void trackOneTapSummaryDetail(@NonNull final Context context,
         @NonNull final String merchantPublicKey, final boolean hasDiscount, final CardPaymentMetadata card) {
-        trackingStrategy = TrackingUtil.REALTIME_STRATEGY;
+        trackingStrategy = StrategyMode.REALTIME_STRATEGY;
 
         final MPTrackingContext mpTrackingContext = getTrackerContext(merchantPublicKey, context);
         final ActionEvent.Builder builder = new ActionEvent.Builder()
@@ -175,7 +176,7 @@ public class Tracker {
 
     public static void trackDiscountTermsAndConditions(@NonNull final Context context,
         @NonNull final String merchantPublicKey) {
-        trackingStrategy = TrackingUtil.REALTIME_STRATEGY;
+        trackingStrategy = StrategyMode.REALTIME_STRATEGY;
 
         final MPTrackingContext mpTrackingContext = getTrackerContext(merchantPublicKey, context);
         final ActionEvent.Builder builder = new ActionEvent.Builder()
@@ -189,7 +190,7 @@ public class Tracker {
     public static void trackCheckoutConfirm(final Context context, final String merchantPublicKey,
         final PaymentModel paymentModel, final SummaryModel summaryModel) {
 
-        trackingStrategy = TrackingUtil.REALTIME_STRATEGY;
+        trackingStrategy = StrategyMode.REALTIME_STRATEGY;
 
         final MPTrackingContext mpTrackingContext = getTrackerContext(merchantPublicKey, context);
 
@@ -221,7 +222,7 @@ public class Tracker {
         final PaymentMethodSearch paymentMethodSearch,
         final Set<String> escCardIds) {
 
-        trackingStrategy = TrackingUtil.REALTIME_STRATEGY;
+        trackingStrategy = StrategyMode.REALTIME_STRATEGY;
 
         List<Pair<String, String>> properties = new ArrayList<>();
         properties.add(new Pair<>(TrackingUtil.PROPERTY_OPTIONS,

@@ -8,7 +8,6 @@ import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.services.callbacks.Callback;
 import com.mercadopago.android.px.services.util.ApiUtil;
-import com.mercadopago.android.px.tracking.tracker.MPTracker;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
@@ -18,10 +17,6 @@ import retrofit2.Call;
 import retrofit2.CallAdapter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-
-/**
- * Created by mreverter on 6/6/16.
- */
 
 public class ErrorHandlingCallAdapter {
     public static class ErrorHandlingCallAdapterFactory extends CallAdapter.Factory {
@@ -76,18 +71,6 @@ public class ErrorHandlingCallAdapter {
                             if (code >= 200 && code < 300) {
                                 //Get body
                                 final T body = r.body();
-                                if (body instanceof Payment) {
-                                    Payment mPayment = (Payment) body;
-
-                                    if (!mPayment.isCardPaymentType(mPayment.getPaymentTypeId())) {
-                                        //FIXME no puede ser Long
-                                        MPTracker.getInstance()
-                                            .trackPayment(new Long(mPayment.getId()), mPayment.getPaymentTypeId());
-                                    }
-                                } else if (body instanceof Token) {
-                                    Token mToken = (Token) body;
-                                    MPTracker.getInstance().trackToken(mToken.getId());
-                                }
                                 callback.success(body);
                             } else {
                                 callback.failure(ApiUtil.getApiException(r));

@@ -13,7 +13,7 @@ BASEDIR=`dirname $0`
 # stack -> ./scripts ---- /.../.../px-android/
 command pushd "$BASEDIR/.." > /dev/null
 
-modules=('px-checkout' 'px-tracking' 'px-services' 'px-testlib' 'testlib')
+modules=('px-checkout' 'px-services' 'px-testlib' 'testlib')
 
 # in order to make it a little bit more interactive while PID is running show loading.
 function showSpinner {
