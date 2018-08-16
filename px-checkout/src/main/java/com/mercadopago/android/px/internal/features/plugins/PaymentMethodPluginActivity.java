@@ -20,8 +20,8 @@ import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.internal.tracker.FlowHandler;
 import com.mercadopago.android.px.internal.tracker.MPTrackingContext;
 import com.mercadopago.android.px.model.PaymentMethod;
+import com.mercadopago.android.px.model.ScreenViewEvent;
 import com.mercadopago.android.px.model.PaymentMethodInfo;
-import com.mercadopago.android.px.tracking.model.ScreenViewEvent;
 
 public class PaymentMethodPluginActivity extends AppCompatActivity implements
     PaymentMethodPlugin.OnPaymentMethodListener {

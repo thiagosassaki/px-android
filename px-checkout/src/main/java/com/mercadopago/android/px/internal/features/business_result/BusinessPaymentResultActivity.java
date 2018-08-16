@@ -12,8 +12,8 @@ import com.mercadopago.android.px.internal.view.ComponentManager;
 import com.mercadopago.android.px.internal.viewmodel.BusinessPaymentModel;
 import com.mercadopago.android.px.model.ExitAction;
 
-import static com.mercadopago.android.px.tracking.utils.TrackingUtil.SCREEN_ID_PAYMENT_RESULT_BUSINESS;
-import static com.mercadopago.android.px.tracking.utils.TrackingUtil.SCREEN_NAME_PAYMENT_RESULT;
+import static com.mercadopago.android.px.tracking.internal.utils.TrackingUtil.SCREEN_ID_PAYMENT_RESULT_BUSINESS;
+import static com.mercadopago.android.px.tracking.internal.utils.TrackingUtil.SCREEN_NAME_PAYMENT_RESULT;
 
 public class BusinessPaymentResultActivity extends AppCompatActivity implements ActionDispatcher {
 

@@ -41,9 +41,9 @@ import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.PaymentPreference;
-import com.mercadopago.android.px.tracking.model.ActionEvent;
-import com.mercadopago.android.px.tracking.tracker.MPTracker;
-import com.mercadopago.android.px.tracking.utils.TrackingUtil;
+import com.mercadopago.android.px.model.ActionEvent;
+import com.mercadopago.android.px.tracking.internal.MPTracker;
+import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
 import com.squareup.picasso.Picasso;
 import java.math.BigDecimal;
 

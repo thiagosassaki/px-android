@@ -33,14 +33,10 @@ import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentType;
 import com.mercadopago.android.px.services.exceptions.ApiException;
-import com.mercadopago.android.px.tracking.model.ScreenViewEvent;
-import com.mercadopago.android.px.tracking.utils.TrackingUtil;
+import com.mercadopago.android.px.model.ScreenViewEvent;
+import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
 import java.lang.reflect.Type;
 import java.util.List;
-
-/**
- * Created by vaserber on 10/25/16.
- */
 
 public class PaymentTypesActivity extends MercadoPagoBaseActivity implements PaymentTypesActivityView {
 

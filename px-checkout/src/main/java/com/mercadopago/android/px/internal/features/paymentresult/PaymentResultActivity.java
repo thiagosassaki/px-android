@@ -51,7 +51,7 @@ import com.mercadopago.android.px.internal.view.RendererFactory;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.services.exceptions.ApiException;
-import com.mercadopago.android.px.tracking.model.ScreenViewEvent;
+import com.mercadopago.android.px.model.ScreenViewEvent;
 import java.math.BigDecimal;
 
 public class PaymentResultActivity extends AppCompatActivity implements PaymentResultNavigator {

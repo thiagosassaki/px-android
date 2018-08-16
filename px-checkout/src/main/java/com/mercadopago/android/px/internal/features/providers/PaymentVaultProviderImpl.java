@@ -9,7 +9,8 @@ import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.tracker.Tracker;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentMethodSearchItem;
-import com.mercadopago.android.px.tracking.tracker.MPTracker;
+import com.mercadopago.android.px.tracking.internal.MPTracker;
+
 
 public class PaymentVaultProviderImpl implements PaymentVaultProvider {
 

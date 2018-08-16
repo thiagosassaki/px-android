@@ -19,8 +19,8 @@ import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.tracking.listeners.TracksListener;
-import com.mercadopago.android.px.tracking.tracker.MPTracker;
+import com.mercadopago.android.px.tracking.PXEventListener;
+import com.mercadopago.android.px.tracking.internal.MPTracker;
 import com.mercadopago.example.R;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -140,7 +140,7 @@ public final class ExamplesUtils {
     }
 
     private static Builder startBaseFlowWithTrackListener() {
-        MPTracker.getInstance().setTracksListener(new TracksListener<HashMap<String, String>>() {
+        MPTracker.getInstance().setTracksListener(new PXEventListener<HashMap<String, String>>() {
 
             @Override
             public void onScreenLaunched(@NonNull final String screenName,
@@ -178,7 +178,6 @@ public final class ExamplesUtils {
 
     private static Builder createBaseWithTwoItemsAndCollectorIcon() {
         final ReviewAndConfirmConfiguration preferences = new ReviewAndConfirmConfiguration.Builder()
-            .setCollectorIcon(R.drawable.px_collector_icon)
             .build();
 
         return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, DUMMY_PREFERENCE_ID_WITH_TWO_ITEMS)
