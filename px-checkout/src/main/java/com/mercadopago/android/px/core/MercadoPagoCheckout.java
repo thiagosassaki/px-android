@@ -16,6 +16,7 @@ import com.mercadopago.android.px.internal.features.uicontrollers.FontCache;
 import com.mercadopago.android.px.internal.tracker.FlowHandler;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.PaymentResult;
+import com.mercadopago.android.px.preferences.CheckoutPreference;
 
 /**
  * Main class of this project.
@@ -43,6 +44,9 @@ public class MercadoPagoCheckout {
     @Nullable
     private final PaymentConfiguration paymentConfiguration;
 
+    @Nullable
+    private final CheckoutPreference checkoutPreference;
+
     /* default */ boolean prefetch = false;
 
     /* default */ MercadoPagoCheckout(final Builder builder) {
@@ -51,6 +55,7 @@ public class MercadoPagoCheckout {
         preferenceId = builder.preferenceId;
         privateKey = builder.privateKey;
         paymentConfiguration = builder.paymentConfiguration;
+        checkoutPreference = builder.checkoutPreference;
         configureCheckoutStore(builder);
         FlowHandler.getInstance().generateFlowId();
         CallbackHolder.getInstance().clean();
@@ -105,6 +110,11 @@ public class MercadoPagoCheckout {
         return preferenceId;
     }
 
+    @Nullable
+    public CheckoutPreference getCheckoutPreference() {
+        return checkoutPreference;
+    }
+
     @NonNull
     public String getPrivateKey() {
         return TextUtil.isEmpty(privateKey) ? "" : privateKey;
@@ -122,10 +132,13 @@ public class MercadoPagoCheckout {
 
         /* default */ @Nullable final String preferenceId;
 
+        /* default */ @Nullable final CheckoutPreference checkoutPreference;
+
         /* default */ @NonNull AdvancedConfiguration advancedConfiguration =
             new AdvancedConfiguration.Builder().build();
 
         /* default */ @Nullable PaymentConfiguration paymentConfiguration;
+
 
         /* default */ @Nullable String privateKey;
 
@@ -141,11 +154,32 @@ public class MercadoPagoCheckout {
          *
          * @param publicKey merchant public key / collector public key {@see <a href="https://www.mercadopago.com/mla/account/credentials">credentials</a>}
          * @param paymentConfiguration the payment configuration for this checkout.
+         * @param checkoutPreference the preference that represents the payment information.
          */
-        public Builder(@NonNull final String publicKey, @NonNull final PaymentConfiguration paymentConfiguration) {
-            preferenceId = null;
+        public Builder(@NonNull final String publicKey,
+            @NonNull final CheckoutPreference checkoutPreference,
+            @NonNull final PaymentConfiguration paymentConfiguration) {
             this.publicKey = publicKey;
             this.paymentConfiguration = paymentConfiguration;
+            this.checkoutPreference = checkoutPreference;
+            preferenceId = null;
+        }
+
+        /**
+         * Checkout builder allow you to create a {@link MercadoPagoCheckout}
+         * {@see  <a href="http://developers.mercadopago.com/">our developers site</a>}
+         *
+         * @param publicKey merchant public key / collector public key {@see <a href="https://www.mercadopago.com/mla/account/credentials">credentials</a>}
+         * @param paymentConfiguration the payment configuration for this checkout.
+         * @param preferenceId the preference id that represents the payment information.
+         */
+        public Builder(@NonNull final String publicKey,
+            @NonNull final String preferenceId,
+            @NonNull final PaymentConfiguration paymentConfiguration) {
+            this.publicKey = publicKey;
+            this.paymentConfiguration = paymentConfiguration;
+            this.preferenceId = preferenceId;
+            checkoutPreference = null;
         }
 
         /**
@@ -159,6 +193,7 @@ public class MercadoPagoCheckout {
         public Builder(@NonNull final String publicKey, @NonNull final String preferenceId) {
             this.publicKey = publicKey;
             this.preferenceId = preferenceId;
+            checkoutPreference = null;
         }
 
         /**

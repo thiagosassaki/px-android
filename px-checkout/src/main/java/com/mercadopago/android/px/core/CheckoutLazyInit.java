@@ -5,19 +5,19 @@ import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.di.Session;
 
 @SuppressWarnings("unused")
-public abstract class CheckoutLazyBuilder {
+public abstract class CheckoutLazyInit {
 
     private final MercadoPagoCheckout.Builder builder;
     private PrefetchService prefetchService;
 
     /**
-     * CheckoutLazyBuilder allows you to prefetch {@link MercadoPagoCheckout} information.
+     * CheckoutLazyInit allows you to prefetch {@link MercadoPagoCheckout} information.
      * Using this Lazy Builder you can avoid having a loading after call
      * {@link MercadoPagoCheckout#startPayment(Context, int)}
      *
      * @param builder Checkout builder to prefetch
      */
-    protected CheckoutLazyBuilder(final MercadoPagoCheckout.Builder builder) {
+    protected CheckoutLazyInit(final MercadoPagoCheckout.Builder builder) {
         this.builder = builder;
     }
 

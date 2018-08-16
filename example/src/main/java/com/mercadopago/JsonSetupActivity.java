@@ -19,6 +19,7 @@ import android.widget.ScrollView;
 import com.google.gson.JsonSyntaxException;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.internal.util.JsonUtil;
+import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.utils.CheckoutConfiguration;
@@ -99,8 +100,8 @@ public class JsonSetupActivity extends AppCompatActivity {
                 new MercadoPagoCheckout.Builder(mConfiguration.getPublicKey(), mConfiguration.getPrefId());
         } else {
             final CheckoutPreference preference = createCheckoutPreference(mConfiguration);
-            checkoutBuilder = new MercadoPagoCheckout.Builder(mConfiguration.getPublicKey(),
-                PaymentConfigurationUtils.create(preference));
+            checkoutBuilder = new MercadoPagoCheckout.Builder(mConfiguration.getPublicKey(), preference,
+                PaymentConfigurationUtils.create());
         }
 
         checkoutBuilder.setAdvancedConfiguration(mConfiguration.getAdvancedConfiguration());

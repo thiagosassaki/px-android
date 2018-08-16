@@ -21,7 +21,6 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.tracking.PXEventListener;
 import com.mercadopago.android.px.tracking.internal.MPTracker;
-import com.mercadopago.example.R;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -114,7 +113,7 @@ public final class ExamplesUtils {
             }
         }
 
-        return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, PaymentConfigurationUtils.create(builder.build()));
+        return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, builder.build(), PaymentConfigurationUtils.create());
     }
 
     @NonNull

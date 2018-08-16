@@ -5,7 +5,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
-import com.mercadopago.android.px.internal.datasource.MercadoPagoServicesAdapter;
 import com.mercadopago.android.px.internal.datasource.AmountService;
 import com.mercadopago.android.px.internal.datasource.DiscountApiService;
 import com.mercadopago.android.px.internal.datasource.DiscountServiceImp;
@@ -13,6 +12,7 @@ import com.mercadopago.android.px.internal.datasource.DiscountStorageService;
 import com.mercadopago.android.px.internal.datasource.GroupsService;
 import com.mercadopago.android.px.internal.datasource.InstallmentService;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoESCImpl;
+import com.mercadopago.android.px.internal.datasource.MercadoPagoServicesAdapter;
 import com.mercadopago.android.px.internal.datasource.PluginService;
 import com.mercadopago.android.px.internal.datasource.cache.GroupsCache;
 import com.mercadopago.android.px.internal.datasource.cache.GroupsCacheCoordinator;
@@ -88,20 +88,7 @@ public final class Session extends ApplicationModule
         final String preferenceId = mercadoPagoCheckout.getPreferenceId();
 
         if (TextUtil.isEmpty(preferenceId)) {
-
-            if (TextUtil.isEmpty(mercadoPagoCheckout
-                .getPaymentConfiguration()
-                .getPreferenceId())) {
-
-                //Pref abierta
-                paymentSetting.configure(mercadoPagoCheckout.
-                    getPaymentConfiguration()
-                    .getCheckoutPreference());
-            } else {
-                paymentSetting.configurePreferenceId(mercadoPagoCheckout
-                    .getPaymentConfiguration()
-                    .getPreferenceId());
-            }
+            paymentSetting.configure(mercadoPagoCheckout.getCheckoutPreference());
         } else {
             //Pref cerrada.
             paymentSetting.configurePreferenceId(preferenceId);

@@ -19,16 +19,16 @@ class PrefetchService {
     private final Handler mainHandler;
 
     /* default */ final Session session;
-    /* default */ final CheckoutLazyBuilder checkoutLazyBuilderCallback;
+    /* default */ final CheckoutLazyInit checkoutLazyInitCallback;
     /* default */ final MercadoPagoCheckout checkout;
     private Thread currentFetch;
 
     /* default */ PrefetchService(final MercadoPagoCheckout checkout, final Session session,
-        final CheckoutLazyBuilder checkoutLazyBuilderCallback) {
+        final CheckoutLazyInit checkoutLazyInitCallback) {
         session.init(checkout);
         this.checkout = checkout;
         this.session = session;
-        this.checkoutLazyBuilderCallback = checkoutLazyBuilderCallback;
+        this.checkoutLazyInitCallback = checkoutLazyInitCallback;
         mainHandler = new Handler(Looper.getMainLooper());
     }
 
@@ -130,7 +130,7 @@ class PrefetchService {
             @Override
             public void run() {
                 checkout.prefetch = true;
-                checkoutLazyBuilderCallback.success(checkout);
+                checkoutLazyInitCallback.success(checkout);
             }
         });
     }
@@ -139,7 +139,7 @@ class PrefetchService {
         mainHandler.post(new Runnable() {
             @Override
             public void run() {
-                checkoutLazyBuilderCallback.fail();
+                checkoutLazyInitCallback.fail();
             }
         });
     }

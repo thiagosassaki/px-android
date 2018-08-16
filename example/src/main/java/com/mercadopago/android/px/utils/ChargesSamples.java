@@ -1,13 +1,13 @@
 package com.mercadopago.android.px.utils;
 
 import android.support.v4.util.Pair;
+import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
+import com.mercadopago.android.px.internal.features.plugins.SamplePaymentProcessor;
+import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.commission.ChargeRule;
 import com.mercadopago.android.px.model.commission.PaymentTypeChargeRule;
-import com.mercadopago.android.px.internal.features.plugins.SamplePaymentProcessor;
-import com.mercadopago.android.px.model.BusinessPayment;
-import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,17 +39,17 @@ final class ChargesSamples {
         charges.add(new PaymentTypeChargeRule(type, BigDecimal.TEN));
         final BusinessPayment payment = BusinessSamples.getBusinessRejected();
 
-        return new MercadoPagoCheckout.Builder(PK,
-            new PaymentConfiguration.Builder(PREF, new SamplePaymentProcessor(payment))
+        return new MercadoPagoCheckout.Builder(PK, PREF,
+            new PaymentConfiguration.Builder(new SamplePaymentProcessor(payment))
                 .addChargeRules(charges)
                 .build());
     }
 
     private static MercadoPagoCheckout.Builder charge(final String paymentMethodId) {
-        return new MercadoPagoCheckout.Builder(PK, createWithCharge(PREF, paymentMethodId));
+        return new MercadoPagoCheckout.Builder(PK, PREF, createWithCharge(paymentMethodId));
     }
 
     private static MercadoPagoCheckout.Builder chargeAndDiscount(final String paymentMethodId) {
-        return new MercadoPagoCheckout.Builder(PK, createWithChargeAndDiscount(PREF, paymentMethodId));
+        return new MercadoPagoCheckout.Builder(PK, PREF, createWithChargeAndDiscount(paymentMethodId));
     }
 }

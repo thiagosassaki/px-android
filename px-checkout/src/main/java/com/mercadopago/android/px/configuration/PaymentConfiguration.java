@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import com.mercadopago.android.px.core.PaymentMethodPlugin;
 import com.mercadopago.android.px.core.PaymentProcessor;
 import com.mercadopago.android.px.model.commission.ChargeRule;
-import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -16,16 +15,12 @@ public class PaymentConfiguration {
     @NonNull private final ArrayList<PaymentMethodPlugin> paymentMethodPluginList;
     @NonNull private final ArrayList<ChargeRule> charges;
     @Nullable private final DiscountConfiguration discountConfiguration;
-    @Nullable private final String preferenceId;
-    @Nullable private final CheckoutPreference checkoutPreference;
 
     /* default */ PaymentConfiguration(@NonNull final Builder builder) {
         paymentProcessor = builder.paymentProcessor;
         paymentMethodPluginList = builder.paymentMethodPluginList;
         charges = builder.charges;
         discountConfiguration = builder.discountConfiguration;
-        checkoutPreference = builder.checkoutPreference;
-        preferenceId = builder.preferenceId;
     }
 
     @NonNull
@@ -48,51 +43,20 @@ public class PaymentConfiguration {
         return discountConfiguration;
     }
 
-    @Nullable
-    public String getPreferenceId() {
-        return preferenceId;
-    }
-
-    @Nullable
-    public CheckoutPreference getCheckoutPreference() {
-        return checkoutPreference;
-    }
-
     public static final class Builder {
 
         /* default */ @NonNull final PaymentProcessor paymentProcessor;
         /* default */ @NonNull final ArrayList<PaymentMethodPlugin> paymentMethodPluginList;
-        /* default */ @Nullable final String preferenceId;
-        /* default */ @Nullable final CheckoutPreference checkoutPreference;
         /* default */ @NonNull ArrayList<ChargeRule> charges;
         /* default */ @Nullable DiscountConfiguration discountConfiguration;
 
         /**
-         * @param checkoutPreference your custom preference.
          * @param paymentProcessor your custom payment processor.
          */
-        public Builder(@NonNull final CheckoutPreference checkoutPreference,
-            @NonNull final PaymentProcessor paymentProcessor) {
+        public Builder(@NonNull final PaymentProcessor paymentProcessor) {
             this.paymentProcessor = paymentProcessor;
             paymentMethodPluginList = new ArrayList<>();
             charges = new ArrayList<>();
-            preferenceId = null;
-            this.checkoutPreference = checkoutPreference;
-        }
-
-        /**
-         * {@see <a href="https://www.mercadopago.com.ar/developers/es/reference/preferences/_preferences/post/">create preference</a>}
-         *
-         * @param preferenceId the preference id that represents the payment information.
-         * @param paymentProcessor your custom payment processor.
-         */
-        public Builder(@NonNull final String preferenceId,
-            @NonNull final PaymentProcessor paymentProcessor) {
-            this.paymentProcessor = paymentProcessor;
-            paymentMethodPluginList = new ArrayList<>();
-            charges = new ArrayList<>();
-            this.preferenceId = preferenceId;
-            checkoutPreference = null;
         }
 
         /**

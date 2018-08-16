@@ -78,7 +78,7 @@ public class SavedCardTestFlow extends TestFlow {
 
     private MercadoPagoCheckout.Builder getMercadoPagoCheckout() {
         final CheckoutPreference checkoutPreference = getCheckoutPreference(getFakeItem());
-        return new MercadoPagoCheckout.Builder(PUBLIC_KEY, new PaymentConfiguration.Builder(checkoutPreference,
+        return new MercadoPagoCheckout.Builder(PUBLIC_KEY, checkoutPreference, new PaymentConfiguration.Builder(
             new PaymentProcessor() {
                 @Override
                 public void startPayment(@NonNull final CheckoutData data, @NonNull final Context context,

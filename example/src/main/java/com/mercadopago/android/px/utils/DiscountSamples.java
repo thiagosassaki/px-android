@@ -37,8 +37,8 @@ final class DiscountSamples {
         final String prefId) {
 
         final SamplePaymentProcessor mainPaymentProcessor = new SamplePaymentProcessor(getBusinessPaymentApproved());
-        return new MercadoPagoCheckout.Builder(publicKey,
-            new PaymentConfiguration.Builder(prefId, mainPaymentProcessor).setDiscountConfiguration(
+        return new MercadoPagoCheckout.Builder(publicKey, prefId,
+            new PaymentConfiguration.Builder(mainPaymentProcessor).setDiscountConfiguration(
                 DiscountConfiguration.forNotAvailableDiscount()).build());
     }
 }

@@ -1,18 +1,17 @@
 package com.mercadopago.android.px.utils;
 
 import android.support.annotation.NonNull;
+import com.mercadopago.android.px.configuration.DiscountConfiguration;
+import com.mercadopago.android.px.configuration.PaymentConfiguration;
+import com.mercadopago.android.px.core.PaymentMethodPlugin;
+import com.mercadopago.android.px.core.PaymentProcessor;
+import com.mercadopago.android.px.internal.features.plugins.SamplePaymentMethodPlugin;
+import com.mercadopago.android.px.internal.features.plugins.SamplePaymentProcessor;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.model.commission.ChargeRule;
 import com.mercadopago.android.px.model.commission.PaymentMethodChargeRule;
-import com.mercadopago.android.px.core.PaymentMethodPlugin;
-import com.mercadopago.android.px.core.PaymentProcessor;
-import com.mercadopago.android.px.internal.features.plugins.SamplePaymentMethodPlugin;
-import com.mercadopago.android.px.internal.features.plugins.SamplePaymentProcessor;
-import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.configuration.DiscountConfiguration;
-import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,41 +21,41 @@ public final class PaymentConfigurationUtils {
         //Do nothing
     }
 
-    public static PaymentConfiguration create(@NonNull final CheckoutPreference checkoutPreference,
+    public static PaymentConfiguration create(
         @NonNull final PaymentProcessor paymentProcessor) {
-        return new PaymentConfiguration.Builder(checkoutPreference, paymentProcessor).build();
+        return new PaymentConfiguration.Builder(paymentProcessor).build();
     }
 
-    public static PaymentConfiguration create(@NonNull final CheckoutPreference checkoutPreference) {
-        return create(checkoutPreference, new SamplePaymentProcessor());
+    public static PaymentConfiguration create() {
+        return create(new SamplePaymentProcessor());
     }
 
-    public static PaymentConfiguration create(@NonNull final CheckoutPreference checkoutPreference,
+    public static PaymentConfiguration create(
         @NonNull final PaymentProcessor paymentProcessor,
         @NonNull final PaymentMethodPlugin paymentMethodPlugin) {
-        return new PaymentConfiguration.Builder(checkoutPreference, paymentProcessor)
+        return new PaymentConfiguration.Builder(paymentProcessor)
             .addPaymentMethodPlugin(paymentMethodPlugin)
             .build();
     }
 
-    public static PaymentConfiguration createWithPlugin(@NonNull final CheckoutPreference checkoutPreference,
+    public static PaymentConfiguration createWithPlugin(
         @NonNull final PaymentProcessor paymentProcessor) {
-        return create(checkoutPreference, paymentProcessor, new SamplePaymentMethodPlugin());
+        return create(paymentProcessor, new SamplePaymentMethodPlugin());
     }
 
     @NonNull
-    public static PaymentConfiguration createWithCharge(final String preferenceId,
+    public static PaymentConfiguration createWithCharge(
         final String paymentMethodId) {
-        return new PaymentConfiguration.Builder(preferenceId,
+        return new PaymentConfiguration.Builder(
             new SamplePaymentProcessor(BusinessSamples.getBusinessRejected()))
             .addChargeRules(getCharge(paymentMethodId))
             .build();
     }
 
     @NonNull
-    public static PaymentConfiguration createWithChargeAndDiscount(final String preferenceId,
+    public static PaymentConfiguration createWithChargeAndDiscount(
         final String paymentMethodId) {
-        return new PaymentConfiguration.Builder(preferenceId,
+        return new PaymentConfiguration.Builder(
             new SamplePaymentProcessor(BusinessSamples.getBusinessRejected()))
             .addChargeRules(getCharge(paymentMethodId))
             .setDiscountConfiguration(
