@@ -7,7 +7,7 @@ import com.mercadopago.android.px.internal.controllers.PaymentMethodGuessingCont
 import com.mercadopago.android.px.internal.features.providers.SecurityCodeProvider;
 import com.mercadopago.android.px.internal.features.uicontrollers.card.CardView;
 import com.mercadopago.android.px.internal.util.ApiUtil;
-import com.mercadopago.android.px.internal.util.TextUtils;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.PaymentMethod;
@@ -17,7 +17,7 @@ import com.mercadopago.android.px.model.SavedESCCardToken;
 import com.mercadopago.android.px.model.Setting;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import com.mercadopago.android.px.services.exceptions.CardTokenException;
+import com.mercadopago.android.px.model.exceptions.CardTokenException;
 
 /**
  * Created by vaserber on 10/26/16.
@@ -230,7 +230,7 @@ public class SecurityCodePresenter extends MvpPresenter<SecurityCodeActivityView
 
     private boolean validateSecurityCodeFromToken() {
         try {
-            if (!TextUtils.isEmpty(mToken.getFirstSixDigits())) {
+            if (!TextUtil.isEmpty(mToken.getFirstSixDigits())) {
                 getResourcesProvider()
                     .validateSecurityCodeFromToken(mSecurityCode, mPaymentMethod, mToken.getFirstSixDigits());
             } else {

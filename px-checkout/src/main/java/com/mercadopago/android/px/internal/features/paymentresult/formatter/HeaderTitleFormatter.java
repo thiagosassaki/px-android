@@ -2,7 +2,7 @@ package com.mercadopago.android.px.internal.features.paymentresult.formatter;
 
 import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
-import com.mercadopago.android.px.services.util.CurrenciesUtil;
+import com.mercadopago.android.px.internal.util.CurrenciesUtil;
 import java.math.BigDecimal;
 
 public class HeaderTitleFormatter extends AmountFormat {

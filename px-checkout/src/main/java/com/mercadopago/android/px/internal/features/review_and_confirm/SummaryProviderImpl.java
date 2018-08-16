@@ -5,8 +5,7 @@ import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.configuration.ReviewAndConfirmConfiguration;
-
-import static com.mercadopago.android.px.internal.util.TextUtils.isEmpty;
+import com.mercadopago.android.px.internal.util.TextUtil;
 
 public class SummaryProviderImpl implements SummaryProvider {
 
@@ -22,7 +21,7 @@ public class SummaryProviderImpl implements SummaryProvider {
     public String getSummaryProductsTitle() {
         String summaryProductTitle;
 
-        if (!isEmpty(reviewAndConfirmConfiguration.getProductTitle())) {
+        if (!TextUtil.isEmpty(reviewAndConfirmConfiguration.getProductTitle())) {
             summaryProductTitle = reviewAndConfirmConfiguration.getProductTitle();
         } else {
             summaryProductTitle = context.getString(R.string.px_review_summary_product);
@@ -65,7 +64,7 @@ public class SummaryProviderImpl implements SummaryProvider {
     public int getDisclaimerTextColor() {
         int disclaimerTextColor;
 
-        if (isEmpty(reviewAndConfirmConfiguration.getDisclaimerTextColor())) {
+        if (TextUtil.isEmpty(reviewAndConfirmConfiguration.getDisclaimerTextColor())) {
             disclaimerTextColor = ContextCompat.getColor(context, R.color.px_default_disclaimer);
         } else {
             disclaimerTextColor = Color.parseColor(reviewAndConfirmConfiguration.getDisclaimerTextColor());

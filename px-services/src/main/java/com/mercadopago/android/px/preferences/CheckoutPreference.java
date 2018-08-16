@@ -9,7 +9,7 @@ import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Sites;
-import com.mercadopago.android.px.services.exceptions.CheckoutPreferenceException;
+import com.mercadopago.android.px.model.exceptions.CheckoutPreferenceException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import static com.mercadopago.android.px.services.util.TextUtil.isEmpty;
+import static com.mercadopago.android.px.internal.util.TextUtil.isEmpty;
 
 /**
  * Model that represents curl -X OPTIONS "https://api.mercadopago.com/checkout/preferences" | json_pp

@@ -12,8 +12,8 @@ import android.support.v4.app.Fragment;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.features.plugins.PluginPayment;
 import com.mercadopago.android.px.internal.features.plugins.Processor;
-import com.mercadopago.android.px.internal.util.TextUtils;
-import com.mercadopago.android.px.services.util.ParcelableUtil;
+import com.mercadopago.android.px.internal.util.TextUtil;
+import com.mercadopago.android.px.internal.util.ParcelableUtil;
 
 @SuppressWarnings("unused")
 public class BusinessPayment implements PluginPayment, Parcelable {
@@ -142,7 +142,7 @@ public class BusinessPayment implements PluginPayment, Parcelable {
     }
 
     public boolean hasHelp() {
-        return TextUtils.isNotEmpty(help);
+        return TextUtil.isNotEmpty(help);
     }
 
     @Nullable

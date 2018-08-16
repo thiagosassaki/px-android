@@ -2,7 +2,7 @@ package com.mercadopago.android.px.internal.features.plugins;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.mercadopago.android.px.internal.util.TextUtils;
+import com.mercadopago.android.px.internal.util.TextUtil;
 
 public class SamplePaymentMethodPresenter {
 
@@ -21,7 +21,7 @@ public class SamplePaymentMethodPresenter {
 
     public void authenticate(final String password) {
 
-        if (TextUtils.isEmpty(password)) {
+        if (TextUtil.isEmpty(password)) {
             state = new SampleState(false,
                 resources.getPasswordRequiredMessage(),
                 "");

@@ -6,13 +6,13 @@ import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.datasource.PluginInitializationTask;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
-import com.mercadopago.android.px.internal.util.TextUtils;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.services.CheckoutService;
-import com.mercadopago.android.px.services.callbacks.Callback;
-import com.mercadopago.android.px.services.core.Settings;
-import com.mercadopago.android.px.services.exceptions.ApiException;
+import com.mercadopago.android.px.internal.services.CheckoutService;
+import com.mercadopago.android.px.services.Callback;
+import com.mercadopago.android.px.internal.core.Settings;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 
 class PrefetchService {
 
@@ -43,7 +43,7 @@ class PrefetchService {
 
                 final String checkoutPreferenceId =
                     paymentSettings.getCheckoutPreferenceId();
-                if (!TextUtils.isEmpty(checkoutPreferenceId)) {
+                if (!TextUtil.isEmpty(checkoutPreferenceId)) {
                     fetchPreference();
                 } else {
                     fetchDiscounts();

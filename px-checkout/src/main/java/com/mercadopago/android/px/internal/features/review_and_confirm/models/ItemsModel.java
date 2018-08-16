@@ -2,7 +2,7 @@ package com.mercadopago.android.px.internal.features.review_and_confirm.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import com.mercadopago.android.px.internal.util.TextUtils;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.Item;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,7 @@ public class ItemsModel implements Parcelable {
         final Item item,
         final boolean hasMultipleItems,
         final String currencyId) {
-        if (hasMultipleItems || TextUtils.isNotEmpty(item.getDescription()) || item.getQuantity() > 1) {
+        if (hasMultipleItems || TextUtil.isNotEmpty(item.getDescription()) || item.getQuantity() > 1) {
             toReturn.add(createItemModel(item, hasMultipleItems, currencyId));
         }
     }

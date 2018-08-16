@@ -24,7 +24,6 @@ import com.mercadopago.android.px.internal.features.uicontrollers.card.CardRepre
 import com.mercadopago.android.px.internal.features.uicontrollers.card.FrontCardView;
 import com.mercadopago.android.px.internal.tracker.FlowHandler;
 import com.mercadopago.android.px.internal.tracker.MPTrackingContext;
-import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.util.ErrorUtil;
 import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.internal.util.ScaleUtil;
@@ -32,9 +31,9 @@ import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentType;
-import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.model.ScreenViewEvent;
 import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -222,7 +221,7 @@ public class PaymentTypesActivity extends MercadoPagoBaseActivity implements Pay
 
     @Override
     public void showApiExceptionError(ApiException exception, String requestOrigin) {
-        ApiUtil.showApiExceptionError(mActivity, exception, requestOrigin);
+        ErrorUtil.showApiExceptionError(mActivity, exception, requestOrigin);
     }
 
     @Override

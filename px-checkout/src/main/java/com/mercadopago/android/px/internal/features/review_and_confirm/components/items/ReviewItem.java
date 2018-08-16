@@ -4,7 +4,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.ItemModel;
-import com.mercadopago.android.px.internal.util.TextUtils;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.internal.view.Component;
 import com.mercadopago.android.px.internal.view.RendererFactory;
@@ -24,7 +24,7 @@ public class ReviewItem extends Component<ReviewItem.Props, Void> {
     }
 
     public boolean hasItemImage() {
-        return TextUtils.isNotEmpty(props.itemModel.imageUrl);
+        return TextUtil.isNotEmpty(props.itemModel.imageUrl);
     }
 
     public boolean hasIcon() {

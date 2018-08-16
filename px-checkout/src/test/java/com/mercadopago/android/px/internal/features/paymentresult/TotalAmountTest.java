@@ -4,7 +4,7 @@ import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.internal.view.TotalAmount;
 import com.mercadopago.android.px.mocks.PayerCosts;
 import com.mercadopago.android.px.model.PayerCost;
-import com.mercadopago.android.px.services.util.CurrenciesUtil;
+import com.mercadopago.android.px.internal.util.CurrenciesUtil;
 import java.math.BigDecimal;
 import java.util.Locale;
 import junit.framework.Assert;

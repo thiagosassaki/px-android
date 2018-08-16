@@ -26,8 +26,6 @@
 
 -keep class com.mercadopago.android.px.model.** { *; } #dtos
 -keep class com.mercadopago.android.px.preferences.** { *; } #dtos
--keep class com.mercadopago.android.px.services.exceptions.** { *; } #dtos
 
 -dontnote com.mercadopago.android.px.model.**
 -dontnote com.mercadopago.android.px.preferences.**
--dontnote com.mercadopago.android.px.services.exceptions.**

@@ -2,8 +2,8 @@ package com.mercadopago.android.px.internal.callbacks;
 
 import com.mercadopago.android.px.internal.base.ResourcesProvider;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import com.mercadopago.android.px.services.callbacks.Callback;
-import com.mercadopago.android.px.services.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.ApiException;
+import com.mercadopago.android.px.services.Callback;
 
 /**
  * All ResourcesProvider implementations' methods containing api calls

@@ -15,6 +15,7 @@ import com.mercadopago.android.px.internal.features.guessing_card.GuessingCardAc
 import com.mercadopago.android.px.internal.features.InstallmentsActivity;
 import com.mercadopago.android.px.internal.features.IssuersActivity;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
+import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.Installment;
 import com.mercadopago.android.px.model.Issuer;
@@ -27,7 +28,6 @@ import com.mercadopago.android.px.configuration.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.services.util.FakeAPI;
 import com.mercadopago.android.px.test.StaticMock;
-import com.mercadopago.android.px.internal.util.JsonUtil;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -96,7 +96,7 @@ public class CardVaultActivityTest {
     }
 
     @Test
-    public void ifInstallmentsForCardIsEmptyThenShowErrorActivity() {
+    public void ifInstallmentsForCardisEmptyhenShowErrorActivity() {
         List<Installment> installmentsList = new ArrayList<>();
         mFakeAPI.addResponseToQueue(installmentsList, 200, "");
 

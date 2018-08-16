@@ -35,7 +35,6 @@ import com.mercadopago.android.px.internal.features.uicontrollers.paymentmethods
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.PluginRepository;
-import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.util.ErrorUtil;
 import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.internal.util.ScaleUtil;
@@ -56,7 +55,7 @@ import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.PaymentPreference;
-import com.mercadopago.android.px.services.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -473,7 +472,7 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
 
     public void showApiException(final ApiException apiException, final String requestOrigin) {
         if (mActivityActive) {
-            ApiUtil.showApiExceptionError(this, apiException, requestOrigin);
+            ErrorUtil.showApiExceptionError(this, apiException, requestOrigin);
         }
     }
 

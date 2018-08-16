@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.PayerCost;
@@ -11,8 +12,6 @@ import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.Site;
 import java.math.BigDecimal;
 import java.util.List;
-
-import static com.mercadopago.android.px.internal.util.TextUtils.isEmpty;
 
 /**
  * Created by mromar on 3/2/18.
@@ -174,7 +173,7 @@ public class SummaryModel implements Parcelable {
         final String title;
 
         if (items.size() == 1) {
-            if (isEmpty(items.get(0).getTitle())) {
+            if (TextUtil.isEmpty(items.get(0).getTitle())) {
                 if (items.get(0).getQuantity() > 1) {
                     title = pluralTitle;
                 } else {

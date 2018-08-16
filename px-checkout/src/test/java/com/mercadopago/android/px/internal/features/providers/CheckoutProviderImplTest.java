@@ -6,7 +6,7 @@ import com.mercadopago.android.px.model.Cause;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.Token;
-import com.mercadopago.android.px.services.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoESC;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static com.mercadopago.android.px.services.util.ApiUtil.StatusCodes.BAD_REQUEST;
+import static com.mercadopago.android.px.internal.util.ApiUtil.StatusCodes.BAD_REQUEST;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;

@@ -13,7 +13,6 @@ import com.mercadopago.android.px.internal.features.MercadoPagoComponents;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.features.providers.CardVaultProviderImpl;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
-import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.util.ErrorUtil;
 import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.internal.util.ViewUtils;
@@ -25,8 +24,8 @@ import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -380,7 +379,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
 
     @Override
     public void showApiExceptionError(final ApiException exception, final String requestOrigin) {
-        ApiUtil.showApiExceptionError(this, exception, requestOrigin);
+        ErrorUtil.showApiExceptionError(this, exception, requestOrigin);
     }
 
     @Override

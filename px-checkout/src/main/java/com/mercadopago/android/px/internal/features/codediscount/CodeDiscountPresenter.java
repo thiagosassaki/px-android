@@ -7,8 +7,8 @@ import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
-import com.mercadopago.android.px.services.callbacks.Callback;
-import com.mercadopago.android.px.services.exceptions.ApiException;
+import com.mercadopago.android.px.services.Callback;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 
 class CodeDiscountPresenter extends MvpPresenter<CodeDiscountView, DiscountRepository> {
 

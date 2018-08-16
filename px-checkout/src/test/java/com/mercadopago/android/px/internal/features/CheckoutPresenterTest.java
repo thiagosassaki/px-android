@@ -9,6 +9,7 @@ import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.mocks.Cards;
 import com.mercadopago.android.px.mocks.Customers;
 import com.mercadopago.android.px.mocks.Installments;
@@ -42,9 +43,8 @@ import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.configuration.PaymentResultScreenConfiguration;
 import com.mercadopago.android.px.internal.features.providers.CheckoutProvider;
-import com.mercadopago.android.px.services.exceptions.ApiException;
-import com.mercadopago.android.px.services.exceptions.CheckoutPreferenceException;
-import com.mercadopago.android.px.internal.util.TextUtils;
+import com.mercadopago.android.px.model.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.CheckoutPreferenceException;
 import com.mercadopago.android.px.utils.PluginInitializationSuccess;
 import com.mercadopago.android.px.utils.StubSuccessMpCall;
 import com.mercadopago.android.px.internal.viewmodel.CheckoutStateModel;
@@ -668,7 +668,7 @@ public class CheckoutPresenterTest {
         presenter.onPaymentConfirmation();
 
         assertTrue(provider.paymentRequested);
-        assertFalse(TextUtils.isEmpty(provider.transactionId));
+        assertFalse(TextUtil.isEmpty(provider.transactionId));
     }
 
     // TODO CHECK IF WE WILL SUPPORT THIS KIND OF PM requests.
@@ -690,7 +690,7 @@ public class CheckoutPresenterTest {
         presenter.onPaymentConfirmation();
 
         assertTrue(provider.paymentRequested);
-        assertFalse(TextUtils.isEmpty(provider.paymentCustomerId));
+        assertFalse(TextUtil.isEmpty(provider.paymentCustomerId));
     }
 
     @Test

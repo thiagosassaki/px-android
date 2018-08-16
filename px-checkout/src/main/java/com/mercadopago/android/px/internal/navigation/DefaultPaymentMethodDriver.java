@@ -7,7 +7,7 @@ import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.preferences.PaymentPreference;
-import com.mercadopago.android.px.services.util.TextUtil;
+import com.mercadopago.android.px.internal.util.TextUtil;
 
 public class DefaultPaymentMethodDriver {
 

@@ -29,7 +29,6 @@ import com.mercadopago.android.px.internal.features.uicontrollers.card.CardRepre
 import com.mercadopago.android.px.internal.features.uicontrollers.card.CardView;
 import com.mercadopago.android.px.internal.tracker.FlowHandler;
 import com.mercadopago.android.px.internal.tracker.MPTrackingContext;
-import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.util.ErrorUtil;
 import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.internal.util.MPCardUIUtils;
@@ -42,10 +41,10 @@ import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.ExceptionHandler;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import com.mercadopago.android.px.services.exceptions.ApiException;
-import com.mercadopago.android.px.services.exceptions.CardTokenException;
 import com.mercadopago.android.px.model.ScreenViewEvent;
 import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
+import com.mercadopago.android.px.model.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.CardTokenException;
 
 public class SecurityCodeActivity extends MercadoPagoBaseActivity implements SecurityCodeActivityView {
 
@@ -117,7 +116,7 @@ public class SecurityCodeActivity extends MercadoPagoBaseActivity implements Sec
 
     @Override
     public void showApiExceptionError(final ApiException exception, final String requestOrigin) {
-        ApiUtil.showApiExceptionError(this, exception, requestOrigin);
+        ErrorUtil.showApiExceptionError(this, exception, requestOrigin);
     }
 
     private void createPresenter() {

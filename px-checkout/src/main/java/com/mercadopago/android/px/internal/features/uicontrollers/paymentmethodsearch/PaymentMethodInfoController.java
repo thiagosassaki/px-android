@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.mercadopago.android.px.R;
-import com.mercadopago.android.px.internal.util.TextUtils;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.MPTextView;
 
 public class PaymentMethodInfoController implements PaymentMethodSearchViewController {
@@ -55,7 +55,7 @@ public class PaymentMethodInfoController implements PaymentMethodSearchViewContr
     @Override
     public void draw() {
 
-        if (TextUtils.isEmpty(item.getName())) {
+        if (TextUtil.isEmpty(item.getName())) {
             name.setVisibility(View.GONE);
         } else {
             name.setVisibility(View.VISIBLE);
@@ -76,7 +76,7 @@ public class PaymentMethodInfoController implements PaymentMethodSearchViewContr
 
     @VisibleForTesting
     boolean shouldShowDescription() {
-        return TextUtils.isNotEmpty(item.getDescription()) && item.getDescription().length() < COMMENT_MAX_LENGTH;
+        return TextUtil.isNotEmpty(item.getDescription()) && item.getDescription().length() < COMMENT_MAX_LENGTH;
     }
 
     @Override

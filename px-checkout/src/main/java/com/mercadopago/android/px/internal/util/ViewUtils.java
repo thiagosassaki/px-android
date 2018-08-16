@@ -24,7 +24,7 @@ public final class ViewUtils {
     }
 
     public static void loadOrGone(final String imgUrl, final ImageView logo) {
-        if (!TextUtils.isEmpty(imgUrl)) {
+        if (!TextUtil.isEmpty(imgUrl)) {
             Picasso.with(logo.getContext())
                 .load(imgUrl)
                 .into(logo, new Callback.EmptyCallback() {
@@ -39,7 +39,7 @@ public final class ViewUtils {
     }
 
     public static void loadOrCallError(final String imgUrl, final ImageView logo, Callback callback) {
-        if (!TextUtils.isEmpty(imgUrl)) {
+        if (!TextUtil.isEmpty(imgUrl)) {
             Picasso.with(logo.getContext())
                 .load(imgUrl)
                 .into(logo, callback);
@@ -49,7 +49,7 @@ public final class ViewUtils {
     }
 
     public static void loadOrGone(@Nullable final CharSequence text, @NonNull final TextView textView) {
-        if (TextUtils.isEmpty(text)) {
+        if (TextUtil.isEmpty(text)) {
             textView.setVisibility(GONE);
         } else {
             textView.setText(text);

@@ -10,7 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.util.ResourceUtil;
-import com.mercadopago.android.px.internal.util.TextUtils;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.PaymentTypes;
 import java.util.Locale;
 
@@ -56,7 +56,7 @@ public class PaymentMethodRenderer extends Renderer<PaymentMethodComponent> {
 
     @VisibleForTesting
     String getDisclaimer(final String paymentMethodTypeId, final String disclaimer, final Context context) {
-        if (PaymentTypes.isCardPaymentType(paymentMethodTypeId) && TextUtils.isNotEmpty(disclaimer)) {
+        if (PaymentTypes.isCardPaymentType(paymentMethodTypeId) && TextUtil.isNotEmpty(disclaimer)) {
             return String.format(context.getString(R.string.px_text_state_account_activity_congrats), disclaimer);
         }
         return "";

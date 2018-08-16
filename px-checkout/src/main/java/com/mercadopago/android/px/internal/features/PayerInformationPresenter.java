@@ -5,14 +5,13 @@ import com.mercadopago.android.px.internal.callbacks.FailureRecovery;
 import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
 import com.mercadopago.android.px.internal.features.providers.PayerInformationProvider;
 import com.mercadopago.android.px.internal.util.ApiUtil;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.Identification;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.mercadopago.android.px.internal.util.TextUtils.isEmpty;
 
 /**
  * Created by mromar on 9/25/17.
@@ -183,19 +182,19 @@ public class PayerInformationPresenter extends MvpPresenter<PayerInformationView
     }
 
     private boolean validateNumber() {
-        return mIdentification != null && validateIdentificationType() && !isEmpty(mIdentification.getNumber());
+        return mIdentification != null && validateIdentificationType() && !TextUtil.isEmpty(mIdentification.getNumber());
     }
 
     private boolean validateIdentificationType() {
-        return mIdentification != null && !isEmpty(mIdentification.getType());
+        return mIdentification != null && !TextUtil.isEmpty(mIdentification.getType());
     }
 
     public boolean checkIsEmptyOrValidName() {
-        return isEmpty(mIdentificationName) || validateName();
+        return TextUtil.isEmpty(mIdentificationName) || validateName();
     }
 
     public boolean checkIsEmptyOrValidLastName() {
-        return isEmpty(mIdentificationLastName) || validateLastName();
+        return TextUtil.isEmpty(mIdentificationLastName) || validateLastName();
     }
 
     public boolean validateName() {
@@ -243,7 +242,7 @@ public class PayerInformationPresenter extends MvpPresenter<PayerInformationView
     }
 
     private boolean validateString(String string) {
-        return !isEmpty(string);
+        return !TextUtil.isEmpty(string);
     }
 
     public Payer getPayer() {

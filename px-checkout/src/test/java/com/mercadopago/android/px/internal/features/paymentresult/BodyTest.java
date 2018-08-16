@@ -14,7 +14,7 @@ import com.mercadopago.android.px.internal.features.paymentresult.components.Bod
 import com.mercadopago.android.px.internal.features.paymentresult.components.BodyError;
 import com.mercadopago.android.px.internal.features.paymentresult.props.PaymentResultBodyProps;
 import com.mercadopago.android.px.configuration.PaymentResultScreenConfiguration;
-import com.mercadopago.android.px.services.constants.ProcessingModes;
+import com.mercadopago.android.px.internal.constants.ProcessingModes;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

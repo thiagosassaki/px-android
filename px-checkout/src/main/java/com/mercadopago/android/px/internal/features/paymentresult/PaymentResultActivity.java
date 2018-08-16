@@ -40,7 +40,6 @@ import com.mercadopago.android.px.internal.features.paymentresult.components.Pay
 import com.mercadopago.android.px.internal.features.paymentresult.props.PaymentResultProps;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.tracker.MPTrackingContext;
-import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.util.ErrorUtil;
 import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.internal.view.Component;
@@ -50,8 +49,8 @@ import com.mercadopago.android.px.internal.view.LoadingRenderer;
 import com.mercadopago.android.px.internal.view.RendererFactory;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import com.mercadopago.android.px.services.exceptions.ApiException;
 import com.mercadopago.android.px.model.ScreenViewEvent;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import java.math.BigDecimal;
 
 public class PaymentResultActivity extends AppCompatActivity implements PaymentResultNavigator {
@@ -126,7 +125,7 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
 
     @Override
     public void showApiExceptionError(final ApiException exception, final String requestOrigin) {
-        ApiUtil.showApiExceptionError(this, exception, requestOrigin);
+        ErrorUtil.showApiExceptionError(this, exception, requestOrigin);
     }
 
     @Override

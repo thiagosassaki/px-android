@@ -3,7 +3,7 @@ package com.mercadopago.android.px.internal.datasource;
 import com.mercadopago.android.px.model.Customer;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.services.adapters.MPCall;
+import com.mercadopago.android.px.internal.callbacks.MPCall;
 import java.util.Map;
 import retrofit2.http.Body;
 import retrofit2.http.GET;

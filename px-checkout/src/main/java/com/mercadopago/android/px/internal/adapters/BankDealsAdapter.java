@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
-import com.mercadopago.android.px.internal.util.TextUtils;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.util.ViewUtils;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.model.BankDeal;
@@ -100,7 +100,7 @@ public class BankDealsAdapter extends RecyclerView.Adapter<BankDealsAdapter.View
         }
 
         private String getRecommendedMessage(BankDeal bankDeal) {
-            return TextUtils.isEmpty(bankDeal.getRecommendedMessage()) ? "" : bankDeal.getRecommendedMessage();
+            return TextUtil.isEmpty(bankDeal.getRecommendedMessage()) ? "" : bankDeal.getRecommendedMessage();
         }
     }
 }

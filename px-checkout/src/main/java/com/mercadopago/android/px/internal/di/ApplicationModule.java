@@ -8,7 +8,7 @@ import com.mercadopago.android.px.internal.util.JsonUtil;
 import java.io.File;
 import retrofit2.Retrofit;
 
-import static com.mercadopago.android.px.services.core.MercadoPagoServices.getDefaultRetrofit;
+import static com.mercadopago.android.px.services.MercadoPagoServices.getDefaultRetrofit;
 
 class ApplicationModule implements PreferenceComponent {
 

@@ -13,7 +13,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.mercadopago.android.px.core.PaymentMethodPlugin;
-import com.mercadopago.android.px.internal.util.TextUtils;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.example.R;
 
 public class SamplePaymentMethodPluginFragment extends Fragment {
@@ -90,7 +90,7 @@ public class SamplePaymentMethodPluginFragment extends Fragment {
         continueButton.setEnabled(!state.authenticating);
         passwordView.setEnabled(!state.authenticating);
         passwordView.setText(presenter.state.password);
-        errorLabel.setVisibility(TextUtils.isEmpty(presenter.state.errorMessage)
+        errorLabel.setVisibility(TextUtil.isEmpty(presenter.state.errorMessage)
             ? View.GONE : View.VISIBLE);
         errorLabel.setText(presenter.state.errorMessage);
         progressbar.setVisibility(presenter.state.authenticating ? View.VISIBLE : View.GONE);

@@ -130,7 +130,7 @@ public class BankDealsActivity extends MercadoPagoActivity implements OnSelected
                         }
                     });
 
-                    ApiUtil.showApiExceptionError(getActivity(),
+                    ErrorUtil.showApiExceptionError(getActivity(),
                         error.getApiException(),
                         ApiUtil.RequestOrigin.GET_BANK_DEALS);
                 } else {

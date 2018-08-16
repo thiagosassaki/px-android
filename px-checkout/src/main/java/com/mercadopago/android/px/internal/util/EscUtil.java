@@ -5,7 +5,7 @@ import com.mercadopago.android.px.model.Cause;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import com.mercadopago.android.px.services.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import java.util.List;
 
 public final class EscUtil {
@@ -16,8 +16,8 @@ public final class EscUtil {
     private static boolean hasValidParametersForESC(@Nullable final PaymentData paymentData,
         @Nullable final String paymentStatus, @Nullable final String paymentDetail) {
         return paymentData != null && paymentData.containsCardInfo()
-            && !TextUtils.isEmpty(paymentStatus)
-            && !TextUtils.isEmpty(paymentDetail);
+            && !TextUtil.isEmpty(paymentStatus)
+            && !TextUtil.isEmpty(paymentDetail);
     }
 
     public static boolean shouldDeleteEsc(@Nullable final PaymentData paymentData,
@@ -30,7 +30,7 @@ public final class EscUtil {
         @Nullable final String paymentStatus, @Nullable final String paymentDetail) {
         return hasValidParametersForESC(paymentData, paymentStatus, paymentDetail) &&
             Payment.StatusCodes.STATUS_APPROVED.equals(paymentStatus) &&
-            !TextUtils.isEmpty(paymentData.getToken().getEsc());
+            !TextUtil.isEmpty(paymentData.getToken().getEsc());
     }
 
     public static boolean isInvalidEscPayment(@Nullable final PaymentData paymentData,

@@ -5,7 +5,7 @@ import android.support.annotation.VisibleForTesting;
 import com.mercadopago.android.px.configuration.PaymentResultScreenConfiguration;
 import com.mercadopago.android.px.internal.features.paymentresult.PaymentResultProvider;
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.actions.ChangePaymentMethodAction;
-import com.mercadopago.android.px.internal.util.TextUtils;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.internal.view.Button;
 import com.mercadopago.android.px.internal.view.Component;
@@ -59,7 +59,7 @@ public class FooterContainer extends Component<FooterContainer.Props, Void> {
                 );
             }
 
-            if (TextUtils.isEmpty(paymentResultScreenConfiguration.getExitButtonTitle())) {
+            if (TextUtil.isEmpty(paymentResultScreenConfiguration.getExitButtonTitle())) {
                 linkAction = new Button.Props(resourcesProvider.getContinueShopping(), new NextAction());
             } else {
                 linkAction = new Button.Props(paymentResultScreenConfiguration.getExitButtonTitle(), new NextAction());
@@ -77,7 +77,7 @@ public class FooterContainer extends Component<FooterContainer.Props, Void> {
                 );
             }
 
-            if (TextUtils.isEmpty(paymentResultScreenConfiguration.getExitButtonTitle())) {
+            if (TextUtil.isEmpty(paymentResultScreenConfiguration.getExitButtonTitle())) {
                 linkAction = new Button.Props(resourcesProvider.getContinueShopping(), new NextAction());
             } else {
                 linkAction = new Button.Props(paymentResultScreenConfiguration.getExitButtonTitle(), new NextAction());

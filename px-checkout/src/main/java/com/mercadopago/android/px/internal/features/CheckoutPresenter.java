@@ -22,7 +22,7 @@ import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.util.JsonUtil;
-import com.mercadopago.android.px.internal.util.TextUtils;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.viewmodel.BusinessPaymentModel;
 import com.mercadopago.android.px.internal.viewmodel.CardPaymentModel;
 import com.mercadopago.android.px.internal.viewmodel.CheckoutStateModel;
@@ -43,9 +43,9 @@ import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.services.callbacks.Callback;
-import com.mercadopago.android.px.services.exceptions.ApiException;
-import com.mercadopago.android.px.services.exceptions.CheckoutPreferenceException;
+import com.mercadopago.android.px.services.Callback;
+import com.mercadopago.android.px.model.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.CheckoutPreferenceException;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
@@ -134,13 +134,13 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
         final PaymentResultScreenConfiguration resultPreference =
             advancedConfiguration.getPaymentResultScreenConfiguration();
         if (isViewAttached()) {
-            if (!TextUtils.isEmpty(resultPreference.getApprovedUrlIcon())) {
+            if (!TextUtil.isEmpty(resultPreference.getApprovedUrlIcon())) {
                 getView().fetchImageFromUrl(resultPreference.getApprovedUrlIcon());
             }
-            if (!TextUtils.isEmpty(resultPreference.getRejectedUrlIcon())) {
+            if (!TextUtil.isEmpty(resultPreference.getRejectedUrlIcon())) {
                 getView().fetchImageFromUrl(resultPreference.getRejectedUrlIcon());
             }
-            if (!TextUtils.isEmpty(resultPreference.getPendingUrlIcon())) {
+            if (!TextUtil.isEmpty(resultPreference.getPendingUrlIcon())) {
                 getView().fetchImageFromUrl(resultPreference.getPendingUrlIcon());
             }
         }
@@ -473,7 +473,7 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     }
 
     public void onPaymentResultCancel(final String nextAction) {
-        if (!TextUtils.isEmpty(nextAction)) {
+        if (!TextUtil.isEmpty(nextAction)) {
             if (nextAction.equals(PaymentResult.SELECT_OTHER_PAYMENT_METHOD)) {
                 state.paymentMethodEdited = true;
                 getView().showPaymentMethodSelection();

@@ -3,7 +3,7 @@ package com.mercadopago.android.px.internal.view;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.PayerCost;
-import com.mercadopago.android.px.services.util.CurrenciesUtil;
+import com.mercadopago.android.px.internal.util.CurrenciesUtil;
 import java.math.BigDecimal;
 import java.util.Locale;
 

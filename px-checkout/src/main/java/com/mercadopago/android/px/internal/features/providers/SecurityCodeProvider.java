@@ -7,7 +7,7 @@ import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.SavedCardToken;
 import com.mercadopago.android.px.model.SavedESCCardToken;
 import com.mercadopago.android.px.model.Token;
-import com.mercadopago.android.px.services.exceptions.CardTokenException;
+import com.mercadopago.android.px.model.exceptions.CardTokenException;
 
 /**
  * Created by marlanti on 7/18/17.

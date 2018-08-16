@@ -16,6 +16,7 @@ import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.util.EscUtil;
 import com.mercadopago.android.px.internal.util.MercadoPagoUtil;
 import com.mercadopago.android.px.internal.util.QueryBuilder;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.Payment;
@@ -24,11 +25,9 @@ import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.exceptions.ExceptionHandler;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.services.callbacks.Callback;
-import com.mercadopago.android.px.services.exceptions.ApiException;
-import com.mercadopago.android.px.services.exceptions.CheckoutPreferenceException;
-
-import static com.mercadopago.android.px.internal.util.TextUtils.isEmpty;
+import com.mercadopago.android.px.services.Callback;
+import com.mercadopago.android.px.model.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.CheckoutPreferenceException;
 
 public class CheckoutProviderImpl implements CheckoutProvider {
 
@@ -218,7 +217,7 @@ public class CheckoutProviderImpl implements CheckoutProvider {
         paymentBody.setBinaryMode(binaryMode);
 
         final Payer payer = paymentData.getPayer();
-        if (!isEmpty(customerId) &&
+        if (!TextUtil.isEmpty(customerId) &&
                 MercadoPagoUtil.isCard(paymentData.getPaymentMethod().getPaymentTypeId())) {
             payer.setId(customerId);
         }
@@ -239,7 +238,7 @@ public class CheckoutProviderImpl implements CheckoutProvider {
         if (discount != null) {
             paymentBody.setCampaignId(discount.getId());
             paymentBody.setCouponAmount(discount.getCouponAmount().floatValue());
-            if (!isEmpty(paymentData.getCouponCode())) {
+            if (!TextUtil.isEmpty(paymentData.getCouponCode())) {
                 paymentBody.setCouponCode(paymentData.getCouponCode());
             }
         }

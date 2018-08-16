@@ -2,10 +2,10 @@ package com.mercadopago.android.px.tracking.internal.services;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
+import com.mercadopago.android.px.internal.util.HttpClientUtil;
 import com.mercadopago.android.px.model.EventTrackIntent;
 import com.mercadopago.android.px.model.PaymentIntent;
 import com.mercadopago.android.px.model.TrackingIntent;
-import com.mercadopago.android.px.services.util.HttpClientUtil;
 import com.mercadopago.android.px.tracking.internal.Settings;
 import com.mercadopago.android.px.tracking.internal.utils.JsonConverter;
 import retrofit2.Call;

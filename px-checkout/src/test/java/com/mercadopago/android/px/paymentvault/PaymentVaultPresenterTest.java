@@ -25,7 +25,7 @@ import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.internal.features.PaymentVaultPresenter;
 import com.mercadopago.android.px.internal.features.providers.PaymentVaultProvider;
-import com.mercadopago.android.px.services.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.utils.Discounts;
 import com.mercadopago.android.px.utils.StubFailMpCall;
 import com.mercadopago.android.px.utils.StubSuccessMpCall;

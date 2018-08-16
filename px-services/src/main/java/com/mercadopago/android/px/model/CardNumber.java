@@ -2,7 +2,7 @@ package com.mercadopago.android.px.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import com.mercadopago.android.px.services.util.ParcelableUtil;
+import com.mercadopago.android.px.internal.util.ParcelableUtil;
 import java.io.Serializable;
 
 public class CardNumber implements Parcelable, Serializable {
