@@ -178,7 +178,6 @@ public final class ExamplesUtils {
 
     private static Builder createBaseWithTwoItemsAndCollectorIcon() {
         final ReviewAndConfirmConfiguration preferences = new ReviewAndConfirmConfiguration.Builder()
-            .setCollectorIcon(R.drawable.px_collector_icon)
             .build();
 
         return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, DUMMY_PREFERENCE_ID_WITH_TWO_ITEMS)
