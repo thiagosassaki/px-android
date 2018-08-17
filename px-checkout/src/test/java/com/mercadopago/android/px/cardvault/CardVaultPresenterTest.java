@@ -236,11 +236,13 @@ public class CardVaultPresenterTest {
 
         presenter.initialize();
 
-//        Token mockedToken = Tokens.getToken();
-//        PaymentMethod mockedPaymentMethod = PaymentMethods.getPaymentMethodOnVisa();
+        final Token mockedToken = Tokens.getToken();
+        final PaymentMethod mockedPaymentMethod = PaymentMethods.getPaymentMethodOnVisa();
         final PayerCost mockedPayerCost = PayerCosts.getPayerCost();
         final List<PayerCost> mockedPayerCostList = PayerCosts.getPayerCostList();
         final List<Issuer> mockedIssuerList = Issuers.getIssuersListMLA();
+        userSelectionRepository.select(mockedPaymentMethod);
+        when(paymentSettingRepository.getToken()).thenReturn(mockedToken);
 
         //Response from GuessingCardActivity, without an issuer selected
         presenter.resolveNewCardRequest(mockedPayerCost, mockedPayerCostList, mockedIssuerList);
@@ -253,12 +255,16 @@ public class CardVaultPresenterTest {
 
         presenter.initialize();
 
-//        Token mockedToken = Tokens.getToken();
-//        PaymentMethod mockedPaymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-//
-//        Issuer mockedIssuer = Issuers.getIssuerMLA();
+        final Token mockedToken = Tokens.getToken();
+        final PaymentMethod mockedPaymentMethod = PaymentMethods.getPaymentMethodOnVisa();
+        final Issuer mockedIssuer = Issuers.getIssuerMLA();
         final List<PayerCost> mockedPayerCostList = PayerCosts.getPayerCostList();
         final List<Issuer> mockedIssuerList = Issuers.getIssuersListMLA();
+        userSelectionRepository.select(mockedPaymentMethod);
+        userSelectionRepository.select(mockedIssuer);
+        paymentSettingRepository.configure(mockedToken);
+        presenter.setIssuer(mockedIssuer);
+        when(paymentSettingRepository.getToken()).thenReturn(mockedToken);
 
         //Response from GuessingCardActivity, with an issuer selected
         presenter.resolveNewCardRequest(null,
@@ -273,13 +279,16 @@ public class CardVaultPresenterTest {
 
         presenter.initialize();
 
-//        Token mockedToken = Tokens.getToken();
-//        PaymentMethod mockedPaymentMethod = PaymentMethods.getPaymentMethodOnVisa();
+        final Token mockedToken = Tokens.getToken();
+        final PaymentMethod mockedPaymentMethod = PaymentMethods.getPaymentMethodOnVisa();
         final PayerCost mockedPayerCost = PayerCosts.getPayerCost();
-//        Issuer mockedIssuer = Issuers.getIssuerMLA();
+        final Issuer mockedIssuer = Issuers.getIssuerMLA();
         final List<PayerCost> mockedPayerCostList = PayerCosts.getPayerCostList();
         final List<Issuer> mockedIssuerList = Issuers.getIssuersListMLA();
-
+        userSelectionRepository.select(mockedPaymentMethod);
+        userSelectionRepository.select(mockedIssuer);
+        when(paymentSettingRepository.getToken()).thenReturn(mockedToken);
+        presenter.setIssuer(mockedIssuer);
         //Response from GuessingCardActivity, with an issuer selected
         presenter
             .resolveNewCardRequest(mockedPayerCost,
@@ -387,17 +396,17 @@ public class CardVaultPresenterTest {
     @Test
     public void whenSecurityCodeResolvedWithPaymentRecoverySetThenFinishWithResult() {
 
-        List<Installment> installmentsList = Installments.getInstallmentsList();
+        final List<Installment> installmentsList = Installments.getInstallmentsList();
         provider.setResponse(installmentsList);
 
-        Token mockedToken = Tokens.getToken();
-        PaymentMethod mockedPaymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-        PayerCost mockedPayerCost = PayerCosts.getPayerCost();
-        Issuer mockedIssuer = Issuers.getIssuerMLA();
-        String mockedPaymentStatus = Payment.StatusCodes.STATUS_REJECTED;
-        String mockedPaymentStatusDetail = Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_CALL_FOR_AUTHORIZE;
+        final Token mockedToken = Tokens.getToken();
+        final PaymentMethod mockedPaymentMethod = PaymentMethods.getPaymentMethodOnVisa();
+        final PayerCost mockedPayerCost = PayerCosts.getPayerCost();
+        final Issuer mockedIssuer = Issuers.getIssuerMLA();
+        final String mockedPaymentStatus = Payment.StatusCodes.STATUS_REJECTED;
+        final String mockedPaymentStatusDetail = Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_CALL_FOR_AUTHORIZE;
 
-        PaymentRecovery mockedPaymentRecovery =
+        final PaymentRecovery mockedPaymentRecovery =
             new PaymentRecovery(mockedToken, mockedPaymentMethod, mockedPayerCost, mockedIssuer, mockedPaymentStatus,
                 mockedPaymentStatusDetail);
 
@@ -406,6 +415,7 @@ public class CardVaultPresenterTest {
         presenter.initialize();
 
         paymentSettingRepository.configure(mockedToken);
+        when(paymentSettingRepository.getToken()).thenReturn(mockedToken);
 
         //Response from SecurityCodeActivity, with recoverable token
         presenter.resolveSecurityCodeRequest();
