@@ -70,18 +70,18 @@ public class InstallmentsPresenterTest {
     @Test
     public void whenPayerCostIsNullThenGetInstallments() {
 
-        List<Installment> installments = Installments.getInstallmentsList();
+        final List<Installment> installments = Installments.getInstallmentsList();
         provider.setResponse(installments);
 
-        PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-        Issuer issuer = Issuers.getIssuerMLA();
-        PaymentPreference paymentPreference = new PaymentPreference();
+        final PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
+        final Issuer issuer = Issuers.getIssuerMLA();
+        final PaymentPreference paymentPreference = new PaymentPreference();
 
         presenter.setPaymentPreference(paymentPreference);
 
         presenter.setCardInfo(getCardInfo());
-        userSelectionRepository.select(paymentMethod);
-        userSelectionRepository.select(issuer);
+        when(userSelectionRepository.getIssuer()).thenReturn(issuer);
+        when(userSelectionRepository.getPaymentMethod()).thenReturn(paymentMethod);
 
         presenter.initialize();
 
@@ -93,17 +93,17 @@ public class InstallmentsPresenterTest {
     @Test
     public void whenGetInstallmentsGetEmptyListThenShowError() {
 
-        List<Installment> installments = new ArrayList<Installment>();
+        final List<Installment> installments = new ArrayList<Installment>();
         provider.setResponse(installments);
 
-        PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-        Issuer issuer = Issuers.getIssuerMLA();
-        PaymentPreference paymentPreference = new PaymentPreference();
+        final PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
+        final Issuer issuer = Issuers.getIssuerMLA();
+        final PaymentPreference paymentPreference = new PaymentPreference();
         presenter.setPaymentPreference(paymentPreference);
 
         presenter.setCardInfo(getCardInfo());
-        userSelectionRepository.select(paymentMethod);
-        userSelectionRepository.select(issuer);
+        when(userSelectionRepository.getIssuer()).thenReturn(issuer);
+        when(userSelectionRepository.getPaymentMethod()).thenReturn(paymentMethod);
 
         presenter.initialize();
 
@@ -114,17 +114,17 @@ public class InstallmentsPresenterTest {
     @Test
     public void whenGetInstallmentsGetMoreThanOneElementsThenShowError() {
 
-        List<Installment> installments = getThreeInstallmentList();
+        final List<Installment> installments = getThreeInstallmentList();
         provider.setResponse(installments);
 
-        PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-        Issuer issuer = Issuers.getIssuerMLA();
-        PaymentPreference paymentPreference = new PaymentPreference();
+        final PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
+        final Issuer issuer = Issuers.getIssuerMLA();
+        final PaymentPreference paymentPreference = new PaymentPreference();
         presenter.setPaymentPreference(paymentPreference);
 
         presenter.setCardInfo(getCardInfo());
-        userSelectionRepository.select(paymentMethod);
-        userSelectionRepository.select(issuer);
+        when(userSelectionRepository.getIssuer()).thenReturn(issuer);
+        when(userSelectionRepository.getPaymentMethod()).thenReturn(paymentMethod);
 
         presenter.initialize();
 
@@ -187,8 +187,8 @@ public class InstallmentsPresenterTest {
 
         presenter.setPaymentPreference(paymentPreference);
         presenter.setCardInfo(getCardInfo());
-        userSelectionRepository.select(paymentMethod);
-        userSelectionRepository.select(issuer);
+        when(userSelectionRepository.getIssuer()).thenReturn(issuer);
+        when(userSelectionRepository.getPaymentMethod()).thenReturn(paymentMethod);
 
         presenter.initialize();
 
@@ -213,8 +213,8 @@ public class InstallmentsPresenterTest {
         presenter.setPaymentPreference(paymentPreference);
 
         presenter.setCardInfo(getCardInfo());
-        userSelectionRepository.select(paymentMethod);
-        userSelectionRepository.select(issuer);
+        when(userSelectionRepository.getIssuer()).thenReturn(issuer);
+        when(userSelectionRepository.getPaymentMethod()).thenReturn(paymentMethod);
 
         presenter.initialize();
 
@@ -234,8 +234,8 @@ public class InstallmentsPresenterTest {
         presenter.setPaymentPreference(paymentPreference);
 
         presenter.setCardInfo(getCardInfo());
-        userSelectionRepository.select(paymentMethod);
-        userSelectionRepository.select(issuer);
+        when(userSelectionRepository.getIssuer()).thenReturn(issuer);
+        when(userSelectionRepository.getPaymentMethod()).thenReturn(paymentMethod);
 
         presenter.initialize();
         presenter.recoverFromFailure();
@@ -281,8 +281,8 @@ public class InstallmentsPresenterTest {
         PaymentPreference paymentPreference = new PaymentPreference();
         presenter.setPaymentPreference(paymentPreference);
         presenter.setCardInfo(getCardInfo());
-        userSelectionRepository.select(paymentMethod);
-        userSelectionRepository.select(issuer);
+        when(userSelectionRepository.getIssuer()).thenReturn(issuer);
+        when(userSelectionRepository.getPaymentMethod()).thenReturn(paymentMethod);
 
         presenter.initialize();
 
@@ -314,10 +314,10 @@ public class InstallmentsPresenterTest {
 
     @Test
     public void whenIsCardInfoAndPaymentMethodAvailableThenIsNotRequiredCardDrawn() {
-        CardInfo cardInfo = getCardInfo();
-        PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
+        final CardInfo cardInfo = getCardInfo();
+        final PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
         presenter.setCardInfo(cardInfo);
-        userSelectionRepository.select(paymentMethod);
+        when(userSelectionRepository.getPaymentMethod()).thenReturn(paymentMethod);
         assertTrue(presenter.isRequiredCardDrawn());
     }
 
@@ -349,8 +349,8 @@ public class InstallmentsPresenterTest {
         Issuer issuer = Issuers.getIssuers().get(0);
         when(checkoutPreference.getSite()).thenReturn(Sites.COLOMBIA);
         presenter.setCardInfo(getCardInfo());
-        userSelectionRepository.select(paymentMethod);
-        userSelectionRepository.select(issuer);
+        when(userSelectionRepository.getIssuer()).thenReturn(issuer);
+        when(userSelectionRepository.getPaymentMethod()).thenReturn(paymentMethod);
         presenter.initialize();
         assertTrue(mockedView.bankInterestsWarningShown);
     }
@@ -361,8 +361,8 @@ public class InstallmentsPresenterTest {
         PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
         Issuer issuer = Issuers.getIssuers().get(0);
         presenter.setCardInfo(getCardInfo());
-        userSelectionRepository.select(paymentMethod);
-        userSelectionRepository.select(issuer);
+        when(userSelectionRepository.getIssuer()).thenReturn(issuer);
+        when(userSelectionRepository.getPaymentMethod()).thenReturn(paymentMethod);
         presenter.initialize();
         assertFalse(mockedView.bankInterestsWarningShown);
     }
