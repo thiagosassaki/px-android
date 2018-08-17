@@ -1,6 +1,7 @@
 package com.mercadopago.android.px.issuers;
 
 import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
+import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.mocks.Issuers;
 import com.mercadopago.android.px.mocks.PaymentMethods;
@@ -15,6 +16,7 @@ import com.mercadopago.android.px.internal.features.IssuersActivityView;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
+import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -27,6 +29,8 @@ import static org.junit.Assert.assertTrue;
 
 public class IssuersPresenterTest {
 
+    @Mock private UserSelectionRepository userSelectionRepository;
+
     @Test
     public void whenIssuersAreNullThenGetIssuersAndShow() {
         MockedView mockedView = new MockedView();
@@ -37,10 +41,10 @@ public class IssuersPresenterTest {
 
         PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
 
-        IssuersPresenter presenter = new IssuersPresenter();
+        IssuersPresenter presenter = new IssuersPresenter(userSelectionRepository);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
-        presenter.setPaymentMethod(paymentMethod);
+        userSelectionRepository.select(paymentMethod);
 
         presenter.initialize();
 
@@ -62,10 +66,10 @@ public class IssuersPresenterTest {
 
         PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
 
-        IssuersPresenter presenter = new IssuersPresenter();
+        IssuersPresenter presenter = new IssuersPresenter(userSelectionRepository);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
-        presenter.setPaymentMethod(paymentMethod);
+        userSelectionRepository.select(paymentMethod);
 
         presenter.initialize();
 
@@ -83,11 +87,11 @@ public class IssuersPresenterTest {
         List<Issuer> issuers = Issuers.getIssuersListMLA();
         PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
 
-        IssuersPresenter presenter = new IssuersPresenter();
+        IssuersPresenter presenter = new IssuersPresenter(userSelectionRepository);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
         presenter.setIssuers(issuers);
-        presenter.setPaymentMethod(paymentMethod);
+        userSelectionRepository.select(paymentMethod);
 
         presenter.initialize();
 
@@ -109,10 +113,10 @@ public class IssuersPresenterTest {
 
         PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
 
-        IssuersPresenter presenter = new IssuersPresenter();
+        IssuersPresenter presenter = new IssuersPresenter(userSelectionRepository);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
-        presenter.setPaymentMethod(paymentMethod);
+        userSelectionRepository.select(paymentMethod);
 
         presenter.initialize();
 
@@ -129,10 +133,10 @@ public class IssuersPresenterTest {
 
         PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
 
-        IssuersPresenter presenter = new IssuersPresenter();
+        IssuersPresenter presenter = new IssuersPresenter(userSelectionRepository);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
-        presenter.setPaymentMethod(paymentMethod);
+        userSelectionRepository.select(paymentMethod);
 
         presenter.initialize();
 
@@ -149,10 +153,10 @@ public class IssuersPresenterTest {
         provider.setResponse(issuers);
         PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
 
-        IssuersPresenter presenter = new IssuersPresenter();
+        IssuersPresenter presenter = new IssuersPresenter(userSelectionRepository);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
-        presenter.setPaymentMethod(paymentMethod);
+        userSelectionRepository.select(paymentMethod);
 
         presenter.initialize();
 
@@ -171,10 +175,10 @@ public class IssuersPresenterTest {
 
         PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
 
-        IssuersPresenter presenter = new IssuersPresenter();
+        IssuersPresenter presenter = new IssuersPresenter(userSelectionRepository);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
-        presenter.setPaymentMethod(paymentMethod);
+        userSelectionRepository.select(paymentMethod);
 
         presenter.initialize();
 
@@ -190,7 +194,7 @@ public class IssuersPresenterTest {
         MockedView mockedView = new MockedView();
         MockedProvider provider = new MockedProvider();
 
-        IssuersPresenter presenter = new IssuersPresenter();
+        IssuersPresenter presenter = new IssuersPresenter(userSelectionRepository);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
@@ -203,7 +207,7 @@ public class IssuersPresenterTest {
     public void whenSetCardInfoThenSetBin() {
         CardInfo cardInfo = getCardInfo();
 
-        IssuersPresenter presenter = new IssuersPresenter();
+        IssuersPresenter presenter = new IssuersPresenter(userSelectionRepository);
         presenter.setCardInfo(cardInfo);
 
         assertEquals(presenter.getBin(), getCardInfo().getFirstSixDigits());
@@ -211,7 +215,7 @@ public class IssuersPresenterTest {
 
     @Test
     public void whenCardInfoIsNullThenPresenterBinIsEmpty() {
-        IssuersPresenter presenter = new IssuersPresenter();
+        IssuersPresenter presenter = new IssuersPresenter(userSelectionRepository);
         presenter.setCardInfo(null);
 
         assertEquals(presenter.getBin(), "");
@@ -222,9 +226,9 @@ public class IssuersPresenterTest {
         CardInfo cardInfo = getCardInfo();
         PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
 
-        IssuersPresenter presenter = new IssuersPresenter();
+        IssuersPresenter presenter = new IssuersPresenter(userSelectionRepository);
         presenter.setCardInfo(cardInfo);
-        presenter.setPaymentMethod(paymentMethod);
+        userSelectionRepository.select(paymentMethod);
 
         assertTrue(presenter.isRequiredCardDrawn());
     }
@@ -233,7 +237,7 @@ public class IssuersPresenterTest {
     public void whenIsNotPaymentMethodAvailableThenIsNotRequiredCardDrawn() {
         CardInfo cardInfo = getCardInfo();
 
-        IssuersPresenter presenter = new IssuersPresenter();
+        IssuersPresenter presenter = new IssuersPresenter(userSelectionRepository);
         presenter.setCardInfo(cardInfo);
 
         assertFalse(presenter.isRequiredCardDrawn());
@@ -243,8 +247,8 @@ public class IssuersPresenterTest {
     public void whenIsNotCardInfoAvailableThenIsNotRequiredCardDrawn() {
         PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
 
-        IssuersPresenter presenter = new IssuersPresenter();
-        presenter.setPaymentMethod(paymentMethod);
+        IssuersPresenter presenter = new IssuersPresenter(userSelectionRepository);
+        userSelectionRepository.select(paymentMethod);
 
         assertFalse(presenter.isRequiredCardDrawn());
     }
@@ -334,10 +338,16 @@ public class IssuersPresenterTest {
         }
 
         @Override
-        public void finishWithResult(Issuer issuer) {
+        public void finishWithResult() {
             this.finishWithResult = true;
-            this.selectedIssuer = issuer;
+            //TODO select issuer
         }
+
+//        @Override
+//        public void finishWithResult(Issuer issuer) {
+//            this.finishWithResult = true;
+//            this.selectedIssuer = issuer;
+//        }
 
         private void simulateIssuerSelection(int index) {
             issuerSelectionCallback.onSelected(index);

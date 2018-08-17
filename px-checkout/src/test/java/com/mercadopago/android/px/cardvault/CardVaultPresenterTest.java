@@ -40,6 +40,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -63,7 +64,7 @@ public class CardVaultPresenterTest {
         when(paymentSettingRepository.getCheckoutPreference()).thenReturn(checkoutPreference);
         when(checkoutPreference.getPaymentPreference()).thenReturn(new PaymentPreference());
         when(amountRepository.getAmountToPay()).thenReturn(new BigDecimal(1000));
-        presenter = new CardVaultPresenter(amountRepository, paymentSettingRepository, userSelectionRepository);
+        presenter = new CardVaultPresenter(amountRepository, userSelectionRepository, paymentSettingRepository);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
     }
@@ -235,15 +236,14 @@ public class CardVaultPresenterTest {
 
         presenter.initialize();
 
-        Token mockedToken = Tokens.getToken();
-        PaymentMethod mockedPaymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-        PayerCost mockedPayerCost = PayerCosts.getPayerCost();
-        List<PayerCost> mockedPayerCostList = PayerCosts.getPayerCostList();
-        List<Issuer> mockedIssuerList = Issuers.getIssuersListMLA();
+//        Token mockedToken = Tokens.getToken();
+//        PaymentMethod mockedPaymentMethod = PaymentMethods.getPaymentMethodOnVisa();
+        final PayerCost mockedPayerCost = PayerCosts.getPayerCost();
+        final List<PayerCost> mockedPayerCostList = PayerCosts.getPayerCostList();
+        final List<Issuer> mockedIssuerList = Issuers.getIssuersListMLA();
 
         //Response from GuessingCardActivity, without an issuer selected
-        presenter.resolveNewCardRequest(mockedPaymentMethod, mockedToken, mockedPayerCost, null,
-            mockedPayerCostList, mockedIssuerList);
+        presenter.resolveNewCardRequest(mockedPayerCost, mockedPayerCostList, mockedIssuerList);
 
         assertTrue(mockedView.issuerFlowStarted);
     }
@@ -253,15 +253,15 @@ public class CardVaultPresenterTest {
 
         presenter.initialize();
 
-        Token mockedToken = Tokens.getToken();
-        PaymentMethod mockedPaymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-
-        Issuer mockedIssuer = Issuers.getIssuerMLA();
-        List<PayerCost> mockedPayerCostList = PayerCosts.getPayerCostList();
-        List<Issuer> mockedIssuerList = Issuers.getIssuersListMLA();
+//        Token mockedToken = Tokens.getToken();
+//        PaymentMethod mockedPaymentMethod = PaymentMethods.getPaymentMethodOnVisa();
+//
+//        Issuer mockedIssuer = Issuers.getIssuerMLA();
+        final List<PayerCost> mockedPayerCostList = PayerCosts.getPayerCostList();
+        final List<Issuer> mockedIssuerList = Issuers.getIssuersListMLA();
 
         //Response from GuessingCardActivity, with an issuer selected
-        presenter.resolveNewCardRequest(mockedPaymentMethod, mockedToken, null, mockedIssuer,
+        presenter.resolveNewCardRequest(null,
             mockedPayerCostList, mockedIssuerList);
 
         assertFalse(mockedView.issuerFlowStarted);
@@ -273,16 +273,16 @@ public class CardVaultPresenterTest {
 
         presenter.initialize();
 
-        Token mockedToken = Tokens.getToken();
-        PaymentMethod mockedPaymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-        PayerCost mockedPayerCost = PayerCosts.getPayerCost();
-        Issuer mockedIssuer = Issuers.getIssuerMLA();
-        List<PayerCost> mockedPayerCostList = PayerCosts.getPayerCostList();
-        List<Issuer> mockedIssuerList = Issuers.getIssuersListMLA();
+//        Token mockedToken = Tokens.getToken();
+//        PaymentMethod mockedPaymentMethod = PaymentMethods.getPaymentMethodOnVisa();
+        final PayerCost mockedPayerCost = PayerCosts.getPayerCost();
+//        Issuer mockedIssuer = Issuers.getIssuerMLA();
+        final List<PayerCost> mockedPayerCostList = PayerCosts.getPayerCostList();
+        final List<Issuer> mockedIssuerList = Issuers.getIssuersListMLA();
 
         //Response from GuessingCardActivity, with an issuer selected
         presenter
-            .resolveNewCardRequest(mockedPaymentMethod, mockedToken, mockedPayerCost, mockedIssuer,
+            .resolveNewCardRequest(mockedPayerCost,
                 mockedPayerCostList, mockedIssuerList);
 
         assertFalse(mockedView.issuerFlowStarted);
@@ -304,8 +304,10 @@ public class CardVaultPresenterTest {
         presenter.setPaymentMethod(mockedPaymentMethod);
         presenter.setPayerCostsList(mockedPayerCostList);
 
+        userSelectionRepository.select(mockedIssuer);
+
         //Response from IssuersActivity, with an issuer selected
-        presenter.resolveIssuersRequest(mockedIssuer);
+        presenter.resolveIssuersRequest();
 
         assertTrue(mockedView.installmentsFlowStarted);
     }
@@ -350,17 +352,19 @@ public class CardVaultPresenterTest {
     @Test
     public void whenSecurityCodeResolvedAndSavedCardSetThenFinishWithResult() {
 
-        List<Installment> installmentsList = Installments.getInstallmentsList();
+        final List<Installment> installmentsList = Installments.getInstallmentsList();
         provider.setResponse(installmentsList);
 
         presenter.setCard(Cards.getCard());
 
         presenter.initialize();
 
-        Token mockedToken = Tokens.getToken();
+        final Token mockedToken = Tokens.getToken();
+
+        paymentSettingRepository.configure(mockedToken);
 
         //Response from SecurityCodeActivity
-        presenter.resolveSecurityCodeRequest(mockedToken);
+        presenter.resolveSecurityCodeRequest();
 
         assertTrue(mockedView.finishedWithResult);
     }
@@ -401,8 +405,10 @@ public class CardVaultPresenterTest {
 
         presenter.initialize();
 
+        paymentSettingRepository.configure(mockedToken);
+
         //Response from SecurityCodeActivity, with recoverable token
-        presenter.resolveSecurityCodeRequest(mockedToken);
+        presenter.resolveSecurityCodeRequest();
 
         assertNotNull(presenter.getPayerCost());
         assertNotNull(presenter.getIssuer());

@@ -80,8 +80,8 @@ public class InstallmentsPresenterTest {
         presenter.setPaymentPreference(paymentPreference);
 
         presenter.setCardInfo(getCardInfo());
-        presenter.setPaymentMethod(paymentMethod);
-        presenter.setIssuer(issuer);
+        userSelectionRepository.select(paymentMethod);
+        userSelectionRepository.select(issuer);
 
         presenter.initialize();
 
@@ -102,8 +102,8 @@ public class InstallmentsPresenterTest {
         presenter.setPaymentPreference(paymentPreference);
 
         presenter.setCardInfo(getCardInfo());
-        presenter.setPaymentMethod(paymentMethod);
-        presenter.setIssuer(issuer);
+        userSelectionRepository.select(paymentMethod);
+        userSelectionRepository.select(issuer);
 
         presenter.initialize();
 
@@ -123,8 +123,8 @@ public class InstallmentsPresenterTest {
         presenter.setPaymentPreference(paymentPreference);
 
         presenter.setCardInfo(getCardInfo());
-        presenter.setPaymentMethod(paymentMethod);
-        presenter.setIssuer(issuer);
+        userSelectionRepository.select(paymentMethod);
+        userSelectionRepository.select(issuer);
 
         presenter.initialize();
 
@@ -143,9 +143,9 @@ public class InstallmentsPresenterTest {
         presenter.setPaymentPreference(paymentPreference);
 
         presenter.setCardInfo(getCardInfo());
-        presenter.setPaymentMethod(paymentMethod);
+        userSelectionRepository.select(paymentMethod);
+        userSelectionRepository.select(issuer);
         presenter.setPayerCosts(payerCosts);
-        presenter.setIssuer(issuer);
 
         presenter.initialize();
 
@@ -164,9 +164,9 @@ public class InstallmentsPresenterTest {
         final PaymentPreference paymentPreference = new PaymentPreference();
         presenter.setPaymentPreference(paymentPreference);
         presenter.setCardInfo(getCardInfo());
-        presenter.setPaymentMethod(paymentMethod);
+        userSelectionRepository.select(paymentMethod);
+        userSelectionRepository.select(issuer);
         presenter.setPayerCosts(payerCosts);
-        presenter.setIssuer(issuer);
 
         presenter.initialize();
 
@@ -187,8 +187,8 @@ public class InstallmentsPresenterTest {
 
         presenter.setPaymentPreference(paymentPreference);
         presenter.setCardInfo(getCardInfo());
-        presenter.setPaymentMethod(paymentMethod);
-        presenter.setIssuer(issuer);
+        userSelectionRepository.select(paymentMethod);
+        userSelectionRepository.select(issuer);
 
         presenter.initialize();
 
@@ -213,8 +213,8 @@ public class InstallmentsPresenterTest {
         presenter.setPaymentPreference(paymentPreference);
 
         presenter.setCardInfo(getCardInfo());
-        presenter.setPaymentMethod(paymentMethod);
-        presenter.setIssuer(issuer);
+        userSelectionRepository.select(paymentMethod);
+        userSelectionRepository.select(issuer);
 
         presenter.initialize();
 
@@ -234,8 +234,8 @@ public class InstallmentsPresenterTest {
         presenter.setPaymentPreference(paymentPreference);
 
         presenter.setCardInfo(getCardInfo());
-        presenter.setPaymentMethod(paymentMethod);
-        presenter.setIssuer(issuer);
+        userSelectionRepository.select(paymentMethod);
+        userSelectionRepository.select(issuer);
 
         presenter.initialize();
         presenter.recoverFromFailure();
@@ -261,8 +261,8 @@ public class InstallmentsPresenterTest {
         presenter.setPaymentPreference(paymentPreference);
         presenter.setCardInfo(getCardInfo());
         presenter.setPayerCosts(payerCosts);
-        presenter.setPaymentMethod(paymentMethod);
-        presenter.setIssuer(issuer);
+        userSelectionRepository.select(paymentMethod);
+        userSelectionRepository.select(issuer);
 
         presenter.initialize();
 
@@ -281,8 +281,8 @@ public class InstallmentsPresenterTest {
         PaymentPreference paymentPreference = new PaymentPreference();
         presenter.setPaymentPreference(paymentPreference);
         presenter.setCardInfo(getCardInfo());
-        presenter.setPaymentMethod(paymentMethod);
-        presenter.setIssuer(issuer);
+        userSelectionRepository.select(paymentMethod);
+        userSelectionRepository.select(issuer);
 
         presenter.initialize();
 
@@ -302,8 +302,8 @@ public class InstallmentsPresenterTest {
         presenter.setPaymentPreference(paymentPreference);
         presenter.setCardInfo(getCardInfo());
         presenter.setPayerCosts(payerCosts);
-        presenter.setPaymentMethod(paymentMethod);
-        presenter.setIssuer(issuer);
+        userSelectionRepository.select(paymentMethod);
+        userSelectionRepository.select(issuer);
 
         presenter.initialize();
 
@@ -317,7 +317,7 @@ public class InstallmentsPresenterTest {
         CardInfo cardInfo = getCardInfo();
         PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
         presenter.setCardInfo(cardInfo);
-        presenter.setPaymentMethod(paymentMethod);
+        userSelectionRepository.select(paymentMethod);
         assertTrue(presenter.isRequiredCardDrawn());
     }
 
@@ -331,7 +331,7 @@ public class InstallmentsPresenterTest {
     @Test
     public void whenIsNotCardInfoAvailableThenIsNotRequiredCardDrawn() {
         PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-        presenter.setPaymentMethod(paymentMethod);
+        userSelectionRepository.select(paymentMethod);
         assertFalse(presenter.isRequiredCardDrawn());
     }
 
@@ -343,21 +343,14 @@ public class InstallmentsPresenterTest {
     }
 
     @Test
-    public void whenIssuerIsNullThenIssuerIdIsNull() {
-        Issuer issuer = null;
-        presenter.setIssuer(issuer);
-        assertTrue(presenter.getIssuerId() == null);
-    }
-
-    @Test
     public void whenMCOThenShowBankInterestsNotCoveredWarning() {
 
         PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
         Issuer issuer = Issuers.getIssuers().get(0);
         when(checkoutPreference.getSite()).thenReturn(Sites.COLOMBIA);
         presenter.setCardInfo(getCardInfo());
-        presenter.setPaymentMethod(paymentMethod);
-        presenter.setIssuer(issuer);
+        userSelectionRepository.select(paymentMethod);
+        userSelectionRepository.select(issuer);
         presenter.initialize();
         assertTrue(mockedView.bankInterestsWarningShown);
     }
@@ -368,8 +361,8 @@ public class InstallmentsPresenterTest {
         PaymentMethod paymentMethod = PaymentMethods.getPaymentMethodOnVisa();
         Issuer issuer = Issuers.getIssuers().get(0);
         presenter.setCardInfo(getCardInfo());
-        presenter.setPaymentMethod(paymentMethod);
-        presenter.setIssuer(issuer);
+        userSelectionRepository.select(paymentMethod);
+        userSelectionRepository.select(issuer);
         presenter.initialize();
         assertFalse(mockedView.bankInterestsWarningShown);
     }

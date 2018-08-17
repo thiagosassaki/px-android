@@ -35,16 +35,16 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
 
     private CardVaultPresenter presenter;
 
-    private PaymentSettingRepository configuration;
+    private PaymentSettingRepository paymentSettingRepository;
 
     private void configure() {
         final Intent intent = getIntent();
         final Card card = JsonUtil.getInstance().fromJson(intent.getStringExtra(EXTRA_CARD), Card.class);
         final Session session = Session.getSession(this);
-        configuration = session.getConfigurationModule().getPaymentSettings();
-        presenter = new CardVaultPresenter(session.getAmountRepository(), configuration,
+        paymentSettingRepository = session.getConfigurationModule().getPaymentSettings();
+        presenter = new CardVaultPresenter(session.getAmountRepository(),
             session.getConfigurationModule().getUserSelectionRepository(),
-            session.getConfigurationModule().getPaymentSettings());
+            paymentSettingRepository);
         presenter.attachResourcesProvider(
             new CardVaultProviderImpl(getApplicationContext()));
         presenter.attachView(this);
@@ -326,7 +326,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
             public void run() {
                 new MercadoPagoComponents.Activities.GuessingCardActivityBuilder()
                     .setActivity(context)
-                    .setPaymentPreference(configuration.getCheckoutPreference().getPaymentPreference())
+                    .setPaymentPreference(paymentSettingRepository.getCheckoutPreference().getPaymentPreference())
                     .setPaymentRecovery(presenter.getPaymentRecovery())
                     .startActivity();
                 overridePendingTransition(R.anim.px_slide_right_to_left_in, R.anim.px_slide_right_to_left_out);
@@ -337,7 +337,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
     private void startInstallmentsActivity() {
         new MercadoPagoComponents.Activities.InstallmentsActivityBuilder()
             .setActivity(this)
-            .setPaymentPreference(configuration.getCheckoutPreference().getPaymentPreference())
+            .setPaymentPreference(paymentSettingRepository.getCheckoutPreference().getPaymentPreference())
             .setCardInfo(presenter.getCardInfo())
             .setPayerCosts(presenter.getPayerCostList())
             .startActivity();

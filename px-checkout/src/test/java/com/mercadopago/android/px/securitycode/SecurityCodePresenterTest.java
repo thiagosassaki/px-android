@@ -1,5 +1,6 @@
 package com.mercadopago.android.px.securitycode;
 
+import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.mocks.Cards;
@@ -26,6 +27,7 @@ import com.mercadopago.android.px.model.exceptions.CardTokenException;
 import com.mercadopago.android.px.utils.MVPStructure;
 import com.mercadopago.android.px.internal.features.SecurityCodeActivityView;
 import org.junit.Test;
+import org.mockito.Mock;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -44,6 +46,8 @@ public class SecurityCodePresenterTest {
     private static final String CARD_INFO_NOT_SET = "card_info_not_set";
     private static final String ERROR_SECURITY_CODE = "error_security_code";
     private static final int CARD_TOKEN_INVALID_SECURITY_CODE = 9;
+
+    @Mock private PaymentSettingRepository configuration;
 
     @Test
     public void showErrorWhenInvalidParameters() {
@@ -503,7 +507,7 @@ public class SecurityCodePresenterTest {
 
         SecurityCodeMockedView view = new SecurityCodeMockedView();
 
-        SecurityCodePresenter presenter = new SecurityCodePresenter();
+        SecurityCodePresenter presenter = new SecurityCodePresenter(configuration);
         presenter.attachView(view);
         SecurityCodeMockedProvider provider = new SecurityCodeMockedProvider();
         presenter.attachResourcesProvider(provider);

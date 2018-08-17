@@ -29,9 +29,7 @@ import java.util.List;
 
 public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultProvider> {
 
-    @NonNull
-    private final AmountRepository amountRepository;
-    private final PaymentSettingRepository configuration;
+    @NonNull private final AmountRepository amountRepository;
     @NonNull private final UserSelectionRepository userSelectionRepository;
     @NonNull private final PaymentSettingRepository paymentSettingRepository;
 
@@ -65,10 +63,8 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
     private SavedESCCardToken escCardToken;
 
     public CardVaultPresenter(@NonNull final AmountRepository amountRepository,
-        @NonNull final PaymentSettingRepository configuration,
         @NonNull final UserSelectionRepository userSelectionRepository,
         @NonNull final PaymentSettingRepository paymentSettingRepository) {
-        this.configuration = configuration;
         this.userSelectionRepository = userSelectionRepository;
         this.paymentSettingRepository = paymentSettingRepository;
         this.amountRepository = amountRepository;
@@ -245,7 +241,7 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         final String bin = TextUtil.isEmpty(cardInfo.getFirstSixDigits()) ? "" : cardInfo.getFirstSixDigits();
         final Long issuerId = this.card.getIssuer() == null ? null : this.card.getIssuer().getId();
         String paymentMethodId = card.getPaymentMethod() == null ? "" : card.getPaymentMethod().getId();
-        final DifferentialPricing differentialPricing = configuration.getCheckoutPreference().getDifferentialPricing();
+        final DifferentialPricing differentialPricing = paymentSettingRepository.getCheckoutPreference().getDifferentialPricing();
         final Integer differentialPricingId = differentialPricing == null ? null : differentialPricing.getId();
         getResourcesProvider().getInstallmentsAsync(bin, issuerId, paymentMethodId, amountRepository.getAmountToPay(),
             differentialPricingId,
@@ -289,7 +285,7 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
 
     private void resolvePayerCosts(final List<PayerCost> payerCosts) {
         final PayerCost defaultPayerCost =
-            configuration.getCheckoutPreference().getPaymentPreference().getDefaultInstallments(payerCosts);
+            paymentSettingRepository.getCheckoutPreference().getPaymentPreference().getDefaultInstallments(payerCosts);
         payerCostsList = payerCosts;
 
         if (defaultPayerCost != null) {
