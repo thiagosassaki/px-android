@@ -1,150 +1,117 @@
 package com.mercadopago.android.px.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.Size;
-import com.mercadopago.android.px.internal.util.CurrenciesUtil;
+import com.mercadopago.android.px.internal.util.ParcelableUtil;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 
-public class Item implements Serializable {
+@SuppressWarnings("unused")
+public class Item implements Serializable, Parcelable {
 
-    private String categoryId;
+    @Nullable
+    private final String id;
+
+    @NonNull
+    private final String title;
+
+    @Nullable
+    private final String description;
+
+    @Nullable
+    private final String pictureUrl;
+
+    @Nullable
+    private final String categoryId;
+
+    @NonNull
+    private final Integer quantity;
+
+    @NonNull
+    private final BigDecimal unitPrice;
+
+    @Nullable
     private String currencyId;
-    private String description;
-    private String id;
-    private String pictureUrl;
-    private Integer quantity;
-    private String title;
-    private BigDecimal unitPrice;
 
-    public Item(String description, Integer quantity, BigDecimal unitPrice) {
-        this.description = description;
-        this.quantity = quantity;
-        this.unitPrice = unitPrice;
+    /* default */
+    protected Item(final Builder builder) {
+        id = builder.id;
+        title = builder.title;
+        description = builder.description;
+        pictureUrl = builder.pictureUrl;
+        categoryId = builder.categoryId;
+        quantity = builder.quantity;
+        unitPrice = builder.unitPrice;
     }
 
-    public Item(String description, Integer quantity, BigDecimal unitPrice, String pictureUrl) {
-
-        this.description = description;
-        this.quantity = quantity;
-        this.unitPrice = unitPrice;
-        this.pictureUrl = pictureUrl;
-    }
-
-    public Item(String description, BigDecimal amount) {
-
-        this.description = description;
-        quantity = 1;
-        unitPrice = amount;
-    }
-
-    public Item(String description, BigDecimal amount, String pictureUrl) {
-        this.description = description;
-        quantity = 1;
-        unitPrice = amount;
-        this.pictureUrl = pictureUrl;
-    }
-
-    public String getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public String getCurrencyId() {
-        return currencyId;
-    }
-
-    public void setCurrencyId(String currencyId) {
-        this.currencyId = currencyId;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
+    @Nullable
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getPictureUrl() {
-        return pictureUrl;
-    }
-
-    public void setPictureUrl(String pictureUrl) {
-        this.pictureUrl = pictureUrl;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
+    @NonNull
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    @Nullable
+    public String getDescription() {
+        return description;
     }
 
+    @Nullable
+    public String getPictureUrl() {
+        return pictureUrl;
+    }
+
+    @Nullable
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    @NonNull
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    @Nullable
+    public String getCurrencyId() {
+        return currencyId;
+    }
+
+    @NonNull
     public BigDecimal getUnitPrice() {
         return unitPrice;
-    }
-
-    public void setUnitPrice(final BigDecimal unitPrice) {
-        this.unitPrice = unitPrice;
-    }
-
-    public boolean hasCardinality() {
-        return quantity != null && quantity > 1;
-    }
-
-    private boolean isValid() {
-        return BigDecimal.ZERO.compareTo(getUnitPrice()) < 0
-            && getQuantity() != null
-            && getQuantity() > 0
-            && CurrenciesUtil.isValidCurrency(getCurrencyId())
-            && getId() != null;
     }
 
     public static BigDecimal getItemTotalAmount(@NonNull final Item item) {
         return item.getUnitPrice().multiply(new BigDecimal(item.getQuantity()));
     }
 
-    private static boolean haveAllSameCurrency(@Size(min = 1) @NonNull final List<Item> items) {
-        boolean areAllTheSameCurrency = true;
-        final String currencyId = items.get(0).getCurrencyId();
-        for (int i = 1; i < items.size(); i++) {
-            areAllTheSameCurrency = areAllTheSameCurrency && currencyId.equals(items.get(i).getCurrencyId());
-        }
-        return areAllTheSameCurrency;
+    public boolean hasCardinality() {
+        return quantity > 1;
     }
 
-    private static boolean eachIsValid(@NonNull final Iterable<Item> items) {
+    public static boolean areItemsValid(@NonNull final Collection<Item> items) {
+        return !items.isEmpty() && isEachItemValid(items);
+    }
+
+    private static boolean isEachItemValid(@NonNull final Iterable<Item> items) {
         boolean areAllValid = true;
         for (final Item item : items) {
-            areAllValid = areAllValid && item.isValid();
+            areAllValid = areAllValid && item.isItemValid();
         }
         return areAllValid;
     }
 
-    public static boolean validItems(@NonNull final List<Item> items) {
-        return !items.isEmpty() && eachIsValid(items) && haveAllSameCurrency(items);
+    private boolean isItemValid() {
+        return BigDecimal.ZERO.compareTo(getUnitPrice()) < 0
+            && getQuantity() > 0;
     }
 
     public static BigDecimal getTotalAmountWith(@NonNull final Iterable<Item> items) {
@@ -157,5 +124,85 @@ public class Item implements Serializable {
 
     public static String getItemsTitle(@NonNull @Size(min = 1) final List<Item> items, final String multipleDefault) {
         return items.size() > 1 ? multipleDefault : items.get(0).getTitle();
+    }
+
+    private Item(final Parcel in) {
+        title = in.readString();
+        quantity = ParcelableUtil.getOptionalInteger(in);
+        unitPrice = ParcelableUtil.getOptionalBigDecimal(in);
+        id = in.readString();
+        description = in.readString();
+        categoryId = in.readString();
+        pictureUrl = in.readString();
+    }
+
+    public static final Creator<Item> CREATOR = new Creator<Item>() {
+        @Override
+        public Item createFromParcel(final Parcel in) {
+            return new Item(in);
+        }
+
+        @Override
+        public Item[] newArray(final int size) {
+            return new Item[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(final Parcel dest, final int flags) {
+        dest.writeString(title);
+        ParcelableUtil.writeOptional(dest, quantity);
+        ParcelableUtil.writeOptional(dest, unitPrice);
+        dest.writeString(id);
+        dest.writeString(description);
+        dest.writeString(categoryId);
+        dest.writeString(pictureUrl);
+    }
+
+    @SuppressWarnings("unused")
+    public static final class Builder {
+        /* default */ @NonNull final String title;
+        /* default */ @NonNull final Integer quantity;
+        /* default */ @NonNull final BigDecimal unitPrice;
+        /* default */ @Nullable String id;
+        /* default */ @Nullable String description;
+        /* default */ @Nullable String categoryId;
+        /* default */ @Nullable String pictureUrl;
+
+        public Builder(@NonNull final String title, @NonNull final Integer quantity,
+            @NonNull final BigDecimal unitPrice) {
+            this.title = title;
+            this.quantity = quantity;
+            this.unitPrice = unitPrice;
+        }
+
+        public Builder setId(@NonNull final String id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder setDescription(@NonNull final String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder setCategoryId(@NonNull final String categoryId) {
+            this.categoryId = categoryId;
+            return this;
+        }
+
+        public Builder setPictureUrl(@NonNull final String pictureUrl) {
+            this.pictureUrl = pictureUrl;
+            return this;
+        }
+
+        public Item build() {
+            return new Item(this);
+        }
     }
 }

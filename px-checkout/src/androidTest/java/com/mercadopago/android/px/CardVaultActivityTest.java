@@ -45,10 +45,6 @@ import static android.support.test.espresso.intent.Intents.times;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static junit.framework.Assert.assertTrue;
 
-/**
- * Created by vaserber on 4/24/17.
- */
-
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class CardVaultActivityTest {
@@ -62,8 +58,7 @@ public class CardVaultActivityTest {
     @Before
     public void setupStartIntent() {
 
-        final Item item = new Item("sarasa", 1, new BigDecimal(100));
-        item.setId("someId");
+        final Item item = new Item.Builder("item title", 1, new BigDecimal(100)).setId("id").build();
         final PaymentSettingRepository configuration =
             new ConfigurationModule(InstrumentationRegistry.getContext()).getPaymentSettings();
         configuration.configure(new AdvancedConfiguration.Builder().build());

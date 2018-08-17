@@ -318,10 +318,9 @@ public final class OneTapSamples {
     private static CheckoutPreference getCheckoutPreferenceWithPayerEmail(
         @NonNull final Collection<String> excludedPaymentTypes, final int amount) {
         final List<Item> items = new ArrayList<>();
-        final Item item = new Item("Descripción del producto", 1, new BigDecimal(amount));
-        item.setId("1234");
-        item.setTitle("Titulo del producto");
-        item.setCurrencyId(Sites.ARGENTINA.getCurrencyId());
+        final Item item =
+            new Item.Builder("Product title", 1, new BigDecimal(amount))
+                .build();
         items.add(item);
         return new CheckoutPreference.Builder(Sites.ARGENTINA,
             PAYER_EMAIL_DUMMY, items)
