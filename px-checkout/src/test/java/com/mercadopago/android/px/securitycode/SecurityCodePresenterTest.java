@@ -27,7 +27,9 @@ import com.mercadopago.android.px.model.exceptions.CardTokenException;
 import com.mercadopago.android.px.utils.MVPStructure;
 import com.mercadopago.android.px.internal.features.SecurityCodeActivityView;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -38,6 +40,7 @@ import static junit.framework.Assert.assertTrue;
  * Created by marlanti on 7/18/17.
  */
 
+@RunWith(MockitoJUnitRunner.class)
 public class SecurityCodePresenterTest {
 
     private static final String PAYMENT_METHOD_NOT_SET = "payment_method_not_set";
