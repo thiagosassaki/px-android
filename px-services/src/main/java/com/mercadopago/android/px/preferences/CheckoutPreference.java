@@ -91,7 +91,7 @@ public class CheckoutPreference implements Serializable {
     }
 
     public void validate() throws CheckoutPreferenceException {
-        if (!Item.validItems(items)) {
+        if (!Item.areItemsValid(items)) {
             throw new CheckoutPreferenceException(CheckoutPreferenceException.INVALID_ITEM);
         } else if (isEmpty(payer.getEmail())) {
             throw new CheckoutPreferenceException(CheckoutPreferenceException.NO_EMAIL_FOUND);

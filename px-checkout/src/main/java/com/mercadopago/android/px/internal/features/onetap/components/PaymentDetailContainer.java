@@ -16,10 +16,12 @@ public class PaymentDetailContainer extends CompactComponent<PaymentDetailContai
     public static final class Props {
         /* default */ final DiscountRepository discountRepository;
         /* default */ final List<Item> items;
+        /* default */ final String currencyId;
 
-        public Props(final DiscountRepository discountRepository, final List<Item> items) {
+        public Props(final DiscountRepository discountRepository, final List<Item> items, final String currencyId) {
             this.discountRepository = discountRepository;
             this.items = items;
+            this.currencyId = currencyId;
         }
     }
 
@@ -36,13 +38,14 @@ public class PaymentDetailContainer extends CompactComponent<PaymentDetailContai
 
     private void addItemDetails(@NonNull final ViewGroup parent) {
         for (final Item item : props.items) {
-            parent.addView(new DetailItem(item).render(parent));
+            parent.addView(new DetailItem(new DetailItem.Props(item, props.currencyId)).render(parent));
         }
     }
 
     private void addDiscount(@NonNull final ViewGroup parent) {
         if (props.discountRepository.hasValidDiscount() || props.discountRepository.isNotAvailableDiscount()) {
-             final DiscountDetailContainer discountDetailContainer = new DiscountDetailContainer(new DiscountDetailContainer.Props(DialogTitleType.SMALL, props.discountRepository));
+            final DiscountDetailContainer discountDetailContainer = new DiscountDetailContainer(
+                new DiscountDetailContainer.Props(DialogTitleType.SMALL, props.discountRepository));
             discountDetailContainer.render(parent);
         }
     }

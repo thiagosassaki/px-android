@@ -25,13 +25,13 @@ public class ItemTest {
     @Test
     public void whenListIsEmptyValidItemsIsFalse() {
         items.clear();
-        assertFalse(Item.validItems(items));
+        assertFalse(Item.areItemsValid(items));
     }
 
     @Test
     public void whenItemsHaveOneValidItemValidItemsReturnTrue() {
         items.add(stubValidItem());
-        assertTrue(Item.validItems(items));
+        assertTrue(Item.areItemsValid(items));
     }
 
     @Test
@@ -40,7 +40,7 @@ public class ItemTest {
         items.add(stubValidItem(20, 1));
         items.add(stubValidItem());
         items.add(stubValidItem());
-        assertTrue(Item.validItems(items));
+        assertTrue(Item.areItemsValid(items));
     }
 
     @Test
@@ -49,13 +49,13 @@ public class ItemTest {
         items.add(stubValidItem());
         items.add(stubValidItemOtherCurrency());
         items.add(stubValidItem());
-        assertFalse(Item.validItems(items));
+        assertFalse(Item.areItemsValid(items));
     }
 
     @Test
     public void whenItemsHaveInvalidThenValidItemsReturnFalse() {
         items.add(stubInvalidItem());
-        assertFalse(Item.validItems(items));
+        assertFalse(Item.areItemsValid(items));
     }
 
     private Item stubValidItem() {

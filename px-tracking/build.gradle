@@ -59,5 +59,3 @@ dependencies {
     api "com.google.code.gson:gson:2.7"
     api "com.squareup.retrofit2:converter-gson:2.1.0"
 }
-
-apply from:"$rootDir/gradle/deploy_tracking.gradle"

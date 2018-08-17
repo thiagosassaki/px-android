@@ -842,7 +842,6 @@ public class CheckoutPresenterTest {
             .setPaymentStatusDetail(Payment.StatusDetail.STATUS_DETAIL_INVALID_ESC)
             .build();
 
-
         final CheckoutPresenter presenter = getBasePresenter(view, provider);
 
         presenter.checkStartPaymentResultActivity(paymentResult);
