@@ -1,9 +1,9 @@
 package com.mercadopago.android.px.model;
 
-import com.mercadopago.android.px.CheckoutActivity;
+import com.mercadopago.android.px.internal.features.CheckoutActivity;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.model.exceptions.ExceptionHandler;
-import com.mercadopago.android.px.services.exceptions.CardTokenException;
+import com.mercadopago.android.px.model.exceptions.CardTokenException;
 import com.mercadopago.android.px.test.BaseTest;
 import com.mercadopago.android.px.test.StaticMock;
 

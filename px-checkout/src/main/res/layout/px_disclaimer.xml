@@ -8,7 +8,7 @@
               android:background="@color/px_review_summary_background"
               android:orientation="vertical">
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/cftText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

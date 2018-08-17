@@ -1,6 +1,6 @@
 package com.mercadopago.android.px.guessing;
 
-import com.mercadopago.android.px.controllers.PaymentMethodGuessingController;
+import com.mercadopago.android.px.internal.controllers.PaymentMethodGuessingController;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
@@ -28,19 +28,18 @@ import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import com.mercadopago.android.px.mvp.TaggedCallback;
-import com.mercadopago.android.px.preferences.AdvancedConfiguration;
+import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
+import com.mercadopago.android.px.configuration.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.PaymentPreference;
-import com.mercadopago.android.px.presenters.GuessingCardPresenter;
-import com.mercadopago.android.px.providers.GuessingCardProvider;
-import com.mercadopago.android.px.services.exceptions.ApiException;
-import com.mercadopago.android.px.services.exceptions.CardTokenException;
-import com.mercadopago.android.px.tracker.MPTrackingContext;
-import com.mercadopago.android.px.uicontrollers.card.CardView;
-import com.mercadopago.android.px.util.ApiUtil;
+import com.mercadopago.android.px.internal.features.guessing_card.GuessingCardPresenter;
+import com.mercadopago.android.px.internal.features.providers.GuessingCardProvider;
+import com.mercadopago.android.px.model.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.CardTokenException;
+import com.mercadopago.android.px.internal.tracker.MPTrackingContext;
+import com.mercadopago.android.px.internal.features.uicontrollers.card.CardView;
 import com.mercadopago.android.px.utils.CardTestUtils;
 import com.mercadopago.android.px.utils.StubSuccessMpCall;
-import com.mercadopago.android.px.views.GuessingCardActivityView;
+import com.mercadopago.android.px.internal.features.guessing_card.GuessingCardActivityView;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +49,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static com.mercadopago.android.px.internal.util.ApiUtil.RequestOrigin.GET_IDENTIFICATION_TYPES;
+import static com.mercadopago.android.px.internal.util.ApiUtil.RequestOrigin.GET_PAYMENT_METHODS;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -151,7 +152,7 @@ public class GuessingCardPresenterTest {
     }
 
     @Test
-    public void ifPaymentMethodListSetIsEmptyThenShowError() {
+    public void ifPaymentMethodListSetisEmptyhenShowError() {
 
         List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
         provider.setIdentificationTypesResponse(identificationTypesList);
@@ -365,7 +366,7 @@ public class GuessingCardPresenterTest {
     public void ifGetPaymentMethodFailsThenShowErrorMessage() {
 
         ApiException apiException = PaymentMethods.getDoNotFindPaymentMethodsException();
-        MercadoPagoError mpException = new MercadoPagoError(apiException, ApiUtil.RequestOrigin.GET_PAYMENT_METHODS);
+        MercadoPagoError mpException = new MercadoPagoError(apiException, GET_PAYMENT_METHODS);
         provider.setPaymentMethodsResponse(mpException);
 
         PaymentPreference paymentPreference = new PaymentPreference();
@@ -457,7 +458,7 @@ public class GuessingCardPresenterTest {
 
         final ApiException apiException = IdentificationTypes.getDoNotFindIdentificationTypesException();
         final MercadoPagoError mpException =
-            new MercadoPagoError(apiException, ApiUtil.RequestOrigin.GET_IDENTIFICATION_TYPES);
+            new MercadoPagoError(apiException, GET_IDENTIFICATION_TYPES);
         PaymentPreference paymentPreference = new PaymentPreference();
         presenter.setPaymentPreference(paymentPreference);
         provider.setIdentificationTypesResponse(mpException);
@@ -468,7 +469,7 @@ public class GuessingCardPresenterTest {
     }
 
     @Test
-    public void ifGetIdentificationTypesIsEmptyThenShowErrorMessage() {
+    public void ifGetIdentificationTypesisEmptyhenShowErrorMessage() {
 
         List<IdentificationType> identificationTypes = new ArrayList<>();
         provider.setIdentificationTypesResponse(identificationTypes);
@@ -835,7 +836,7 @@ public class GuessingCardPresenterTest {
     }
 
     @Test
-    public void whenGuessedPaymentMethodsListIsEmptyThenPaymentMethodShouldBeUndefined() {
+    public void whenGuessedPaymentMethodsListisEmptyhenPaymentMethodShouldBeUndefined() {
 
         List<PaymentMethod> paymentMethodList = new ArrayList<>();
 

@@ -5,17 +5,18 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import com.mercadopago.android.px.core.MercadoPagoServicesAdapter;
+import com.mercadopago.android.px.core.PaymentProcessor;
+import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
+import com.mercadopago.android.px.internal.datasource.MercadoPagoServicesAdapter;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
+import com.mercadopago.android.px.internal.util.ApiUtil;
+import com.mercadopago.android.px.model.GenericPayment;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentBody;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import com.mercadopago.android.px.mvp.TaggedCallback;
-import com.mercadopago.android.px.plugins.model.GenericPayment;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.util.ApiUtil;
 
 public class MercadoPagoPaymentProcessor implements PaymentProcessor {
 
@@ -59,7 +60,7 @@ public class MercadoPagoPaymentProcessor implements PaymentProcessor {
         //TODO idempotency key, customer id?
         //TODO payer identification - in 40.0.0 it;s mutable for brasil.
         createPaymentInMercadoPago(paymentSettings.getTransactionId(), data.checkoutPreference, data.paymentData,
-            paymentSettings.getAdvancedConfiguration().isBinaryMode(), publicKey,
+            data.checkoutPreference.isBinaryMode(), publicKey,
             new TaggedCallback<Payment>(ApiUtil.RequestOrigin.CREATE_PAYMENT) {
                 @Override
                 public void onSuccess(final Payment payment) {

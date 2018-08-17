@@ -1,7 +1,7 @@
 package com.mercadopago.android.px.utils;
 
-import com.mercadopago.android.px.services.adapters.MPCall;
-import com.mercadopago.android.px.services.callbacks.Callback;
+import com.mercadopago.android.px.internal.callbacks.MPCall;
+import com.mercadopago.android.px.services.Callback;
 
 public class StubSuccessMpCall<T> implements MPCall<T> {
 

@@ -32,7 +32,7 @@
                 android:visibility="gone"
                 android:background="@color/px_background_blue">
 
-                <com.mercadopago.android.px.customviews.MPTextView
+                <com.mercadopago.android.px.internal.view.MPTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:font_style="light"
@@ -61,7 +61,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <com.mercadopago.android.px.views.AmountView
+    <com.mercadopago.android.px.internal.view.AmountView
         android:id="@+id/amount_view"
         android:layout_weight="1"
         android:layout_width="match_parent"

@@ -1,6 +1,8 @@
 package com.mercadopago.android.px.internal.datasource;
 
 import android.support.annotation.NonNull;
+import com.mercadopago.android.px.configuration.PaymentConfiguration;
+import com.mercadopago.android.px.core.PaymentMethodPlugin;
 import com.mercadopago.android.px.internal.datasource.cache.GroupsCache;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
@@ -10,22 +12,19 @@ import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.model.requests.GroupsIntent;
-import com.mercadopago.android.px.plugins.PaymentMethodPlugin;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.preferences.PaymentConfiguration;
-import com.mercadopago.android.px.services.CheckoutService;
-import com.mercadopago.android.px.services.adapters.MPCall;
-import com.mercadopago.android.px.services.callbacks.Callback;
-import com.mercadopago.android.px.services.constants.ProcessingModes;
-import com.mercadopago.android.px.services.core.Settings;
-import com.mercadopago.android.px.services.exceptions.ApiException;
-import com.mercadopago.android.px.util.MercadoPagoESC;
+import com.mercadopago.android.px.internal.services.CheckoutService;
+import com.mercadopago.android.px.internal.callbacks.MPCall;
+import com.mercadopago.android.px.services.Callback;
+import com.mercadopago.android.px.internal.constants.ProcessingModes;
+import com.mercadopago.android.px.internal.core.Settings;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import static com.mercadopago.android.px.services.core.Settings.PAYMENT_METHODS_OPTIONS_API_VERSION;
+import static com.mercadopago.android.px.internal.core.Settings.PAYMENT_METHODS_OPTIONS_API_VERSION;
 
 public class GroupsService implements GroupsRepository {
 

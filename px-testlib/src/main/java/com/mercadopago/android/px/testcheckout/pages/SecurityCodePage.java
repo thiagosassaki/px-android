@@ -17,7 +17,7 @@ public class SecurityCodePage extends PageObject<CheckoutValidator> {
     public SecurityCodePage() {
     }
 
-    protected SecurityCodePage(final CheckoutValidator validator) {
+    public SecurityCodePage(final CheckoutValidator validator) {
         super(validator);
     }
 

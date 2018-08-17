@@ -2,7 +2,7 @@ package com.mercadopago.android.px.model;
 
 import android.content.Context;
 import android.text.TextUtils;
-import com.mercadopago.android.px.services.exceptions.CardTokenException;
+import com.mercadopago.android.px.model.exceptions.CardTokenException;
 import java.util.Calendar;
 import java.util.Locale;
 

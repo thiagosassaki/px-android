@@ -8,22 +8,19 @@ import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.util.Log;
 import android.widget.Toast;
+import com.mercadopago.android.px.configuration.AdvancedConfiguration;
+import com.mercadopago.android.px.configuration.ReviewAndConfirmConfiguration;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.core.MercadoPagoCheckout.Builder;
+import com.mercadopago.android.px.internal.util.ViewUtils;
 import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import com.mercadopago.android.px.plugins.model.BusinessPayment;
-import com.mercadopago.android.px.plugins.model.ExitAction;
-import com.mercadopago.android.px.preferences.AdvancedConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
-import com.mercadopago.android.px.tracking.listeners.TracksListener;
-import com.mercadopago.android.px.tracking.tracker.MPTracker;
-import com.mercadopago.android.px.util.ViewUtils;
-import com.mercadopago.example.R;
+import com.mercadopago.android.px.tracking.PXEventListener;
+import com.mercadopago.android.px.tracking.internal.MPTracker;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -116,7 +113,7 @@ public final class ExamplesUtils {
             }
         }
 
-        return createBase(builder.build());
+        return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, builder.build(), PaymentConfigurationUtils.create());
     }
 
     @NonNull
@@ -131,18 +128,18 @@ public final class ExamplesUtils {
 
     private static Builder customExitReviewAndConfirm() {
 
-        final ReviewAndConfirmPreferences preferences = new ReviewAndConfirmPreferences.Builder()
+        final ReviewAndConfirmConfiguration preferences = new ReviewAndConfirmConfiguration.Builder()
             .setTopFragment(Fragment.class, new Bundle())
             .build();
 
         return createBaseWithDecimals().setAdvancedConfiguration(
             new AdvancedConfiguration.Builder()
-                .setReviewAndConfirmPreferences(preferences)
+                .setReviewAndConfirmConfiguration(preferences)
                 .build());
     }
 
     private static Builder startBaseFlowWithTrackListener() {
-        MPTracker.getInstance().setTracksListener(new TracksListener<HashMap<String, String>>() {
+        MPTracker.getInstance().setTracksListener(new PXEventListener<HashMap<String, String>>() {
 
             @Override
             public void onScreenLaunched(@NonNull final String screenName,
@@ -162,10 +159,6 @@ public final class ExamplesUtils {
         return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, "99628543-518e6477-ac0d-4f4a-8097-51c2fcc00b71");
     }
 
-    private static Builder createBase(@NonNull final CheckoutPreference checkoutPreference) {
-        return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, checkoutPreference);
-    }
-
     public static Builder createBase() {
         return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, DUMMY_PREFERENCE_ID);
     }
@@ -183,26 +176,16 @@ public final class ExamplesUtils {
     }
 
     private static Builder createBaseWithTwoItemsAndCollectorIcon() {
-        final ReviewAndConfirmPreferences preferences = new ReviewAndConfirmPreferences.Builder()
-            .setCollectorIcon(R.drawable.px_collector_icon)
+        final ReviewAndConfirmConfiguration preferences = new ReviewAndConfirmConfiguration.Builder()
             .build();
 
         return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, DUMMY_PREFERENCE_ID_WITH_TWO_ITEMS)
             .setAdvancedConfiguration(new AdvancedConfiguration.Builder()
-                .setReviewAndConfirmPreferences(preferences)
+                .setReviewAndConfirmConfiguration(preferences)
                 .build());
     }
 
     private static Builder createBaseWithOneItemLongTitle() {
         return new Builder(DUMMY_MERCHANT_PUBLIC_KEY, DUMMY_PREFERENCE_ID_WITH_ITEM_LONG_TITLE);
-    }
-
-    /* default */
-    static BusinessPayment getBusinessPaymentApproved() {
-        return new BusinessPayment.Builder(BusinessPayment.Decorator.APPROVED, Payment.StatusCodes.STATUS_APPROVED,
-            Payment.StatusDetail.STATUS_DETAIL_ACCREDITED,
-            R.drawable.px_icon_card, "Title")
-            .setPrimaryButton(new ExitAction("Button Name", 23))
-            .build();
     }
 }

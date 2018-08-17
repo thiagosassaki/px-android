@@ -1,7 +1,7 @@
 package com.mercadopago.android.px.internal.datasource;
 
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.plugins.PaymentMethodPlugin;
+import com.mercadopago.android.px.core.PaymentMethodPlugin;
 
 public class PluginInitializationTask {
 

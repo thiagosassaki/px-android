@@ -34,7 +34,7 @@
                     android:maxWidth="40dp"
                     android:layout_gravity="center_vertical"/>
 
-                <com.mercadopago.android.px.customviews.MPTextView
+                <com.mercadopago.android.px.internal.view.MPTextView
                     android:layout_marginLeft="10dp"
                     android:layout_marginStart="10dp"
                     android:layout_width="wrap_content"

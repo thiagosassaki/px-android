@@ -2,7 +2,7 @@ package com.mercadopago.android.px.model;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Size;
-import com.mercadopago.android.px.services.util.CurrenciesUtil;
+import com.mercadopago.android.px.internal.util.CurrenciesUtil;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;

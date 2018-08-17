@@ -1,13 +1,14 @@
 package com.mercadopago.android.px.viewmodel.mappers;
 
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.core.CheckoutStore;
+import com.mercadopago.android.px.internal.datasource.CheckoutStore;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
+import com.mercadopago.android.px.internal.viewmodel.BusinessPaymentModel;
+import com.mercadopago.android.px.internal.viewmodel.mappers.Mapper;
+import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.PaymentData;
-import com.mercadopago.android.px.plugins.model.BusinessPayment;
-import com.mercadopago.android.px.plugins.model.BusinessPaymentModel;
 
 public class BusinessModelMapper extends Mapper<BusinessPayment, BusinessPaymentModel> {
 

@@ -3,11 +3,11 @@ package com.mercadopago.android.px.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.services.util.ParcelableUtil;
+import com.mercadopago.android.px.internal.util.ParcelableUtil;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import static com.mercadopago.android.px.services.util.CurrenciesUtil.isValidCurrency;
+import static com.mercadopago.android.px.internal.util.CurrenciesUtil.isValidCurrency;
 
 public class Discount implements Serializable, Parcelable {
     /**

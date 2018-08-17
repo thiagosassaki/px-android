@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:visibility="visible">
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
@@ -19,7 +19,7 @@
         android:textSize="14dp"
         app:font_style="light"/>
 
-    <com.mercadopago.android.px.customviews.MPEditText
+    <com.mercadopago.android.px.internal.view.MPEditText
         android:id="@+id/mpsdkLastName"
         android:layout_width="293dp"
         android:layout_height="wrap_content"

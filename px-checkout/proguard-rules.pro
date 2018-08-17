@@ -18,19 +18,15 @@
 
 
 -keep class com.mercadopago.android.px.model.** { *; } #dtos
--keep class com.mercadopago.android.px.viewmodel.** { *; } #dtos
--keep class com.mercadopago.android.px.preferences.** { *; } #dtos
+-keep class com.mercadopago.android.px.internal.viewmodel.** { *; } #dtos
+-keep class com.mercadopago.android.px.configuration.** { *; } #dtos
 -keep class com.mercadopago.android.px.constants.PaymentTypes { *; } #dtos
--keep class com.mercadopago.android.px.plugins.PaymentResultAction { *; } #dtos
--keep class com.mercadopago.android.px.plugins.model.** { *; } #dtos
 
--dontnote com.mercadopago.android.px.preferences.**
+-dontnote com.mercadopago.android.px.configuration.**
 -dontnote com.mercadopago.android.px.model.**
--dontnote com.mercadopago.android.px.viewmodel.**
--dontnote com.mercadopago.android.px.plugins.PaymentResultAction
+-dontnote com.mercadopago.android.px.internal.viewmodel.**
 -dontnote com.mercadopago.android.px.constants.PaymentTypes
--dontnote com.mercadopago.android.px.plugins.model.**
--dontnote com.mercadopago.android.px.util.MercadoPagoESCImpl #se usa esta clase pero no se tiene la lib
+-dontnote com.mercadopago.android.px.internal.datasource.MercadoPagoESCImpl #se usa esta clase pero no se tiene la lib
 
 ######################## Picasso #########################
 -dontwarn com.squareup.okhttp.**

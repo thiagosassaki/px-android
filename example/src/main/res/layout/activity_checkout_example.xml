@@ -32,7 +32,7 @@
                 android:layout_marginTop="20dp"
                 android:src="@drawable/plugandplay"/>
 
-            <com.mercadopago.android.px.customviews.MPTextView
+            <com.mercadopago.android.px.internal.view.MPTextView
                 style="@style/big_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
                 android:singleLine="false"
                 android:text="@string/checkout_title"/>
 
-            <com.mercadopago.android.px.customviews.MPTextView
+            <com.mercadopago.android.px.internal.view.MPTextView
                 style="@style/form_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
                 android:singleLine="false"
                 android:text="@string/checkout_description"/>
 
-            <com.mercadopago.android.px.customviews.MPButton
+            <com.mercadopago.android.px.internal.view.MPButton
                 android:id="@+id/continueButton"
                 style="@style/px_button_normal"
                 android:layout_width="match_parent"
@@ -62,7 +62,7 @@
                 android:layout_marginTop="25dp"
                 android:text="@string/px_continue_label"/>
 
-            <com.mercadopago.android.px.customviews.MPButton
+            <com.mercadopago.android.px.internal.view.MPButton
                 android:id="@+id/select_checkout"
                 style="@style/px_button_normal"
                 android:layout_width="match_parent"

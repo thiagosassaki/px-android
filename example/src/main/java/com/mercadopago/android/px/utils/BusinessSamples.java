@@ -4,23 +4,24 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pair;
 import com.mercadopago.SampleTopFragment;
+import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
+import com.mercadopago.android.px.internal.features.plugins.SamplePaymentMethodPlugin;
+import com.mercadopago.android.px.internal.features.plugins.SamplePaymentProcessor;
+import com.mercadopago.android.px.model.BusinessPayment;
+import com.mercadopago.android.px.model.ExitAction;
 import com.mercadopago.android.px.model.Payment;
-import com.mercadopago.android.px.plugins.SamplePaymentProcessor;
-import com.mercadopago.android.px.plugins.SamplePaymentMethodPlugin;
-import com.mercadopago.android.px.plugins.model.BusinessPayment;
-import com.mercadopago.android.px.plugins.model.ExitAction;
-import com.mercadopago.android.px.preferences.PaymentConfiguration;
 import com.mercadopago.example.R;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import static com.mercadopago.android.px.utils.ExamplesUtils.createBase;
 
 final class BusinessSamples {
 
     private static final String BUTTON_PRIMARY_NAME = "ButtonPrimaryName";
     private static final String BUTTON_SECONDARY_NAME = "ButtonSecondaryName";
+
+    private static final String DUMMY_MERCHANT_PUBLIC_KEY = "TEST-c6d9b1f9-71ff-4e05-9327-3c62468a23ee";
+    private static final String DUMMY_PREFERENCE_ID = "243962506-0bb62e22-5c7b-425e-a0a6-c22d0f4758a9";
 
     private BusinessSamples() {
     }
@@ -119,8 +120,9 @@ final class BusinessSamples {
 
     private static MercadoPagoCheckout.Builder customBusinessPayment(final BusinessPayment businessPayment) {
         final SamplePaymentProcessor samplePaymentProcessor = new SamplePaymentProcessor(businessPayment);
-        return createBase().setPaymentConfiguration(new PaymentConfiguration.Builder(samplePaymentProcessor)
-            .addPaymentMethodPlugin(new SamplePaymentMethodPlugin())
-            .build());
+        return new MercadoPagoCheckout.Builder(DUMMY_MERCHANT_PUBLIC_KEY, DUMMY_PREFERENCE_ID,
+            new PaymentConfiguration.Builder(samplePaymentProcessor)
+                .addPaymentMethodPlugin(new SamplePaymentMethodPlugin())
+                .build());
     }
 }

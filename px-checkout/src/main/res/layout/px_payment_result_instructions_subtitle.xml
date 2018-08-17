@@ -6,7 +6,7 @@
              android:background="@color/px_white"
              android:padding="@dimen/px_m_margin">
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/msdpkInstructionsSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

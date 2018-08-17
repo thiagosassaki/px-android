@@ -1,5 +1,6 @@
 package com.mercadopago.android.px.securitycode;
 
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.mocks.Cards;
 import com.mercadopago.android.px.mocks.Issuers;
@@ -17,14 +18,13 @@ import com.mercadopago.android.px.model.SavedCardToken;
 import com.mercadopago.android.px.model.SavedESCCardToken;
 import com.mercadopago.android.px.model.SecurityCode;
 import com.mercadopago.android.px.model.Token;
-import com.mercadopago.android.px.mvp.TaggedCallback;
-import com.mercadopago.android.px.presenters.SecurityCodePresenter;
-import com.mercadopago.android.px.providers.SecurityCodeProvider;
-import com.mercadopago.android.px.services.exceptions.ApiException;
-import com.mercadopago.android.px.services.exceptions.CardTokenException;
+import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
+import com.mercadopago.android.px.internal.features.SecurityCodePresenter;
+import com.mercadopago.android.px.internal.features.providers.SecurityCodeProvider;
+import com.mercadopago.android.px.model.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.CardTokenException;
 import com.mercadopago.android.px.utils.MVPStructure;
-import com.mercadopago.android.px.views.SecurityCodeActivityView;
-import com.mercadopago.android.px.util.TextUtils;
+import com.mercadopago.android.px.internal.features.SecurityCodeActivityView;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -478,7 +478,7 @@ public class SecurityCodePresenterTest {
     }
 
     private boolean isErrorShown(SecurityCodeMockedView view) {
-        return !TextUtils.isEmpty(view.errorMessage);
+        return !TextUtil.isEmpty(view.errorMessage);
     }
 
     private PaymentRecovery getPaymentRecoveryForESC(PaymentMethod paymentMethod) {

@@ -43,4 +43,9 @@ public class InstallmentsPage extends PageObject<CheckoutValidator> {
 
         return new ReviewAndConfirmPage(validator);
     }
+
+    public DiscountDetailPage pressOnDiscountDetail() {
+        onView(withId(R.id.amount_view)).perform(click());
+        return new DiscountDetailPage(validator);
+    }
 }

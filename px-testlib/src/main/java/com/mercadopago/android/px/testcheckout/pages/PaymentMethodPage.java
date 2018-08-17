@@ -18,6 +18,12 @@ public class PaymentMethodPage extends PageObject<CheckoutValidator> {
         super(validator);
     }
 
+    public SecurityCodePage selectSavedDebitCard() {
+        onView(withId(R.id.mpsdkGroupsList))
+            .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        return new SecurityCodePage(validator);
+    }
+
     public CardPage selectCard() {
         onView(withId(R.id.mpsdkGroupsList))
             .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
@@ -28,6 +34,16 @@ public class PaymentMethodPage extends PageObject<CheckoutValidator> {
         onView(withId(R.id.mpsdkGroupsList))
             .perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));
         return new CashPage(validator);
+    }
+
+    public DiscountDetailPage pressOnDiscountDetail() {
+        onView(withId(R.id.amount_view)).perform(click());
+        return new DiscountDetailPage(validator);
+    }
+
+    public DiscountCodeInputPage pressOnDiscountCodeInput() {
+        onView(withId(R.id.amount_view)).perform(click());
+        return new DiscountCodeInputPage(validator);
     }
 
     @Override

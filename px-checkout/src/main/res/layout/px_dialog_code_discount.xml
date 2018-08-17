@@ -9,7 +9,7 @@
     android:orientation="vertical"
     android:padding="@dimen/px_m_margin">
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/px_xl_margin"
@@ -30,6 +30,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:focusable="true"
+            android:clickable="true"
             custom:ui_textFieldMaxLines="1"/>
 
         <com.mercadolibre.android.ui.widgets.MeliSpinner

@@ -4,10 +4,10 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.mocks.IdentificationTypes;
 import com.mercadopago.android.px.model.Identification;
 import com.mercadopago.android.px.model.IdentificationType;
-import com.mercadopago.android.px.mvp.TaggedCallback;
-import com.mercadopago.android.px.presenters.PayerInformationPresenter;
-import com.mercadopago.android.px.providers.PayerInformationProvider;
-import com.mercadopago.android.px.views.PayerInformationView;
+import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
+import com.mercadopago.android.px.internal.features.PayerInformationPresenter;
+import com.mercadopago.android.px.internal.features.providers.PayerInformationProvider;
+import com.mercadopago.android.px.internal.features.PayerInformationView;
 import java.util.List;
 import org.junit.Test;
 

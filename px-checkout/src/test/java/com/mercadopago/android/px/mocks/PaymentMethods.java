@@ -1,10 +1,10 @@
 package com.mercadopago.android.px.mocks;
 
 import com.google.gson.reflect.TypeToken;
+import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.model.PaymentMethod;
-import com.mercadopago.android.px.services.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.utils.ResourcesUtil;
-import com.mercadopago.android.px.util.JsonUtil;
 import java.lang.reflect.Type;
 import java.util.List;
 

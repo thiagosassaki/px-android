@@ -1,6 +1,6 @@
 package com.mercadopago.android.px.model;
 
-import com.mercadopago.android.px.util.TextUtils;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -79,6 +79,6 @@ public class PaymentData implements Serializable {
     }
 
     public boolean containsCardInfo() {
-        return getToken() != null && !TextUtils.isEmpty(getToken().getCardId());
+        return getToken() != null && !TextUtil.isEmpty(getToken().getCardId());
     }
 }

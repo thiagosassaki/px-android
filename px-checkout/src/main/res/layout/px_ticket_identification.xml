@@ -19,7 +19,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.mercadopago.android.px.customviews.MPTextView
+            <com.mercadopago.android.px.internal.view.MPTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -37,7 +37,7 @@
                 android:paddingLeft="15dp"
                 android:paddingStart="15dp">
 
-                <com.mercadopago.android.px.customviews.MPTextView
+                <com.mercadopago.android.px.internal.view.MPTextView
                     android:id="@+id/mpsdkIdentificationTypeId"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -51,7 +51,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <com.mercadopago.android.px.customviews.MPTextView
+                    <com.mercadopago.android.px.internal.view.MPTextView
                         android:id="@+id/mpsdkIdentificationCardholderContainer"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -69,7 +69,7 @@
                         app:autoSizeTextType="uniform"
                         app:font_style="mono_regular"/>
 
-                    <com.mercadopago.android.px.customviews.MPTextView
+                    <com.mercadopago.android.px.internal.view.MPTextView
                         android:id="@+id/mpsdkIdNumberView"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -103,7 +103,7 @@
                     android:paddingRight="7dp"
                     android:paddingStart="15dp">
 
-                    <com.mercadopago.android.px.customviews.MPTextView
+                    <com.mercadopago.android.px.internal.view.MPTextView
                         android:id="@+id/mpsdkNameView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -121,7 +121,7 @@
                     android:layout_marginTop="10dp"
                     android:visibility="gone">
 
-                    <com.mercadopago.android.px.customviews.MPTextView
+                    <com.mercadopago.android.px.internal.view.MPTextView
                         android:id="@+id/mpsdkLastnameView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

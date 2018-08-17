@@ -55,7 +55,7 @@
                 android:paddingRight="8dp"
                 android:paddingStart="8dp">
 
-                <com.mercadopago.android.px.customviews.MPTextView
+                <com.mercadopago.android.px.internal.view.MPTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="35dp"
@@ -77,7 +77,7 @@
                     android:paddingRight="2dp"
                     android:paddingStart="2dp">
 
-                    <com.mercadopago.android.px.customviews.MPTextView
+                    <com.mercadopago.android.px.internal.view.MPTextView
                         android:id="@+id/mpsdkIdentificationCardholderContainer"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -91,7 +91,7 @@
                         app:autoSizeTextType="uniform"
                         app:font_style="mono_regular"/>
 
-                    <com.mercadopago.android.px.customviews.MPTextView
+                    <com.mercadopago.android.px.internal.view.MPTextView
                         android:id="@+id/mpsdkIdNumberView"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"

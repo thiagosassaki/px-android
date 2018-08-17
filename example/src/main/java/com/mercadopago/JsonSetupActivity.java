@@ -18,10 +18,12 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import com.google.gson.JsonSyntaxException;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
+import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.util.JsonUtil;
-import com.mercadopago.android.px.util.TextUtils;
+import com.mercadopago.android.px.internal.util.TextUtil;
+import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.utils.CheckoutConfiguration;
+import com.mercadopago.android.px.utils.PaymentConfigurationUtils;
 import com.mercadopago.example.R;
 
 public class JsonSetupActivity extends AppCompatActivity {
@@ -93,12 +95,13 @@ public class JsonSetupActivity extends AppCompatActivity {
     private void startCheckout() {
         final MercadoPagoCheckout.Builder checkoutBuilder;
 
-        if (!TextUtils.isEmpty(mConfiguration.getPrefId())) {
+        if (!TextUtil.isEmpty(mConfiguration.getPrefId())) {
             checkoutBuilder =
                 new MercadoPagoCheckout.Builder(mConfiguration.getPublicKey(), mConfiguration.getPrefId());
         } else {
             final CheckoutPreference preference = createCheckoutPreference(mConfiguration);
-            checkoutBuilder = new MercadoPagoCheckout.Builder(mConfiguration.getPublicKey(), preference);
+            checkoutBuilder = new MercadoPagoCheckout.Builder(mConfiguration.getPublicKey(), preference,
+                PaymentConfigurationUtils.create());
         }
 
         checkoutBuilder.setAdvancedConfiguration(mConfiguration.getAdvancedConfiguration());
@@ -117,7 +120,7 @@ public class JsonSetupActivity extends AppCompatActivity {
         final String configsJson = mJsonInputEditText.getText().toString();
         try {
             mConfiguration = JsonUtil.getInstance().fromJson(configsJson, CheckoutConfiguration.class);
-            if (!TextUtils.isEmpty(configsJson)) {
+            if (!TextUtil.isEmpty(configsJson)) {
                 isOk = true;
             }
         } catch (final JsonSyntaxException exception) {

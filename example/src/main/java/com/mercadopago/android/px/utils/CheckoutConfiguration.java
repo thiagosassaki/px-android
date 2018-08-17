@@ -1,11 +1,11 @@
 package com.mercadopago.android.px.utils;
 
 import com.google.gson.annotations.SerializedName;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Sites;
-import com.mercadopago.android.px.preferences.AdvancedConfiguration;
-import com.mercadopago.android.px.util.TextUtils;
+import com.mercadopago.android.px.configuration.AdvancedConfiguration;
 import java.util.List;
 
 public class CheckoutConfiguration {
@@ -45,7 +45,7 @@ public class CheckoutConfiguration {
     }
 
     public Site getSite() {
-        return TextUtils.isEmpty(siteId) ? null : Sites.getById(siteId);
+        return TextUtil.isEmpty(siteId) ? null : Sites.getById(siteId);
     }
 
     public Integer getTime() {

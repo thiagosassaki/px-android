@@ -19,7 +19,7 @@
         android:maxHeight="20dp"
         tools:src="@drawable/px_amex"/>
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/mpsdkPaymentMethodName"
         android:layout_width="0dp"
         android:layout_height="match_parent"

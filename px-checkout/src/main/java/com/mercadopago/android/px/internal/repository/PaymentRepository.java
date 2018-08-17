@@ -1,7 +1,7 @@
 package com.mercadopago.android.px.internal.repository;
 
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.viewmodel.OneTapModel;
+import com.mercadopago.android.px.internal.viewmodel.OneTapModel;
 
 public interface PaymentRepository {
 

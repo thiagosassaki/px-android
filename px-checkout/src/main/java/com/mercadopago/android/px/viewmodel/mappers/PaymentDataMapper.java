@@ -4,12 +4,13 @@ import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
+import com.mercadopago.android.px.internal.viewmodel.mappers.Mapper;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.requests.PaymentBodyIntent;
 
-import static com.mercadopago.android.px.util.TextUtils.isEmpty;
+import static com.mercadopago.android.px.internal.util.TextUtil.isEmpty;
 
 public class PaymentDataMapper extends Mapper<PaymentData, PaymentBodyIntent> {
 
@@ -30,15 +31,13 @@ public class PaymentDataMapper extends Mapper<PaymentData, PaymentBodyIntent> {
 
         //TODO Payer está en PaymentData. Se puede sacar de algún repository?
         final Payer payer = val.getPayer();
-
         //TODO ver si el email del payer está viniendo bien
-
-        PaymentBodyIntent.Builder paymentBodyIntentBuilder =
+        final PaymentBodyIntent.Builder paymentBodyIntentBuilder =
             new PaymentBodyIntent.Builder(paymentSettingRepository.getCheckoutPreferenceId(),
                 paymentSettingRepository.getPublicKey(), userSelectionRepository.getPaymentMethod().getId(),
                 payer.getEmail());
 
-        paymentBodyIntentBuilder.setBinaryMode(paymentSettingRepository.getAdvancedConfiguration().isBinaryMode());
+        paymentBodyIntentBuilder.setBinaryMode(paymentSettingRepository.getCheckoutPreference().isBinaryMode());
         paymentBodyIntentBuilder.setPayer(payer);
 
         if (paymentSettingRepository.getToken() != null) {
