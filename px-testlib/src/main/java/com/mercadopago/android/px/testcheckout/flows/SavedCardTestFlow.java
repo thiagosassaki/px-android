@@ -131,9 +131,6 @@ public class SavedCardTestFlow extends TestFlow {
 
     @NonNull
     private Item getFakeItem() {
-        final Item item = new Item("sarasa", 1, new BigDecimal(100));
-        item.setId("sarasa");
-        item.setCurrencyId("ARS");
-        return item;
+        return new Item.Builder("sarasa", 1, new BigDecimal(100)).setId("sarasa").build();
     }
 }
