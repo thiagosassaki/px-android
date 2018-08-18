@@ -11,6 +11,9 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Model that represents the item which will be paid.
+ */
 @SuppressWarnings("unused")
 public class Item implements Serializable, Parcelable {
 
@@ -38,8 +41,7 @@ public class Item implements Serializable, Parcelable {
     @Nullable
     private String currencyId;
 
-    /* default */
-    protected Item(final Builder builder) {
+    /* default */ Item(final Builder builder) {
         id = builder.id;
         title = builder.title;
         description = builder.description;
@@ -126,7 +128,7 @@ public class Item implements Serializable, Parcelable {
         return items.size() > 1 ? multipleDefault : items.get(0).getTitle();
     }
 
-    private Item(final Parcel in) {
+    /* default */ Item(final Parcel in) {
         title = in.readString();
         quantity = ParcelableUtil.getOptionalInteger(in);
         unitPrice = ParcelableUtil.getOptionalBigDecimal(in);
@@ -166,14 +168,27 @@ public class Item implements Serializable, Parcelable {
 
     @SuppressWarnings("unused")
     public static final class Builder {
+
+        //region mandatory params
         /* default */ @NonNull final String title;
         /* default */ @NonNull final Integer quantity;
         /* default */ @NonNull final BigDecimal unitPrice;
+        //endregion mandatory params
+
         /* default */ @Nullable String id;
         /* default */ @Nullable String description;
         /* default */ @Nullable String categoryId;
         /* default */ @Nullable String pictureUrl;
 
+        /**
+         * Builder for item construction.
+         * It should be used when checkout initialize without a preference id and
+         * it is initialize with a preference created programmatically.
+         *
+         * @param title item title
+         * @param quantity item quantity
+         * @param unitPrice item price
+         */
         public Builder(@NonNull final String title, @NonNull final Integer quantity,
             @NonNull final BigDecimal unitPrice) {
             this.title = title;
@@ -181,26 +196,59 @@ public class Item implements Serializable, Parcelable {
             this.unitPrice = unitPrice;
         }
 
+        /**
+         * Item identification is an optional value.
+         * You could use this value when you want to send an item identification to the backend.
+         *
+         * @param id item identification.
+         * @return builder
+         */
         public Builder setId(@NonNull final String id) {
             this.id = id;
             return this;
         }
 
+        /**
+         * You can add an item description with more information.
+         * Item description will be shown along the payment process.
+         *
+         * @param description item description.
+         * @return builder
+         */
         public Builder setDescription(@NonNull final String description) {
             this.description = description;
             return this;
         }
 
+        /**
+         * Item category id is an optional value.
+         * You could use this value when you want to send an item category identification to the backend.
+         *
+         * @param categoryId item category identification.
+         * @return builder
+         */
         public Builder setCategoryId(@NonNull final String categoryId) {
             this.categoryId = categoryId;
             return this;
         }
 
+        /**
+         * This value represents the URL of the item picture.
+         * Item picture will be shown along the payment process.
+         *
+         * @param pictureUrl item picture URL.
+         * @return builder
+         */
         public Builder setPictureUrl(@NonNull final String pictureUrl) {
             this.pictureUrl = pictureUrl;
             return this;
         }
 
+        /**
+         * It creates the item that will be paid.
+         *
+         * @return Item
+         */
         public Item build() {
             return new Item(this);
         }
