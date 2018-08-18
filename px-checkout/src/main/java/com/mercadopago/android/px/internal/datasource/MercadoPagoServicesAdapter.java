@@ -15,9 +15,6 @@ import java.util.Map;
 
 public class MercadoPagoServicesAdapter extends MercadoPagoServices {
 
-    private static final String MP_API_BASE_URL = "https://api.mercadopago.com";
-    private static final String MP_CHECKOUT_PAYMENTS_URI = "/v1/checkout/payments";
-
     public MercadoPagoServicesAdapter(@NonNull final Context mContext, @NonNull final String mPublicKey) {
         this(mContext, mPublicKey, null);
     }
@@ -36,8 +33,7 @@ public class MercadoPagoServicesAdapter extends MercadoPagoServices {
         payload.put("installments", paymentBody.getInstallments());
         payload.put("campaign_id", paymentBody.getCampaignId());
 
-        createPayment(paymentBody.getTransactionId(), MP_API_BASE_URL,
-            MP_CHECKOUT_PAYMENTS_URI,
+        createPayment(paymentBody.getTransactionId(),
             payload,
             new HashMap<String, String>(),
             callback);

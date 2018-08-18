@@ -28,7 +28,9 @@ public class PaymentDetailInfoDialog extends MeliDialog {
         final Session session = Session.getSession(view.getContext());
         final PaymentDetailContainer container =
             new PaymentDetailContainer(new PaymentDetailContainer.Props(session.getDiscountRepository(),
-                session.getConfigurationModule().getPaymentSettings().getCheckoutPreference().getItems()));
+                session.getConfigurationModule().getPaymentSettings().getCheckoutPreference().getItems(),
+                session.getConfigurationModule().getPaymentSettings().getCheckoutPreference().getSite()
+                    .getCurrencyId()));
         container.render((ViewGroup) view.findViewById(R.id.main_container));
     }
 

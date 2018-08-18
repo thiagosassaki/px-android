@@ -118,9 +118,7 @@ public final class ExamplesUtils {
 
     @NonNull
     private static CheckoutPreference.Builder getBasePreferenceBuilder() {
-        final Item item = new Item("Aaaa", 1, new BigDecimal(10));
-        item.setId("123");
-        item.setCurrencyId("ARS");
+        final Item item = new Item.Builder("title", 1, new BigDecimal(10)).setDescription("description").build();
 
         return new CheckoutPreference.Builder(Sites.ARGENTINA, "a@a.a",
             Collections.singletonList(item));

@@ -1,14 +1,20 @@
 package com.mercadopago.android.px.internal.services;
 
+import com.mercadopago.android.px.internal.callbacks.MPCall;
 import com.mercadopago.android.px.model.Installment;
 import com.mercadopago.android.px.model.Issuer;
+import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentMethod;
-import com.mercadopago.android.px.internal.callbacks.MPCall;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 
 /**
  * Created by mromar on 10/20/17.
@@ -34,4 +40,9 @@ public interface PaymentService {
         @Query("public_key") String publicKey, @Query("access_token") String privateKey,
         @Query("payment_method_id") String paymentMethodId, @Query("bin") String bin,
         @Query("processing_mode") String processingMode);
+
+    @POST("/v1/checkout/payments")
+    MPCall<Payment> createPayment(@Header("X-Idempotency-Key") String transactionId,
+        @Body Map<String, Object> additionalInfo,
+        @QueryMap Map<String, String> query);
 }

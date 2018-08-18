@@ -5,10 +5,9 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.datasource.cache.FileManager;
 import com.mercadopago.android.px.internal.util.JsonUtil;
+import com.mercadopago.android.px.internal.util.RetrofitUtil;
 import java.io.File;
 import retrofit2.Retrofit;
-
-import static com.mercadopago.android.px.services.MercadoPagoServices.getDefaultRetrofit;
 
 class ApplicationModule implements PreferenceComponent {
 
@@ -42,6 +41,6 @@ class ApplicationModule implements PreferenceComponent {
     }
 
     public Retrofit getRetrofitClient() {
-        return getDefaultRetrofit(context);
+        return RetrofitUtil.getRetrofitClient(context);
     }
 }
