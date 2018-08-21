@@ -163,7 +163,7 @@ public class ReviewAndConfirmConfiguration implements Serializable {
 
     @Deprecated
     public BigDecimal getTotalAmount() {
-        return null;
+        return BigDecimal.ZERO;
 //        return totalAmount;
     }
 
