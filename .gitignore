@@ -8,5 +8,6 @@ build
 .idea
 *.iml
 *.log
+reports
 px-checkout/jacoco.exec
 config/
