@@ -18,12 +18,15 @@ public interface PaymentMethodPlugin extends Serializable {
 
     /* default */ final class CheckoutData {
         @NonNull public final CheckoutPreference checkoutPreference;
-        @NonNull public final Discount discount;
+        @Nullable public final Discount discount;
+        @Nullable public final String privateKey;
 
         public CheckoutData(@NonNull final CheckoutPreference checkoutPreference,
-            @NonNull final Discount discount) {
+            @Nullable final Discount discount,
+            @Nullable final String privateKey) {
             this.checkoutPreference = checkoutPreference;
             this.discount = discount;
+            this.privateKey = privateKey;
         }
     }
 

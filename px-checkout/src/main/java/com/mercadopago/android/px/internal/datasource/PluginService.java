@@ -95,7 +95,8 @@ public class PluginService implements PluginRepository {
     public PluginInitializationTask getInitTask() {
         return new PluginInitializationTask(all(),
             new PaymentMethodPlugin.CheckoutData(paymentSettings.getCheckoutPreference(),
-                discountRepository.getDiscount()));
+                discountRepository.getDiscount(),
+                paymentSettings.getPrivateKey()));
     }
 
     @Override
