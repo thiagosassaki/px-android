@@ -147,7 +147,7 @@ public class PaymentResultContainerTest {
             .setPaymentData(paymentData)
             .build();
         final HeaderProps headerProps = getHeaderPropsFromContainerWith(paymentResult);
-        Assert.assertEquals(headerProps.background, R.color.px_blue_MP);
+        Assert.assertEquals(headerProps.background, R.color.px_colorPrimary);
     }
 
     @Test

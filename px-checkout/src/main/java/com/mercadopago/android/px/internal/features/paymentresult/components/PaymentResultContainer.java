@@ -26,10 +26,10 @@ public class PaymentResultContainer extends Component<PaymentResultProps, Void> 
         RendererFactory.register(PaymentResultContainer.class, PaymentResultRenderer.class);
     }
 
-    private static final int DEFAULT_STATUS_BAR_COLOR = R.color.px_blue_status_MP;
-    private static final int GREEN_STATUS_BAR_COLOR = R.color.px_green_status_MP;
-    private static final int RED_STATUS_BAR_COLOR = R.color.px_red_status_MP;
-    private static final int ORANGE_STATUS_BAR_COLOR = R.color.px_orange_status_MP;
+    private static final int DEFAULT_STATUS_BAR_COLOR = R.color.px_blue_status_bar;
+    private static final int GREEN_STATUS_BAR_COLOR = R.color.px_green_status_bar;
+    private static final int RED_STATUS_BAR_COLOR = R.color.px_red_status_bar;
+    private static final int ORANGE_STATUS_BAR_COLOR = R.color.px_orange_status_bar;
 
     public static final int DEFAULT_ICON_IMAGE = R.drawable.px_icon_default;
     public static final int ITEM_ICON_IMAGE = R.drawable.px_icon_product;
@@ -145,7 +145,7 @@ public class PaymentResultContainer extends Component<PaymentResultProps, Void> 
         } else if (isOrangeBackground(paymentResult)) {
             return R.color.ui_components_warning_color;
         } else {
-            return R.color.px_blue_MP;
+            return R.color.px_colorPrimary;
         }
     }
 
