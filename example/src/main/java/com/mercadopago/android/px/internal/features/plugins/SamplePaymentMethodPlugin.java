@@ -16,11 +16,6 @@ public class SamplePaymentMethodPlugin implements PaymentMethodPlugin {
     }
 
     @Override
-    public void init() {
-        //Do nothing
-    }
-
-    @Override
     @NonNull
     public PaymentMethodInfo getPaymentMethodInfo(@NonNull final Context context) {
         return new PaymentMethodInfo(
@@ -48,6 +43,11 @@ public class SamplePaymentMethodPlugin implements PaymentMethodPlugin {
     public Fragment getFragment(@NonNull final CheckoutData data,
         @NonNull final Context context) {
         return new SamplePaymentMethodPluginFragment();
+    }
+
+    @Override
+    public void init(@NonNull final CheckoutData checkoutData) {
+
     }
 
     @Override
