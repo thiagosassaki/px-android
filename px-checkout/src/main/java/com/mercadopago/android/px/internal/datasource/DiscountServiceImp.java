@@ -38,7 +38,6 @@ public class DiscountServiceImp implements DiscountRepository {
     public void configureMerchantDiscountManually(@Nullable final PaymentConfiguration paymentConfiguration) {
         if (paymentConfiguration != null && paymentConfiguration.getDiscountConfiguration() != null) {
             final DiscountConfiguration discountConfiguration = paymentConfiguration.getDiscountConfiguration();
-            //TODO Merchant discount // TODO ADD ERROR
             discountStorageService.configureDiscountManually(discountConfiguration.getDiscount(),
                 discountConfiguration.getCampaign(), discountConfiguration.isNotAvailable());
         }

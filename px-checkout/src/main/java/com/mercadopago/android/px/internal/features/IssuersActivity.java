@@ -30,11 +30,10 @@ import com.mercadopago.android.px.internal.util.ScaleUtil;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.Issuer;
-import com.mercadopago.android.px.model.PaymentMethod;
-import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.model.ScreenViewEvent;
-import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
 import com.mercadopago.android.px.model.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -167,11 +166,11 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
 
     protected void trackScreen() {
         final String publicKey = Session.getSession(this).getConfigurationModule().getPaymentSettings().getPublicKey();
-        MPTrackingContext mpTrackingContext = new MPTrackingContext.Builder(this, publicKey)
+        final MPTrackingContext mpTrackingContext = new MPTrackingContext.Builder(this, publicKey)
             .setVersion(BuildConfig.VERSION_NAME)
             .build();
 
-        ScreenViewEvent event = new ScreenViewEvent.Builder()
+        final ScreenViewEvent event = new ScreenViewEvent.Builder()
             .setFlowId(FlowHandler.getInstance().getFlowId())
             .setScreenId(TrackingUtil.SCREEN_ID_ISSUERS)
             .setScreenName(TrackingUtil.SCREEN_NAME_CARD_FORM_ISSUERS)

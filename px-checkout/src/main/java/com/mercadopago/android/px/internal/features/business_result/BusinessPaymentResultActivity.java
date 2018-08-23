@@ -6,10 +6,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import com.mercadopago.android.px.internal.features.business_result.components.BusinessPaymentContainer;
 import com.mercadopago.android.px.internal.tracker.Tracker;
-import com.mercadopago.android.px.internal.view.Action;
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.internal.view.ComponentManager;
 import com.mercadopago.android.px.internal.viewmodel.BusinessPaymentModel;
+import com.mercadopago.android.px.model.Action;
 import com.mercadopago.android.px.model.ExitAction;
 
 import static com.mercadopago.android.px.tracking.internal.utils.TrackingUtil.SCREEN_ID_PAYMENT_RESULT_BUSINESS;

@@ -11,13 +11,12 @@ import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.GenericPayment;
 import com.mercadopago.android.px.model.Payment;
-import com.mercadopago.android.px.model.PaymentResult;
-import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 
 /* default */ class OneTapPresenter extends MvpPresenter<OneTap.View, ResourcesProvider>
     implements OneTap.Actions, PaymentServiceHandler {
 
+    private static final String TAG = OneTapPresenter.class.getName();
     @NonNull private final OneTapModel model;
     @NonNull private final PaymentRepository paymentRepository;
 
@@ -47,7 +46,7 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
     public void cancel() {
         if (isViewAttached()) {
             getView().cancel();
-            getView().trackCancel(model.getPublicKey());
+            getView().trackCancel();
         }
     }
 
@@ -58,20 +57,11 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
         }
     }
 
-    private PaymentResult toPaymentResult(@NonNull final GenericPayment genericPayment) {
-        final Payment payment = new Payment();
-        payment.setId(genericPayment.paymentId);
-        payment.setPaymentMethodId(genericPayment.paymentData.getPaymentMethod().getId());
-        payment.setPaymentTypeId(PaymentTypes.PLUGIN);
-        payment.setStatus(genericPayment.status);
-        payment.setStatusDetail(genericPayment.statusDetail);
-
-        return new PaymentResult.Builder()
-            .setPaymentData(genericPayment.paymentData)
-            .setPaymentId(payment.getId())
-            .setPaymentStatus(payment.getStatus())
-            .setPaymentStatusDetail(payment.getStatusDetail())
-            .build();
+    @Override
+    public void onPaymentFinished(@NonNull final Payment payment) {
+        if (isViewAttached()) {
+            getView().showPaymentResult(payment);
+        }
     }
 
     /**
@@ -81,9 +71,8 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
      */
     @Override
     public void onPaymentFinished(@NonNull final GenericPayment genericPayment) {
-        //TODO add esc logic.
         if (isViewAttached()) {
-            getView().showPaymentResult(toPaymentResult(genericPayment));
+            getView().showPaymentResult(genericPayment);
         }
     }
 
@@ -94,7 +83,6 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
      */
     @Override
     public void onPaymentFinished(@NonNull final BusinessPayment businessPayment) {
-        //TODO add esc logic.
         if (isViewAttached()) {
             getView().showBusinessResult(businessPayment);
         }
@@ -102,15 +90,10 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 
     @Override
     public void onPaymentError(@NonNull final MercadoPagoError error) {
+        //This method calls to Checkout activity to manage esc, it's important to check
+        // all this behaviour ahead.
         if (isViewAttached()) {
             getView().showErrorView(error);
-        }
-    }
-
-    @Override
-    public void cancelPayment() {
-        if (isViewAttached()) {
-            //TODO do something.
         }
     }
 
@@ -130,36 +113,32 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 
     @Override
     public void onPaymentMethodRequired() {
-        //TODO definition
-        Log.d(OneTapPresenter.class.getName(), "Should not happen. - onPaymentMethodRequired");
+        Log.d(TAG, "Should not happen. - onPaymentMethodRequired");
         cancel();
     }
 
     @Override
     public void onCardError() {
-        //TODO definition
-        Log.d(OneTapPresenter.class.getName(), "Should not happen. - onCardError");
+        Log.d(TAG, "Should not happen. - onCardError");
         cancel();
     }
 
     @Override
     public void onIssuerRequired() {
-        //TODO definition
-        Log.d(OneTapPresenter.class.getName(), "Should not happen. - onIssuerRequired");
+        Log.d(TAG, "Should not happen. - onIssuerRequired");
         cancel();
     }
 
     @Override
     public void onPayerCostRequired() {
-        //TODO definition
-        Log.d(OneTapPresenter.class.getName(), "Should not happen. - onPayerCostRequired");
+        Log.d(TAG, "Should not happen. - onPayerCostRequired");
         cancel();
     }
 
     @Override
     public void onTokenRequired() {
-        //TODO definition
-        Log.d(OneTapPresenter.class.getName(), "Should not happen. - onPayerCostRequired");
+        Log.d(TAG, "Should not happen. - onPayerCostRequired");
         cancel();
     }
+
 }

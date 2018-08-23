@@ -18,29 +18,23 @@ import com.mercadopago.android.px.internal.features.MercadoPagoComponents;
 import com.mercadopago.android.px.internal.features.onetap.components.OneTapContainer;
 import com.mercadopago.android.px.internal.features.plugins.PaymentProcessorPluginActivity;
 import com.mercadopago.android.px.internal.tracker.Tracker;
-import com.mercadopago.android.px.internal.util.ErrorUtil;
 import com.mercadopago.android.px.internal.viewmodel.OneTapModel;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
-import com.mercadopago.android.px.model.PaymentResult;
+import com.mercadopago.android.px.model.IPayment;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import java.math.BigDecimal;
 
-import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 public class OneTapFragment extends Fragment implements OneTap.View {
 
-    private static final String ARG_ONE_TAP_MODEL = "arg_onetap_model";
+    private static final String ARG_ONE_TAP_MODEL = "ARG_ONETAP_MODEL";
     private static final int REQ_CODE_CARD_VAULT = 0x999;
     private static final int REQ_CODE_PAYMENT_PROCESSOR = 0x123;
 
     private CallBack callback;
-    OneTapPresenter presenter;
 
-    //TODO remove - just for tracking
-    private BigDecimal amountToPay;
-    private boolean hasDiscount;
+    /* default */ OneTapPresenter presenter;
 
     public static OneTapFragment getInstance(@NonNull final OneTapModel oneTapModel) {
         final OneTapFragment oneTapFragment = new OneTapFragment();
@@ -55,10 +49,6 @@ public class OneTapFragment extends Fragment implements OneTap.View {
         void onOneTapCanceled();
 
         void onChangePaymentMethod();
-
-        void onOneTapConfirmCardFlow();
-
-        void onOneTapCardFlowCanceled();
     }
 
     @Override
@@ -95,11 +85,9 @@ public class OneTapFragment extends Fragment implements OneTap.View {
         final Bundle arguments = getArguments();
         if (arguments != null) {
             final Session session = Session.getSession(view.getContext());
-            amountToPay = session.getAmountRepository().getAmountToPay();
-            hasDiscount = session.getDiscountRepository().getDiscount() != null;
+
             final OneTapModel model = (OneTapModel) arguments.getSerializable(ARG_ONE_TAP_MODEL);
-            presenter = new OneTapPresenter(model,
-                session.getPaymentRepository());
+            presenter = new OneTapPresenter(model, session.getPaymentRepository());
             configureView(view, presenter, model);
             presenter.attachView(this);
             trackScreen(model);
@@ -108,8 +96,7 @@ public class OneTapFragment extends Fragment implements OneTap.View {
 
     private void trackScreen(final OneTapModel model) {
         if (getActivity() != null) {
-            Tracker.trackOneTapScreen(getActivity().getApplicationContext(), model.getPublicKey(),
-                    model.getPaymentMethods().getOneTapMetadata(), amountToPay);
+            Tracker.trackOneTapScreen(getActivity().getApplicationContext(), model);
         }
     }
 
@@ -148,15 +135,14 @@ public class OneTapFragment extends Fragment implements OneTap.View {
 
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == REQ_CODE_CARD_VAULT && resultCode == RESULT_OK) {
             presenter.onTokenResolved();
-        } else if (requestCode == REQ_CODE_CARD_VAULT && resultCode == RESULT_CANCELED && callback != null) {
-            callback.onOneTapCardFlowCanceled();
         } else if (requestCode == REQ_CODE_PAYMENT_PROCESSOR && getActivity() != null) {
             ((CheckoutActivity) getActivity()).resolvePaymentProcessor(resultCode, data);
         }
-
-        super.onActivityResult(requestCode, resultCode, data);
+        // CardVault cancel (requestCode == REQ_CODE_CARD_VAULT && resultCode == RESULT_CANCELED)
     }
 
     @Override
@@ -174,24 +160,21 @@ public class OneTapFragment extends Fragment implements OneTap.View {
     @Override
     public void trackConfirm(final OneTapModel model) {
         if (getActivity() != null) {
-            Tracker.trackOneTapConfirm(getActivity().getApplicationContext(), model.getPublicKey(),
-                    model.getPaymentMethods().getOneTapMetadata(), amountToPay);
+            Tracker.trackOneTapConfirm(getActivity().getApplicationContext(), model);
         }
     }
 
     @Override
-    public void trackCancel(final String publicKey) {
+    public void trackCancel() {
         if (getActivity() != null) {
-            Tracker.trackOneTapCancel(getActivity().getApplicationContext(), publicKey);
+            Tracker.trackOneTapCancel(getActivity().getApplicationContext());
         }
     }
 
     @Override
     public void trackModal(final OneTapModel model) {
         if (getActivity() != null) {
-            Tracker
-                    .trackOneTapSummaryDetail(getActivity().getApplicationContext(), model.getPublicKey(), hasDiscount,
-                            model.getPaymentMethods().getOneTapMetadata().getCard());
+            Tracker.trackOneTapSummaryDetail(getActivity().getApplicationContext(), model);
         }
     }
 
@@ -202,8 +185,9 @@ public class OneTapFragment extends Fragment implements OneTap.View {
 
     @Override
     public void showErrorView(@NonNull final MercadoPagoError error) {
+        //TODO refactor
         if (getActivity() != null) {
-            ErrorUtil.startErrorActivity(getActivity(), error);
+            ((CheckoutActivity) getActivity()).presenter.onPaymentError(error);
         }
     }
 
@@ -216,7 +200,7 @@ public class OneTapFragment extends Fragment implements OneTap.View {
     }
 
     @Override
-    public void showPaymentResult(final PaymentResult paymentResult) {
+    public void showPaymentResult(final IPayment paymentResult) {
         //TODO refactor
         if (getActivity() != null) {
             ((CheckoutActivity) getActivity()).presenter.checkStartPaymentResultActivity(paymentResult);
@@ -225,9 +209,6 @@ public class OneTapFragment extends Fragment implements OneTap.View {
 
     @Override
     public void showCardFlow(@NonNull final OneTapModel model, @NonNull final Card card) {
-        if (callback != null) {
-            callback.onOneTapConfirmCardFlow();
-        }
         new MercadoPagoComponents.Activities.CardVaultActivityBuilder()
             .setCard(card)
             .startActivity(this, REQ_CODE_CARD_VAULT);

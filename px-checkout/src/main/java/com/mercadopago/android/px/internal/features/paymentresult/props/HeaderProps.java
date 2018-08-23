@@ -4,8 +4,9 @@ import android.content.Context;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.internal.util.TextUtil;
+import com.mercadopago.android.px.internal.viewmodel.DecoratorModel;
+import com.mercadopago.android.px.model.BusinessPayment;
 
 public class HeaderProps {
 
@@ -40,9 +41,11 @@ public class HeaderProps {
             builder.setIconImage(businessPayment.getIcon());
         }
 
+        final DecoratorModel decoratorModel = DecoratorModel.from(decorator);
+
         String subtitle;
         if (TextUtil.isEmpty(businessPayment.getSubtitle())) {
-            subtitle = decorator.message == 0 ? null : context.getString(decorator.message);
+            subtitle = decoratorModel.message == 0 ? null : context.getString(decoratorModel.message);
         } else {
             subtitle = businessPayment.getSubtitle();
         }
@@ -51,11 +54,11 @@ public class HeaderProps {
 
         return builder
             .setHeight(HEADER_MODE_WRAP)
-            .setBackground(decorator.resColor)
-            .setStatusBarColor(decorator.resColor)
+            .setBackground(decoratorModel.resColor)
+            .setStatusBarColor(decoratorModel.resColor)
 
             .setIconImage(businessPayment.getIcon())
-            .setBadgeImage(decorator.badge)
+            .setBadgeImage(decoratorModel.badge)
             .setTitle(businessPayment.getTitle())
             .setLabel(subtitle)
             .build();

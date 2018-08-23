@@ -7,11 +7,14 @@ public class PluginInitializationTask {
 
     public static final String KEY_INIT_SUCCESS = "init_success";
     @NonNull private final Iterable<PaymentMethodPlugin> plugins;
+    @NonNull private final PaymentMethodPlugin.CheckoutData checkoutData;
 
     private Thread taskThread;
 
-    public PluginInitializationTask(@NonNull final Iterable<PaymentMethodPlugin> plugins) {
+    public PluginInitializationTask(@NonNull final Iterable<PaymentMethodPlugin> plugins, @NonNull final
+    PaymentMethodPlugin.CheckoutData checkoutData) {
         this.plugins = plugins;
+        this.checkoutData = checkoutData;
     }
 
     /* async init */
@@ -29,7 +32,7 @@ public class PluginInitializationTask {
     public void initPlugins(final DataInitializationCallbacks callback) {
         try {
             for (final PaymentMethodPlugin plugin : plugins) {
-                plugin.init();
+                plugin.init(checkoutData);
             }
             if (!taskThread.isInterrupted()) {
                 callback.onDataInitialized();

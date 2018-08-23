@@ -1,5 +1,6 @@
 package com.mercadopago.android.px.internal.features;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.adapters.IdentificationTypesAdapter;
 import com.mercadopago.android.px.internal.callbacks.card.TicketIdentificationNameEditTextCallback;
 import com.mercadopago.android.px.internal.callbacks.card.TicketIdentificationNumberEditTextCallback;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.features.card.TicketIdentificationNameTextWatcher;
 import com.mercadopago.android.px.internal.features.card.TicketIdentificationNumberTextWatcher;
 import com.mercadopago.android.px.internal.features.providers.PayerInformationProviderImpl;
@@ -36,16 +38,14 @@ import com.mercadopago.android.px.internal.view.MPEditText;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.model.Identification;
 import com.mercadopago.android.px.model.IdentificationType;
-import com.mercadopago.android.px.model.Payer;
-import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.model.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PayerInformationActivity extends MercadoPagoBaseActivity implements PayerInformationView {
 
-    public static final String PAYER_BUNDLE = "mPayer";
     public static final String IDENTIFICATION_NUMBER_BUNDLE = "mIdentificationNumber";
     public static final String IDENTIFICATION_NAME_BUNDLE = "mIdentificationName";
     public static final String IDENTIFICATION_LAST_NAME_BUNDLE = "mIdentificationLastName";
@@ -62,6 +62,11 @@ public class PayerInformationActivity extends MercadoPagoBaseActivity implements
 
     public static final String ERROR_STATE = "textview_error";
     public static final String NORMAL_STATE = "textview_normal";
+
+    public static void start(final Activity activity, final int reqCode) {
+        final Intent payerInformationIntent = new Intent(activity, PayerInformationActivity.class);
+        activity.startActivityForResult(payerInformationIntent, reqCode);
+    }
 
     // Local vars
     protected PayerInformationPresenter mPresenter;
@@ -98,7 +103,7 @@ public class PayerInformationActivity extends MercadoPagoBaseActivity implements
     private IdentificationTicketView mIdentificationTicketView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivityActive = true;
 
@@ -113,10 +118,8 @@ public class PayerInformationActivity extends MercadoPagoBaseActivity implements
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
-
-        outState.putString(PAYER_BUNDLE, JsonUtil.getInstance().toJson(mPresenter.getPayer()));
         outState.putString(IDENTIFICATION_NUMBER_BUNDLE, mPresenter.getIdentificationNumber());
         outState.putString(IDENTIFICATION_NAME_BUNDLE, mPresenter.getIdentificationName());
         outState.putString(IDENTIFICATION_LAST_NAME_BUNDLE, mPresenter.getIdentificationLastName());
@@ -128,11 +131,10 @@ public class PayerInformationActivity extends MercadoPagoBaseActivity implements
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(final Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
         if (savedInstanceState != null) {
-            Payer payer = JsonUtil.getInstance().fromJson(savedInstanceState.getString(PAYER_BUNDLE), Payer.class);
             String identificationNumber = savedInstanceState.getString(IDENTIFICATION_NUMBER_BUNDLE);
             String identificationName = savedInstanceState.getString(IDENTIFICATION_NAME_BUNDLE);
             String identificationLastName = savedInstanceState.getString(IDENTIFICATION_LAST_NAME_BUNDLE);
@@ -150,7 +152,6 @@ public class PayerInformationActivity extends MercadoPagoBaseActivity implements
                 identificationTypesList = new ArrayList<>();
             }
 
-            mPresenter.setPayer(payer);
             mPresenter.setIdentificationNumber(identificationNumber);
             mPresenter.setIdentificationName(identificationName);
             mPresenter.setIdentificationLastName(identificationLastName);
@@ -191,7 +192,8 @@ public class PayerInformationActivity extends MercadoPagoBaseActivity implements
     }
 
     private void createPresenter() {
-        mPresenter = new PayerInformationPresenter();
+        mPresenter =
+            new PayerInformationPresenter(Session.getSession(this).getConfigurationModule().getPaymentSettings());
     }
 
     private void configurePresenter() {
@@ -258,10 +260,9 @@ public class PayerInformationActivity extends MercadoPagoBaseActivity implements
     }
 
     @Override
-    public void initializeIdentificationTypes(List<IdentificationType> identificationTypes) {
+    public void initializeIdentificationTypes(final List<IdentificationType> identificationTypes) {
         mIdentificationTicketView.setIdentificationType(identificationTypes.get(0));
         mIdentificationTicketView.drawIdentificationTypeName();
-
         mIdentificationTypeSpinner.setAdapter(new IdentificationTypesAdapter(identificationTypes));
         mIdentificationTypeContainer.setVisibility(View.VISIBLE);
     }
@@ -736,9 +737,7 @@ public class PayerInformationActivity extends MercadoPagoBaseActivity implements
     }
 
     private void finishWithPayer() {
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra("payer", JsonUtil.getInstance().toJson(mPresenter.getPayer()));
-        setResult(RESULT_OK, returnIntent);
+        setResult(RESULT_OK);
         finish();
     }
 }

@@ -14,9 +14,11 @@ import com.mercadopago.android.px.internal.viewmodel.OneTapModel;
 import com.mercadopago.android.px.internal.viewmodel.mappers.CardMapper;
 import com.mercadopago.android.px.internal.viewmodel.mappers.PaymentMethodMapper;
 import com.mercadopago.android.px.model.Card;
+import com.mercadopago.android.px.model.IPayment;
 import com.mercadopago.android.px.model.OneTapMetadata;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.PaymentMethod;
+import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 
@@ -104,7 +106,7 @@ public class PaymentService implements PaymentRepository {
     }
 
     private void validateCardInfo(final PaymentServiceHandler paymentServiceHandler) {
-        //TODO arreglar
+        //TODO improve
         if (userSelectionRepository.hasCardSelected() && userSelectionRepository.getPayerCost() != null) {
             //Paying with saved card
             if (paymentSettingRepository.getToken() != null) {
@@ -134,20 +136,17 @@ public class PaymentService implements PaymentRepository {
         if (paymentProcessor.shouldShowFragmentOnPayment()) {
             paymentServiceHandler.onVisualPayment();
         } else {
-
             final CheckoutPreference checkoutPreference = paymentSettingRepository.getCheckoutPreference();
-            final PaymentData paymentData = createPaymentData();
-            //TODO fix
-            CheckoutStore.getInstance().setPaymentData(paymentData);
             final PaymentProcessor.CheckoutData checkoutData =
-                new PaymentProcessor.CheckoutData(paymentData, checkoutPreference);
+                new PaymentProcessor.CheckoutData(getPaymentData(), checkoutPreference);
 
             paymentProcessor.startPayment(checkoutData, context, paymentServiceHandler);
         }
     }
 
-    //TODO remove duplication - Presenter Checkout
-    private PaymentData createPaymentData() {
+    @NonNull
+    @Override
+    public PaymentData getPaymentData() {
         final PaymentData paymentData = new PaymentData();
         paymentData.setPaymentMethod(userSelectionRepository.getPaymentMethod());
         paymentData.setPayerCost(userSelectionRepository.getPayerCost());
@@ -155,8 +154,20 @@ public class PaymentService implements PaymentRepository {
         paymentData.setToken(paymentSettingRepository.getToken());
         paymentData.setDiscount(discountRepository.getDiscount());
         paymentData.setTransactionAmount(amountRepository.getAmountToPay());
-        //TODO verify identification for payer that comes from boleto selection.
+        //se agrego payer info a la pref - BOLBRADESCO
         paymentData.setPayer(paymentSettingRepository.getCheckoutPreference().getPayer());
         return paymentData;
+    }
+
+    @NonNull
+    @Override
+    public PaymentResult createPaymentResult(@NonNull final IPayment payment) {
+        return new PaymentResult.Builder()
+            .setPaymentData(getPaymentData())
+            .setPaymentId(payment.getId())
+            .setPaymentStatus(payment.getPaymentStatus())
+            .setStatementDescription(payment.getStatementDescription())
+            .setPaymentStatusDetail(payment.getPaymentStatusDetail())
+            .build();
     }
 }

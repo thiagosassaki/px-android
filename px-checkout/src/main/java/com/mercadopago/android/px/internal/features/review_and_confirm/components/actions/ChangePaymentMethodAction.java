@@ -1,6 +1,6 @@
 package com.mercadopago.android.px.internal.features.review_and_confirm.components.actions;
 
-import com.mercadopago.android.px.internal.view.Action;
+import com.mercadopago.android.px.model.Action;
 
 public class ChangePaymentMethodAction extends Action {
 

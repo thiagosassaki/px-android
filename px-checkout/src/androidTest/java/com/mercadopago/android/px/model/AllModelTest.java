@@ -88,8 +88,8 @@ public class AllModelTest extends BaseTest<CheckoutActivity> {
         assertTrue(payment.getPaymentTypeId().equals("credit_card"));
         assertTrue(payment.getRefunds() == null);
         assertTrue(payment.getStatementDescriptor().equals("statement"));
-        assertTrue(payment.getStatus().equals("approved"));
-        assertTrue(payment.getStatusDetail().equals("accredited"));
+        assertTrue(payment.getPaymentStatus().equals("approved"));
+        assertTrue(payment.getPaymentStatusDetail().equals("accredited"));
         assertTrue(payment.getTransactionAmount().toString().equals("10.50"));
         assertTrue(payment.getTransactionAmountRefunded().toString().equals("20.50"));
         assertTrue(payment.getTransactionDetails().getTotalPaidAmount().toString().equals("100"));

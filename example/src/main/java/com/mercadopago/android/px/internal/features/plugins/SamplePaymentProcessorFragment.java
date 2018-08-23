@@ -11,17 +11,18 @@ import android.view.ViewGroup;
 import com.mercadopago.android.px.core.PaymentProcessor;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.GenericPayment;
+import com.mercadopago.android.px.model.IPayment;
 import com.mercadopago.example.R;
 
 public class SamplePaymentProcessorFragment extends Fragment {
 
     private static final long CONST_TIME_MILLIS = 2000;
     @Nullable
-    private PluginPayment payment;
+    private IPayment payment;
     @Nullable
     private PaymentProcessor.OnPaymentListener paymentListener;
 
-    public void setPayment(@Nullable final PluginPayment payment) {
+    public void setPayment(@Nullable final IPayment payment) {
         this.payment = payment;
     }
 

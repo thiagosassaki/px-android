@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 import com.mercadolibre.android.ui.widgets.MeliButton;
+import com.mercadopago.android.px.model.Action;
 import javax.annotation.Nonnull;
 
 public abstract class Button extends CompactComponent<Button.Props, Button.Actions> {

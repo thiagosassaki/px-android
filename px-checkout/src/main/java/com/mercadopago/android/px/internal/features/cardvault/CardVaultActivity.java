@@ -9,8 +9,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.android.px.R;
-import com.mercadopago.android.px.internal.features.MercadoPagoComponents;
 import com.mercadopago.android.px.internal.di.Session;
+import com.mercadopago.android.px.internal.features.MercadoPagoComponents;
 import com.mercadopago.android.px.internal.features.providers.CardVaultProviderImpl;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.ErrorUtil;
@@ -23,9 +23,9 @@ import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.Token;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
-import com.mercadopago.android.px.model.exceptions.ApiException;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -248,7 +248,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
         }
     }
 
-    protected void resolveGuessingCardRequest(int resultCode, Intent data) {
+    protected void resolveGuessingCardRequest(final int resultCode, final Intent data) {
         if (resultCode == RESULT_OK) {
             PayerCost payerCost = JsonUtil.getInstance().fromJson(data.getStringExtra("payerCost"), PayerCost.class);
 
@@ -263,10 +263,10 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
 
             List<Issuer> issuers;
             try {
-                Type listType = new TypeToken<List<Issuer>>() {
+                final Type listType = new TypeToken<List<Issuer>>() {
                 }.getType();
                 issuers = JsonUtil.getInstance().getGson().fromJson(data.getStringExtra("issuers"), listType);
-            } catch (Exception ex) {
+            } catch (final Exception ex) {
                 issuers = null;
             }
 

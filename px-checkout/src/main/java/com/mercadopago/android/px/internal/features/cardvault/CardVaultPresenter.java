@@ -22,9 +22,9 @@ import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.SavedESCCardToken;
 import com.mercadopago.android.px.model.Token;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
-import com.mercadopago.android.px.model.exceptions.ApiException;
 import java.util.List;
 
 public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultProvider> {
@@ -355,7 +355,6 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
 
     public void resolveNewCardRequest(final PayerCost payerCost,
         final List<PayerCost> payerCosts, final List<Issuer> issuers) {
-
         setCardInfo(new CardInfo(paymentSettingRepository.getToken()));
         setPayerCost(payerCost);
         setPayerCostsList(payerCosts);
@@ -378,7 +377,11 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         setCardInfo(new CardInfo(getCard()));
         setPaymentMethod(getCard().getPaymentMethod());
         setIssuer(getCard().getIssuer());
-        getInstallmentsForCardAsync(getCard());
+        if (userSelectionRepository.getPayerCost() != null) {
+            askForSecurityCodeWithoutInstallments();
+        } else {
+            getInstallmentsForCardAsync(getCard());
+        }
     }
 
     private void startNewCardFlow() {

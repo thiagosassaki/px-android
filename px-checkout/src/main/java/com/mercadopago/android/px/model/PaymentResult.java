@@ -1,10 +1,8 @@
 package com.mercadopago.android.px.model;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import java.io.Serializable;
-
-/**
- * Created by vaserber on 2/13/17.
- */
 
 public class PaymentResult implements Serializable {
 
@@ -15,15 +13,13 @@ public class PaymentResult implements Serializable {
     private final Long paymentId;
     private final String paymentStatus;
     private final String paymentStatusDetail;
-    private final String payerEmail;
     private final String statementDescription;
 
-    private PaymentResult(Builder builder) {
+    /* default */ PaymentResult(final Builder builder) {
         paymentData = builder.paymentData;
         paymentId = builder.paymentId;
         paymentStatus = builder.paymentStatus;
         paymentStatusDetail = builder.paymentStatusDetail;
-        payerEmail = builder.payerEmail;
         statementDescription = builder.statementDescription;
     }
 
@@ -59,10 +55,6 @@ public class PaymentResult implements Serializable {
         return paymentStatusDetail;
     }
 
-    public String getPayerEmail() {
-        return payerEmail;
-    }
-
     public String getStatementDescription() {
         return statementDescription;
     }
@@ -87,41 +79,35 @@ public class PaymentResult implements Serializable {
             getPaymentStatus().equals(Payment.StatusCodes.STATUS_IN_PROCESS);
     }
 
-    public static class Builder {
+    public static final class Builder {
 
-        private PaymentData paymentData;
-        private Long paymentId;
-        private String paymentStatus;
-        private String paymentStatusDetail;
-        private String payerEmail;
-        private String statementDescription;
+        /* default */ PaymentData paymentData;
+        /* default */ Long paymentId;
+        /* default */ String paymentStatus;
+        /* default */ String paymentStatusDetail;
+        /* default */ String statementDescription;
 
-        public Builder setPaymentData(final PaymentData paymentData) {
+        public Builder setPaymentData(@NonNull final PaymentData paymentData) {
             this.paymentData = paymentData;
             return this;
         }
 
-        public Builder setPaymentId(final Long paymentId) {
+        public Builder setPaymentId(@NonNull final Long paymentId) {
             this.paymentId = paymentId;
             return this;
         }
 
-        public Builder setPaymentStatus(final String paymentStatus) {
+        public Builder setPaymentStatus(@NonNull final String paymentStatus) {
             this.paymentStatus = paymentStatus;
             return this;
         }
 
-        public Builder setPaymentStatusDetail(final String statusDetail) {
+        public Builder setPaymentStatusDetail(@NonNull final String statusDetail) {
             paymentStatusDetail = statusDetail;
             return this;
         }
 
-        public Builder setPayerEmail(final String payerEmail) {
-            this.payerEmail = payerEmail;
-            return this;
-        }
-
-        public Builder setStatementDescription(final String statementDescription) {
+        public Builder setStatementDescription(@Nullable final String statementDescription) {
             this.statementDescription = statementDescription;
             return this;
         }

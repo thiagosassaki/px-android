@@ -3,16 +3,16 @@ package com.mercadopago.android.px.core;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import com.mercadopago.android.px.internal.core.Settings;
 import com.mercadopago.android.px.internal.datasource.PluginInitializationTask;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
+import com.mercadopago.android.px.internal.services.CheckoutService;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
-import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.internal.services.CheckoutService;
-import com.mercadopago.android.px.services.Callback;
-import com.mercadopago.android.px.internal.core.Settings;
 import com.mercadopago.android.px.model.exceptions.ApiException;
+import com.mercadopago.android.px.preferences.CheckoutPreference;
+import com.mercadopago.android.px.services.Callback;
 
 class PrefetchService {
 
@@ -95,7 +95,6 @@ class PrefetchService {
     }
 
     /* default */ void initPlugins() {
-        //TODO refactor - muy turbio todo.
         final PluginInitializationTask initTask = session.getPluginRepository().getInitTask();
         initTask.initPlugins(new PluginInitializationTask.DataInitializationCallbacks() {
             @Override

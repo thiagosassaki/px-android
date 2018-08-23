@@ -12,7 +12,6 @@ import android.widget.FrameLayout;
 import com.mercadopago.android.px.BuildConfig;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.PaymentMethodPlugin;
-import com.mercadopago.android.px.internal.datasource.CheckoutStore;
 import com.mercadopago.android.px.internal.di.ConfigurationModule;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.PluginRepository;
@@ -20,8 +19,8 @@ import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.internal.tracker.FlowHandler;
 import com.mercadopago.android.px.internal.tracker.MPTrackingContext;
 import com.mercadopago.android.px.model.PaymentMethod;
-import com.mercadopago.android.px.model.ScreenViewEvent;
 import com.mercadopago.android.px.model.PaymentMethodInfo;
+import com.mercadopago.android.px.model.ScreenViewEvent;
 
 public class PaymentMethodPluginActivity extends AppCompatActivity implements
     PaymentMethodPlugin.OnPaymentMethodListener {
@@ -58,8 +57,8 @@ public class PaymentMethodPluginActivity extends AppCompatActivity implements
         final PaymentMethodPlugin plugin = pluginRepository.getPlugin(paymentMethodInfo.getId());
 
         final PaymentMethodPlugin.CheckoutData checkoutData =
-            new PaymentMethodPlugin.CheckoutData(CheckoutStore.getInstance().getPaymentData(),
-                configurationModule.getPaymentSettings().getCheckoutPreference());
+            new PaymentMethodPlugin.CheckoutData(configurationModule.getPaymentSettings().getCheckoutPreference()
+                , session.getDiscountRepository().getDiscount());
 
         final Fragment fragment = plugin.getFragment(checkoutData, this);
 

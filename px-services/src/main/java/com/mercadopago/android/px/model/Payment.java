@@ -1,12 +1,13 @@
 package com.mercadopago.android.px.model;
 
-import java.io.Serializable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class Payment implements Serializable {
+public class Payment implements IPayment {
 
     private Boolean binaryMode;
     private String callForAuthorizeId;
@@ -41,6 +42,15 @@ public class Payment implements Serializable {
     private BigDecimal transactionAmount;
     private BigDecimal transactionAmountRefunded;
     private TransactionDetails transactionDetails;
+
+    public Payment() {
+        //Gson
+    }
+
+    public Payment(@NonNull final String status, @NonNull final String statusDetail) {
+        this.status = status;
+        this.statusDetail = statusDetail;
+    }
 
     public Boolean getBinaryMode() {
         return binaryMode;
@@ -154,6 +164,8 @@ public class Payment implements Serializable {
         this.feeDetails = feeDetails;
     }
 
+    @Override
+    @Nullable
     public Long getId() {
         return id;
     }
@@ -266,16 +278,8 @@ public class Payment implements Serializable {
         this.statementDescriptor = statementDescriptor;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public String getStatusDetail() {
-        return statusDetail;
     }
 
     public void setStatusDetail(String statusDetail) {
@@ -354,6 +358,24 @@ public class Payment implements Serializable {
             ", transactionAmountRefunded=" + transactionAmountRefunded +
             ", transactionDetails=" + transactionDetails +
             '}';
+    }
+
+    @Nullable
+    @Override
+    public String getStatementDescription() {
+        return statementDescriptor;
+    }
+
+    @NonNull
+    @Override
+    public String getPaymentStatus() {
+        return status;
+    }
+
+    @NonNull
+    @Override
+    public String getPaymentStatusDetail() {
+        return statusDetail;
     }
 
     public static class StatusCodes {

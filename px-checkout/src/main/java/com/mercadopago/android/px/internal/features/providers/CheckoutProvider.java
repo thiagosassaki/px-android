@@ -13,7 +13,7 @@ public interface CheckoutProvider extends ResourcesProvider {
 
     String getCheckoutExceptionMessage(CheckoutPreferenceException exception);
 
-    String getCheckoutExceptionMessage(IllegalStateException exception);
+    String getCheckoutExceptionMessage(Exception exception);
 
     void fetchFonts();
 

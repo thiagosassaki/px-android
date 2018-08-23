@@ -11,6 +11,8 @@ import com.mercadopago.android.px.internal.features.review_and_confirm.models.Pa
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.SummaryModel;
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.TermsAndConditionsModel;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
+import com.mercadopago.android.px.internal.repository.DiscountRepository;
+import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.Campaign;
@@ -26,12 +28,9 @@ import java.util.List;
 public class ReviewAndConfirmBuilder {
 
     private Issuer issuer;
-    private Discount discount;
-    private Campaign campaign;
     private Token token;
     private Boolean hasExtraPaymentMethods;
     private String merchantPublicKey;
-    private CheckoutPreference checkoutPreference;
 
     public ReviewAndConfirmBuilder setIssuer(final Issuer issuer) {
         this.issuer = issuer;
@@ -53,18 +52,9 @@ public class ReviewAndConfirmBuilder {
         return this;
     }
 
-    public ReviewAndConfirmBuilder setDiscount(Discount discount, Campaign campaign) {
-        this.discount = discount;
-        this.campaign = campaign;
-        return this;
-    }
-
     private void validate(final Activity activity) {
         if (activity == null) {
             throw new IllegalStateException("activity can't be null");
-        }
-        if (checkoutPreference == null) {
-            throw new IllegalStateException("Checkout preference can't be null");
         }
     }
 
@@ -77,9 +67,15 @@ public class ReviewAndConfirmBuilder {
         final UserSelectionRepository userSelectionRepository =
             configurationModule.getUserSelectionRepository();
 
+        final PaymentSettingRepository paymentSettings = configurationModule.getPaymentSettings();
+
         final AmountRepository amountRepository = session.getAmountRepository();
 
         final PaymentMethod paymentMethod = userSelectionRepository.getPaymentMethod();
+        final CheckoutPreference checkoutPreference = paymentSettings.getCheckoutPreference();
+        final DiscountRepository discountRepository = session.getDiscountRepository();
+        final Discount discount = discountRepository.getDiscount();
+        final Campaign campaign = discountRepository.getCampaign();
 
         final List<Item> items = checkoutPreference.getItems();
 
@@ -90,7 +86,7 @@ public class ReviewAndConfirmBuilder {
             activity.getResources().getString(R.string.px_review_summary_products));
 
         final boolean termsAndConditionsEnabled =
-            TextUtil.isEmpty(configurationModule.getPaymentSettings().getPrivateKey());
+            TextUtil.isEmpty(paymentSettings.getPrivateKey());
 
         final TermsAndConditionsModel mercadoPagoTermsAndConditions =
             termsAndConditionsEnabled ? new TermsAndConditionsModel(site.getTermsAndConditionsUrl(),
@@ -123,10 +119,5 @@ public class ReviewAndConfirmBuilder {
             summaryModel,
             itemsModel,
             discountTermsAndConditions);
-    }
-
-    public ReviewAndConfirmBuilder setPreference(@NonNull final CheckoutPreference checkoutPreference) {
-        this.checkoutPreference = checkoutPreference;
-        return this;
     }
 }

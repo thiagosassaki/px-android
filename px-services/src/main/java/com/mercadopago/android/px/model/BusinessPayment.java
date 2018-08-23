@@ -3,20 +3,15 @@ package com.mercadopago.android.px.model;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
-import com.mercadopago.android.px.R;
-import com.mercadopago.android.px.internal.features.plugins.PluginPayment;
-import com.mercadopago.android.px.internal.features.plugins.Processor;
-import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.util.ParcelableUtil;
+import com.mercadopago.android.px.internal.util.TextUtil;
 
 @SuppressWarnings("unused")
-public class BusinessPayment implements PluginPayment, Parcelable {
+public class BusinessPayment implements IPayment, Parcelable {
 
     @NonNull private final String title;
     @NonNull private final Decorator decorator;
@@ -85,11 +80,6 @@ public class BusinessPayment implements PluginPayment, Parcelable {
             return new BusinessPayment[size];
         }
     };
-
-    @Override
-    public void process(final Processor processor) {
-        processor.process(this);
-    }
 
     @Override
     public int describeContents() {
@@ -165,6 +155,13 @@ public class BusinessPayment implements PluginPayment, Parcelable {
     }
 
     @Nullable
+    @Override
+    public Long getId() {
+        return Long.getLong(receiptId);
+    }
+
+    @Override
+    @Nullable
     public String getStatementDescription() {
         return statementDescription;
     }
@@ -189,11 +186,13 @@ public class BusinessPayment implements PluginPayment, Parcelable {
         return bottomFragment;
     }
 
+    @Override
     @NonNull
     public String getPaymentStatus() {
         return paymentStatus;
     }
 
+    @Override
     @NonNull
     public String getPaymentStatusDetail() {
         return paymentStatusDetail;
@@ -205,27 +204,14 @@ public class BusinessPayment implements PluginPayment, Parcelable {
     }
 
     public enum Decorator {
-        APPROVED("APPROVED", R.color.ui_components_success_color,
-            R.drawable.px_badge_check, 0),
-        REJECTED("REJECTED", R.color.ui_components_error_color,
-            R.drawable.px_badge_error,
-            R.string.px_rejection_label),
-        PENDING("PENDING", R.color.ui_components_warning_color,
-            R.drawable.px_badge_pending_orange, 0);
+        APPROVED("APPROVED"),
+        REJECTED("REJECTED"),
+        PENDING("PENDING");
 
         public final String name;
-        public final int resColor;
-        public final int badge;
-        public final int message;
 
-        Decorator(final String name,
-            @ColorRes final int resColor,
-            @DrawableRes final int badge,
-            @StringRes final int message) {
+        Decorator(final String name) {
             this.name = name;
-            this.resColor = resColor;
-            this.badge = badge;
-            this.message = message;
         }
 
         public static Decorator fromName(final String text) {
@@ -283,7 +269,7 @@ public class BusinessPayment implements PluginPayment, Parcelable {
             @NonNull final String paymentStatusDetail,
             @NonNull final String imageUrl,
             @NonNull final String title) {
-            this(decorator, paymentStatus, paymentStatusDetail, R.drawable.px_icon_default, title);
+            this(decorator, paymentStatus, paymentStatusDetail, 0, title);
             this.imageUrl = imageUrl;
         }
 

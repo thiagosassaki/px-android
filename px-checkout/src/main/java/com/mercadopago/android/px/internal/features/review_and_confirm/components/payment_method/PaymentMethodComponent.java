@@ -6,10 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.PaymentModel;
-import com.mercadopago.android.px.internal.view.Action;
 import com.mercadopago.android.px.internal.view.Button;
 import com.mercadopago.android.px.internal.view.ButtonLink;
 import com.mercadopago.android.px.internal.view.CompactComponent;
+import com.mercadopago.android.px.model.Action;
 import com.mercadopago.android.px.model.PaymentTypes;
 
 public class PaymentMethodComponent extends CompactComponent<PaymentModel, PaymentMethodComponent.Actions> {

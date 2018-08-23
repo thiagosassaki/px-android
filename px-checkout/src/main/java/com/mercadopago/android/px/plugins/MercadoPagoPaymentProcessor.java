@@ -11,19 +11,13 @@ import com.mercadopago.android.px.internal.datasource.MercadoPagoServicesAdapter
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.ApiUtil;
-import com.mercadopago.android.px.model.GenericPayment;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentBody;
-import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import com.mercadopago.android.px.preferences.CheckoutPreference;
 
 public class MercadoPagoPaymentProcessor implements PaymentProcessor {
 
     private static final int TIMEOUT = 30000;
-
-    //TODO remove - ADD paymentAPI service.
-    private MercadoPagoServicesAdapter mercadoPagoServiceAdapter;
 
     @Override
     public int getPaymentTimeout() {
@@ -55,16 +49,20 @@ public class MercadoPagoPaymentProcessor implements PaymentProcessor {
         final Session session = Session.getSession(context);
         final PaymentSettingRepository paymentSettings = session.getConfigurationModule().getPaymentSettings();
         final String publicKey = paymentSettings.getPublicKey();
-        mercadoPagoServiceAdapter = session.getMercadoPagoServiceAdapter();
+        final MercadoPagoServicesAdapter mercadoPagoServiceAdapter = session.getMercadoPagoServiceAdapter();
+
+        final PaymentBody paymentBody =
+            new PaymentBody(paymentSettings.getTransactionId(), data.paymentData, data.checkoutPreference);
+        paymentBody.setBinaryMode(data.checkoutPreference.isBinaryMode());
+        paymentBody.setPublicKey(publicKey);
 
         //TODO idempotency key, customer id?
-        //TODO payer identification - in 40.0.0 it;s mutable for brasil.
-        createPaymentInMercadoPago(paymentSettings.getTransactionId(), data.checkoutPreference, data.paymentData,
-            data.checkoutPreference.isBinaryMode(), publicKey,
+
+        mercadoPagoServiceAdapter.createPayment(paymentBody,
             new TaggedCallback<Payment>(ApiUtil.RequestOrigin.CREATE_PAYMENT) {
                 @Override
                 public void onSuccess(final Payment payment) {
-                    paymentListener.onPaymentFinished(mapPayment(payment, data));
+                    paymentListener.onPaymentFinished(payment);
                 }
 
                 @Override
@@ -72,24 +70,5 @@ public class MercadoPagoPaymentProcessor implements PaymentProcessor {
                     paymentListener.onPaymentError(error);
                 }
             });
-    }
-
-    /* default */
-    @NonNull
-    GenericPayment mapPayment(final Payment payment, @NonNull final CheckoutData data) {
-        return new GenericPayment(payment.getId(), payment.getStatus(),
-            payment.getStatusDetail(), data.paymentData);
-    }
-
-    private void createPaymentInMercadoPago(@NonNull final String transactionId,
-        @NonNull final CheckoutPreference checkoutPreference,
-        @NonNull final PaymentData paymentData,
-        final boolean binaryMode,
-        final String publicKey,
-        final TaggedCallback<Payment> taggedCallback) {
-        final PaymentBody paymentBody = new PaymentBody(transactionId, paymentData, checkoutPreference);
-        paymentBody.setBinaryMode(binaryMode);
-        paymentBody.setPublicKey(publicKey);
-        mercadoPagoServiceAdapter.createPayment(paymentBody, taggedCallback);
     }
 }

@@ -1,10 +1,12 @@
 package com.mercadopago.android.px.paymentvault;
 
 import android.support.annotation.NonNull;
+import com.mercadopago.android.px.core.PaymentMethodPlugin;
 import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
-import com.mercadopago.android.px.model.PaymentMethods;
-import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.internal.features.PaymentVaultPresenter;
+import com.mercadopago.android.px.internal.features.PaymentVaultView;
 import com.mercadopago.android.px.internal.features.hooks.Hook;
+import com.mercadopago.android.px.internal.features.providers.PaymentVaultProvider;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
@@ -18,18 +20,16 @@ import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentMethodSearchItem;
+import com.mercadopago.android.px.model.PaymentMethods;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Site;
-import com.mercadopago.android.px.core.PaymentMethodPlugin;
+import com.mercadopago.android.px.model.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentPreference;
-import com.mercadopago.android.px.internal.features.PaymentVaultPresenter;
-import com.mercadopago.android.px.internal.features.providers.PaymentVaultProvider;
-import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.utils.Discounts;
 import com.mercadopago.android.px.utils.StubFailMpCall;
 import com.mercadopago.android.px.utils.StubSuccessMpCall;
-import com.mercadopago.android.px.internal.features.PaymentVaultView;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -532,7 +532,7 @@ public class PaymentVaultPresenterTest {
         presenter.initialize();
         mockedView.simulateItemSelection(0);
 
-        presenter.onPayerInformationReceived(payer);
+        presenter.onPayerInformationReceived();
 
         assertEquals(boleto, mockedView.selectedPaymentMethod);
         assertEquals(payer, mockedView.selectedPayer);
@@ -703,12 +703,6 @@ public class PaymentVaultPresenterTest {
         @Override
         public void finishPaymentMethodSelection(PaymentMethod selectedPaymentMethod) {
             this.selectedPaymentMethod = selectedPaymentMethod;
-        }
-
-        @Override
-        public void finishPaymentMethodSelection(PaymentMethod paymentMethod, Payer payer) {
-            this.selectedPaymentMethod = paymentMethod;
-            this.selectedPayer = payer;
         }
 
         @Override

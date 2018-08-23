@@ -9,7 +9,6 @@ import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CustomSearchItem;
 import com.mercadopago.android.px.model.Discount;
-import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentMethodSearchItem;
 import com.mercadopago.android.px.model.Site;
@@ -48,8 +47,6 @@ public interface PaymentVaultView extends MvpView {
     void startPaymentMethodsSelection(final PaymentPreference paymentPreference);
 
     void finishPaymentMethodSelection(PaymentMethod selectedPaymentMethod);
-
-    void finishPaymentMethodSelection(PaymentMethod paymentMethod, Payer payer);
 
     void showAmount(@NonNull final DiscountRepository discountRepository,
         @NonNull final BigDecimal totalAmount,

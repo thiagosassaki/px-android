@@ -21,10 +21,6 @@ public class PaymentBody {
     private Float couponAmount;
     private String campaignId;
 
-    //TODO remove this constructor.
-    public PaymentBody() {
-    }
-
     public PaymentBody(@NonNull final String transactionId,
         @NonNull final PaymentData paymentData,
         @NonNull final CheckoutPreference checkoutPreference) {

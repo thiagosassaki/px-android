@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import com.mercadopago.android.px.internal.features.cardvault.CardVaultActivity;
 import com.mercadopago.android.px.internal.features.guessing_card.GuessingCardActivity;
@@ -48,7 +49,6 @@ public class MercadoPagoComponents {
         public static final int SECURITY_CODE_REQUEST_CODE = 18;
         public static final int REVIEW_AND_CONFIRM_REQUEST_CODE = 20;
         public static final int REVIEW_PAYMENT_METHODS_REQUEST_CODE = 21;
-        public static final int PAYER_INFORMATION_REQUEST_CODE = 22;
 
         public static final int HOOK_1 = 50;
         public static final int HOOK_1_PLUGIN = 52;
@@ -398,29 +398,6 @@ public class MercadoPagoComponents {
             }
         }
 
-        public static class PayerInformationActivityBuilder {
-            private Activity activity;
-
-            public PayerInformationActivityBuilder setActivity(Activity activity) {
-                this.activity = activity;
-                return this;
-            }
-
-            public void startActivity() {
-
-                if (activity == null) {
-                    throw new IllegalStateException("activity is null");
-                }
-                startPayerInformationActivity();
-            }
-
-            private void startPayerInformationActivity() {
-                Intent payerInformationIntent = new Intent(activity, PayerInformationActivity.class);
-
-                activity.startActivityForResult(payerInformationIntent, PAYER_INFORMATION_REQUEST_CODE);
-            }
-        }
-
         public static class PaymentResultActivityBuilder {
             private Activity activity;
             private Discount discount;
@@ -432,7 +409,7 @@ public class MercadoPagoComponents {
                 return this;
             }
 
-            public PaymentResultActivityBuilder setDiscount(Discount discount) {
+            public PaymentResultActivityBuilder setDiscount(@Nullable final Discount discount) {
                 this.discount = discount;
                 return this;
             }

@@ -5,7 +5,7 @@ import com.mercadopago.android.px.internal.base.MvpView;
 import com.mercadopago.android.px.internal.viewmodel.OneTapModel;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
-import com.mercadopago.android.px.model.PaymentResult;
+import com.mercadopago.android.px.model.IPayment;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 
 public interface OneTap {
@@ -22,7 +22,7 @@ public interface OneTap {
 
         void trackConfirm(final OneTapModel model);
 
-        void trackCancel(final String publicKey);
+        void trackCancel();
 
         void trackModal(final OneTapModel model);
 
@@ -32,7 +32,7 @@ public interface OneTap {
 
         void showBusinessResult(final BusinessPayment businessPayment);
 
-        void showPaymentResult(final PaymentResult paymentResult);
+        void showPaymentResult(final IPayment paymentResult);
     }
 
     interface Actions {

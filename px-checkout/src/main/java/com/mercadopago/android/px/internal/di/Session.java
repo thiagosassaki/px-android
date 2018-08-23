@@ -74,14 +74,11 @@ public final class Session extends ApplicationModule
         final DiscountRepository discountRepository = getDiscountRepository();
 
         final PaymentConfiguration paymentConfiguration = mercadoPagoCheckout.getPaymentConfiguration();
-
         final PaymentSettingRepository paymentSetting = configurationModule.getPaymentSettings();
         paymentSetting.configure(mercadoPagoCheckout.getPublicKey());
-
         paymentSetting.configure(mercadoPagoCheckout.getAdvancedConfiguration());
         paymentSetting.configurePrivateKey(mercadoPagoCheckout.getPrivateKey());
         paymentSetting.configure(paymentConfiguration);
-
         discountRepository.configureMerchantDiscountManually(paymentConfiguration);
         resolvePreference(mercadoPagoCheckout, paymentSetting);
         // end Store persistent paymentSetting
@@ -103,6 +100,13 @@ public final class Session extends ApplicationModule
         getDiscountRepository().reset();
         getConfigurationModule().reset();
         getGroupsCache().evict();
+        configurationModule = null;
+        discountRepository = null;
+        amountRepository = null;
+        groupsRepository = null;
+        paymentRepository = null;
+        groupsCache = null;
+        pluginRepository = null;
     }
 
     public GroupsRepository getGroupsRepository() {
@@ -180,14 +184,14 @@ public final class Session extends ApplicationModule
     @NonNull
     public PluginRepository getPluginRepository() {
         if (pluginRepository == null) {
-            pluginRepository = new PluginService(getContext(), getConfigurationModule().getPaymentSettings());
+            pluginRepository = new PluginService(getContext(), getConfigurationModule().getPaymentSettings(),
+                getDiscountRepository());
         }
         return pluginRepository;
     }
 
     @NonNull
     public PaymentRepository getPaymentRepository() {
-        //TODO fix getPaymentProcessor / default payment processor.
         if (paymentRepository == null) {
             final ConfigurationModule configurationModule = getConfigurationModule();
             final PaymentProcessor paymentProcessor =

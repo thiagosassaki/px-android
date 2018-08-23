@@ -46,16 +46,15 @@ import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CustomSearchItem;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.Issuer;
-import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentMethodInfo;
 import com.mercadopago.android.px.model.PaymentMethodSearchItem;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Token;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.PaymentPreference;
-import com.mercadopago.android.px.model.exceptions.ApiException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,6 +67,7 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
 
     public static final int COLUMN_SPACING_DP_VALUE = 20;
     public static final int COLUMNS = 2;
+    private static final int PAYER_INFORMATION_REQUEST_CODE = 22;
 
     // Local vars
     protected boolean mActivityActive;
@@ -289,8 +289,8 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
             presenter.onPaymentMethodReturned();
         } else if (requestCode == MercadoPagoComponents.Activities.PAYMENT_VAULT_REQUEST_CODE) {
             resolvePaymentVaultRequest(resultCode, data);
-        } else if (requestCode == MercadoPagoComponents.Activities.PAYER_INFORMATION_REQUEST_CODE) {
-            resolvePayerInformationRequest(resultCode, data);
+        } else if (requestCode == PAYER_INFORMATION_REQUEST_CODE) {
+            resolvePayerInformationRequest(resultCode);
         } else if (requestCode == MercadoPagoComponents.Activities.PLUGIN_PAYMENT_METHOD_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 presenter.onPluginAfterHookOne();
@@ -366,11 +366,10 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
         }
     }
 
-    private void resolvePayerInformationRequest(final int resultCode, final Intent data) {
+    private void resolvePayerInformationRequest(final int resultCode) {
         presenter.onHookReset();
         if (resultCode == RESULT_OK) {
-            final Payer payer = JsonUtil.getInstance().fromJson(data.getStringExtra("payer"), Payer.class);
-            presenter.onPayerInformationReceived(payer);
+            presenter.onPayerInformationReceived();
         } else {
             overridePendingTransition(R.anim.px_slide_left_to_right_in, R.anim.px_slide_left_to_right_out);
         }
@@ -395,18 +394,12 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
 
     @Override
     public void finishPaymentMethodSelection(final PaymentMethod paymentMethod) {
-        finishWith(paymentMethod, null);
+        finishWith(paymentMethod);
     }
 
-    @Override
-    public void finishPaymentMethodSelection(final PaymentMethod paymentMethod, final Payer payer) {
-        finishWith(paymentMethod, payer);
-    }
-
-    private void finishWith(final PaymentMethod paymentMethod, final Payer payer) {
+    private void finishWith(final PaymentMethod paymentMethod) {
         final Intent returnIntent = new Intent();
         returnIntent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(paymentMethod));
-        returnIntent.putExtra("payer", JsonUtil.getInstance().toJson(payer));
         finishWithResult(returnIntent);
     }
 
@@ -552,15 +545,13 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
 
     @Override
     public void collectPayerInformation() {
-        new MercadoPagoComponents.Activities.PayerInformationActivityBuilder()
-            .setActivity(this)
-            .startActivity();
         overrideTransitionIn();
+        PayerInformationActivity.start(this, PAYER_INFORMATION_REQUEST_CODE);
     }
 
     //### HOOKS ######################
 
-    public void resolveHook1Request(int resultCode) {
+    public void resolveHook1Request(final int resultCode) {
         if (resultCode == RESULT_OK) {
             presenter.onHookContinue();
         } else {

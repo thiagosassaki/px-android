@@ -179,60 +179,7 @@ public class CheckoutProviderImpl implements CheckoutProvider {
     }
 
     @Override
-    public String getCheckoutExceptionMessage(IllegalStateException exception) {
+    public String getCheckoutExceptionMessage(final Exception exception) {
         return context.getString(R.string.px_standard_error_message);
     }
-
-
-    //TODO REMOVE
-    /*
-    private void createPaymentInMercadoPago(final String transactionId,
-                                            final CheckoutPreference checkoutPreference,
-                                            final PaymentData paymentData,
-                                            final Boolean binaryMode,
-                                            final String customerId,
-                                            final TaggedCallback<Payment> taggedCallback) {
-        final PaymentBody paymentBody = createPaymentBody(transactionId, checkoutPreference, paymentData, binaryMode, customerId);
-        mercadoPagoServicesAdapter.createPayment(paymentBody, taggedCallback);
-    }
-
-    private PaymentBody createPaymentBody(final String transactionId, final CheckoutPreference checkoutPreference,
-                                          final PaymentData paymentData, final Boolean binaryMode, final String customerId) {
-        final PaymentBody paymentBody = new PaymentBody();
-        paymentBody.setPrefId(checkoutPreference.getId());
-        paymentBody.setPublicKey(publicKey);
-        paymentBody.setPaymentMethodId(paymentData.getPaymentMethod().getId());
-        paymentBody.setBinaryMode(binaryMode);
-
-        final Payer payer = paymentData.getPayer();
-        if (!TextUtil.isEmpty(customerId) &&
-                MercadoPagoUtil.isCard(paymentData.getPaymentMethod().getPaymentTypeId())) {
-            payer.setId(customerId);
-        }
-
-        paymentBody.setPayer(payer);
-
-        if (paymentData.getToken() != null) {
-            paymentBody.setTokenId(paymentData.getToken().getId());
-        }
-        if (paymentData.getPayerCost() != null) {
-            paymentBody.setInstallments(paymentData.getPayerCost().getInstallments());
-        }
-        if (paymentData.getIssuer() != null) {
-            paymentBody.setIssuerId(paymentData.getIssuer().getId());
-        }
-
-        final Discount discount = paymentData.getDiscount();
-        if (discount != null) {
-            paymentBody.setCampaignId(discount.getId());
-            paymentBody.setCouponAmount(discount.getCouponAmount().floatValue());
-            if (!TextUtil.isEmpty(paymentData.getCouponCode())) {
-                paymentBody.setCouponCode(paymentData.getCouponCode());
-            }
-        }
-
-        paymentBody.setTransactionId(transactionId);
-        return paymentBody;
-    }
-    */
 }
