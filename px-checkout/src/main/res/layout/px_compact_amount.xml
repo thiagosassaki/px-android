@@ -74,7 +74,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textAppearance="@style/MLFont.Regular"
-            android:textColor="@color/px_discount_one_tap"
+            android:textColor="@color/px_discount_description"
             android:textSize="@dimen/px_xs_text"
             tools:text="20 % OFF"/>
 

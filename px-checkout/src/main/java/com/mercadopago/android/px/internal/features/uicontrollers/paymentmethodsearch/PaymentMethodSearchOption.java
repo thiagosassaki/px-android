@@ -93,15 +93,15 @@ public class PaymentMethodSearchOption implements PaymentMethodSearchViewControl
         }
 
         if (needsTint) {
-            mIcon.setColorFilter(ContextCompat.getColor(mContext, R.color.px_main_color),
+            mIcon.setColorFilter(ContextCompat.getColor(mContext, R.color.px_colorPrimary),
                 PorterDuff.Mode.MULTIPLY);
         }
     }
 
     private boolean needsTint() {
-        final int originalColor = ContextCompat.getColor(mContext, R.color.px_original_main_color);
-        final int realColor = ContextCompat.getColor(mContext, R.color.px_main_color);
-        return (originalColor != realColor) && (mItem.isGroup() || mItem.isPaymentType());
+        final int checkoutMainColor = ContextCompat.getColor(mContext, R.color.px_colorPrimary);
+        final int integrationColor = ContextCompat.getColor(mContext, R.color.px_paymentMethodTint);
+        return (checkoutMainColor != integrationColor) && (mItem.isGroup() || mItem.isPaymentType());
     }
 
     @Override

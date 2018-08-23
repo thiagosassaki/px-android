@@ -4,11 +4,32 @@
 ![GitHub tag](https://img.shields.io/github/tag/mercadopago/px-android.svg)
 ![GitHub top language](https://img.shields.io/github/languages/top/mercadopago/px-android.svg)
 
-# MercadoPago - Android Payment Experience
+
+![Screenshot MercadoPago](https://i.imgur.com/ZaqavRJ.jpg)
+
 
 The MercadoPago Android Payment Experience makes it easy to collect your user's credit card details inside your android app. By creating tokens, MercadoPago handles the bulk of PCI compliance by preventing sensitive card data from hitting your server.
 
-![Screenshot MercadoPago](https://i.imgur.com/ZaqavRJ.jpg)
+
+### 🌟 Features
+
+- Easy to install
+
+- Easy to integrate
+
+- PCI compliance
+
+- Basic color customization
+
+- Advanced color customization
+ 
+- Lazy loading initialization support
+
+- Custom Fragments support in certain screens
+
+- Support to build your own Payment Processor
+
+- Support to create your own custom Payment Method
 
 ## Installation
 
@@ -20,12 +41,37 @@ Add this line to your app's `build.gradle` inside the `dependencies` section:
     
 
 ## 🐒 How to use?
-Only **1** steps needed to create a basic checkout using `MercadoPagoCheckout`:
+
+Only **3** steps needed to create a basic checkout using `MercadoPagoCheckout`:
+
+1) Import into your project
+```java
+import com.mercadopago.android.px.core.MercadoPagoCheckout.Builder;
+```
+
+2) Set your PublicKey and PreferenceId
+```java
+final MercadoPagoCheckout checkout = new MercadoPagoCheckout.Builder("your_public_key", "your_checkout_preference_id")
+    .build();
+```
+
+3) Start
+```java
+checkout.startPayment(activityOrContext, requestCode);
+```
+
+### One line integration
 ```java
 new MercadoPagoCheckout.Builder("your_public_key", "your_checkout_preference_id")
     .build()
     .startPayment(activityOrContext, requestCode);
 ```
+
+### Advanced integration
+Check our official code [reference](http://mercadopago.github.io/px-android/), especially ```MercadoPagoCheckoutBuilder``` object to explore all available functionalities.
+
+### 🔮 Project Example
+This project include an example project using MercadoPago PX. In case you need support contact the MercadoPago Developers Site.
 
 
 ## Documentation
@@ -42,7 +88,41 @@ You can join the MercadoPago Developers Community on MercadoPago Developers Site
 + [Español](https://www.mercadopago.com.ar/developers/es/community/forum/)
 + [Português](https://www.mercadopago.com.br/developers/pt/community/forum/)
 
+## 🌈 Color customization
+```
+    <!-- Toolbar and status bar default -->
+	<color name="px_colorPrimary">@color/ui_components_android_color_primary</color>
+	<color name="px_colorPrimaryDark">@color/ui_components_android_color_primary_dark</color>
+	<color name="px_colorAccent">@color/ui_components_android_color_accent</color>
+	<color name="px_background">@color/px_colorPrimary</color>
+	<color name="px_toolbar_text">@color/ui_components_white_color</color>
 
+	<!-- Discount modal and discount description -->
+	<color name="px_discount_summary_background">#474747</color>
+	<color name="px_discount_description">#64c574</color>
+
+	<!-- Inputs -->
+	<color name="px_input">@color/px_colorPrimary</color>
+
+	<!-- R&C toolbar -->
+	<color name="px_review_background">@color/ui_components_white_color</color>
+	<color name="px_review_toolbar_text">@color/px_colorPrimary</color>
+
+	<!-- R&C summary -->
+	<color name="px_review_summary_background">@color/px_white</color>
+	<color name="px_summary_text_color">@color/ui_components_dark_grey_color</color>
+	<color name="px_summary_separator_color">@color/px_separator</color>
+
+	<!-- R&C components -->
+	<color name="px_review_payment_method_background">@color/px_light_gray</color>
+	<color name="px_review_item_background">@color/px_light_gray</color>
+
+	<!-- Spinner -->
+	<color name="px_background_loading">@color/ui_components_white_color</color>
+	<color name="px_tint_loading">@color/px_colorPrimary</color>
+
+	<color name="px_paymentMethodTint">@color/px_colorPrimary</color>
+```
 
 ## 👨🏻‍💻 Author
 Mercado Pago / Mercado Libre
