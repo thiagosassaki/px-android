@@ -12,8 +12,12 @@ android {
         targetSdkVersion api_level as int
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        // only on development
+        if (!project.hasProperty('deploy')) {
+            resConfigs("en", "xxhdpi")
+            aaptOptions.cruncherEnabled = false
+        }
     }
 
     dexOptions {
@@ -54,11 +58,11 @@ android {
 
 dependencies {
     implementation project(':px-checkout')
-    implementation "com.google.code.gson:gson:2.8.2"
+    implementation "com.google.code.gson:gson:$gson"
     implementation "com.android.support:appcompat-v7:$support_library_version"
     implementation "com.android.support:design:$support_library_version"
 
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation "com.android.support.constraint:constraint-layout:$constraint_layout"
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leak_cannary"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leak_cannary"
     androidTestImplementation project(':px-testlib')

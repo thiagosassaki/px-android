@@ -35,11 +35,13 @@ function showSpinner {
 function uploadModule {
   local pid
   echo "Uploading $1"
-  ./gradlew $1:bintrayUpload > /dev/null || echo "${red}error uploading $1 ${normal}" & export pid=$!
+  ./gradlew -Pdeploy $1:bintrayUpload > /dev/null || echo "${red}error uploading $1 ${normal}" & export pid=$!
   showSpinner $pid
 }
 
 echo "${green}######### Init deploy #########${normal}"
+./gradlew clean
+./gradlew assemble
 
 for current in ${modules[@]}
 do

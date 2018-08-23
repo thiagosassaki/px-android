@@ -6,23 +6,23 @@ apply plugin:'maven-publish'
 apply plugin:'com.jfrog.bintray'
 apply plugin:'com.github.dcendents.android-maven'
 
-
-task androidJavadocs(type:Javadoc) {
+task javadoc(type:Javadoc) {
     failOnError = false
     options.encoding = 'UTF-8'
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    // JDK 1.8 is more strict then 1.7. Have JDK 1.8 behave like 1.7 for javadoc generation
+    // JDK 1.8 is more strict than 1.7. This makes JDK 1.8 behave like 1.7 for javadoc
     if (Jvm.current().getJavaVersion().isJava8Compatible()) {
         options.addStringOption('Xdoclint:none', '-quiet')
     }
     exclude '**/BuildConfig.java'
     exclude '**/R.java'
+    exclude '**/internal/**'
 }
 
-task androidJavadocsJar(type:Jar, dependsOn:androidJavadocs) {
+task androidJavadocsJar(type:Jar, dependsOn:javadoc) {
     classifier = 'javadoc'
-    from androidJavadocs.destinationDir
+    from javadoc.destinationDir
 }
 
 task androidSourcesJar(type:Jar) {
@@ -31,7 +31,7 @@ task androidSourcesJar(type:Jar) {
 }
 
 afterEvaluate {
-    androidJavadocs.classpath += project.android.libraryVariants.toList().first().javaCompile.classpath
+    javadoc.classpath += project.android.libraryVariants.toList().first().javaCompile.classpath
 }
 
 artifacts {
@@ -127,7 +127,7 @@ bintray {
             name = versionToDeploy
             desc = libraryDescription
             vcsTag = versionToDeploy
-            released  = new Date()
+            released = project.hasProperty('deploy') ? new Date() : "2018-08-08"
         }
     }
 }
