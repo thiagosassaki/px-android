@@ -40,8 +40,8 @@ function uploadModule {
 }
 
 echo "${green}######### Init deploy #########${normal}"
-./gradlew clean
-./gradlew assemble
+./gradlew -Pdeploy clean
+./gradlew -Pdeploy assemble
 
 for current in ${modules[@]}
 do
