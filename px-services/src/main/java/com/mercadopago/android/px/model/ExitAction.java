@@ -4,8 +4,9 @@ import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import java.io.Serializable;
 
-public class ExitAction extends Action implements Parcelable {
+public class ExitAction extends Action implements Parcelable, Serializable {
 
     private final String name;
     private final int resCode;
