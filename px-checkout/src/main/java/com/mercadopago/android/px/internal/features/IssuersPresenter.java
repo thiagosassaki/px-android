@@ -1,10 +1,12 @@
 package com.mercadopago.android.px.internal.features;
 
+import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.base.MvpPresenter;
 import com.mercadopago.android.px.internal.callbacks.FailureRecovery;
 import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
 import com.mercadopago.android.px.internal.features.providers.IssuersProvider;
+import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.Issuer;
@@ -19,14 +21,18 @@ import java.util.List;
 
 public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersProvider> {
 
+    @NonNull private final UserSelectionRepository userSelectionRepository;
     //Local vars
-    private PaymentMethod mPaymentMethod;
     private List<Issuer> mIssuers;
     private CardInfo mCardInfo;
     private FailureRecovery mFailureRecovery;
 
     //Card Info
     private String mBin = "";
+
+    public IssuersPresenter(@NonNull final UserSelectionRepository userSelectionRepository) {
+        this.userSelectionRepository = userSelectionRepository;
+    }
 
     public void initialize() {
         if (wereIssuersSet()) {
@@ -50,7 +56,9 @@ public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersP
         if (mIssuers.isEmpty()) {
             getView().showError(getResourcesProvider().getEmptyIssuersError(), "");
         } else if (mIssuers.size() == 1) {
-            getView().finishWithResult(issuers.get(0));
+            final Issuer issuer = issuers.get(0);
+            storeIssuerSelection(issuer);
+            getView().finishWithResult();
         } else {
             getView().showHeader();
             getView().showIssuers(issuers, getDpadSelectionCallback());
@@ -60,7 +68,7 @@ public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersP
     private void getIssuersAsync() {
         getView().showLoadingView();
 
-        getResourcesProvider().getIssuers(mPaymentMethod.getId(), mBin,
+        getResourcesProvider().getIssuers(userSelectionRepository.getPaymentMethod().getId(), mBin,
             new TaggedCallback<List<Issuer>>(ApiUtil.RequestOrigin.GET_ISSUERS) {
                 @Override
                 public void onSuccess(List<Issuer> issuers) {
@@ -93,8 +101,14 @@ public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersP
         };
     }
 
-    public void onItemSelected(int position) {
-        getView().finishWithResult(mIssuers.get(position));
+    public void onItemSelected(final int position) {
+        final Issuer issuer = mIssuers.get(position);
+        storeIssuerSelection(issuer);
+        getView().finishWithResult();
+    }
+
+    private void storeIssuerSelection(@NonNull final Issuer issuer) {
+        userSelectionRepository.select(issuer);
     }
 
     public void recoverFromFailure() {
@@ -103,12 +117,8 @@ public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersP
         }
     }
 
-    public void setPaymentMethod(PaymentMethod paymentMethod) {
-        mPaymentMethod = paymentMethod;
-    }
-
     public PaymentMethod getPaymentMethod() {
-        return mPaymentMethod;
+        return userSelectionRepository.getPaymentMethod();
     }
 
     public void setIssuers(List<Issuer> issuers) {
@@ -140,6 +150,6 @@ public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersP
     }
 
     public boolean isRequiredCardDrawn() {
-        return mCardInfo != null && mPaymentMethod != null;
+        return mCardInfo != null && userSelectionRepository.getPaymentMethod() != null;
     }
 }

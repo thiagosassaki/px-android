@@ -5,10 +5,10 @@ import com.mercadopago.android.px.model.Instructions;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.requests.GroupsIntent;
+import com.mercadopago.android.px.model.requests.PaymentBodyIntent;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.internal.callbacks.MPCall;
 import java.math.BigDecimal;
-import java.util.Map;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -34,7 +34,7 @@ public interface CheckoutService {
 
     @POST("/{version}/checkout/payments")
     MPCall<Payment> createPayment(@Path(value = "version", encoded = true) String version,
-        @Header("X-Idempotency-Key") String transactionId, @Body Map<String, Object> body);
+        @Header("X-Idempotency-Key") String transactionId, @Body PaymentBodyIntent body);
 
     @GET("/{version}/checkout/payments/{payment_id}/results")
     MPCall<Instructions> getPaymentResult(@Path(value = "version", encoded = true) String version,

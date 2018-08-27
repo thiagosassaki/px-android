@@ -214,8 +214,6 @@ public class CardTokenTest extends BaseTest<CheckoutActivity> {
         }
     }
 
-    // TODO: test cvv not required
-
     // * Expiry date
     public void testExpiryDate() {
         CardToken cardToken = StaticMock.getCardToken();

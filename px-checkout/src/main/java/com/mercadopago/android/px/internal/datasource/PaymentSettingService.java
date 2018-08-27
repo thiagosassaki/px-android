@@ -7,10 +7,12 @@ import com.mercadopago.android.px.configuration.AdvancedConfiguration;
 import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.JsonUtil;
+import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.commission.ChargeRule;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class PaymentSettingService implements PaymentSettingRepository {
 
@@ -18,6 +20,7 @@ public class PaymentSettingService implements PaymentSettingRepository {
     private static final String PREF_CHECKOUT_PREF_ID = "PREF_CHECKOUT_PREFERENCE_ID";
     private static final String PREF_PUBLIC_KEY = "PREF_PUBLIC_KEY";
     private static final String PREF_PRIVATE_KEY = "PREF_PRIVATE_KEY";
+    private static final String PREF_TOKEN = "PREF_TOKEN";
     private static final String PREF_ADVANCED = "PREF_ADVANCED";
 
     @NonNull private final SharedPreferences sharedPreferences;
@@ -39,6 +42,13 @@ public class PaymentSettingService implements PaymentSettingRepository {
         edit.clear().apply();
         pref = null;
         paymentConfiguration = null;
+    }
+
+    @Override
+    public void configure(@NonNull final Token token) {
+        final SharedPreferences.Editor edit = sharedPreferences.edit();
+        edit.putString(PREF_TOKEN, jsonUtil.toJson(token));
+        edit.apply();
     }
 
     @Override
@@ -74,11 +84,6 @@ public class PaymentSettingService implements PaymentSettingRepository {
     }
 
     @Override
-    public boolean hasPaymentConfiguration() {
-        return getPaymentConfiguration() != null;
-    }
-
-    @Override
     public void configure(@Nullable final CheckoutPreference checkoutPreference) {
         final SharedPreferences.Editor edit = sharedPreferences.edit();
         if (checkoutPreference == null) {
@@ -94,11 +99,10 @@ public class PaymentSettingService implements PaymentSettingRepository {
     @Override
     public List<ChargeRule> chargeRules() {
         final PaymentConfiguration paymentConfiguration = getPaymentConfiguration();
-        return paymentConfiguration == null ? new ArrayList<ChargeRule>() :
-            paymentConfiguration.getCharges();
+        return paymentConfiguration.getCharges();
     }
 
-    @Nullable
+    @NonNull
     @Override
     public PaymentConfiguration getPaymentConfiguration() {
         return paymentConfiguration;
@@ -123,6 +127,18 @@ public class PaymentSettingService implements PaymentSettingRepository {
     @Override
     public String getPublicKey() {
         return sharedPreferences.getString(PREF_PUBLIC_KEY, "");
+    }
+
+    @Nullable
+    @Override
+    public Token getToken() {
+        return jsonUtil.fromJson(sharedPreferences.getString(PREF_TOKEN, ""), Token.class);
+    }
+
+    @NonNull
+    @Override
+    public String getTransactionId() {
+        return String.format(Locale.getDefault(), "%s%d", getPublicKey(), Calendar.getInstance().getTimeInMillis());
     }
 
     @NonNull

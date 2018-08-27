@@ -13,14 +13,7 @@ public interface CheckoutProvider extends ResourcesProvider {
 
     String getCheckoutExceptionMessage(CheckoutPreferenceException exception);
 
-    String getCheckoutExceptionMessage(IllegalStateException exception);
-
-    void createPayment(String transactionId,
-        CheckoutPreference checkoutPreference,
-        PaymentData paymentData,
-        Boolean binaryMode,
-        String customerId,
-        TaggedCallback<Payment> taggedCallback);
+    String getCheckoutExceptionMessage(Exception exception);
 
     void fetchFonts();
 

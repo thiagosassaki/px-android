@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import com.mercadopago.android.px.model.PaymentData;
+import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.PaymentMethodInfo;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.io.Serializable;
@@ -17,13 +17,16 @@ public interface PaymentMethodPlugin extends Serializable {
     }
 
     /* default */ final class CheckoutData {
-        public final PaymentData paymentData;
-        public final CheckoutPreference checkoutPreference;
+        @NonNull public final CheckoutPreference checkoutPreference;
+        @Nullable public final Discount discount;
+        @Nullable public final String privateKey;
 
-        public CheckoutData(@NonNull final PaymentData paymentData,
-            @NonNull final CheckoutPreference checkoutPreference) {
-            this.paymentData = paymentData;
+        public CheckoutData(@NonNull final CheckoutPreference checkoutPreference,
+            @Nullable final Discount discount,
+            @Nullable final String privateKey) {
             this.checkoutPreference = checkoutPreference;
+            this.discount = discount;
+            this.privateKey = privateKey;
         }
     }
 
@@ -36,7 +39,7 @@ public interface PaymentMethodPlugin extends Serializable {
     /**
      * Init method to be called in a background thread to init this plugin.
      */
-    void init();
+    void init(@NonNull final CheckoutData checkoutData);
 
     /**
      * This method returns {@link PluginPosition#TOP} or

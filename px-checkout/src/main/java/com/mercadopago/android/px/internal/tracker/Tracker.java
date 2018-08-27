@@ -2,49 +2,51 @@ package com.mercadopago.android.px.internal.tracker;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 import com.mercadopago.android.px.BuildConfig;
 import com.mercadopago.android.px.core.PaymentMethodPlugin;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.PaymentModel;
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.SummaryModel;
+import com.mercadopago.android.px.internal.repository.DiscountRepository;
+import com.mercadopago.android.px.internal.viewmodel.OneTapModel;
+import com.mercadopago.android.px.model.ActionEvent;
 import com.mercadopago.android.px.model.CardPaymentMetadata;
 import com.mercadopago.android.px.model.OneTapMetadata;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentMethodSearchItem;
 import com.mercadopago.android.px.model.PaymentTypes;
-import com.mercadopago.android.px.model.ActionEvent;
 import com.mercadopago.android.px.model.ScreenViewEvent;
 import com.mercadopago.android.px.tracking.internal.StrategyMode;
 import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
-public class Tracker {
+public final class Tracker {
 
-    private static String trackingStrategy = StrategyMode.NOOP_STRATEGY;
+    private Tracker() {
+    }
 
     private static void addProperties(final ScreenViewEvent.Builder builder,
-        final List<Pair<String, String>> propertyList) {
-        if (propertyList == null) {
-            return;
-        } else {
-            for (Pair<String, String> property : propertyList) {
+        @Nullable final Iterable<Pair<String, String>> propertyList) {
+        if (propertyList != null) {
+            for (final Pair<String, String> property : propertyList) {
                 builder.addProperty(property.first, property.second);
             }
         }
     }
 
-    private static MPTrackingContext getTrackerContext(final String merchantPublicKey, final Context context) {
-        MPTrackingContext.Builder builder = new MPTrackingContext.Builder(context, merchantPublicKey)
+    private static MPTrackingContext getTrackerContext(@NonNull final String publicKey,
+        @NonNull final Context context,
+        @NonNull final String trackingStrategy) {
+
+        final MPTrackingContext.Builder builder = new MPTrackingContext.Builder(context, publicKey)
             .setVersion(BuildConfig.VERSION_NAME);
-        if (trackingStrategy.equals(StrategyMode.REALTIME_STRATEGY)) {
-            builder.setTrackingStrategy(StrategyMode.REALTIME_STRATEGY);
-            trackingStrategy = StrategyMode.NOOP_STRATEGY;
-        }
+
+        builder.setTrackingStrategy(trackingStrategy);
 
         return builder.build();
     }
@@ -60,17 +62,27 @@ public class Tracker {
         final String screenName,
         final Context context,
         final String merchantPublicKey,
-        final List<Pair<String, String>> properties) {
+        @Nullable final Iterable<Pair<String, String>> properties) {
 
-        MPTrackingContext mpTrackingContext = getTrackerContext(merchantPublicKey, context);
+        trackScreen(screenId, screenName, context, merchantPublicKey, properties, StrategyMode.NOOP_STRATEGY);
+    }
 
-        ScreenViewEvent.Builder builder = new ScreenViewEvent.Builder()
+    public static void trackScreen(final String screenId,
+        final String screenName,
+        final Context context,
+        final String merchantPublicKey,
+        @Nullable final Iterable<Pair<String, String>> properties,
+        final String trackingStrategy) {
+
+        final MPTrackingContext mpTrackingContext = getTrackerContext(merchantPublicKey, context, trackingStrategy);
+
+        final ScreenViewEvent.Builder builder = new ScreenViewEvent.Builder()
             .setFlowId(FlowHandler.getInstance().getFlowId())
             .setScreenId(screenId)
             .setScreenName(screenName);
 
         addProperties(builder, properties);
-        ScreenViewEvent event = builder.build();
+        final ScreenViewEvent event = builder.build();
         mpTrackingContext.trackEvent(event);
     }
 
@@ -78,7 +90,7 @@ public class Tracker {
         final String merchantPublicKey,
         final PaymentModel paymentModel) {
 
-        List<Pair<String, String>> properties = new ArrayList<>();
+        final Collection<Pair<String, String>> properties = new ArrayList<>();
         properties.add(new Pair<>(TrackingUtil.PROPERTY_SHIPPING_INFO, TrackingUtil.HAS_SHIPPING_DEFAULT_VALUE));
         properties.add(new Pair<>(TrackingUtil.PROPERTY_PAYMENT_TYPE_ID, paymentModel.getPaymentType()));
         properties.add(new Pair<>(TrackingUtil.PROPERTY_PAYMENT_METHOD_ID, paymentModel.paymentMethodId));
@@ -89,11 +101,15 @@ public class Tracker {
             context, merchantPublicKey, properties);
     }
 
-    public static void trackOneTapScreen(@NonNull final Context context, @NonNull final String merchantPublicKey,
-        @NonNull final OneTapMetadata oneTapMetadata, @NonNull final BigDecimal transactionAmount) {
-        trackingStrategy = StrategyMode.REALTIME_STRATEGY;
+    public static void trackOneTapScreen(@NonNull final Context context,
+        final OneTapModel model) {
+        final OneTapMetadata oneTapMetadata = model.getPaymentMethods().getOneTapMetadata();
+        final Session session = Session.getSession(context);
+        final BigDecimal amountToPay = session.getAmountRepository().getAmountToPay();
+        final String publicKey = session.getConfigurationModule().getPaymentSettings().getPublicKey();
 
-        final MPTrackingContext mpTrackingContext = getTrackerContext(merchantPublicKey, context);
+        final MPTrackingContext mpTrackingContext =
+            getTrackerContext(publicKey, context, StrategyMode.REALTIME_STRATEGY);
 
         final ScreenViewEvent.Builder builder = new ScreenViewEvent.Builder()
             .setFlowId(FlowHandler.getInstance().getFlowId())
@@ -101,7 +117,7 @@ public class Tracker {
             .setScreenName(TrackingUtil.SCREEN_ID_ONE_TAP)
             .addProperty(TrackingUtil.PROPERTY_PAYMENT_TYPE_ID, oneTapMetadata.getPaymentTypeId())
             .addProperty(TrackingUtil.PROPERTY_PAYMENT_METHOD_ID, oneTapMetadata.getPaymentMethodId())
-            .addProperty(TrackingUtil.PROPERTY_PURCHASE_AMOUNT, transactionAmount.toString());
+            .addProperty(TrackingUtil.PROPERTY_PURCHASE_AMOUNT, amountToPay.toString());
 
         if (oneTapMetadata.getCard() != null) {
             builder.addProperty(TrackingUtil.PROPERTY_INSTALLMENTS,
@@ -113,12 +129,14 @@ public class Tracker {
     }
 
     public static void trackOneTapConfirm(@NonNull final Context context,
-        @NonNull final String merchantPublicKey,
-        @NonNull final OneTapMetadata oneTapMetadata,
-        @NonNull final BigDecimal totalAmount) {
-        trackingStrategy = StrategyMode.REALTIME_STRATEGY;
+        final OneTapModel model) {
+        final OneTapMetadata oneTapMetadata = model.getPaymentMethods().getOneTapMetadata();
+        final Session session = Session.getSession(context);
+        final BigDecimal amountToPay = session.getAmountRepository().getAmountToPay();
+        final String publicKey = session.getConfigurationModule().getPaymentSettings().getPublicKey();
 
-        final MPTrackingContext mpTrackingContext = getTrackerContext(merchantPublicKey, context);
+        final MPTrackingContext mpTrackingContext =
+            getTrackerContext(publicKey, context, StrategyMode.REALTIME_STRATEGY);
 
         final ActionEvent.Builder builder = new ActionEvent.Builder()
             .setFlowId(FlowHandler.getInstance().getFlowId())
@@ -127,7 +145,7 @@ public class Tracker {
             .setScreenName(TrackingUtil.SCREEN_ID_ONE_TAP)
             .addProperty(TrackingUtil.PROPERTY_PAYMENT_TYPE_ID, oneTapMetadata.getPaymentTypeId())
             .addProperty(TrackingUtil.PROPERTY_PAYMENT_METHOD_ID, oneTapMetadata.getPaymentMethodId())
-            .addProperty(TrackingUtil.PROPERTY_PURCHASE_AMOUNT, totalAmount.toString());
+            .addProperty(TrackingUtil.PROPERTY_PURCHASE_AMOUNT, amountToPay.toString());
 
         final CardPaymentMetadata card = oneTapMetadata.getCard();
 
@@ -140,10 +158,12 @@ public class Tracker {
         mpTrackingContext.trackEvent(builder.build());
     }
 
-    public static void trackOneTapCancel(@NonNull final Context context, @NonNull final String merchantPublicKey) {
-        trackingStrategy = StrategyMode.REALTIME_STRATEGY;
+    public static void trackOneTapCancel(@NonNull final Context context) {
+        final Session session = Session.getSession(context);
+        final String publicKey = session.getConfigurationModule().getPaymentSettings().getPublicKey();
 
-        final MPTrackingContext mpTrackingContext = getTrackerContext(merchantPublicKey, context);
+        final MPTrackingContext mpTrackingContext =
+            getTrackerContext(publicKey, context, StrategyMode.REALTIME_STRATEGY);
 
         final ActionEvent.Builder builder = new ActionEvent.Builder()
             .setFlowId(FlowHandler.getInstance().getFlowId())
@@ -155,16 +175,23 @@ public class Tracker {
     }
 
     public static void trackOneTapSummaryDetail(@NonNull final Context context,
-        @NonNull final String merchantPublicKey, final boolean hasDiscount, final CardPaymentMetadata card) {
-        trackingStrategy = StrategyMode.REALTIME_STRATEGY;
+        final OneTapModel model) {
+        final CardPaymentMetadata card = model.getPaymentMethods().getOneTapMetadata().getCard();
+        final Session session = Session.getSession(context);
+        final String publicKey =
+            session.getConfigurationModule().getPaymentSettings().getPublicKey();
+        final DiscountRepository discountRepository = session.getDiscountRepository();
+        final boolean validDiscount = discountRepository.hasValidDiscount();
 
-        final MPTrackingContext mpTrackingContext = getTrackerContext(merchantPublicKey, context);
+        final MPTrackingContext mpTrackingContext =
+            getTrackerContext(publicKey, context, StrategyMode.REALTIME_STRATEGY);
+
         final ActionEvent.Builder builder = new ActionEvent.Builder()
             .setFlowId(FlowHandler.getInstance().getFlowId())
             .setAction(TrackingUtil.ACTION_OPEN_SUMMARY_ONE_TAP)
             .setScreenId(TrackingUtil.SCREEN_ID_ONE_TAP)
             .setScreenName(TrackingUtil.SCREEN_ID_ONE_TAP)
-            .addProperty(TrackingUtil.PROPERTY_HAS_DISCOUNT, String.valueOf(hasDiscount));
+            .addProperty(TrackingUtil.PROPERTY_HAS_DISCOUNT, String.valueOf(validDiscount));
 
         if (card != null) {
             builder.addProperty(TrackingUtil.PROPERTY_INSTALLMENTS,
@@ -176,9 +203,10 @@ public class Tracker {
 
     public static void trackDiscountTermsAndConditions(@NonNull final Context context,
         @NonNull final String merchantPublicKey) {
-        trackingStrategy = StrategyMode.REALTIME_STRATEGY;
 
-        final MPTrackingContext mpTrackingContext = getTrackerContext(merchantPublicKey, context);
+        final MPTrackingContext mpTrackingContext =
+            getTrackerContext(merchantPublicKey, context, StrategyMode.REALTIME_STRATEGY);
+
         final ActionEvent.Builder builder = new ActionEvent.Builder()
             .setFlowId(FlowHandler.getInstance().getFlowId())
             .setScreenId(TrackingUtil.SCREEN_ID_DISCOUNT_TERMS)
@@ -190,11 +218,10 @@ public class Tracker {
     public static void trackCheckoutConfirm(final Context context, final String merchantPublicKey,
         final PaymentModel paymentModel, final SummaryModel summaryModel) {
 
-        trackingStrategy = StrategyMode.REALTIME_STRATEGY;
+        final MPTrackingContext mpTrackingContext =
+            getTrackerContext(merchantPublicKey, context, StrategyMode.REALTIME_STRATEGY);
 
-        final MPTrackingContext mpTrackingContext = getTrackerContext(merchantPublicKey, context);
-
-        ActionEvent.Builder builder = new ActionEvent.Builder()
+        final ActionEvent.Builder builder = new ActionEvent.Builder()
             .setFlowId(FlowHandler.getInstance().getFlowId())
             .setAction(TrackingUtil.ACTION_CHECKOUT_CONFIRMED)
             .setScreenId(TrackingUtil.SCREEN_ID_REVIEW_AND_CONFIRM)
@@ -208,7 +235,7 @@ public class Tracker {
         }
 
         //If is saved card
-        String cardId = paymentModel.getCardId();
+        final String cardId = paymentModel.getCardId();
         if (cardId != null) {
             builder.addProperty(TrackingUtil.PROPERTY_CARD_ID, cardId);
         }
@@ -222,9 +249,7 @@ public class Tracker {
         final PaymentMethodSearch paymentMethodSearch,
         final Set<String> escCardIds) {
 
-        trackingStrategy = StrategyMode.REALTIME_STRATEGY;
-
-        List<Pair<String, String>> properties = new ArrayList<>();
+        final Collection<Pair<String, String>> properties = new ArrayList<>();
         properties.add(new Pair<>(TrackingUtil.PROPERTY_OPTIONS,
             getFormattedPaymentMethodsForTracking(context, paymentMethodSearch, escCardIds)));
 
@@ -237,7 +262,7 @@ public class Tracker {
         @NonNull final String merchantPublicKey,
         @NonNull final PaymentMethodSearchItem selectedItem) {
 
-        String selectedItemId = selectedItem.getId();
+        final String selectedItemId = selectedItem.getId();
 
         if (TrackingUtil.GROUP_TICKET.equals(selectedItemId)) {
             trackScreen(TrackingUtil.SCREEN_ID_PAYMENT_VAULT_TICKET, TrackingUtil.SCREEN_NAME_PAYMENT_VAULT_TICKET,

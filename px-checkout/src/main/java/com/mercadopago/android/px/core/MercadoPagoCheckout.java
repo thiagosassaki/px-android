@@ -9,7 +9,7 @@ import android.support.annotation.Nullable;
 import com.mercadopago.android.px.configuration.AdvancedConfiguration;
 import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import com.mercadopago.android.px.internal.callbacks.CallbackHolder;
-import com.mercadopago.android.px.internal.datasource.CheckoutStore;
+import com.mercadopago.android.px.internal.datasource.MercadoPagoPaymentConfiguration;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.features.CheckoutActivity;
 import com.mercadopago.android.px.internal.features.uicontrollers.FontCache;
@@ -41,7 +41,7 @@ public class MercadoPagoCheckout {
     @Nullable
     private final String privateKey;
 
-    @Nullable
+    @NonNull
     private final PaymentConfiguration paymentConfiguration;
 
     @Nullable
@@ -56,7 +56,6 @@ public class MercadoPagoCheckout {
         privateKey = builder.privateKey;
         paymentConfiguration = builder.paymentConfiguration;
         checkoutPreference = builder.checkoutPreference;
-        configureCheckoutStore(builder);
         FlowHandler.getInstance().generateFlowId();
         CallbackHolder.getInstance().clean();
     }
@@ -75,11 +74,6 @@ public class MercadoPagoCheckout {
      */
     public void startPayment(@NonNull final Context context, final int requestCode) {
         startIntent(context, CheckoutActivity.getIntent(context), requestCode);
-    }
-
-    private void configureCheckoutStore(final Builder builder) {
-        final CheckoutStore store = CheckoutStore.getInstance();
-        store.reset();
     }
 
     private void startIntent(@NonNull final Context context, @NonNull final Intent checkoutIntent,
@@ -120,7 +114,7 @@ public class MercadoPagoCheckout {
         return TextUtil.isEmpty(privateKey) ? "" : privateKey;
     }
 
-    @Nullable
+    @NonNull
     public PaymentConfiguration getPaymentConfiguration() {
         return paymentConfiguration;
     }
@@ -137,7 +131,7 @@ public class MercadoPagoCheckout {
         /* default */ @NonNull AdvancedConfiguration advancedConfiguration =
             new AdvancedConfiguration.Builder().build();
 
-        /* default */ @Nullable PaymentConfiguration paymentConfiguration;
+        /* default */ @NonNull PaymentConfiguration paymentConfiguration = new MercadoPagoPaymentConfiguration();
 
 
         /* default */ @Nullable String privateKey;
@@ -227,8 +221,6 @@ public class MercadoPagoCheckout {
         }
 
         /**
-         * //TODO we will add a new mechanism
-         *
          * @deprecated we will not support this mechanism anymore.
          */
         @Deprecated
@@ -239,8 +231,6 @@ public class MercadoPagoCheckout {
         }
 
         /**
-         * //TODO we will add a new mechanism
-         *
          * @deprecated we will not support this mechanism anymore.
          */
         @Deprecated
@@ -251,8 +241,6 @@ public class MercadoPagoCheckout {
         }
 
         /**
-         * //TODO we will add a new mechanism
-         *
          * @deprecated we will not support this mechanism anymore.
          */
         @Deprecated
@@ -263,7 +251,6 @@ public class MercadoPagoCheckout {
         }
 
         /**
-         * //TODO we will add a new mechanism
          * @deprecated we will not support this mechanism anymore.
          */
         @Deprecated

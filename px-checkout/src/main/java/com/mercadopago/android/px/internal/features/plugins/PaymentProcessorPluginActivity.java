@@ -1,8 +1,9 @@
 package com.mercadopago.android.px.internal.features.plugins;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,34 +12,56 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.PaymentProcessor;
-import com.mercadopago.android.px.internal.datasource.CheckoutStore;
 import com.mercadopago.android.px.internal.di.ConfigurationModule;
 import com.mercadopago.android.px.internal.di.Session;
+import com.mercadopago.android.px.internal.util.ErrorUtil;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.GenericPayment;
 import com.mercadopago.android.px.model.Payment;
-import com.mercadopago.android.px.model.PaymentData;
-import com.mercadopago.android.px.model.PaymentResult;
-import com.mercadopago.android.px.model.PaymentTypes;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 
+import static com.mercadopago.android.px.internal.util.ErrorUtil.ERROR_REQUEST_CODE;
+
 public final class PaymentProcessorPluginActivity extends AppCompatActivity
-    implements PaymentProcessor.OnPaymentListener, Processor {
+    implements PaymentProcessor.OnPaymentListener {
 
     private static final String EXTRA_BUSINESS_PAYMENT = "extra_business_payment";
+    private static final String EXTRA_GENERIC_PAYMENT = "extra_generic_payment";
+    private static final String EXTRA_PAYMENT = "extra_payment";
     private static final String PROCESSOR_FRAGMENT = "PROCESSOR_FRAGMENT";
 
-    public static Intent getIntent(@NonNull final Context context) {
-        return new Intent(context, PaymentProcessorPluginActivity.class);
+    public static void start(@NonNull final Activity activity, final int reqCode) {
+        final Intent intent = new Intent(activity, PaymentProcessorPluginActivity.class);
+        activity.startActivityForResult(intent, reqCode);
+    }
+
+    public static void start(@NonNull final Fragment fragment, final int reqCode) {
+        final Intent intent = new Intent(fragment.getContext(), PaymentProcessorPluginActivity.class);
+        fragment.startActivityForResult(intent, reqCode);
     }
 
     public static boolean isBusiness(@Nullable final Intent intent) {
         return intent != null && intent.getExtras() != null && intent.getExtras().containsKey(EXTRA_BUSINESS_PAYMENT);
     }
 
+    public static boolean isGeneric(@Nullable final Intent intent) {
+        return intent != null && intent.getExtras() != null && intent.getExtras().containsKey(EXTRA_GENERIC_PAYMENT);
+    }
+
+    @Nullable
+    public static Payment getPayment(final Intent intent) {
+        return (Payment) intent.getExtras().get(EXTRA_PAYMENT);
+    }
+
     @Nullable
     public static BusinessPayment getBusinessPayment(final Intent intent) {
         return (BusinessPayment) intent.getExtras().get(EXTRA_BUSINESS_PAYMENT);
+    }
+
+    @Nullable
+    public static GenericPayment getGenericPayment(final Intent intent) {
+        return (GenericPayment) intent.getExtras().get(EXTRA_GENERIC_PAYMENT);
     }
 
     @Override
@@ -49,7 +72,6 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity
         setContentView(frameLayout,
             new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-        final CheckoutStore store = CheckoutStore.getInstance();
         final Session session = Session.getSession(getApplicationContext());
         final ConfigurationModule configurationModule = session.getConfigurationModule();
         final PaymentProcessor paymentProcessor =
@@ -57,10 +79,9 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity
                 .getPaymentConfiguration()
                 .getPaymentProcessor();
 
-        final PaymentData paymentData = store.getPaymentData();
         final CheckoutPreference checkoutPreference = configurationModule.getPaymentSettings().getCheckoutPreference();
         final PaymentProcessor.CheckoutData checkoutData =
-            new PaymentProcessor.CheckoutData(paymentData, checkoutPreference);
+            new PaymentProcessor.CheckoutData(session.getPaymentRepository().getPaymentData(), checkoutPreference);
 
         final Fragment fragment = paymentProcessor.getFragment(checkoutData, this);
         final Bundle fragmentBundle = paymentProcessor.getFragmentBundle(checkoutData, this);
@@ -77,56 +98,47 @@ public final class PaymentProcessorPluginActivity extends AppCompatActivity
         }
     }
 
-    private PaymentResult toPaymentResult(@NonNull final GenericPayment genericPayment) {
-
-        final Payment payment = new Payment();
-        payment.setId(genericPayment.paymentId);
-        payment.setPaymentMethodId(genericPayment.paymentData.getPaymentMethod().getId());
-        payment.setPaymentTypeId(PaymentTypes.PLUGIN);
-        payment.setStatus(genericPayment.status);
-        payment.setStatusDetail(genericPayment.statusDetail);
-
-        return new PaymentResult.Builder()
-            .setPaymentData(genericPayment.paymentData)
-            .setPaymentId(payment.getId())
-            .setPaymentStatus(payment.getStatus())
-            .setPaymentStatusDetail(payment.getStatusDetail())
-            .build();
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ERROR_REQUEST_CODE) {
+            //TODO verify error handling
+            onBackPressed();
+        }
     }
 
     @Override
-    public void process(final BusinessPayment businessPayment) {
+    public void onPaymentFinished(@NonNull final Payment payment) {
         final Intent intent = new Intent();
-        intent.putExtra(EXTRA_BUSINESS_PAYMENT, businessPayment);
+        intent.putExtra(EXTRA_PAYMENT, payment);
         setResult(RESULT_OK, intent);
         finish();
     }
 
     @Override
-    public void process(final GenericPayment genericPayment) {
-        final PaymentResult paymentResult = toPaymentResult(genericPayment);
-        CheckoutStore.getInstance().setPaymentResult(paymentResult);
-        setResult(RESULT_OK);
+    public void onPaymentFinished(@NonNull final GenericPayment genericPayment) {
+        final Intent intent = new Intent();
+        intent.putExtra(EXTRA_GENERIC_PAYMENT, (Parcelable) genericPayment);
+        setResult(RESULT_OK, intent);
         finish();
     }
 
     @Override
-    public void onPaymentFinished(@NonNull final PluginPayment payment) {
-        payment.process(this);
-    }
-
-    @Override
-    public void onPaymentFinished(@NonNull final GenericPayment genericPayment) {
-        process(genericPayment);
-    }
-
-    @Override
     public void onPaymentFinished(@NonNull final BusinessPayment businessPayment) {
-        process(businessPayment);
+        final Intent intent = new Intent();
+        intent.putExtra(EXTRA_BUSINESS_PAYMENT, (Parcelable) businessPayment);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     @Override
-    public void cancelPayment() {
+    public void onPaymentError(@NonNull final MercadoPagoError error) {
+        //TODO verify error handling
+        ErrorUtil.startErrorActivity(this, error);
+    }
+
+    @Override
+    public void onBackPressed() {
         setResult(RESULT_CANCELED);
         finish();
     }

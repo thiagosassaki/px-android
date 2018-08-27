@@ -842,6 +842,7 @@ public class GuessingCardPresenter extends MvpPresenter<GuessingCardActivityView
 
     public void resolveTokenRequest(Token token) {
         mToken = token;
+        paymentSettingRepository.configure(mToken);
         getIssuers();
     }
 
@@ -899,6 +900,7 @@ public class GuessingCardPresenter extends MvpPresenter<GuessingCardActivityView
     private void resolveIssuersList(List<Issuer> issuers) {
         if (issuers.size() == 1) {
             mIssuer = issuers.get(0);
+            userSelectionRepository.select(mIssuer);
             getInstallments();
         } else {
             getView().finishCardFlow(userSelectionRepository.getPaymentMethod(), mToken, issuers);

@@ -17,16 +17,15 @@ import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.internal.view.AmountView;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CustomSearchItem;
-import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentMethodSearchItem;
 import com.mercadopago.android.px.model.PaymentMethods;
 import com.mercadopago.android.px.model.PaymentTypes;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.services.Callback;
-import com.mercadopago.android.px.model.exceptions.ApiException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -122,8 +121,8 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
         }
     }
 
-    public void onPayerInformationReceived(final Payer payer) {
-        getView().finishPaymentMethodSelection(userSelectionRepository.getPaymentMethod(), payer);
+    public void onPayerInformationReceived() {
+        getView().finishPaymentMethodSelection(userSelectionRepository.getPaymentMethod());
     }
 
     private void validateParameters() throws IllegalStateException {
@@ -198,10 +197,6 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
         }
     }
 
-    private void selectCard(final Card card) {
-        getView().startSavedCardFlow(card);
-    }
-
     private void showAvailableOptions() {
         final Collection<PaymentMethodPlugin> paymentMethodPluginList =
             pluginRepository.getEnabledPlugins();
@@ -242,7 +237,9 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
     private void selectCard(final CustomSearchItem item) {
         if (PaymentTypes.isCardPaymentType(item.getType())) {
             final Card card = getCardWithPaymentMethod(item);
-            selectCard(card);
+            userSelectionRepository.select(card);
+            //TODO ver que pasa si selectedCard es null
+            getView().startSavedCardFlow(card);
         }
     }
 
@@ -256,7 +253,6 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
                 selectedCard.setSecurityCode(paymentMethod.getSettings().get(0).getSecurityCode());
             }
         }
-        userSelectionRepository.select(paymentMethod);
         return selectedCard;
     }
 

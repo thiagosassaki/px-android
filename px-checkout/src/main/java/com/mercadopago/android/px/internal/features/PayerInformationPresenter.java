@@ -1,15 +1,18 @@
 package com.mercadopago.android.px.internal.features;
 
+import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.base.MvpPresenter;
 import com.mercadopago.android.px.internal.callbacks.FailureRecovery;
 import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
 import com.mercadopago.android.px.internal.features.providers.PayerInformationProvider;
+import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.Identification;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +22,8 @@ import java.util.List;
 
 public class PayerInformationPresenter extends MvpPresenter<PayerInformationView, PayerInformationProvider> {
 
-    //Activity parameters
-    private Payer mPayer;
+    @NonNull
+    private final PaymentSettingRepository paymentSettings;
 
     //Payer info
     private String mIdentificationNumber;
@@ -36,7 +39,8 @@ public class PayerInformationPresenter extends MvpPresenter<PayerInformationView
     private static final int DEFAULT_IDENTIFICATION_NUMBER_LENGTH = 12;
     private static final String IDENTIFICATION_TYPE_CPF = "CPF";
 
-    public PayerInformationPresenter() {
+    public PayerInformationPresenter(@NonNull final PaymentSettingRepository paymentSettings) {
+        this.paymentSettings = paymentSettings;
         mIdentification = new Identification();
     }
 
@@ -126,11 +130,15 @@ public class PayerInformationPresenter extends MvpPresenter<PayerInformationView
     }
 
     public void createPayer() {
-        mPayer = new Payer();
-
-        mPayer.setFirstName(mIdentificationName);
-        mPayer.setLastName(mIdentificationLastName);
-        mPayer.setIdentification(mIdentification);
+        //Get current payer
+        final CheckoutPreference checkoutPreference = paymentSettings.getCheckoutPreference();
+        final Payer payer = checkoutPreference.getPayer();
+        // add collected information.
+        payer.setFirstName(mIdentificationName);
+        payer.setLastName(mIdentificationLastName);
+        payer.setIdentification(mIdentification);
+        // reconfigure
+        paymentSettings.configure(checkoutPreference);
     }
 
     public FailureRecovery getFailureRecovery() {
@@ -226,7 +234,7 @@ public class PayerInformationPresenter extends MvpPresenter<PayerInformationView
     }
 
     public boolean validateBusinessName() {
-        boolean isBusinessNameValid = validateString(mIdentificationBusinessName);
+        final boolean isBusinessNameValid = validateString(mIdentificationBusinessName);
 
         if (isBusinessNameValid) {
             getView().clearErrorView();
@@ -243,10 +251,6 @@ public class PayerInformationPresenter extends MvpPresenter<PayerInformationView
 
     private boolean validateString(String string) {
         return !TextUtil.isEmpty(string);
-    }
-
-    public Payer getPayer() {
-        return mPayer;
     }
 
     public IdentificationType getIdentificationType() {
@@ -271,10 +275,6 @@ public class PayerInformationPresenter extends MvpPresenter<PayerInformationView
 
     public List<IdentificationType> getIdentificationTypes() {
         return mIdentificationTypes;
-    }
-
-    public void setPayer(Payer mPayer) {
-        this.mPayer = mPayer;
     }
 
     public void setIdentificationType(IdentificationType mIdentificationType) {

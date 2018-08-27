@@ -121,7 +121,8 @@ public class SecurityCodeActivity extends MercadoPagoBaseActivity implements Sec
 
     private void createPresenter() {
         if (mSecurityCodePresenter == null) {
-            mSecurityCodePresenter = new SecurityCodePresenter();
+            final Session session = Session.getSession(this);
+            mSecurityCodePresenter = new SecurityCodePresenter(session.getConfigurationModule().getPaymentSettings());
         }
     }
 
@@ -446,9 +447,7 @@ public class SecurityCodeActivity extends MercadoPagoBaseActivity implements Sec
 
     @Override
     public void finishWithResult() {
-        final Intent returnIntent = new Intent();
-        returnIntent.putExtra("token", JsonUtil.getInstance().toJson(mSecurityCodePresenter.getToken()));
-        setResult(RESULT_OK, returnIntent);
+        setResult(RESULT_OK);
         finish();
     }
 }

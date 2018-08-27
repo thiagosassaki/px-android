@@ -15,9 +15,9 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.configuration.ReviewAndConfirmConfiguration;
-import com.mercadopago.android.px.internal.features.MercadoPagoComponents;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.features.MercadoPagoBaseActivity;
+import com.mercadopago.android.px.internal.features.MercadoPagoComponents;
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.ReviewAndConfirmContainer;
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.actions.CancelPaymentAction;
 import com.mercadopago.android.px.internal.features.review_and_confirm.components.actions.ChangePaymentMethodAction;
@@ -28,9 +28,9 @@ import com.mercadopago.android.px.internal.features.review_and_confirm.models.Su
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.TermsAndConditionsModel;
 import com.mercadopago.android.px.internal.features.uicontrollers.FontCache;
 import com.mercadopago.android.px.internal.tracker.Tracker;
-import com.mercadopago.android.px.internal.view.Action;
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.internal.view.ComponentManager;
+import com.mercadopago.android.px.model.Action;
 import com.mercadopago.android.px.model.ExitAction;
 
 public final class ReviewAndConfirmActivity extends MercadoPagoBaseActivity implements ActionDispatcher {

@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.configuration.AdvancedConfiguration;
 import com.mercadopago.android.px.configuration.PaymentConfiguration;
+import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.commission.ChargeRule;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.util.List;
@@ -20,12 +21,16 @@ public interface PaymentSettingRepository {
 
     void configure(@Nullable final PaymentConfiguration paymentConfiguration);
 
+    void configure(@NonNull Token token);
+
     void configurePreferenceId(@Nullable String preferenceId);
+
+    void configurePrivateKey(@Nullable final String privateKey);
 
     @NonNull
     List<ChargeRule> chargeRules();
 
-    @Nullable
+    @NonNull
     PaymentConfiguration getPaymentConfiguration();
 
     @Nullable
@@ -38,14 +43,15 @@ public interface PaymentSettingRepository {
     String getPublicKey();
 
     @NonNull
+    String getTransactionId();
+
+    @NonNull
     AdvancedConfiguration getAdvancedConfiguration();
 
     @Nullable
     String getPrivateKey();
 
-    void configurePrivateKey(@Nullable final String privateKey);
-
-    boolean hasPaymentConfiguration();
-
+    @Nullable
+    Token getToken();
 
 }

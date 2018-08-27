@@ -12,26 +12,26 @@ public class CardInfo {
     private final String lastFourDigits;
     private final String firstSixDigits;
 
-    public CardInfo(CardToken cardToken) {
+    public CardInfo(final CardToken cardToken) {
         cardNumberLength = cardToken.getCardNumber().length();
         lastFourDigits = cardToken.getCardNumber().substring(cardNumberLength - 4, cardNumberLength);
         firstSixDigits = cardToken.getCardNumber().substring(0, 6);
     }
 
-    public CardInfo(Token token) {
+    public CardInfo(final Token token) {
         cardNumberLength = token.getCardNumberLength();
         lastFourDigits = token.getLastFourDigits();
         firstSixDigits = token.getFirstSixDigits();
     }
 
-    public CardInfo(Card card) {
+    public CardInfo(final Card card) {
         lastFourDigits = card.getLastFourDigits();
         firstSixDigits = card.getFirstSixDigits();
         securityCodeLength = card.getSecurityCodeLength();
         securityCodeLocation = card.getSecurityCodeLocation();
     }
 
-    public static boolean canCreateCardInfo(Token token) {
+    public static boolean canCreateCardInfo(final Token token) {
         return token.getCardNumberLength() != null && token.getLastFourDigits() != null
             && token.getFirstSixDigits() != null;
     }

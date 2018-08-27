@@ -7,21 +7,24 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import com.mercadopago.android.px.core.PaymentProcessor;
+import com.mercadopago.android.px.model.BusinessPayment;
+import com.mercadopago.android.px.model.GenericPayment;
+import com.mercadopago.android.px.model.IPayment;
 
 import static com.mercadopago.android.px.utils.PaymentUtils.getBusinessPaymentApproved;
 
 public class SamplePaymentProcessor implements PaymentProcessor {
 
     private static final int CONSTANT_DELAY_MILLIS = 2000;
-    private final PluginPayment pluginPayment;
+    private final IPayment iPayment;
     private final Handler handler = new Handler();
 
-    public SamplePaymentProcessor(final PluginPayment pluginPayment) {
-        this.pluginPayment = pluginPayment;
+    public SamplePaymentProcessor(final IPayment iPayment) {
+        this.iPayment = iPayment;
     }
 
     public SamplePaymentProcessor() {
-        pluginPayment = getBusinessPaymentApproved();
+        iPayment = getBusinessPaymentApproved();
     }
 
     @Override
@@ -31,7 +34,11 @@ public class SamplePaymentProcessor implements PaymentProcessor {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                paymentListener.onPaymentFinished(pluginPayment);
+                if (iPayment instanceof BusinessPayment) {
+                    paymentListener.onPaymentFinished((BusinessPayment) iPayment);
+                } else if (iPayment instanceof GenericPayment) {
+                    paymentListener.onPaymentFinished((GenericPayment) iPayment);
+                }
             }
         }, CONSTANT_DELAY_MILLIS);
     }
@@ -57,8 +64,8 @@ public class SamplePaymentProcessor implements PaymentProcessor {
     public Fragment getFragment(@NonNull final CheckoutData data,
         @NonNull final Context context) {
         final SamplePaymentProcessorFragment samplePaymentProcessorFragment = new SamplePaymentProcessorFragment();
-        //TODO warning, dont you really do this.
-        samplePaymentProcessorFragment.setPayment(pluginPayment);
+        // This is just a sample, you should't do this, you must process the payment inside the fragment.
+        samplePaymentProcessorFragment.setPayment(iPayment);
         return samplePaymentProcessorFragment;
     }
 }

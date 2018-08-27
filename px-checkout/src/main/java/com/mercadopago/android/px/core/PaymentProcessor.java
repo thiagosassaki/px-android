@@ -5,10 +5,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import com.mercadopago.android.px.internal.features.plugins.PluginPayment;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.GenericPayment;
+import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentData;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.io.Serializable;
 
@@ -29,18 +30,14 @@ public interface PaymentProcessor extends Serializable {
 
     interface OnPaymentListener {
 
-        /**
-         * Most generic way to process a payment.
-         *
-         * @param payment plugin payment.
-         */
-        void onPaymentFinished(@NonNull final PluginPayment payment);
+        void onPaymentFinished(@NonNull final Payment payment);
 
         void onPaymentFinished(@NonNull final GenericPayment genericPayment);
 
         void onPaymentFinished(@NonNull final BusinessPayment businessPayment);
 
-        void cancelPayment();
+        void onPaymentError(@NonNull final MercadoPagoError error);
+
     }
 
     /**
@@ -90,7 +87,7 @@ public interface PaymentProcessor extends Serializable {
     /**
      * Fragment that will appear if {@link #shouldShowFragmentOnPayment()} is true
      * when user clicks this payment method.
-
+     * <p>
      * inside {@link android.support.v4.app.Fragment#onAttach(Context)}
      * context will be an instance of {@link OnPaymentListener}
      *

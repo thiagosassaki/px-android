@@ -4,13 +4,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.configuration.DiscountConfiguration;
 import com.mercadopago.android.px.configuration.PaymentConfiguration;
+import com.mercadopago.android.px.internal.callbacks.MPCall;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
-import com.mercadopago.android.px.internal.callbacks.MPCall;
-import com.mercadopago.android.px.services.Callback;
 import com.mercadopago.android.px.model.exceptions.ApiException;
+import com.mercadopago.android.px.plugins.MercadoPagoPaymentProcessor;
+import com.mercadopago.android.px.services.Callback;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
@@ -37,7 +38,6 @@ public class DiscountServiceImp implements DiscountRepository {
     public void configureMerchantDiscountManually(@Nullable final PaymentConfiguration paymentConfiguration) {
         if (paymentConfiguration != null && paymentConfiguration.getDiscountConfiguration() != null) {
             final DiscountConfiguration discountConfiguration = paymentConfiguration.getDiscountConfiguration();
-            //TODO Merchant discount // TODO ADD ERROR
             discountStorageService.configureDiscountManually(discountConfiguration.getDiscount(),
                 discountConfiguration.getCampaign(), discountConfiguration.isNotAvailable());
         }
@@ -179,7 +179,8 @@ public class DiscountServiceImp implements DiscountRepository {
         }
 
         private boolean shouldGetDiscount() {
-            return !fetched && !paymentSettingRepository.hasPaymentConfiguration();
+            return !fetched && !(paymentSettingRepository.getPaymentConfiguration()
+                .getPaymentProcessor() instanceof MercadoPagoPaymentProcessor);
         }
 
         private void getFromNetwork(final Callback<Boolean> callback, @NonNull final Callable campaignsCall)

@@ -16,6 +16,13 @@ public class PaymentConfiguration {
     @NonNull private final ArrayList<ChargeRule> charges;
     @Nullable private final DiscountConfiguration discountConfiguration;
 
+    protected PaymentConfiguration(@NonNull final PaymentProcessor paymentProcessor) {
+        this.paymentProcessor = paymentProcessor;
+        paymentMethodPluginList = new ArrayList<>();
+        charges = new ArrayList<>();
+        discountConfiguration = null;
+    }
+
     /* default */ PaymentConfiguration(@NonNull final Builder builder) {
         paymentProcessor = builder.paymentProcessor;
         paymentMethodPluginList = builder.paymentMethodPluginList;

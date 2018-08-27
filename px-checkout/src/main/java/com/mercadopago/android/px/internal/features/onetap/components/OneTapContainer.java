@@ -13,12 +13,12 @@ import com.mercadopago.android.px.internal.features.review_and_confirm.models.Te
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.ViewUtils;
-import com.mercadopago.android.px.internal.view.Action;
 import com.mercadopago.android.px.internal.view.Button;
 import com.mercadopago.android.px.internal.view.ButtonPrimary;
 import com.mercadopago.android.px.internal.view.CompactComponent;
 import com.mercadopago.android.px.internal.view.TermsAndConditionsComponent;
 import com.mercadopago.android.px.internal.viewmodel.OneTapModel;
+import com.mercadopago.android.px.model.Action;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.Item;

@@ -1,11 +1,13 @@
 package com.mercadopago.android.px.internal.features;
 
+import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.base.MvpPresenter;
 import com.mercadopago.android.px.internal.callbacks.FailureRecovery;
 import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
 import com.mercadopago.android.px.internal.controllers.PaymentMethodGuessingController;
 import com.mercadopago.android.px.internal.features.providers.SecurityCodeProvider;
 import com.mercadopago.android.px.internal.features.uicontrollers.card.CardView;
+import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.Card;
@@ -16,8 +18,8 @@ import com.mercadopago.android.px.model.SavedCardToken;
 import com.mercadopago.android.px.model.SavedESCCardToken;
 import com.mercadopago.android.px.model.Setting;
 import com.mercadopago.android.px.model.Token;
-import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.model.exceptions.CardTokenException;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 
 /**
  * Created by vaserber on 10/26/16.
@@ -25,6 +27,7 @@ import com.mercadopago.android.px.model.exceptions.CardTokenException;
 
 public class SecurityCodePresenter extends MvpPresenter<SecurityCodeActivityView, SecurityCodeProvider> {
 
+    @NonNull private final PaymentSettingRepository paymentSettingRepository;
     private FailureRecovery mFailureRecovery;
 
     //Card Info
@@ -39,6 +42,10 @@ public class SecurityCodePresenter extends MvpPresenter<SecurityCodeActivityView
     protected Card mCard;
     protected Token mToken;
     protected PaymentRecovery mPaymentRecovery;
+
+    public SecurityCodePresenter(@NonNull final PaymentSettingRepository paymentSettingRepository) {
+        this.paymentSettingRepository = paymentSettingRepository;
+    }
 
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         mPaymentMethod = paymentMethod;
@@ -252,6 +259,7 @@ public class SecurityCodePresenter extends MvpPresenter<SecurityCodeActivityView
                 @Override
                 public void onSuccess(Token token) {
                     mToken = token;
+                    paymentSettingRepository.configure(mToken);
                     putSecurityCode();
                 }
 
@@ -351,6 +359,7 @@ public class SecurityCodePresenter extends MvpPresenter<SecurityCodeActivityView
         if (mCardInfo != null) {
             mToken.setLastFourDigits(mCardInfo.getLastFourDigits());
         }
+        paymentSettingRepository.configure(mToken);
         getView().finishWithResult();
     }
 

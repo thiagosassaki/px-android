@@ -22,17 +22,16 @@ import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.SavedESCCardToken;
 import com.mercadopago.android.px.model.Token;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
-import com.mercadopago.android.px.model.exceptions.ApiException;
 import java.util.List;
 
 public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultProvider> {
 
-    @NonNull
-    private final AmountRepository amountRepository;
-    private final PaymentSettingRepository configuration;
+    @NonNull private final AmountRepository amountRepository;
     @NonNull private final UserSelectionRepository userSelectionRepository;
+    @NonNull private final PaymentSettingRepository paymentSettingRepository;
 
     private FailureRecovery failureRecovery;
     private String bin;
@@ -64,10 +63,10 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
     private SavedESCCardToken escCardToken;
 
     public CardVaultPresenter(@NonNull final AmountRepository amountRepository,
-        @NonNull final PaymentSettingRepository configuration,
-        @NonNull final UserSelectionRepository userSelectionRepository) {
-        this.configuration = configuration;
+        @NonNull final UserSelectionRepository userSelectionRepository,
+        @NonNull final PaymentSettingRepository paymentSettingRepository) {
         this.userSelectionRepository = userSelectionRepository;
+        this.paymentSettingRepository = paymentSettingRepository;
         this.amountRepository = amountRepository;
     }
 
@@ -242,7 +241,7 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         final String bin = TextUtil.isEmpty(cardInfo.getFirstSixDigits()) ? "" : cardInfo.getFirstSixDigits();
         final Long issuerId = this.card.getIssuer() == null ? null : this.card.getIssuer().getId();
         String paymentMethodId = card.getPaymentMethod() == null ? "" : card.getPaymentMethod().getId();
-        final DifferentialPricing differentialPricing = configuration.getCheckoutPreference().getDifferentialPricing();
+        final DifferentialPricing differentialPricing = paymentSettingRepository.getCheckoutPreference().getDifferentialPricing();
         final Integer differentialPricingId = differentialPricing == null ? null : differentialPricing.getId();
         getResourcesProvider().getInstallmentsAsync(bin, issuerId, paymentMethodId, amountRepository.getAmountToPay(),
             differentialPricingId,
@@ -286,7 +285,7 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
 
     private void resolvePayerCosts(final List<PayerCost> payerCosts) {
         final PayerCost defaultPayerCost =
-            configuration.getCheckoutPreference().getPaymentPreference().getDefaultInstallments(payerCosts);
+            paymentSettingRepository.getCheckoutPreference().getPaymentPreference().getDefaultInstallments(payerCosts);
         payerCostsList = payerCosts;
 
         if (defaultPayerCost != null) {
@@ -320,9 +319,9 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         startSecurityCodeFlowIfNeeded();
     }
 
-    public void resolveIssuersRequest(final Issuer issuer) {
+    public void resolveIssuersRequest() {
         issuersListShown = true;
-        setIssuer(issuer);
+        setIssuer(userSelectionRepository.getIssuer());
         checkStartInstallmentsActivity();
     }
 
@@ -345,8 +344,8 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         setPayerCost(payerCost);
     }
 
-    public void resolveSecurityCodeRequest(final Token token) {
-        setToken(token);
+    public void resolveSecurityCodeRequest() {
+        setToken(paymentSettingRepository.getToken());
         if (tokenRecoveryAvailable()) {
             setPayerCost(getPaymentRecovery().getPayerCost());
             setIssuer(getPaymentRecovery().getIssuer());
@@ -354,15 +353,10 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         finishWithResult();
     }
 
-    public void resolveNewCardRequest(final PaymentMethod paymentMethod, final Token token,
-        final PayerCost payerCost, final Issuer issuer,
+    public void resolveNewCardRequest(final PayerCost payerCost,
         final List<PayerCost> payerCosts, final List<Issuer> issuers) {
-
-        setPaymentMethod(paymentMethod);
-        setToken(token);
-        setCardInfo(new CardInfo(token));
+        setCardInfo(new CardInfo(paymentSettingRepository.getToken()));
         setPayerCost(payerCost);
-        setIssuer(issuer);
         setPayerCostsList(payerCosts);
         setIssuersList(issuers);
         checkStartIssuersActivity();
@@ -383,7 +377,11 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         setCardInfo(new CardInfo(getCard()));
         setPaymentMethod(getCard().getPaymentMethod());
         setIssuer(getCard().getIssuer());
-        getInstallmentsForCardAsync(getCard());
+        if (userSelectionRepository.getPayerCost() != null) {
+            askForSecurityCodeWithoutInstallments();
+        } else {
+            getInstallmentsForCardAsync(getCard());
+        }
     }
 
     private void startNewCardFlow() {
@@ -446,6 +444,7 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
                     public void onSuccess(final Token token) {
                         CardVaultPresenter.this.token = token;
                         CardVaultPresenter.this.token.setLastFourDigits(card.getLastFourDigits());
+                        paymentSettingRepository.configure(CardVaultPresenter.this.token);
                         finishWithResult();
                     }
 

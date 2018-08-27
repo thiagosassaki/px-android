@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import com.mercadopago.android.px.core.PaymentMethodPlugin;
+import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.model.PaymentMethod;
@@ -15,11 +16,14 @@ public class PluginService implements PluginRepository {
 
     @NonNull private final Context context;
     @NonNull private final PaymentSettingRepository paymentSettings;
+    @NonNull private final DiscountRepository discountRepository;
 
     public PluginService(@NonNull final Context context,
-        @NonNull final PaymentSettingRepository paymentSettings) {
+        @NonNull final PaymentSettingRepository paymentSettings,
+        @NonNull final DiscountRepository discountRepository) {
         this.context = context;
         this.paymentSettings = paymentSettings;
+        this.discountRepository = discountRepository;
     }
 
     @Override
@@ -89,7 +93,10 @@ public class PluginService implements PluginRepository {
 
     @Override
     public PluginInitializationTask getInitTask() {
-        return new PluginInitializationTask(all());
+        return new PluginInitializationTask(all(),
+            new PaymentMethodPlugin.CheckoutData(paymentSettings.getCheckoutPreference(),
+                discountRepository.getDiscount(),
+                paymentSettings.getPrivateKey()));
     }
 
     @Override

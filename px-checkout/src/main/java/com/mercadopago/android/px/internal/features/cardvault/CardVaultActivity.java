@@ -9,8 +9,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.android.px.R;
-import com.mercadopago.android.px.internal.features.MercadoPagoComponents;
 import com.mercadopago.android.px.internal.di.Session;
+import com.mercadopago.android.px.internal.features.MercadoPagoComponents;
 import com.mercadopago.android.px.internal.features.providers.CardVaultProviderImpl;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.ErrorUtil;
@@ -23,9 +23,9 @@ import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.Token;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
-import com.mercadopago.android.px.model.exceptions.ApiException;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -35,16 +35,16 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
 
     private CardVaultPresenter presenter;
 
-    private PaymentSettingRepository configuration;
+    private PaymentSettingRepository paymentSettingRepository;
 
     private void configure() {
         final Intent intent = getIntent();
         final Card card = JsonUtil.getInstance().fromJson(intent.getStringExtra(EXTRA_CARD), Card.class);
         final Session session = Session.getSession(this);
-        configuration = session.getConfigurationModule().getPaymentSettings();
-
-        presenter = new CardVaultPresenter(session.getAmountRepository(), configuration,
-            session.getConfigurationModule().getUserSelectionRepository());
+        paymentSettingRepository = session.getConfigurationModule().getPaymentSettings();
+        presenter = new CardVaultPresenter(session.getAmountRepository(),
+            session.getConfigurationModule().getUserSelectionRepository(),
+            paymentSettingRepository);
         presenter.attachResourcesProvider(
             new CardVaultProviderImpl(getApplicationContext()));
         presenter.attachView(this);
@@ -232,10 +232,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
 
     protected void resolveIssuersRequest(int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            Bundle bundle = data.getExtras();
-            Issuer issuer = JsonUtil.getInstance().fromJson(bundle.getString("issuer"), Issuer.class);
-
-            presenter.resolveIssuersRequest(issuer);
+            presenter.resolveIssuersRequest();
         } else if (resultCode == RESULT_CANCELED) {
             presenter.onResultCancel();
         }
@@ -251,12 +248,8 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
         }
     }
 
-    protected void resolveGuessingCardRequest(int resultCode, Intent data) {
+    protected void resolveGuessingCardRequest(final int resultCode, final Intent data) {
         if (resultCode == RESULT_OK) {
-            PaymentMethod paymentMethod =
-                JsonUtil.getInstance().fromJson(data.getStringExtra("paymentMethod"), PaymentMethod.class);
-            Token token = JsonUtil.getInstance().fromJson(data.getStringExtra("token"), Token.class);
-            Issuer issuer = JsonUtil.getInstance().fromJson(data.getStringExtra("issuer"), Issuer.class);
             PayerCost payerCost = JsonUtil.getInstance().fromJson(data.getStringExtra("payerCost"), PayerCost.class);
 
             List<PayerCost> payerCosts;
@@ -270,14 +263,14 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
 
             List<Issuer> issuers;
             try {
-                Type listType = new TypeToken<List<Issuer>>() {
+                final Type listType = new TypeToken<List<Issuer>>() {
                 }.getType();
                 issuers = JsonUtil.getInstance().getGson().fromJson(data.getStringExtra("issuers"), listType);
-            } catch (Exception ex) {
+            } catch (final Exception ex) {
                 issuers = null;
             }
 
-            presenter.resolveNewCardRequest(paymentMethod, token, payerCost, issuer, payerCosts, issuers);
+            presenter.resolveNewCardRequest(payerCost, payerCosts, issuers);
         } else if (resultCode == RESULT_CANCELED) {
             presenter.onResultCancel();
         }
@@ -285,9 +278,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
 
     protected void resolveSecurityCodeRequest(int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            Token token = JsonUtil.getInstance().fromJson(data.getStringExtra("token"), Token.class);
-
-            presenter.resolveSecurityCodeRequest(token);
+            presenter.resolveSecurityCodeRequest();
         } else if (resultCode == RESULT_CANCELED) {
             presenter.onResultCancel();
         }
@@ -303,7 +294,6 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
     public void startIssuersActivity() {
         new MercadoPagoComponents.Activities.IssuersActivityBuilder()
             .setActivity(this)
-            .setPaymentMethod(presenter.getPaymentMethod())
             .setCardInfo(presenter.getCardInfo())
             .setIssuers(presenter.getIssuersList())
             .startActivity();
@@ -336,7 +326,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
             public void run() {
                 new MercadoPagoComponents.Activities.GuessingCardActivityBuilder()
                     .setActivity(context)
-                    .setPaymentPreference(configuration.getCheckoutPreference().getPaymentPreference())
+                    .setPaymentPreference(paymentSettingRepository.getCheckoutPreference().getPaymentPreference())
                     .setPaymentRecovery(presenter.getPaymentRecovery())
                     .startActivity();
                 overridePendingTransition(R.anim.px_slide_right_to_left_in, R.anim.px_slide_right_to_left_out);
@@ -347,9 +337,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
     private void startInstallmentsActivity() {
         new MercadoPagoComponents.Activities.InstallmentsActivityBuilder()
             .setActivity(this)
-            .setPaymentMethod(presenter.getPaymentMethod())
-            .setIssuer(presenter.getIssuer())
-            .setPaymentPreference(configuration.getCheckoutPreference().getPaymentPreference())
+            .setPaymentPreference(paymentSettingRepository.getCheckoutPreference().getPaymentPreference())
             .setCardInfo(presenter.getCardInfo())
             .setPayerCosts(presenter.getPayerCostList())
             .startActivity();
@@ -369,9 +357,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
     public void finishWithResult() {
         final Intent returnIntent = new Intent();
         returnIntent.putExtra("payerCost", JsonUtil.getInstance().toJson(presenter.getPayerCost()));
-        returnIntent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(presenter.getPaymentMethod()));
         returnIntent.putExtra("token", JsonUtil.getInstance().toJson(presenter.getToken()));
-        returnIntent.putExtra("issuer", JsonUtil.getInstance().toJson(presenter.getIssuer()));
         returnIntent.putExtra(EXTRA_CARD, JsonUtil.getInstance().toJson(presenter.getCard()));
         setResult(RESULT_OK, returnIntent);
         finish();

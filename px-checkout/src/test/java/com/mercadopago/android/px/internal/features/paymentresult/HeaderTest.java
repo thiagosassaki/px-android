@@ -1,11 +1,11 @@
 package com.mercadopago.android.px.internal.features.paymentresult;
 
-import com.mercadopago.android.px.internal.view.Action;
-import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.internal.features.paymentresult.components.Header;
 import com.mercadopago.android.px.internal.features.paymentresult.components.Icon;
 import com.mercadopago.android.px.internal.features.paymentresult.props.HeaderProps;
 import com.mercadopago.android.px.internal.features.paymentresult.props.IconProps;
+import com.mercadopago.android.px.internal.view.ActionDispatcher;
+import com.mercadopago.android.px.model.Action;
 import junit.framework.Assert;
 import org.junit.Test;
 

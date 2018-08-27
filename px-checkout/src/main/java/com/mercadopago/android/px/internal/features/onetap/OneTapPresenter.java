@@ -1,57 +1,35 @@
 package com.mercadopago.android.px.internal.features.onetap;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 import com.mercadopago.android.px.internal.base.MvpPresenter;
 import com.mercadopago.android.px.internal.base.ResourcesProvider;
-import com.mercadopago.android.px.internal.repository.PluginRepository;
+import com.mercadopago.android.px.internal.repository.PaymentRepository;
+import com.mercadopago.android.px.internal.repository.PaymentServiceHandler;
 import com.mercadopago.android.px.internal.viewmodel.OneTapModel;
-import com.mercadopago.android.px.internal.viewmodel.mappers.CardMapper;
-import com.mercadopago.android.px.internal.viewmodel.mappers.CardPaymentMapper;
-import com.mercadopago.android.px.internal.viewmodel.mappers.PaymentMethodMapper;
-import com.mercadopago.android.px.model.OneTapMetadata;
-import com.mercadopago.android.px.model.PaymentTypes;
-import com.mercadopago.android.px.model.Token;
+import com.mercadopago.android.px.model.BusinessPayment;
+import com.mercadopago.android.px.model.Card;
+import com.mercadopago.android.px.model.GenericPayment;
+import com.mercadopago.android.px.model.Payment;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 
-class OneTapPresenter extends MvpPresenter<OneTap.View, ResourcesProvider> implements OneTap.Actions {
+/* default */ class OneTapPresenter extends MvpPresenter<OneTap.View, ResourcesProvider>
+    implements OneTap.Actions, PaymentServiceHandler {
 
+    private static final String TAG = OneTapPresenter.class.getName();
     @NonNull private final OneTapModel model;
-    @NonNull private final PluginRepository pluginRepository;
+    @NonNull private final PaymentRepository paymentRepository;
 
-    @NonNull private final CardMapper cardMapper;
-    @NonNull private final PaymentMethodMapper paymentMethodMapper;
-
-    /**
-     * Creates a OneTap presenter.
-     *
-     * @param model one tap viewmodel
-     * @param pluginRepository
-     */
-    OneTapPresenter(@NonNull final OneTapModel model,
-        @NonNull final PluginRepository pluginRepository) {
+    /* default */ OneTapPresenter(@NonNull final OneTapModel model,
+        @NonNull final PaymentRepository paymentRepository) {
         this.model = model;
-        this.pluginRepository = pluginRepository;
-        cardMapper = new CardMapper();
-        paymentMethodMapper = new PaymentMethodMapper();
+        this.paymentRepository = paymentRepository;
     }
 
     @Override
     public void confirmPayment() {
-        final OneTapMetadata oneTapMetadata = model.getPaymentMethods().getOneTapMetadata();
-        final String paymentTypeId = oneTapMetadata.getPaymentTypeId();
-        final String paymentMethodId = oneTapMetadata.getPaymentMethodId();
         getView().trackConfirm(model);
-        if (PaymentTypes.isCardPaymentType(paymentTypeId)) {
-            getView().showCardFlow(model, cardMapper.map(model));
-        } else if (PaymentTypes.isPlugin(paymentTypeId)) {
-            getView().showPaymentFlow(pluginRepository.getPluginAsPaymentMethod(paymentMethodId, paymentTypeId));
-        } else {
-            getView().showPaymentFlow(paymentMethodMapper.map(model.getPaymentMethods()));
-        }
-    }
-
-    @Override
-    public void onReceived(@NonNull final Token token) {
-        getView().showPaymentFlow(new CardPaymentMapper(token).map(model));
+        paymentRepository.startOneTapPayment(model, this);
     }
 
     @Override
@@ -66,7 +44,101 @@ class OneTapPresenter extends MvpPresenter<OneTap.View, ResourcesProvider> imple
     }
 
     public void cancel() {
-        getView().cancel();
-        getView().trackCancel(model.getPublicKey());
+        if (isViewAttached()) {
+            getView().cancel();
+            getView().trackCancel();
+        }
     }
+
+    @Override
+    public void onTokenResolved() {
+        if (isViewAttached()) {
+            confirmPayment();
+        }
+    }
+
+    @Override
+    public void onPaymentFinished(@NonNull final Payment payment) {
+        if (isViewAttached()) {
+            getView().showPaymentResult(payment);
+        }
+    }
+
+    /**
+     * When there is no visual interaction needed this callback is called.
+     *
+     * @param genericPayment plugin payment.
+     */
+    @Override
+    public void onPaymentFinished(@NonNull final GenericPayment genericPayment) {
+        if (isViewAttached()) {
+            getView().showPaymentResult(genericPayment);
+        }
+    }
+
+    /**
+     * When there is no visual interaction needed this callback is called.
+     *
+     * @param businessPayment plugin payment.
+     */
+    @Override
+    public void onPaymentFinished(@NonNull final BusinessPayment businessPayment) {
+        if (isViewAttached()) {
+            getView().showBusinessResult(businessPayment);
+        }
+    }
+
+    @Override
+    public void onPaymentError(@NonNull final MercadoPagoError error) {
+        //This method calls to Checkout activity to manage esc, it's important to check
+        // all this behaviour ahead.
+        if (isViewAttached()) {
+            getView().showErrorView(error);
+        }
+    }
+
+    @Override
+    public void onVisualPayment() {
+        if (isViewAttached()) {
+            getView().showPaymentProcessor();
+        }
+    }
+
+    @Override
+    public void onCvvRequired(@NonNull final Card card) {
+        if (isViewAttached()) {
+            getView().showCardFlow(model, card);
+        }
+    }
+
+    @Override
+    public void onPaymentMethodRequired() {
+        Log.d(TAG, "Should not happen. - onPaymentMethodRequired");
+        cancel();
+    }
+
+    @Override
+    public void onCardError() {
+        Log.d(TAG, "Should not happen. - onCardError");
+        cancel();
+    }
+
+    @Override
+    public void onIssuerRequired() {
+        Log.d(TAG, "Should not happen. - onIssuerRequired");
+        cancel();
+    }
+
+    @Override
+    public void onPayerCostRequired() {
+        Log.d(TAG, "Should not happen. - onPayerCostRequired");
+        cancel();
+    }
+
+    @Override
+    public void onTokenRequired() {
+        Log.d(TAG, "Should not happen. - onPayerCostRequired");
+        cancel();
+    }
+
 }

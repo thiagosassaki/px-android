@@ -9,17 +9,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.mercadopago.android.px.core.PaymentProcessor;
+import com.mercadopago.android.px.model.BusinessPayment;
+import com.mercadopago.android.px.model.GenericPayment;
+import com.mercadopago.android.px.model.IPayment;
 import com.mercadopago.example.R;
 
 public class SamplePaymentProcessorFragment extends Fragment {
 
     private static final long CONST_TIME_MILLIS = 2000;
     @Nullable
-    private PluginPayment payment;
+    private IPayment payment;
     @Nullable
     private PaymentProcessor.OnPaymentListener paymentListener;
 
-    public void setPayment(@Nullable final PluginPayment payment) {
+    public void setPayment(@Nullable final IPayment payment) {
         this.payment = payment;
     }
 
@@ -49,8 +52,12 @@ public class SamplePaymentProcessorFragment extends Fragment {
         getView().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (paymentListener != null) {
-                    paymentListener.onPaymentFinished(payment);
+                if (paymentListener != null && payment != null) {
+                    if (payment instanceof BusinessPayment) {
+                        paymentListener.onPaymentFinished((BusinessPayment) payment);
+                    } else if (payment instanceof GenericPayment) {
+                        paymentListener.onPaymentFinished((GenericPayment) payment);
+                    }
                 }
             }
         }, CONST_TIME_MILLIS);

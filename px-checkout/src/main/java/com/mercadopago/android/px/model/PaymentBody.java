@@ -1,6 +1,8 @@
 package com.mercadopago.android.px.model;
 
+import android.support.annotation.NonNull;
 import com.google.gson.annotations.SerializedName;
+import com.mercadopago.android.px.preferences.CheckoutPreference;
 
 public class PaymentBody {
 
@@ -18,6 +20,43 @@ public class PaymentBody {
     private Payer payer;
     private Float couponAmount;
     private String campaignId;
+
+    public PaymentBody(@NonNull final String transactionId,
+        @NonNull final PaymentData paymentData,
+        @NonNull final CheckoutPreference checkoutPreference) {
+        setPrefId(checkoutPreference.getId());
+        setPublicKey(publicKey);
+        setPaymentMethodId(paymentData.getPaymentMethod().getId());
+        setBinaryMode(binaryMode);
+        final Payer payer = paymentData.getPayer();
+        setPayer(payer);
+
+        if (paymentData.getToken() != null) {
+            setTokenId(paymentData.getToken().getId());
+        }
+        if (paymentData.getPayerCost() != null) {
+            setInstallments(paymentData.getPayerCost().getInstallments());
+        }
+        if (paymentData.getIssuer() != null) {
+            setIssuerId(paymentData.getIssuer().getId());
+        }
+
+        final Discount discount = paymentData.getDiscount();
+        if (discount != null) {
+            setCampaignId(discount.getId());
+            setCouponAmount(discount.getCouponAmount().floatValue());
+        }
+
+        setTransactionId(transactionId);
+
+        //TODO VER - CustomerId does not exists
+        /*
+        if (!TextUtils.isEmpty(customerId) &&
+            MercadoPagoUtil.isCard(paymentData.getPaymentMethod().getPaymentTypeId())) {
+            payer.setId(customerId);
+        }
+        */
+    }
 
     public void setCouponAmount(Float couponAmount) {
         this.couponAmount = couponAmount;

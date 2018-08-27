@@ -30,11 +30,10 @@ import com.mercadopago.android.px.internal.util.ScaleUtil;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.Issuer;
-import com.mercadopago.android.px.model.PaymentMethod;
-import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.model.ScreenViewEvent;
-import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
 import com.mercadopago.android.px.model.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -67,7 +66,8 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        createPresenter();
+        mPresenter =
+            new IssuersPresenter(Session.getSession(this).getConfigurationModule().getUserSelectionRepository());
         getActivityParameters();
 
         mPresenter.attachView(this);
@@ -83,10 +83,6 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
         mPresenter.initialize();
     }
 
-    protected void createPresenter() {
-        mPresenter = new IssuersPresenter();
-    }
-
     private void getActivityParameters() {
         List<Issuer> issuers;
         try {
@@ -97,8 +93,6 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
             issuers = null;
         }
 
-        mPresenter.setPaymentMethod(
-            JsonUtil.getInstance().fromJson(getIntent().getStringExtra("paymentMethod"), PaymentMethod.class));
         mPresenter.setCardInfo(JsonUtil.getInstance().fromJson(getIntent().getStringExtra("cardInfo"), CardInfo.class));
         mPresenter.setIssuers(issuers);
     }
@@ -172,11 +166,11 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
 
     protected void trackScreen() {
         final String publicKey = Session.getSession(this).getConfigurationModule().getPaymentSettings().getPublicKey();
-        MPTrackingContext mpTrackingContext = new MPTrackingContext.Builder(this, publicKey)
+        final MPTrackingContext mpTrackingContext = new MPTrackingContext.Builder(this, publicKey)
             .setVersion(BuildConfig.VERSION_NAME)
             .build();
 
-        ScreenViewEvent event = new ScreenViewEvent.Builder()
+        final ScreenViewEvent event = new ScreenViewEvent.Builder()
             .setFlowId(FlowHandler.getInstance().getFlowId())
             .setScreenId(TrackingUtil.SCREEN_ID_ISSUERS)
             .setScreenName(TrackingUtil.SCREEN_NAME_CARD_FORM_ISSUERS)
@@ -336,10 +330,8 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
     }
 
     @Override
-    public void finishWithResult(Issuer issuer) {
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra("issuer", JsonUtil.getInstance().toJson(issuer));
-        setResult(RESULT_OK, returnIntent);
+    public void finishWithResult() {
+        setResult(RESULT_OK);
         finish();
         animateTransitionSlideInSlideOut();
     }

@@ -13,7 +13,7 @@ public class OneTapMetadata implements Parcelable, Serializable {
     private String paymentTypeId;
     private CardPaymentMetadata card;
 
-    protected OneTapMetadata(Parcel in) {
+    protected OneTapMetadata(final Parcel in) {
         paymentMethodId = in.readString();
         paymentTypeId = in.readString();
         card = in.readParcelable(CardPaymentMetadata.class.getClassLoader());
@@ -21,12 +21,12 @@ public class OneTapMetadata implements Parcelable, Serializable {
 
     public static final Creator<OneTapMetadata> CREATOR = new Creator<OneTapMetadata>() {
         @Override
-        public OneTapMetadata createFromParcel(Parcel in) {
+        public OneTapMetadata createFromParcel(final Parcel in) {
             return new OneTapMetadata(in);
         }
 
         @Override
-        public OneTapMetadata[] newArray(int size) {
+        public OneTapMetadata[] newArray(final int size) {
             return new OneTapMetadata[size];
         }
     };

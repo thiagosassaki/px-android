@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.features.paymentresult.components.LineSeparator;
 import com.mercadopago.android.px.internal.util.ViewUtils;
+import com.mercadopago.android.px.model.Action;
 import javax.annotation.Nonnull;
 
 public class Footer extends CompactComponent<Footer.Props, ActionDispatcher> {

@@ -28,7 +28,7 @@ public final class PaymentUtils {
     @NonNull
     public static GenericPayment getGenericPaymentApprovedAccountMoney() {
         return new GenericPayment(123L, Payment.StatusCodes.STATUS_APPROVED,
-            Payment.StatusDetail.STATUS_DETAIL_ACCREDITED, getPaymentDataWithAccountMoneyPlugin(new BigDecimal(120)));
+            Payment.StatusDetail.STATUS_DETAIL_ACCREDITED);
     }
 
     private static PaymentData getPaymentDataWithAccountMoneyPlugin(final BigDecimal amount) {

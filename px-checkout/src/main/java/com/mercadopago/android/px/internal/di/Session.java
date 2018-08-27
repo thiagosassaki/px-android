@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
+import com.mercadopago.android.px.core.PaymentProcessor;
 import com.mercadopago.android.px.internal.datasource.AmountService;
 import com.mercadopago.android.px.internal.datasource.DiscountApiService;
 import com.mercadopago.android.px.internal.datasource.DiscountServiceImp;
@@ -13,6 +14,7 @@ import com.mercadopago.android.px.internal.datasource.GroupsService;
 import com.mercadopago.android.px.internal.datasource.InstallmentService;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoESCImpl;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoServicesAdapter;
+import com.mercadopago.android.px.internal.datasource.PaymentService;
 import com.mercadopago.android.px.internal.datasource.PluginService;
 import com.mercadopago.android.px.internal.datasource.cache.GroupsCache;
 import com.mercadopago.android.px.internal.datasource.cache.GroupsCacheCoordinator;
@@ -21,6 +23,7 @@ import com.mercadopago.android.px.internal.datasource.cache.GroupsMemCache;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
+import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
@@ -42,6 +45,7 @@ public final class Session extends ApplicationModule
     private DiscountRepository discountRepository;
     private AmountRepository amountRepository;
     private GroupsRepository groupsRepository;
+    private PaymentRepository paymentRepository;
     private GroupsCache groupsCache;
     private PluginService pluginRepository;
 
@@ -59,7 +63,7 @@ public final class Session extends ApplicationModule
     /**
      * Initialize Session with MercadoPagoCheckout information.
      *
-     * @param mercadoPagoCheckout
+     * @param mercadoPagoCheckout non mutable checkout intent.
      */
     public void init(@NonNull final MercadoPagoCheckout mercadoPagoCheckout) {
         //TODO add session mapping object.
@@ -70,14 +74,11 @@ public final class Session extends ApplicationModule
         final DiscountRepository discountRepository = getDiscountRepository();
 
         final PaymentConfiguration paymentConfiguration = mercadoPagoCheckout.getPaymentConfiguration();
-
         final PaymentSettingRepository paymentSetting = configurationModule.getPaymentSettings();
         paymentSetting.configure(mercadoPagoCheckout.getPublicKey());
-
         paymentSetting.configure(mercadoPagoCheckout.getAdvancedConfiguration());
         paymentSetting.configurePrivateKey(mercadoPagoCheckout.getPrivateKey());
         paymentSetting.configure(paymentConfiguration);
-
         discountRepository.configureMerchantDiscountManually(paymentConfiguration);
         resolvePreference(mercadoPagoCheckout, paymentSetting);
         // end Store persistent paymentSetting
@@ -99,6 +100,13 @@ public final class Session extends ApplicationModule
         getDiscountRepository().reset();
         getConfigurationModule().reset();
         getGroupsCache().evict();
+        configurationModule = null;
+        discountRepository = null;
+        amountRepository = null;
+        groupsRepository = null;
+        paymentRepository = null;
+        groupsCache = null;
+        pluginRepository = null;
     }
 
     public GroupsRepository getGroupsRepository() {
@@ -176,8 +184,25 @@ public final class Session extends ApplicationModule
     @NonNull
     public PluginRepository getPluginRepository() {
         if (pluginRepository == null) {
-            pluginRepository = new PluginService(getContext(), getConfigurationModule().getPaymentSettings());
+            pluginRepository = new PluginService(getContext(), getConfigurationModule().getPaymentSettings(),
+                getDiscountRepository());
         }
         return pluginRepository;
+    }
+
+    @NonNull
+    public PaymentRepository getPaymentRepository() {
+        if (paymentRepository == null) {
+            final ConfigurationModule configurationModule = getConfigurationModule();
+            final PaymentProcessor paymentProcessor =
+                getConfigurationModule().getPaymentSettings().getPaymentConfiguration().getPaymentProcessor();
+            paymentRepository = new PaymentService(configurationModule.getUserSelectionRepository(),
+                configurationModule.getPaymentSettings(),
+                getPluginRepository(), getDiscountRepository(), getAmountRepository(),
+                paymentProcessor,
+                getContext());
+        }
+
+        return paymentRepository;
     }
 }

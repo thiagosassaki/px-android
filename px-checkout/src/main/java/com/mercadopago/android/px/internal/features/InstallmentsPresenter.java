@@ -17,7 +17,6 @@ import com.mercadopago.android.px.internal.view.AmountView;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.DifferentialPricing;
 import com.mercadopago.android.px.model.Installment;
-import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
@@ -40,11 +39,6 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
 
     //Card Info
     private String bin = "";
-    private Long issuerId;
-
-    //Activity parameters
-    private PaymentMethod paymentMethod;
-    private Issuer issuer;
 
     private List<PayerCost> payerCosts;
     private PaymentPreference paymentPreference;
@@ -117,8 +111,10 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
         getView().showLoadingView();
         final DifferentialPricing differentialPricing = configuration.getCheckoutPreference().getDifferentialPricing();
         final Integer differentialPricingId = differentialPricing == null ? null : differentialPricing.getId();
-        getResourcesProvider().getInstallments(bin, amountRepository.getAmountToPay(), issuerId, paymentMethod.getId(),
-            differentialPricingId, new TaggedCallback<List<Installment>>(ApiUtil.RequestOrigin.GET_INSTALLMENTS) {
+        getResourcesProvider()
+            .getInstallments(bin, amountRepository.getAmountToPay(), userSelectionRepository.getIssuer().getId(),
+            userSelectionRepository.getPaymentMethod().getId(),
+                differentialPricingId, new TaggedCallback<List<Installment>>(ApiUtil.RequestOrigin.GET_INSTALLMENTS) {
                 @Override
                 public void onSuccess(final List<Installment> installments) {
                     if (installments.size() == 0) {
@@ -131,23 +127,19 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
                     }
                 }
 
-                @Override
-                public void onFailure(final MercadoPagoError mercadoPagoError) {
-                    getView().hideLoadingView();
-                    setFailureRecovery(new FailureRecovery() {
-                        @Override
-                        public void recover() {
-                            getInstallmentsAsync();
-                        }
-                    });
-                    getView().showError(mercadoPagoError, ApiUtil.RequestOrigin.GET_INSTALLMENTS);
-                    getView().onFailureCodeDiscountCallback();
-                }
-            });
-    }
-
-    public void setPaymentMethod(final PaymentMethod paymentMethod) {
-        this.paymentMethod = paymentMethod;
+                    @Override
+                    public void onFailure(final MercadoPagoError mercadoPagoError) {
+                        getView().hideLoadingView();
+                        setFailureRecovery(new FailureRecovery() {
+                            @Override
+                            public void recover() {
+                                getInstallmentsAsync();
+                            }
+                        });
+                        getView().showError(mercadoPagoError, ApiUtil.RequestOrigin.GET_INSTALLMENTS);
+                        getView().onFailureCodeDiscountCallback();
+                    }
+                });
     }
 
     public void setCardInfo(final CardInfo cardInfo) {
@@ -161,15 +153,8 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
         return cardInfo;
     }
 
-    public void setIssuer(Issuer issuer) {
-        this.issuer = issuer;
-        if (this.issuer != null) {
-            issuerId = this.issuer.getId();
-        }
-    }
-
     public Integer getCardNumberLength() {
-        return PaymentMethodGuessingController.getCardNumberLength(paymentMethod, bin);
+        return PaymentMethodGuessingController.getCardNumberLength(userSelectionRepository.getPaymentMethod(), bin);
     }
 
     public void setPayerCosts(List<PayerCost> payerCosts) {
@@ -189,11 +174,11 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
     }
 
     public PaymentMethod getPaymentMethod() {
-        return paymentMethod;
+        return userSelectionRepository.getPaymentMethod();
     }
 
     public boolean isRequiredCardDrawn() {
-        return cardInfo != null && paymentMethod != null;
+        return cardInfo != null && userSelectionRepository.getPaymentMethod() != null;
     }
 
     private OnSelectedCallback<Integer> getDpadSelectionCallback() {
@@ -207,10 +192,6 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
 
     public String getBin() {
         return bin;
-    }
-
-    public Long getIssuerId() {
-        return issuerId;
     }
 
     public void recoverFromFailure() {

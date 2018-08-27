@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import com.mercadopago.android.px.internal.features.cardvault.CardVaultActivity;
 import com.mercadopago.android.px.internal.features.guessing_card.GuessingCardActivity;
@@ -48,7 +49,6 @@ public class MercadoPagoComponents {
         public static final int SECURITY_CODE_REQUEST_CODE = 18;
         public static final int REVIEW_AND_CONFIRM_REQUEST_CODE = 20;
         public static final int REVIEW_PAYMENT_METHODS_REQUEST_CODE = 21;
-        public static final int PAYER_INFORMATION_REQUEST_CODE = 22;
 
         public static final int HOOK_1 = 50;
         public static final int HOOK_1_PLUGIN = 52;
@@ -198,7 +198,6 @@ public class MercadoPagoComponents {
         public static class IssuersActivityBuilder {
             private Activity activity;
             private CardInfo cardInformation;
-            private PaymentMethod paymentMethod;
             private List<Issuer> issuers;
 
             public IssuersActivityBuilder setActivity(Activity activity) {
@@ -211,11 +210,6 @@ public class MercadoPagoComponents {
                 return this;
             }
 
-            public IssuersActivityBuilder setPaymentMethod(PaymentMethod paymentMethod) {
-                this.paymentMethod = paymentMethod;
-                return this;
-            }
-
             public IssuersActivityBuilder setIssuers(List<Issuer> issuers) {
                 this.issuers = issuers;
                 return this;
@@ -225,15 +219,11 @@ public class MercadoPagoComponents {
                 if (activity == null) {
                     throw new IllegalStateException("activity is null");
                 }
-                if (paymentMethod == null) {
-                    throw new IllegalStateException("payment method is null");
-                }
                 startIssuersActivity();
             }
 
             private void startIssuersActivity() {
                 Intent intent = new Intent(activity, IssuersActivity.class);
-                intent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(paymentMethod));
                 intent.putExtra("issuers", JsonUtil.getInstance().toJson(issuers));
                 intent.putExtra("cardInfo", JsonUtil.getInstance().toJson(cardInformation));
                 activity.startActivityForResult(intent, ISSUERS_REQUEST_CODE);
@@ -244,8 +234,6 @@ public class MercadoPagoComponents {
             private Activity activity;
             private CardInfo cardInfo;
             private List<PayerCost> payerCosts;
-            private Issuer issuer;
-            private PaymentMethod paymentMethod;
             private PaymentPreference paymentPreference;
 
             public InstallmentsActivityBuilder setActivity(Activity activity) {
@@ -263,16 +251,6 @@ public class MercadoPagoComponents {
                 return this;
             }
 
-            public InstallmentsActivityBuilder setPaymentMethod(PaymentMethod paymentMethod) {
-                this.paymentMethod = paymentMethod;
-                return this;
-            }
-
-            public InstallmentsActivityBuilder setIssuer(Issuer issuer) {
-                this.issuer = issuer;
-                return this;
-            }
-
             public InstallmentsActivityBuilder setPayerCosts(List<PayerCost> payerCosts) {
                 this.payerCosts = payerCosts;
                 return this;
@@ -282,21 +260,11 @@ public class MercadoPagoComponents {
                 if (activity == null) {
                     throw new IllegalStateException("activity is null");
                 }
-                if (payerCosts == null) {
-                    if (issuer == null) {
-                        throw new IllegalStateException("issuer is null");
-                    }
-                    if (paymentMethod == null) {
-                        throw new IllegalStateException("payment method is null");
-                    }
-                }
                 startInstallmentsActivity();
             }
 
             private void startInstallmentsActivity() {
                 final Intent intent = new Intent(activity, InstallmentsActivity.class);
-                intent.putExtra("paymentMethod", JsonUtil.getInstance().toJson(paymentMethod));
-                intent.putExtra("issuer", JsonUtil.getInstance().toJson(issuer));
                 intent.putExtra("payerCosts", JsonUtil.getInstance().toJson(payerCosts));
                 intent.putExtra("paymentPreference", JsonUtil.getInstance().toJson(paymentPreference));
                 intent.putExtra("cardInfo", JsonUtil.getInstance().toJson(cardInfo));
@@ -430,29 +398,6 @@ public class MercadoPagoComponents {
             }
         }
 
-        public static class PayerInformationActivityBuilder {
-            private Activity activity;
-
-            public PayerInformationActivityBuilder setActivity(Activity activity) {
-                this.activity = activity;
-                return this;
-            }
-
-            public void startActivity() {
-
-                if (activity == null) {
-                    throw new IllegalStateException("activity is null");
-                }
-                startPayerInformationActivity();
-            }
-
-            private void startPayerInformationActivity() {
-                Intent payerInformationIntent = new Intent(activity, PayerInformationActivity.class);
-
-                activity.startActivityForResult(payerInformationIntent, PAYER_INFORMATION_REQUEST_CODE);
-            }
-        }
-
         public static class PaymentResultActivityBuilder {
             private Activity activity;
             private Discount discount;
@@ -464,7 +409,7 @@ public class MercadoPagoComponents {
                 return this;
             }
 
-            public PaymentResultActivityBuilder setDiscount(Discount discount) {
+            public PaymentResultActivityBuilder setDiscount(@Nullable final Discount discount) {
                 this.discount = discount;
                 return this;
             }

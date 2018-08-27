@@ -52,7 +52,6 @@ public class FullSummary extends Component<SummaryComponent.SummaryProps, Void> 
         final ReviewAndConfirmConfiguration reviewAndConfirmConfiguration = props.reviewAndConfirmConfiguration;
         final Summary.Builder summaryBuilder = new Summary.Builder();
 
-        // TODO hotfix charges with preferences
         if (isPrefAmountDifferent(props.summaryModel.getCharges()) &&
             reviewAndConfirmConfiguration.hasProductAmount()) {
             summaryBuilder.addSummaryProductDetail(reviewAndConfirmConfiguration.getProductAmount(), getItemTitle(),

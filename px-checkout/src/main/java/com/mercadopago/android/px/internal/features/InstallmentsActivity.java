@@ -41,15 +41,13 @@ import com.mercadopago.android.px.internal.view.DiscountDetailDialog;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.Discount;
-import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PayerCost;
-import com.mercadopago.android.px.model.PaymentMethod;
+import com.mercadopago.android.px.model.ScreenViewEvent;
 import com.mercadopago.android.px.model.Site;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.PaymentPreference;
-import com.mercadopago.android.px.model.ScreenViewEvent;
 import com.mercadopago.android.px.tracking.internal.utils.TrackingUtil;
-import com.mercadopago.android.px.model.exceptions.ApiException;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.List;
@@ -115,11 +113,6 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
     private void getActivityParameters() {
         final Intent intent = getIntent();
 
-        final PaymentMethod paymentMethod =
-            JsonUtil.getInstance().fromJson(intent.getStringExtra("paymentMethod"), PaymentMethod.class);
-
-        presenter.setPaymentMethod(paymentMethod);
-        presenter.setIssuer(JsonUtil.getInstance().fromJson(intent.getStringExtra("issuer"), Issuer.class));
         presenter.setCardInfo(JsonUtil.getInstance().fromJson(intent.getStringExtra("cardInfo"), CardInfo.class));
 
         List<PayerCost> payerCosts;
