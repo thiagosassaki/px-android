@@ -3,9 +3,12 @@ package com.mercadopago;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
+import com.mercadopago.android.px.configuration.DiscountConfiguration;
+import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.core.PaymentProcessor;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoPaymentProcessor;
+import com.mercadopago.android.px.internal.features.plugins.SamplePaymentMethodPlugin;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
@@ -119,11 +122,13 @@ public class DiscountTest {
     @Test
     public void whenMerchantDiscountIsAlwaysOnAndHasPaymentProcessorThenShowMerchantDiscountAndGetCongrats() {
 
+        final PaymentConfiguration paymentConfiguration = new PaymentConfiguration.Builder(paymentProcessor)
+            .addPaymentMethodPlugin(new SamplePaymentMethodPlugin())
+            .setDiscountConfiguration(DiscountConfiguration.withDiscount(discount,campaign))
+            .build();
+
         final MercadoPagoCheckout.Builder builder =
-            new MercadoPagoCheckout.Builder(MERCHANT_PUBLIC_KEY, PREFERENCE_ID)
-                .setPaymentProcessor(paymentProcessor)
-                .addPaymentMethodPlugin(new SamplePaymentMethodPlugin(), paymentProcessor)
-                .setDiscount(discount, campaign);
+            new MercadoPagoCheckout.Builder(MERCHANT_PUBLIC_KEY, PREFERENCE_ID, paymentConfiguration);
 
         campaign =
             new Campaign.Builder(MERCHANT_DISCOUNT_ID).setMaxCouponAmount(new BigDecimal(200)).setMaxRedeemPerUser(2)
@@ -139,12 +144,15 @@ public class DiscountTest {
 
     @Test
     public void whenMerchantDiscountIsAlwaysOnHasPaymentProcessorAndPayerHasOneTapThenShowMerchantDiscountAndGetCongrats() {
+
+        final PaymentConfiguration paymentConfiguration = new PaymentConfiguration.Builder(paymentProcessor)
+            .addPaymentMethodPlugin(new SamplePaymentMethodPlugin())
+            .setDiscountConfiguration(DiscountConfiguration.withDiscount(discount,campaign))
+            .build();
+
         final MercadoPagoCheckout.Builder builder =
-            new MercadoPagoCheckout.Builder(ONE_TAP_MERCHANT_PUBLIC_KEY,
-                checkoutPreferenceWithPayerEmail)
-                .setPaymentProcessor(paymentProcessor)
-                .setDiscount(discount, campaign)
-                .setPrivateKey(ONE_TAP_PAYER_3_ACCESS_TOKEN);;
+            new MercadoPagoCheckout.Builder(ONE_TAP_MERCHANT_PUBLIC_KEY, checkoutPreferenceWithPayerEmail, paymentConfiguration)
+                .setPrivateKey(ONE_TAP_PAYER_3_ACCESS_TOKEN);
 
         campaign =
             new Campaign.Builder(MERCHANT_DISCOUNT_ID).setMaxCouponAmount(new BigDecimal(200)).setMaxRedeemPerUser(2)
@@ -165,11 +173,13 @@ public class DiscountTest {
             new Campaign.Builder(MERCHANT_DISCOUNT_ID).setMaxCouponAmount(new BigDecimal(200)).setMaxRedeemPerUser(1)
                 .build();
 
+        final PaymentConfiguration paymentConfiguration = new PaymentConfiguration.Builder(paymentProcessor)
+            .addPaymentMethodPlugin(new SamplePaymentMethodPlugin())
+            .setDiscountConfiguration(DiscountConfiguration.withDiscount(discount,campaign))
+            .build();
+
         final MercadoPagoCheckout.Builder builder =
-            new MercadoPagoCheckout.Builder(MERCHANT_PUBLIC_KEY, PREFERENCE_ID)
-                .setPaymentProcessor(paymentProcessor)
-                .addPaymentMethodPlugin(new SamplePaymentMethodPlugin(), paymentProcessor)
-                .setDiscount(discount, campaign);
+            new MercadoPagoCheckout.Builder(MERCHANT_PUBLIC_KEY, PREFERENCE_ID, paymentConfiguration);
 
         discountTestFlow = new DiscountTestFlow(builder.build(), activityRule.getActivity());
 
@@ -181,9 +191,13 @@ public class DiscountTest {
 
     @Test
     public void whenMerchantDiscountIsAppliedAndHasNotPaymentProcessorThenNotShowDiscountAndGetCongrats() {
+
+        final PaymentConfiguration paymentConfiguration = new PaymentConfiguration.Builder(paymentProcessor)
+            .setDiscountConfiguration(DiscountConfiguration.withDiscount(discount,campaign))
+            .build();
+
         final MercadoPagoCheckout.Builder builder =
-            new MercadoPagoCheckout.Builder(MERCHANT_PUBLIC_KEY, PREFERENCE_ID)
-                .setDiscount(discount, campaign);
+            new MercadoPagoCheckout.Builder(MERCHANT_PUBLIC_KEY, PREFERENCE_ID, paymentConfiguration);
 
         discountTestFlow = new DiscountTestFlow(builder.build(), activityRule.getActivity());
 
