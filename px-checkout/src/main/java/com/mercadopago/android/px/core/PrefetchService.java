@@ -3,33 +3,32 @@ package com.mercadopago.android.px.core;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import com.mercadopago.android.px.internal.core.Settings;
+import com.mercadopago.android.px.internal.datasource.PluginInitializationTask;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
+import com.mercadopago.android.px.internal.services.CheckoutService;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
-import com.mercadopago.android.px.plugins.DataInitializationTask;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.services.CheckoutService;
-import com.mercadopago.android.px.services.callbacks.Callback;
-import com.mercadopago.android.px.services.core.Settings;
-import com.mercadopago.android.px.services.exceptions.ApiException;
-import com.mercadopago.android.px.util.TextUtils;
-import java.util.Map;
+import com.mercadopago.android.px.services.Callback;
 
 class PrefetchService {
 
     private final Handler mainHandler;
 
     /* default */ final Session session;
-    /* default */ final CheckoutLazyBuilder checkoutLazyBuilderCallback;
+    /* default */ final CheckoutLazyInit checkoutLazyInitCallback;
     /* default */ final MercadoPagoCheckout checkout;
     private Thread currentFetch;
 
     /* default */ PrefetchService(final MercadoPagoCheckout checkout, final Session session,
-        final CheckoutLazyBuilder checkoutLazyBuilderCallback) {
+        final CheckoutLazyInit checkoutLazyInitCallback) {
         session.init(checkout);
         this.checkout = checkout;
         this.session = session;
-        this.checkoutLazyBuilderCallback = checkoutLazyBuilderCallback;
+        this.checkoutLazyInitCallback = checkoutLazyInitCallback;
         mainHandler = new Handler(Looper.getMainLooper());
     }
 
@@ -44,7 +43,7 @@ class PrefetchService {
 
                 final String checkoutPreferenceId =
                     paymentSettings.getCheckoutPreferenceId();
-                if (!TextUtils.isEmpty(checkoutPreferenceId)) {
+                if (!TextUtil.isEmpty(checkoutPreferenceId)) {
                     fetchPreference();
                 } else {
                     fetchDiscounts();
@@ -96,26 +95,18 @@ class PrefetchService {
     }
 
     /* default */ void initPlugins() {
-        //TODO refactor - muy turbio todo.
-        final DataInitializationTask dataInitializationTask =
-            CheckoutStore.getInstance().getDataInitializationTask();
-        if (dataInitializationTask != null) {
-            dataInitializationTask.initPlugins(new DataInitializationTask.DataInitializationCallbacks() {
-                @Override
-                public void onDataInitialized(@NonNull final Map<String, Object> data) {
-                    data.put(DataInitializationTask.KEY_INIT_SUCCESS, true);
-                    fetchGroups();
-                }
+        final PluginInitializationTask initTask = session.getPluginRepository().getInitTask();
+        initTask.initPlugins(new PluginInitializationTask.DataInitializationCallbacks() {
+            @Override
+            public void onDataInitialized() {
+                fetchGroups();
+            }
 
-                @Override
-                public void onFailure(@NonNull final Exception e, @NonNull final Map<String, Object> data) {
-                    data.put(DataInitializationTask.KEY_INIT_SUCCESS, false);
-                    fetchGroups();
-                }
-            });
-        } else {
-            fetchGroups();
-        }
+            @Override
+            public void onFailure(@NonNull final Exception e) {
+                fetchGroups();
+            }
+        });
     }
 
     /* default */ void fetchGroups() {
@@ -138,7 +129,7 @@ class PrefetchService {
             @Override
             public void run() {
                 checkout.prefetch = true;
-                checkoutLazyBuilderCallback.success(checkout);
+                checkoutLazyInitCallback.success(checkout);
             }
         });
     }
@@ -147,7 +138,7 @@ class PrefetchService {
         mainHandler.post(new Runnable() {
             @Override
             public void run() {
-                checkoutLazyBuilderCallback.fail();
+                checkoutLazyInitCallback.fail();
             }
         });
     }

@@ -8,7 +8,7 @@
                                    android:theme="@style/ToolbarTheme"
                                    app:popupTheme="@style/Theme.MercadoPagoTheme.NoActionBar">
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/mpsdkTitle"
         style="@style/px_title_text"
         android:layout_width="wrap_content"

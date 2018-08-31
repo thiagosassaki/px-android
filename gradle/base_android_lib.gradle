@@ -1,0 +1,43 @@
+apply plugin:'com.android.library'
+
+if (project.hasProperty('deploy')) {
+    apply plugin:'com.getkeepsafe.dexcount'
+}
+
+
+android {
+    compileSdkVersion api_level as int
+    buildToolsVersion build_tools_version as String
+
+    defaultConfig {
+        minSdkVersion min_api_level as int
+        targetSdkVersion api_level as int
+        versionCode 1
+        versionName version_to_deploy as String
+        consumerProguardFiles 'proguard-rules.pro'
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        if (!project.hasProperty('deploy')) {
+            resConfigs("en", "xxhdpi")
+            aaptOptions.cruncherEnabled = false
+        }
+    }
+
+    dexOptions {
+        preDexLibraries !(travisBuild)
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
+    }
+}

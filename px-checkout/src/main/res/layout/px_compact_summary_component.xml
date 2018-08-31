@@ -13,7 +13,7 @@
         android:layout_marginBottom="@dimen/px_l_alternative_margin"
         android:orientation="vertical">
 
-        <com.mercadopago.android.px.customviews.MPTextView
+        <com.mercadopago.android.px.internal.view.MPTextView
             android:id="@+id/mpsdkTotalAmount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
             android:textSize="@dimen/px_xxxl_text"
             tools:text="$ 100"/>
 
-        <com.mercadopago.android.px.customviews.MPTextView
+        <com.mercadopago.android.px.internal.view.MPTextView
             android:id="@+id/mpsdkItemTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

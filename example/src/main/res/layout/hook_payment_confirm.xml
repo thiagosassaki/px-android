@@ -25,7 +25,7 @@
                 android:layout_gravity="center_vertical"
                 android:orientation="vertical">
 
-                <com.mercadopago.android.px.customviews.MPTextView
+                <com.mercadopago.android.px.internal.view.MPTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -35,7 +35,7 @@
                     android:textColor="@color/ui_meli_black"
                     android:textSize="20sp"/>
 
-                <com.mercadopago.android.px.customviews.MPTextView
+                <com.mercadopago.android.px.internal.view.MPTextView
                     android:id="@+id/amount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

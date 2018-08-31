@@ -22,7 +22,7 @@
             android:theme="@style/ToolbarTheme"
             app:popupTheme="@style/Theme.MercadoPagoTheme.NoActionBar">
 
-            <com.mercadopago.android.px.customviews.MPTextView
+            <com.mercadopago.android.px.internal.view.MPTextView
                 android:id="@+id/mpsdkToolbarTitle"
                 style="@style/px_title_text"
                 android:layout_width="wrap_content"
@@ -30,7 +30,7 @@
                 android:layout_gravity="center"
                 android:text="@string/px_title_activity_payment_methods"/>
 
-            <com.mercadopago.android.px.customviews.MPTextView
+            <com.mercadopago.android.px.internal.view.MPTextView
                 android:id="@+id/mpsdkBankDeals"
                 style="@style/px_small_white_text"
                 android:layout_width="wrap_content"

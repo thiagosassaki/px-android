@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- one tap -->
+    <!-- One tap -->
     <string name="px_payment_detail_title_modal">Detalle</string>
+    <string name="px_processing_payment_button">Procesando tu pago</string>
 
     <!-- Banks deals -->
     <string name="px_empty_bank_deals">No tienes ninguna promoción disponible</string>
@@ -13,10 +14,6 @@
 
     <!-- Payment Methods -->
     <string name="px_title_activity_payment_methods">¿Cómo quieres pagar?</string>
-
-    <!-- Customer cards -->
-    <string name="px_title_activity_customer_pms">¿Con qué tarjeta?</string>
-    <string name="other_payment_method">Otro medio de pago…</string>
 
     <!-- Vault -->
     <string name="px_last_digits_label">Terminada en</string>
@@ -190,9 +187,6 @@
     <string name="px_debit_payment_type">Débito</string>
     <string name="px_form_card_title_payment_type_prepaid">Tarjeta prepaga</string>
     <string name="px_payment_types_title">¿Qué tipo de tarjeta es?</string>
-
-    <string name="px_confirm_prompt_yes">Sí</string>
-    <string name="px_confirm_prompt_no">No</string>
 
     <!-- Review and Confirm -->
     <string name="px_change_payment">Cambiar medio de pago</string>

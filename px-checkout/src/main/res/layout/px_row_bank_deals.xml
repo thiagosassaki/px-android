@@ -25,7 +25,7 @@
             android:contentDescription="@string/px_bank"
             android:scaleType="fitCenter"/>
 
-        <com.mercadopago.android.px.customviews.MPTextView
+        <com.mercadopago.android.px.internal.view.MPTextView
             android:id="@+id/logo_name"
             style="@style/DealsLogoName"
             android:layout_width="wrap_content"
@@ -37,7 +37,7 @@
     </FrameLayout>
 
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/mpsdkInstallments"
         android:layout_marginTop="@dimen/px_xs_margin"
         android:layout_width="wrap_content"
@@ -47,7 +47,7 @@
         tools:text="6 cuotas sin interes"
         style="@style/DealsListTitle"/>
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/mpsdkBankDesc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

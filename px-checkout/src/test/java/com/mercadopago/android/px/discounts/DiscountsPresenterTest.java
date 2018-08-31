@@ -1,10 +1,10 @@
 package com.mercadopago.android.px.discounts;
 
 import com.mercadopago.android.px.model.Discount;
-import com.mercadopago.android.px.mvp.TaggedCallback;
-import com.mercadopago.android.px.presenters.DiscountsPresenter;
-import com.mercadopago.android.px.providers.DiscountsProvider;
-import com.mercadopago.android.px.views.DiscountsActivityView;
+import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
+import com.mercadopago.android.px.internal.features.DiscountsPresenter;
+import com.mercadopago.android.px.internal.features.providers.DiscountsProvider;
+import com.mercadopago.android.px.internal.features.DiscountsActivityView;
 import java.math.BigDecimal;
 import org.junit.Test;
 

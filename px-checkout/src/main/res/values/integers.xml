@@ -5,5 +5,6 @@
     <integer name="px_default_animation_time">300</integer>
     <integer name="px_document_anim_time">400</integer>
     <integer name="px_default_animation_offset">100</integer>
+    <integer name="px_long_animation_time">500</integer>
 
 </resources>

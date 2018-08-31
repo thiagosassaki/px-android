@@ -1,11 +1,11 @@
 package com.mercadopago.android.px.guessing;
 
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.mocks.PaymentMethods;
 import com.mercadopago.android.px.model.PaymentMethod;
-import com.mercadopago.android.px.presenters.ReviewPaymentMethodsPresenter;
-import com.mercadopago.android.px.providers.ReviewPaymentMethodsProvider;
-import com.mercadopago.android.px.views.ReviewPaymentMethodsView;
+import com.mercadopago.android.px.internal.features.ReviewPaymentMethodsPresenter;
+import com.mercadopago.android.px.internal.features.providers.ReviewPaymentMethodsProvider;
+import com.mercadopago.android.px.internal.features.ReviewPaymentMethodsView;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;

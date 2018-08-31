@@ -18,6 +18,12 @@ public class PaymentMethodPage extends PageObject<CheckoutValidator> {
         super(validator);
     }
 
+    public SecurityCodePage selectSavedDebitCard() {
+        onView(withId(R.id.mpsdkGroupsList))
+            .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        return new SecurityCodePage(validator);
+    }
+
     public CardPage selectCard() {
         onView(withId(R.id.mpsdkGroupsList))
             .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));

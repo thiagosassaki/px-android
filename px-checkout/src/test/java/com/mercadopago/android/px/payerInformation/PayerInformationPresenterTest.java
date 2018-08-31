@@ -1,15 +1,17 @@
 package com.mercadopago.android.px.payerInformation;
 
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
+import com.mercadopago.android.px.internal.features.PayerInformationPresenter;
+import com.mercadopago.android.px.internal.features.PayerInformationView;
+import com.mercadopago.android.px.internal.features.providers.PayerInformationProvider;
+import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.mocks.IdentificationTypes;
 import com.mercadopago.android.px.model.Identification;
 import com.mercadopago.android.px.model.IdentificationType;
-import com.mercadopago.android.px.mvp.TaggedCallback;
-import com.mercadopago.android.px.presenters.PayerInformationPresenter;
-import com.mercadopago.android.px.providers.PayerInformationProvider;
-import com.mercadopago.android.px.views.PayerInformationView;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import java.util.List;
 import org.junit.Test;
+import org.mockito.Mock;
 
 import static junit.framework.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -20,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 public class PayerInformationPresenterTest {
 
+    @Mock private PaymentSettingRepository paymentSettingRepository;
     @Test
     public void whenInitializePresenterThenInitializeIdentificationTypes() {
         MockedView mockedView = new MockedView();
@@ -28,7 +31,8 @@ public class PayerInformationPresenterTest {
         List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
         provider.setIdentificationTypesResponse(identificationTypesList);
 
-        PayerInformationPresenter presenter = new PayerInformationPresenter();
+        PayerInformationPresenter presenter = new PayerInformationPresenter(
+            paymentSettingRepository);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
@@ -45,7 +49,7 @@ public class PayerInformationPresenterTest {
         MercadoPagoError mercadoPagoError = new MercadoPagoError("bad_request", false);
         provider.setIdentificationTypesResponse(mercadoPagoError);
 
-        PayerInformationPresenter presenter = new PayerInformationPresenter();
+        PayerInformationPresenter presenter = new PayerInformationPresenter(paymentSettingRepository);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
@@ -63,7 +67,8 @@ public class PayerInformationPresenterTest {
         List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
         provider.setIdentificationTypesResponse(identificationTypesList);
 
-        PayerInformationPresenter presenter = new PayerInformationPresenter();
+        PayerInformationPresenter presenter = new PayerInformationPresenter(
+            paymentSettingRepository);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
@@ -82,7 +87,8 @@ public class PayerInformationPresenterTest {
         List<IdentificationType> identificationTypesList = IdentificationTypes.getIdentificationTypes();
         provider.setIdentificationTypesResponse(identificationTypesList);
 
-        PayerInformationPresenter presenter = new PayerInformationPresenter();
+        PayerInformationPresenter presenter = new PayerInformationPresenter(
+            paymentSettingRepository);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
 
@@ -104,7 +110,8 @@ public class PayerInformationPresenterTest {
         IdentificationType identificationType = getIdentificationTypeCPF();
         Identification identification = getIdentificationWithWrongNumberCPF();
 
-        PayerInformationPresenter presenter = new PayerInformationPresenter();
+        PayerInformationPresenter presenter = new PayerInformationPresenter(
+            paymentSettingRepository);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
         presenter.setIdentificationType(identificationType);
@@ -126,7 +133,8 @@ public class PayerInformationPresenterTest {
         IdentificationType identificationType = getIdentificationTypeCPF();
         Identification identification = getIdentificationCPF();
 
-        PayerInformationPresenter presenter = new PayerInformationPresenter();
+        PayerInformationPresenter presenter = new PayerInformationPresenter(
+            paymentSettingRepository);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
         presenter.setIdentificationType(identificationType);

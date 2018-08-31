@@ -1,12 +1,8 @@
 package com.mercadopago.android.px.mocks;
 
+import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.utils.ResourcesUtil;
-import com.mercadopago.android.px.util.JsonUtil;
-
-/**
- * Created by mreverter on 1/30/17.
- */
 
 public class PaymentMethodSearchs {
 
@@ -65,6 +61,11 @@ public class PaymentMethodSearchs {
 
     public static PaymentMethodSearch getPaymentMethodSearchWithOnlyOneOffTypeAndAccountMoneyMLA() {
         String json = ResourcesUtil.getStringResource("only_one_off_type_and_account_money_MLA.json");
+        return JsonUtil.getInstance().fromJson(json, PaymentMethodSearch.class);
+    }
+
+    public static PaymentMethodSearch getPaymentMethodSearchWithOnlyBolbradescoMLB() {
+        String json = ResourcesUtil.getStringResource("only_bolbradesco_payment_method_search_MLB.json");
         return JsonUtil.getInstance().fromJson(json, PaymentMethodSearch.class);
     }
 }

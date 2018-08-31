@@ -1,7 +1,7 @@
 package com.mercadopago.android.px.model;
 
+import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.test.StaticMock;
-import com.mercadopago.android.px.util.JsonUtil;
 import java.util.Arrays;
 import java.util.Collection;
 import junit.framework.Assert;

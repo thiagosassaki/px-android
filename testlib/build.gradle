@@ -1,58 +1,25 @@
-ext {
-    okHttp3Version = '3.8.1'
-    spoonClientVersion = '1.7.1'
-    espressoVersion = '3.0.1'
-    mockitoCoreVersion = '1.10.19'
-    androidRunner = '1.0.1'
-}
-
-buildscript {
-    repositories {
-        google()
-        jcenter()
-    }
-
-    dependencies {
-        classpath "com.stanfy.spoon:spoon-gradle-plugin:1.2.2"
-    }
-}
-
-apply plugin:'com.android.library'
+apply from:"$rootDir/gradle/base_android_lib.gradle"
 apply plugin:'spoon'
+apply from:"$rootDir/gradle/deploy_testlib.gradle"
+
+android {
+    lintOptions {
+        abortOnError false
+    }
+}
 
 spoon {
     grantAllPermissions = true
 }
 
-android {
-    compileSdkVersion api_level as int
-    buildToolsVersion build_tools_version as String
-
-    defaultConfig {
-        minSdkVersion min_api_level as int
-        targetSdkVersion api_level as int
-        versionCode 1
-        versionName "1.0"
-        consumerProguardFiles 'proguard-rules.pro'
-    }
-
-    android {
-        lintOptions {
-            abortOnError false
-        }
-    }
-}
-
 dependencies {
     api "junit:junit:$junit"
-    api "com.android.support.test:runner:$androidRunner"
-    api "com.android.support.test:rules:$androidRunner"
-    api "com.squareup.spoon:spoon-client:$spoonClientVersion"
-    api "com.android.support.test.espresso:espresso-core:$espressoVersion"
-    api "com.android.support.test.espresso:espresso-contrib:$espressoVersion"
-    api "com.android.support.test.espresso:espresso-intents:$espressoVersion"
-    api "com.squareup.okhttp3:okhttp:$okHttp3Version"
-    api "com.android.support.test.espresso:espresso-idling-resource:$espressoVersion"
+    api "com.android.support.test:runner:$android_runner"
+    api "com.android.support.test:rules:$android_runner"
+    api "com.squareup.spoon:spoon-client:$spoon_client"
+    api "com.android.support.test.espresso:espresso-core:$espresso"
+    api "com.android.support.test.espresso:espresso-contrib:$espresso"
+    api "com.android.support.test.espresso:espresso-intents:$espresso"
+    api "com.squareup.okhttp3:okhttp:$okhttp"
+    api "com.android.support.test.espresso:espresso-idling-resource:$espresso"
 }
-
-apply from:"$rootDir/gradle/deploy_testlib.gradle"

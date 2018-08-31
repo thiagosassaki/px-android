@@ -1,7 +1,7 @@
 package com.mercadopago.android.px.model;
 
 import android.os.Looper;
-import com.mercadopago.android.px.controllers.CheckoutTimer;
+import com.mercadopago.android.px.internal.controllers.CheckoutTimer;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

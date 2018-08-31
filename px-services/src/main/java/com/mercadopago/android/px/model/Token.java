@@ -3,7 +3,7 @@ package com.mercadopago.android.px.model;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mercadopago.android.px.services.util.TextUtil;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import java.util.Date;
 
 public class Token implements CardInformation {

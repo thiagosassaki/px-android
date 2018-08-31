@@ -1,13 +1,13 @@
 package com.mercadopago.android.px.paymentmethods;
 
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentTypes;
-import com.mercadopago.android.px.mvp.TaggedCallback;
+import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
 import com.mercadopago.android.px.preferences.PaymentPreference;
-import com.mercadopago.android.px.presenters.PaymentMethodsPresenter;
-import com.mercadopago.android.px.providers.PaymentMethodsProvider;
-import com.mercadopago.android.px.views.PaymentMethodsView;
+import com.mercadopago.android.px.internal.features.PaymentMethodsPresenter;
+import com.mercadopago.android.px.internal.features.providers.PaymentMethodsProvider;
+import com.mercadopago.android.px.internal.features.PaymentMethodsView;
 import java.util.ArrayList;
 import java.util.List;
 import junit.framework.Assert;

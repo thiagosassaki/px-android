@@ -1,0 +1,35 @@
+{
+  "groups": [
+    {
+      "id": "bolbradesco",
+      "type": "payment_method",
+      "description": "Cash payment",
+      "comment": null,
+      "children": null,
+      "children_header": null,
+      "show_icon": true
+    }
+  ],
+  "custom_options": [
+
+  ],
+  "payment_methods": [
+    {
+      "additional_info_needed": [
+      ],
+      "id": "bolbradesco",
+      "name": "Bolbradesco",
+      "payment_type_id": "ticket",
+      "status": "active",
+      "secure_thumbnail": "https://www.mercadopago.com/org-img/MP3/API/logos/bolbradesco.gif",
+      "thumbnail": "http://img.mlstatic.com/org-img/MP3/API/logos/bolbradesco.gif",
+      "deferred_capture": "does_not_apply",
+      "settings": [
+      ],
+      "min_allowed_amount": 0.01,
+      "max_allowed_amount": 60000,
+      "accreditation_time": 0
+    }
+  ],
+  "account_money": null
+}

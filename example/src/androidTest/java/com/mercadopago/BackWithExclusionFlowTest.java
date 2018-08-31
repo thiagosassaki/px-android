@@ -37,7 +37,7 @@ public class BackWithExclusionFlowTest {
         MercadoPagoCheckout.Builder builder =
             new MercadoPagoCheckout.Builder("TEST-e4bdd1cf-bcb2-43f7-b565-ed4c9ea25be7",
                 "243966003-bb8f7422-39c1-4337-81dd-60a88eb787df");
-        builder.build().startForPayment(activityRule.getActivity());
+        builder.build().startPayment(activityRule.getActivity(), 1);
     }
 
     @Test

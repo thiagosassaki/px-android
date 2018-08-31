@@ -1,9 +1,12 @@
 package com.mercadopago.android.px.mocks;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import com.mercadopago.android.px.internal.util.JsonUtil;
+import com.mercadopago.android.px.model.IPayment;
 import com.mercadopago.android.px.model.Payment;
-import com.mercadopago.android.px.services.exceptions.ApiException;
+import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.utils.ResourcesUtil;
-import com.mercadopago.android.px.util.JsonUtil;
 
 public class Payments {
     public static Payment getApprovedPayment() {
@@ -34,5 +37,35 @@ public class Payments {
     public static ApiException getInvalidIdentificationPayment() {
         String json = ResourcesUtil.getStringResource("invalid_identification_payment.json");
         return JsonUtil.getInstance().fromJson(json, ApiException.class);
+    }
+
+    public static IPayment create(@NonNull final String status,
+        @NonNull final String statusDetail) {
+        return new IPayment() {
+
+            @Nullable
+            @Override
+            public Long getId() {
+                return 1234L;
+            }
+
+            @Nullable
+            @Override
+            public String getStatementDescription() {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public String getPaymentStatus() {
+                return status;
+            }
+
+            @NonNull
+            @Override
+            public String getPaymentStatusDetail() {
+                return statusDetail;
+            }
+        };
     }
 }

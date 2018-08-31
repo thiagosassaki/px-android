@@ -3,6 +3,7 @@
 
     <!-- one tap -->
     <string name="px_payment_detail_title_modal">Detalhes</string>
+    <string name="px_processing_payment_button">Processando o seu pagamento</string>
 
     <!-- Banks deals -->
     <string name="px_empty_bank_deals">Você não tem nenhuma promoção disponível</string>
@@ -13,10 +14,6 @@
 
     <!-- Payment Methods -->
     <string name="px_title_activity_payment_methods">Como você prefere pagar?</string>
-
-    <!-- Customer cards -->
-    <string name="px_title_activity_customer_pms">Com qual cartão?</string>
-    <string name="other_payment_method">Outro meio de pagamento…</string>
 
     <!-- Vault -->
     <string name="px_last_digits_label">Terminado em</string>
@@ -179,8 +176,6 @@
     <string name="px_instant_accreditation_time">É aprovado imediatamente</string>
     <string name="px_accreditation_time">Será aprovado em</string>
     <string name="px_what_can_do">O que eu posso fazer?</string>
-    <string name="px_confirm_prompt_yes">Sim</string>
-    <string name="px_confirm_prompt_no">Não</string>
 
     <!-- Low Res -->
     <string name="px_form_card_title_payment_type">Cartão de %1$s</string>

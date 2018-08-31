@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
-import com.mercadopago.android.px.services.util.ParcelableUtil;
+import com.mercadopago.android.px.internal.util.ParcelableUtil;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -14,6 +14,10 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * Model that represents a discount campaign.
+ */
+@SuppressWarnings("unused")
 public class Campaign implements Serializable, Parcelable {
 
     private final String id;
@@ -36,17 +40,14 @@ public class Campaign implements Serializable, Parcelable {
         endDate = builder.endDate;
     }
 
-    @SuppressWarnings("unused")
     public String getId() {
         return id;
     }
 
-    @SuppressWarnings("unused")
     public BigDecimal getMaxCouponAmount() {
         return maxCouponAmount;
     }
 
-    @SuppressWarnings("unused")
     public String getCodeType() {
         return codeType;
     }
@@ -125,16 +126,19 @@ public class Campaign implements Serializable, Parcelable {
 
     @SuppressWarnings("unused")
     public static final class Builder {
+
         //region mandatory params
-        /* default */ final String id;
+        /* default */ @NonNull final String id;
         //endregion mandatory params
+
         /* default */ BigDecimal maxCouponAmount = BigDecimal.ZERO;
-        /* default */ String codeType;
+        /* default */ @Nullable String codeType;
         /* default */ int maxRedeemPerUser = 1;
-        /* default */ Date endDate;
+        /* default */ @Nullable Date endDate;
 
         /**
-         * Builder for campaign construction
+         * Builder for campaign construction.
+         * This campaign have to be created in Mercado Pago.
          *
          * @param id campaign id
          */
@@ -188,6 +192,11 @@ public class Campaign implements Serializable, Parcelable {
             return this;
         }
 
+        /**
+         * It creates the Campaign.
+         *
+         * @return Campaign
+         */
         public Campaign build() {
             return new Campaign(this);
         }

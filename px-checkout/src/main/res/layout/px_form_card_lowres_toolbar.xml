@@ -11,7 +11,7 @@
                                    android:visibility="gone"
                                    app:popupTheme="@style/Theme.MercadoPagoTheme.NoActionBar">
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/mpsdkTitle"
         style="@style/px_toolbar_text_medium"
         android:layout_width="wrap_content"
@@ -21,7 +21,7 @@
         android:layout_marginStart="20dp"
         tools:text="Tarjeta de crédito"/>
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/mpsdkBankDealsText"
         style="@style/px_toolbar_text_xx_small"
         android:layout_width="wrap_content"
@@ -32,7 +32,7 @@
         android:visibility="gone"
         tools:text="Ver Promociones"/>
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/mpsdkTimerTextView"
         style="@style/px_toolbar_text_small"
         android:layout_width="wrap_content"

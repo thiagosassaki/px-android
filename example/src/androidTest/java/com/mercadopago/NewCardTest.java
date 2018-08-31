@@ -6,8 +6,10 @@ import android.test.suitebuilder.annotation.LargeTest;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.testcheckout.flows.CreditCardTestFlow;
 import com.mercadopago.android.px.testcheckout.flows.DebitCardTestFlow;
+import com.mercadopago.android.px.testcheckout.flows.SavedCardTestFlow;
 import com.mercadopago.android.px.testcheckout.idleresources.CheckoutResource;
 import com.mercadopago.android.px.testcheckout.input.Amex;
+import com.mercadopago.android.px.testcheckout.input.Card;
 import com.mercadopago.android.px.testcheckout.input.Country;
 import com.mercadopago.android.px.testcheckout.input.FakeCard;
 import com.mercadopago.android.px.testcheckout.input.Maestro;
@@ -99,5 +101,14 @@ public class NewCardTest {
         VisaDebit card = new VisaDebit(FakeCard.CardState.APRO, Country.ARGENTINA);
         CongratsPage congratsPage = debitCardTestFlow.runDebitCardPaymentFlow(card);
         assertNotNull(congratsPage);
+    }
+
+    @Test
+    public void withNewCardWithSavedCardFlowIsOk() {
+        final Card card = new Card("123", "Test", "6042013076608231", "123456789", "1234");
+        final SavedCardTestFlow savedCardTestFlow =
+            new SavedCardTestFlow("debit_card", activityRule.getActivity());
+        CongratsPage congratsPageSavedCard = savedCardTestFlow.runNewCardPaymentFlow(card);
+        assertNotNull(congratsPageSavedCard);
     }
 }

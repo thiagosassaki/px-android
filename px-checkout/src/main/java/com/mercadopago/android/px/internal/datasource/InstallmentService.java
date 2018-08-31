@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.repository.InstallmentRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.model.Installment;
-import com.mercadopago.android.px.services.adapters.MPCall;
+import com.mercadopago.android.px.internal.callbacks.MPCall;
 import java.math.BigDecimal;
 import java.util.List;
 

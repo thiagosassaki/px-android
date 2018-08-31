@@ -1,50 +1,20 @@
-apply plugin:'com.android.library'
+apply from:"$rootDir/gradle/base_android_lib.gradle"
+apply from:"$rootDir/gradle/deploy_services.gradle"
 
 def user_agent = "PX/Android/" + (version_to_deploy as String)
 
 android {
-    compileSdkVersion api_level.toInteger()
-    buildToolsVersion build_tools_version
-
     defaultConfig {
-        minSdkVersion min_api_level.toInteger()
-        targetSdkVersion api_level.toInteger()
-        versionCode 1
-        versionName "1.0"
-        consumerProguardFiles 'proguard-rules.pro'
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "USER_AGENT", "\"$user_agent\""
-    }
-
-    lintOptions {
-        abortOnError false
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
-    }
-
-    buildTypes {
-
-        release {
-            debuggable true
-            minifyEnabled false
-        }
     }
 }
 
 dependencies {
-
     androidTestImplementation project(":testlib")
-    testImplementation 'junit:junit:4.12'
 
     implementation "com.android.support:appcompat-v7:$support_library_version"
-    implementation "com.google.code.gson:gson:2.8.2"
-    api "com.squareup.retrofit2:retrofit:2.4.0"
-    api "com.squareup.retrofit2:converter-gson:2.4.0"
-    api "com.squareup.okhttp3:logging-interceptor:3.9.1"
-    implementation project(':px-tracking')
+    implementation "com.google.code.gson:gson:$gson"
+    api "com.squareup.retrofit2:retrofit:$retrofit"
+    api "com.squareup.retrofit2:converter-gson:$retrofit"
+    api "com.squareup.okhttp3:logging-interceptor:$okhttp"
 }
-
-apply from:"$rootDir/gradle/deploy_services.gradle"

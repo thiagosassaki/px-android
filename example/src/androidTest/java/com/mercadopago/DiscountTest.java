@@ -4,15 +4,15 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.suitebuilder.annotation.LargeTest;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
+import com.mercadopago.android.px.core.PaymentProcessor;
+import com.mercadopago.android.px.internal.datasource.MercadoPagoPaymentProcessor;
+import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
+import com.mercadopago.android.px.model.ExitAction;
 import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.Sites;
-import com.mercadopago.android.px.plugins.MainPaymentProcessor;
-import com.mercadopago.android.px.plugins.SamplePaymentMethodPlugin;
-import com.mercadopago.android.px.plugins.model.BusinessPayment;
-import com.mercadopago.android.px.plugins.model.ExitAction;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.testcheckout.assertions.AlwaysOnDiscountValidator;
 import com.mercadopago.android.px.testcheckout.assertions.OneShotDiscountValidator;
@@ -73,7 +73,7 @@ public class DiscountTest {
 
     private DiscountTestFlow discountTestFlow;
     private BusinessPayment businessPayment;
-    private MainPaymentProcessor mainPaymentProcessor;
+    private PaymentProcessor paymentProcessor;
     private Discount discount;
     private Campaign campaign;
     private Visa card;
@@ -94,7 +94,7 @@ public class DiscountTest {
             .setSecondaryButton(new ExitAction(BUSINESS_PAYMENT_BUTTON_NAME, 34))
             .build();
 
-        mainPaymentProcessor = new MainPaymentProcessor(businessPayment);
+        paymentProcessor = new MercadoPagoPaymentProcessor();
 
         discount = new Discount.Builder(MERCHANT_DISCOUNT_ID, MERCHANT_DISCOUNT_CURRENCY, new BigDecimal(50))
             .setPercentOff(BigDecimal.TEN).build();
@@ -105,22 +105,24 @@ public class DiscountTest {
         card = new Visa(FakeCard.CardState.APRO, Country.ARGENTINA);
 
         final List<Item> items = new ArrayList<>();
-        final Item item = new Item(ITEM_DESCRIPTION, 1, new BigDecimal(120));
-        item.setId(ITEM_ID);
-        item.setTitle(ITEM_TITLE);
-        item.setCurrencyId(Sites.ARGENTINA.getCurrencyId());
+        final Item item = new Item.Builder(ITEM_TITLE, 1,new BigDecimal(120))
+            .setId(ITEM_ID)
+            .setDescription(ITEM_DESCRIPTION).build();
+
         items.add(item);
-        checkoutPreferenceWithPayerEmail = new CheckoutPreference.Builder(Sites.ARGENTINA,
+
+        checkoutPreferenceWithPayerEmail = new CheckoutPreference.Builder( Sites.ARGENTINA,
             PAYER_EMAIL_DUMMY, items)
             .build();
     }
 
     @Test
     public void whenMerchantDiscountIsAlwaysOnAndHasPaymentProcessorThenShowMerchantDiscountAndGetCongrats() {
+
         final MercadoPagoCheckout.Builder builder =
             new MercadoPagoCheckout.Builder(MERCHANT_PUBLIC_KEY, PREFERENCE_ID)
-                .setPaymentProcessor(mainPaymentProcessor)
-                .addPaymentMethodPlugin(new SamplePaymentMethodPlugin(), mainPaymentProcessor)
+                .setPaymentProcessor(paymentProcessor)
+                .addPaymentMethodPlugin(new SamplePaymentMethodPlugin(), paymentProcessor)
                 .setDiscount(discount, campaign);
 
         campaign =
@@ -140,7 +142,7 @@ public class DiscountTest {
         final MercadoPagoCheckout.Builder builder =
             new MercadoPagoCheckout.Builder(ONE_TAP_MERCHANT_PUBLIC_KEY,
                 checkoutPreferenceWithPayerEmail)
-                .setPaymentProcessor(mainPaymentProcessor)
+                .setPaymentProcessor(paymentProcessor)
                 .setDiscount(discount, campaign)
                 .setPrivateKey(ONE_TAP_PAYER_3_ACCESS_TOKEN);;
 
@@ -165,8 +167,8 @@ public class DiscountTest {
 
         final MercadoPagoCheckout.Builder builder =
             new MercadoPagoCheckout.Builder(MERCHANT_PUBLIC_KEY, PREFERENCE_ID)
-                .setPaymentProcessor(mainPaymentProcessor)
-                .addPaymentMethodPlugin(new SamplePaymentMethodPlugin(), mainPaymentProcessor)
+                .setPaymentProcessor(paymentProcessor)
+                .addPaymentMethodPlugin(new SamplePaymentMethodPlugin(), paymentProcessor)
                 .setDiscount(discount, campaign);
 
         discountTestFlow = new DiscountTestFlow(builder.build(), activityRule.getActivity());

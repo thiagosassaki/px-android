@@ -23,7 +23,7 @@
             tools:src="@drawable/px_review_item_default"/>
     </FrameLayout>
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

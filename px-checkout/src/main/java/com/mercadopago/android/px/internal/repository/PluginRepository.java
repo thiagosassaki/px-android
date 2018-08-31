@@ -1,9 +1,11 @@
 package com.mercadopago.android.px.internal.repository;
 
 import android.support.annotation.NonNull;
+import com.mercadopago.android.px.core.PaymentMethodPlugin;
+import com.mercadopago.android.px.internal.datasource.PluginInitializationTask;
 import com.mercadopago.android.px.model.PaymentMethod;
-import com.mercadopago.android.px.plugins.PaymentMethodPlugin;
-import com.mercadopago.android.px.plugins.model.PaymentMethodInfo;
+import com.mercadopago.android.px.model.PaymentMethodInfo;
+import java.util.Collection;
 
 public interface PluginRepository {
 
@@ -18,4 +20,15 @@ public interface PluginRepository {
 
     @NonNull
     PaymentMethodInfo getPaymentMethodInfo(@NonNull final String pluginId);
+
+    Collection<PaymentMethodPlugin> getEnabledPlugins();
+
+    boolean hasEnabledPaymentMethodPlugin();
+
+    int getPaymentMethodPluginCount();
+
+    @NonNull
+    PaymentMethodPlugin getFirstEnabledPlugin();
+
+    PluginInitializationTask getInitTask();
 }

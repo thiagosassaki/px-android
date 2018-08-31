@@ -2,18 +2,16 @@ package com.mercadopago.android.px.internal.repository;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
+import com.mercadopago.android.px.configuration.PaymentConfiguration;
+import com.mercadopago.android.px.internal.base.ResourcesProvider;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
-import com.mercadopago.android.px.mvp.ResourcesProvider;
-import com.mercadopago.android.px.services.adapters.MPCall;
-
+import com.mercadopago.android.px.internal.callbacks.MPCall;
 import java.math.BigDecimal;
 
 public interface DiscountRepository extends ResourcesProvider {
 
-    void configureMerchantDiscountManually(@Nullable final Discount discount, @Nullable final Campaign campaign,
-        final boolean notAvailableDiscount);
+    void configureMerchantDiscountManually(@Nullable final PaymentConfiguration paymentConfiguration);
 
     void configureDiscountManually(@Nullable final Discount discount, @Nullable final Campaign campaign);
 

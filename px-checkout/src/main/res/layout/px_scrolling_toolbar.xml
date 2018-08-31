@@ -38,13 +38,13 @@
         app:layout_collapseMode="pin">
 
 
-        <com.mercadopago.android.px.customviews.MPTextView
+        <com.mercadopago.android.px.internal.view.MPTextView
             android:id="@+id/mpsdkTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/px_title_text"/>
 
-        <com.mercadopago.android.px.customviews.MPTextView
+        <com.mercadopago.android.px.internal.view.MPTextView
             android:id="@+id/mpsdkTimerTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

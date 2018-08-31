@@ -7,7 +7,7 @@
               android:paddingBottom="@dimen/px_xs_margin"
               android:weightSum="1">
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/mpsdkDescription"
         android:layout_width="@dimen/px_zero_height"
         android:layout_height="wrap_content"
@@ -20,7 +20,7 @@
         android:textSize="@dimen/px_m_text"
         tools:text="Total"/>
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/mpsdkAmount"
         android:layout_width="@dimen/px_zero_height"
         android:layout_height="wrap_content"

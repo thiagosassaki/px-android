@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:background="#B3FFFFFF"
+             android:layout_height="match_parent"
+             android:clickable="true">
+
+
+
+    <RelativeLayout
+        android:id="@+id/cho_loading_buy_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout_gravity="center">
+
+        <ProgressBar
+            android:id="@+id/cho_loading_buy_progress"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="@dimen/px_s_margin"
+            android:layout_marginRight="@dimen/px_s_margin"
+            android:indeterminate="false"
+            android:progressDrawable="@drawable/px_loading_buy_background"
+            tools:max="100"
+            tools:progress="10"/>
+
+        <com.mercadopago.android.px.internal.view.MPTextView
+            android:id="@+id/cho_loading_buy_progress_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/button_text_size"/>
+
+        <ImageView
+            android:id="@+id/cho_loading_buy_circular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/px_white_circle"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+
+        <ImageView
+            android:id="@+id/cho_loading_buy_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:scaleType="centerInside"
+            android:visibility="gone"
+            tools:src="@drawable/px_ic_payment_success"
+            tools:visibility="visible"/>
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/cho_loading_buy_reveal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible"
+        />
+</FrameLayout>

@@ -13,7 +13,7 @@ BASEDIR=`dirname $0`
 # stack -> ./scripts ---- /.../.../px-android/
 command pushd "$BASEDIR/.." > /dev/null
 
-modules=('px-checkout' 'px-tracking' 'px-services' 'px-testlib' 'testlib')
+modules=('px-checkout' 'px-services' 'px-testlib' 'testlib')
 
 # in order to make it a little bit more interactive while PID is running show loading.
 function showSpinner {
@@ -35,11 +35,13 @@ function showSpinner {
 function uploadModule {
   local pid
   echo "Uploading $1"
-  ./gradlew $1:bintrayUpload > /dev/null || echo "${red}error uploading $1 ${normal}" & export pid=$!
+  ./gradlew -Pdeploy $1:bintrayUpload > /dev/null || echo "${red}error uploading $1 ${normal}" & export pid=$!
   showSpinner $pid
 }
 
 echo "${green}######### Init deploy #########${normal}"
+./gradlew -Pdeploy clean
+./gradlew -Pdeploy assemble
 
 for current in ${modules[@]}
 do

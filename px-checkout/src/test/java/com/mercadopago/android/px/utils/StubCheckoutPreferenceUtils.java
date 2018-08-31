@@ -112,17 +112,7 @@ public final class StubCheckoutPreferenceUtils {
     }
 
     public static CheckoutPreference.Builder stubBuilderOneItemAndPayer() {
-        return stubBuilderOneItem()
-            .setPayerAccessToken("AT");
-    }
-
-    public static CheckoutPreference stubPreferenceWithAccessToken() {
-        return stubBuilderWithAccessToken()
-            .build();
-    }
-
-    private static CheckoutPreference.Builder stubBuilderWithAccessToken() {
-        return stubBuilderOneItemAndPayer().setPayerAccessToken("ACCESS_TOKEN");
+        return stubBuilderOneItem();
     }
 
     public static CheckoutPreference stubPreferenceOneItem() {
@@ -143,9 +133,7 @@ public final class StubCheckoutPreferenceUtils {
     }
 
     private static List<Item> stubOneItemList() {
-        Item dummy = new Item("dummy", BigDecimal.TEN);
-        dummy.setId("dummy_id");
-        dummy.setCurrencyId("ARS");
+        Item dummy = new Item.Builder("Dummy item", 1, BigDecimal.TEN).setDescription("description").build();
         return Collections.singletonList(dummy);
     }
 }

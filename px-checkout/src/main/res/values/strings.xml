@@ -6,6 +6,7 @@
     <string name="px_string_holder" translatable="false">%1$s</string>
     <string name="px_payment_detail_title_modal">Detail</string>
     <string name="px_quantity_modal" translatable="false">%1$d %2$s</string>
+    <string name="px_processing_payment_button">Processing your payment</string>
 
     <!-- Banks deals -->
     <string name="px_empty_bank_deals">No promotions available for you</string>
@@ -17,9 +18,6 @@
     <!-- Payment Methods -->
     <string name="px_title_activity_payment_methods">How do you want to pay?</string>
 
-    <!-- Customer cards -->
-    <string name="px_title_activity_customer_pms">Which card?</string>
-    <string name="other_payment_method">Other payment method…</string>
 
     <!-- Vault -->
     <string name="px_last_digits_label">Ending in</string>
@@ -197,8 +195,6 @@
     <string name="px_instant_accreditation_time">Will be accredited instantly</string>
     <string name="px_accreditation_time">Will be accredited in</string>
     <string name="px_what_can_do">What can I do?</string>
-    <string name="px_confirm_prompt_yes">Yes</string>
-    <string name="px_confirm_prompt_no">No</string>
 
     <!-- Review and Confirm -->
     <string name="px_change_payment">Change payment method</string>

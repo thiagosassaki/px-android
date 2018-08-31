@@ -3,7 +3,7 @@
                 android:layout_height="?android:attr/listPreferredItemHeight"
                 android:gravity="center_vertical">
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/mpsdkItemTitle"
         android:layout_width="100dp"
         android:layout_height="wrap_content"

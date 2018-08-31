@@ -1,9 +1,9 @@
 package com.mercadopago.android.px.core;
 
-import com.mercadopago.android.px.callbacks.CallbackHolder;
-import com.mercadopago.android.px.callbacks.PaymentCallback;
-import com.mercadopago.android.px.callbacks.PaymentDataCallback;
-import com.mercadopago.android.px.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.internal.callbacks.CallbackHolder;
+import com.mercadopago.android.px.internal.callbacks.PaymentCallback;
+import com.mercadopago.android.px.internal.callbacks.PaymentDataCallback;
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentData;
 import junit.framework.Assert;

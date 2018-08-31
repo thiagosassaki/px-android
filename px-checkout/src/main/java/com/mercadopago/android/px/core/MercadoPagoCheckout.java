@@ -6,235 +6,122 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.mercadopago.android.px.CheckoutActivity;
-import com.mercadopago.android.px.callbacks.CallbackHolder;
-import com.mercadopago.android.px.hooks.CheckoutHooks;
+import com.mercadolibre.android.ui.font.Font;
+import com.mercadopago.android.px.configuration.AdvancedConfiguration;
+import com.mercadopago.android.px.configuration.PaymentConfiguration;
+import com.mercadopago.android.px.internal.callbacks.CallbackHolder;
+import com.mercadopago.android.px.internal.datasource.MercadoPagoPaymentConfiguration;
 import com.mercadopago.android.px.internal.di.Session;
-import com.mercadopago.android.px.model.Campaign;
-import com.mercadopago.android.px.model.Discount;
-import com.mercadopago.android.px.model.PaymentData;
+import com.mercadopago.android.px.internal.features.CheckoutActivity;
+import com.mercadopago.android.px.internal.features.uicontrollers.FontCache;
+import com.mercadopago.android.px.internal.tracker.FlowHandler;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.PaymentResult;
-import com.mercadopago.android.px.model.commission.ChargeRule;
-import com.mercadopago.android.px.plugins.DataInitializationTask;
-import com.mercadopago.android.px.plugins.PaymentMethodPlugin;
-import com.mercadopago.android.px.plugins.PaymentProcessor;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import com.mercadopago.android.px.preferences.FlowPreference;
-import com.mercadopago.android.px.preferences.PaymentResultScreenPreference;
-import com.mercadopago.android.px.preferences.ServicePreference;
-import com.mercadopago.android.px.review_and_confirm.models.ReviewAndConfirmPreferences;
-import com.mercadopago.android.px.tracker.FlowHandler;
-import com.mercadopago.android.px.uicontrollers.FontCache;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import static com.mercadopago.android.px.plugins.PaymentProcessor.PAYMENT_PROCESSOR_KEY;
-import static com.mercadopago.android.px.util.TextUtils.isEmpty;
+/**
+ * Main class of this project.
+ * It provides access to most of the checkout experience.
+ */
+@SuppressWarnings("unused")
+public class MercadoPagoCheckout {
 
-public class MercadoPagoCheckout implements Serializable {
-
-    public static final int CHECKOUT_REQUEST_CODE = 5;
-    public static final int PAYMENT_DATA_RESULT_CODE = 6;
     public static final int PAYMENT_RESULT_CODE = 7;
-    public static final int TIMER_FINISHED_RESULT_CODE = 8;
-    public static final int PAYMENT_METHOD_CHANGED_REQUESTED = 9;
+    public static final String EXTRA_PAYMENT_RESULT = "EXTRA_PAYMENT_RESULT";
+    public static final String EXTRA_ERROR = "EXTRA_ERROR";
 
     @NonNull
     private final String publicKey;
 
-    @Nullable
-    private final CheckoutPreference checkoutPreference;
-
     @NonNull
-    private final FlowPreference flowPreference;
-
-    @Nullable
-    private final PaymentResultScreenPreference paymentResultScreenPreference;
-
-    @Nullable
-    private final PaymentData paymentData;
-
-    @Nullable
-    private final PaymentResult paymentResult;
+    private final AdvancedConfiguration advancedConfiguration;
 
     @Nullable
     private final String preferenceId;
 
     @Nullable
-    private final Discount discount;
-
-    @Nullable
-    private final Campaign campaign;
-
-    private final boolean notAvailableDiscount;
-
-    private final boolean binaryMode;
-
-    @Nullable
     private final String privateKey;
 
     @NonNull
-    private final ArrayList<ChargeRule> charges;
+    private final PaymentConfiguration paymentConfiguration;
+
+    @Nullable
+    private final CheckoutPreference checkoutPreference;
 
     /* default */ boolean prefetch = false;
 
     /* default */ MercadoPagoCheckout(final Builder builder) {
         publicKey = builder.publicKey;
-        checkoutPreference = builder.checkoutPreference;
-        flowPreference = builder.flowPreference;
-        paymentResultScreenPreference = builder.paymentResultScreenPreference;
-        binaryMode = builder.binaryMode;
-        discount = builder.discount;
-        campaign = builder.campaign;
-        notAvailableDiscount = builder.notAvailableDiscount;
-        charges = builder.charges;
-        paymentResult = builder.paymentResult;
-        paymentData = builder.paymentData;
+        advancedConfiguration = builder.advancedConfiguration;
         preferenceId = builder.preferenceId;
         privateKey = builder.privateKey;
-        configureCheckoutStore(builder);
-        configureFlowHandler();
-    }
-
-    /**
-     * Deprecated - new implementation involves payment processor.
-     * <p>
-     * Starts checkout experience.
-     * When the flows ends it returns a {@link PaymentData} object to finish the payment.
-     * will be returned on {@link Activity#onActivityResult(int, int, Intent)} if success or
-     * {@link com.mercadopago.android.px.exceptions.MercadoPagoError}
-     * if something went wrong or canceled.
-     *
-     * @param context context needed to start checkout.
-     */
-    @Deprecated
-    @SuppressWarnings("unused")
-    public void startForPaymentData(@NonNull final Context context) {
-        //TODO payment result code should not be hardcoded.
-        startForResult(context, MercadoPagoCheckout.PAYMENT_DATA_RESULT_CODE);
+        paymentConfiguration = builder.paymentConfiguration;
+        checkoutPreference = builder.checkoutPreference;
+        FlowHandler.getInstance().generateFlowId();
+        CallbackHolder.getInstance().clean();
     }
 
     /**
      * Starts checkout experience.
      * When the flows ends it returns a {@link PaymentResult} object that
      * will be returned on {@link Activity#onActivityResult(int, int, Intent)} if success or
-     * {@link com.mercadopago.android.px.exceptions.MercadoPagoError}
+     * {@link com.mercadopago.android.px.model.exceptions.MercadoPagoError}
      * <p>
      * will return on {@link Activity#onActivityResult(int, int, Intent)}
      *
      * @param context context needed to start checkout.
+     * @param requestCode it's the number that identifies the checkout flow request for
+     * {@link Activity#onActivityResult(int, int, Intent)}
      */
-    @SuppressWarnings("unused")
-    public void startForPayment(@NonNull final Context context) {
-        //TODO payment result code should not be hardcoded.
-        startForResult(context, MercadoPagoCheckout.PAYMENT_RESULT_CODE);
+    public void startPayment(@NonNull final Context context, final int requestCode) {
+        startIntent(context, CheckoutActivity.getIntent(context), requestCode);
     }
 
-    private void configureFlowHandler() {
-        //Create flow identifier only for new checkouts
-        if (paymentResult == null && paymentData == null) {
-            FlowHandler.getInstance().generateFlowId();
-        }
-    }
+    private void startIntent(@NonNull final Context context, @NonNull final Intent checkoutIntent,
+        final int requestCode) {
 
-    private void configureCheckoutStore(final Builder builder) {
-        final CheckoutStore store = CheckoutStore.getInstance();
-        store.reset();
-        store.setReviewAndConfirmPreferences(builder.reviewAndConfirmPreferences);
-        store.setPaymentResultScreenPreference(paymentResultScreenPreference);
-        store.setPaymentMethodPluginList(builder.paymentMethodPluginList);
-        store.setPaymentPlugins(builder.paymentPlugins);
-        store.setCheckoutHooks(builder.checkoutHooks);
-        store.setDataInitializationTask(builder.dataInitializationTask);
-        store.setCheckoutPreference(builder.checkoutPreference);
-    }
-
-    private void validate(final int resultCode) throws IllegalStateException {
-        if (isCheckoutTimerAvailable() && isPaymentDataIntegration(resultCode)) {
-            throw new IllegalStateException("CheckoutTimer is not available with PaymentData integration");
-        }
-    }
-
-    private boolean isCheckoutTimerAvailable() {
-        return flowPreference.isCheckoutTimerEnabled();
-    }
-
-    private boolean isPaymentDataIntegration(final int resultCode) {
-        return resultCode == MercadoPagoCheckout.PAYMENT_DATA_RESULT_CODE;
-    }
-
-    private void startForResult(@NonNull final Context context, final int resultCode) {
-        CallbackHolder.getInstance().clean();
-        startCheckoutActivity(context, resultCode);
-    }
-
-    private void startCheckoutActivity(@NonNull final Context context, final int resultCode) {
-        validate(resultCode);
-        startIntent(context, CheckoutActivity.getIntent(context, resultCode, this));
-    }
-
-    private void startIntent(@NonNull final Context context, @NonNull final Intent checkoutIntent) {
+        initFonts(context);
 
         if (!prefetch) {
             Session.getSession(context).init(this);
         }
 
         if (context instanceof Activity) {
-            ((Activity) context).startActivityForResult(checkoutIntent, MercadoPagoCheckout.CHECKOUT_REQUEST_CODE);
+            ((Activity) context).startActivityForResult(checkoutIntent, requestCode);
         } else {
             context.startActivity(checkoutIntent);
         }
     }
 
-    @Nullable
-    public PaymentResultScreenPreference getPaymentResultScreenPreference() {
-        return paymentResultScreenPreference;
+    private void initFonts(@NonNull final Context context) {
+        if (TextUtil.isNotEmpty(Font.LIGHT.getFontPath())) {
+            setCustomFont(context, FontCache.CUSTOM_LIGHT_FONT, Font.LIGHT.getFontPath());
+        }
+        if (TextUtil.isNotEmpty(Font.REGULAR.getFontPath())) {
+            setCustomFont(context, FontCache.CUSTOM_REGULAR_FONT, Font.REGULAR.getFontPath());
+        }
+    }
+
+    /**
+     * @deprecated we will not support this mechanism anymore.
+     */
+    @Deprecated
+    private static void setCustomFont(@NonNull final Context context, final String fontType, final String fontPath) {
+        final Typeface typeFace;
+        if (!FontCache.hasTypeface(fontType)) {
+            typeFace = Typeface.createFromAsset(context.getAssets(), fontPath);
+            FontCache.setTypeface(fontType, typeFace);
+        }
+    }
+
+
+    @NonNull
+    public AdvancedConfiguration getAdvancedConfiguration() {
+        return advancedConfiguration;
     }
 
     @NonNull
-    public FlowPreference getFlowPreference() {
-        return flowPreference;
-    }
-
-    public boolean isBinaryMode() {
-        return binaryMode;
-    }
-
-    @Nullable
-    public Discount getDiscount() {
-        return discount;
-    }
-
-    @Nullable
-    public Campaign getCampaign() {
-        return campaign;
-    }
-
-    public boolean isNotAvailableDiscount() {
-        return notAvailableDiscount;
-    }
-
-    @NonNull
-    public List<ChargeRule> getCharges() {
-        return charges;
-    }
-
-    @Nullable
-    public PaymentData getPaymentData() {
-        return paymentData;
-    }
-
-    @Nullable
-    public PaymentResult getPaymentResult() {
-        return paymentResult;
-    }
-
-    @NonNull
-    public String getMerchantPublicKey() {
+    public String getPublicKey() {
         return publicKey;
     }
 
@@ -250,63 +137,77 @@ public class MercadoPagoCheckout implements Serializable {
 
     @NonNull
     public String getPrivateKey() {
-        return isEmpty(privateKey) ? "" : privateKey;
+        return TextUtil.isEmpty(privateKey) ? "" : privateKey;
     }
 
-    public static class Builder {
+    @NonNull
+    public PaymentConfiguration getPaymentConfiguration() {
+        return paymentConfiguration;
+    }
 
-        final String publicKey;
+    @SuppressWarnings("unused")
+    public static final class Builder {
 
-        final String preferenceId;
+        /* default */ @NonNull final String publicKey;
 
-        final CheckoutPreference checkoutPreference;
+        /* default */ @Nullable final String preferenceId;
 
-        @NonNull final ArrayList<ChargeRule> charges = new ArrayList<>();
+        /* default */ @Nullable final CheckoutPreference checkoutPreference;
 
-        final Map<String, PaymentProcessor> paymentPlugins = new HashMap<>();
+        /* default */ @NonNull AdvancedConfiguration advancedConfiguration =
+            new AdvancedConfiguration.Builder().build();
 
-        final List<PaymentMethodPlugin> paymentMethodPluginList = new ArrayList<>();
+        /* default */ @NonNull PaymentConfiguration paymentConfiguration = new MercadoPagoPaymentConfiguration();
 
-        Boolean binaryMode = false;
 
-        Boolean notAvailableDiscount = false;
+        /* default */ @Nullable String privateKey;
 
-        @NonNull
-        FlowPreference flowPreference = new FlowPreference.Builder().build();
+        /* default */ @Deprecated String regularFontPath;
 
-        @Nullable
-        String privateKey;
+        /* default */ @Deprecated String lightFontPath;
 
-        PaymentResultScreenPreference paymentResultScreenPreference;
-        PaymentData paymentData;
-        PaymentResult paymentResult;
-        Discount discount;
-        Campaign campaign;
-        CheckoutHooks checkoutHooks;
-        DataInitializationTask dataInitializationTask;
-        String regularFontPath;
-        String lightFontPath;
-        String monoFontPath;
-        ReviewAndConfirmPreferences reviewAndConfirmPreferences;
+        /* default */ @Deprecated String monoFontPath;
 
         /**
          * Checkout builder allow you to create a {@link MercadoPagoCheckout}
+         * {@see  <a href="http://developers.mercadopago.com/">our developers site</a>}
          *
-         * @param publicKey merchant public key.
+         * @param publicKey merchant public key / collector public key {@see <a href="https://www.mercadopago.com/mla/account/credentials">credentials</a>}
+         * @param paymentConfiguration the payment configuration for this checkout.
          * @param checkoutPreference the preference that represents the payment information.
          */
-        public Builder(@NonNull final String publicKey, @NonNull final CheckoutPreference checkoutPreference) {
-            preferenceId = null;
+        public Builder(@NonNull final String publicKey,
+            @NonNull final CheckoutPreference checkoutPreference,
+            @NonNull final PaymentConfiguration paymentConfiguration) {
             this.publicKey = publicKey;
+            this.paymentConfiguration = paymentConfiguration;
             this.checkoutPreference = checkoutPreference;
-            //TODO 21/06/2017 - Hack for credits, should remove payer access token.
-            privateKey = checkoutPreference.getPayer().getAccessToken();
+            preferenceId = null;
         }
 
         /**
          * Checkout builder allow you to create a {@link MercadoPagoCheckout}
+         * {@see  <a href="http://developers.mercadopago.com/">our developers site</a>}
          *
-         * @param publicKey merchant public key.
+         * @param publicKey merchant public key / collector public key {@see <a href="https://www.mercadopago.com/mla/account/credentials">credentials</a>}
+         * @param paymentConfiguration the payment configuration for this checkout.
+         * @param preferenceId the preference id that represents the payment information.
+         */
+        public Builder(@NonNull final String publicKey,
+            @NonNull final String preferenceId,
+            @NonNull final PaymentConfiguration paymentConfiguration) {
+            this.publicKey = publicKey;
+            this.paymentConfiguration = paymentConfiguration;
+            this.preferenceId = preferenceId;
+            checkoutPreference = null;
+        }
+
+        /**
+         * Checkout builder allow you to create a {@link MercadoPagoCheckout}
+         * For more information check the following links
+         * {@see <a href="https://www.mercadopago.com/mla/account/credentials">credentials</a>}
+         * {@see <a href="https://www.mercadopago.com.ar/developers/es/reference/preferences/_preferences/post/">create preference</a>}
+         * @param publicKey merchant public key / collector public key
          * @param preferenceId the preference id that represents the payment information.
          */
         public Builder(@NonNull final String publicKey, @NonNull final String preferenceId) {
@@ -316,198 +217,42 @@ public class MercadoPagoCheckout implements Serializable {
         }
 
         /**
-         * Set Mercado Pago discount that will be applied to total amount.
-         * When you set a discount with its campaign, we do not check in discount service.
-         * You have to set a payment processor for discount be applied.
-         *
-         * @param discount Mercado Pago discount.
-         * @param campaign Discount campaign with discount data.
-         */
-        public Builder setDiscount(@NonNull final Discount discount, @NonNull final Campaign campaign) {
-            this.discount = discount;
-            this.campaign = campaign;
-            return this;
-        }
-
-        /**
-         * By enabling this feature you'll inform that payer's discount is no more applicable,
-         * because payer has reached the limit.
-         * You have to set a payment processor to apply this feature.
-         */
-        public Builder discountNotAvailable() {
-            notAvailableDiscount = true;
-            return this;
-        }
-
-        /**
          * Private key provides save card capabilities and account money balance.
          *
          * @param privateKey the user private key
-         * @return builder
-         */
-        public Builder setPrivateKey(@NonNull final String privateKey) {
-            //TODO 21/06/2017 - Hack for credits, should remove payer access token.
-            this.privateKey = privateKey;
-            if (checkoutPreference != null) {
-                checkoutPreference.getPayer().setAccessToken(privateKey);
-            }
-            return this;
-        }
-
-        /**
-         * Add extra charges that will apply to total amount.
-         *
-         * @param charge Extra charge that you could collect.
-         */
-        public Builder addChargeRule(@NonNull final ChargeRule charge) {
-            charges.add(charge);
-            return this;
-        }
-
-        /**
-         * Add extra charges that will apply to total amount.
-         *
-         * @param charges the list of chargest that could apply.
-         */
-        public Builder addChargeRules(@NonNull final Collection<ChargeRule> charges) {
-            this.charges.addAll(charges);
-            return this;
-        }
-
-        public Builder setFlowPreference(@NonNull final FlowPreference flowPreference) {
-            this.flowPreference = flowPreference;
-            return this;
-        }
-
-        @SuppressWarnings("unused")
-        public Builder setPaymentResultScreenPreference(PaymentResultScreenPreference paymentResultScreenPreference) {
-            this.paymentResultScreenPreference = paymentResultScreenPreference;
-            return this;
-        }
-
-        @SuppressWarnings("unused")
-        @Deprecated
-        public Builder setServicePreference(@NonNull final ServicePreference servicePreference) {
-            return this;
-        }
-
-        public Builder setPaymentData(PaymentData paymentData) {
-            this.paymentData = paymentData;
-            return this;
-        }
-
-        /**
-         * If enableBinaryMode is called, processed payment can only be APPROVED or REJECTED.
-         * <p>
-         * Non compatible with PaymentProcessor.
-         * <p>
-         * Non compatible with off payments methods
-         *
-         * @return builder
-         */
-        @SuppressWarnings("unused")
-        public Builder enableBinaryMode() {
-            binaryMode = true;
-            return this;
-        }
-
-        /**
-         * Enable to preset configurations to customize visualization on
-         * the Review and Confirm Screen see {@link ReviewAndConfirmPreferences.Builder}
-         *
-         * @param reviewAndConfirmPreferences the custom preference configuration
          * @return builder to keep operating
          */
-        @SuppressWarnings("unused")
-        public Builder setReviewAndConfirmPreferences(final ReviewAndConfirmPreferences reviewAndConfirmPreferences) {
-            this.reviewAndConfirmPreferences = reviewAndConfirmPreferences;
+        public Builder setPrivateKey(@NonNull final String privateKey) {
+            this.privateKey = privateKey;
             return this;
         }
 
-        @SuppressWarnings("unused")
-        public Builder setPaymentResult(final PaymentResult paymentResult) {
-            this.paymentResult = paymentResult;
+        /**
+         * It provides support for custom checkout functionality/ configure special behaviour
+         * You can enable/disable several functionality.
+         *
+         * @param advancedConfiguration your configuration.
+         * @return builder to keep operating
+         */
+        public Builder setAdvancedConfiguration(@NonNull final AdvancedConfiguration advancedConfiguration) {
+            this.advancedConfiguration = advancedConfiguration;
             return this;
         }
 
-        @SuppressWarnings("unused")
-        public Builder setCheckoutHooks(@NonNull final CheckoutHooks checkoutHooks) {
-            this.checkoutHooks = checkoutHooks;
-            return this;
-        }
+//        /**
+//         * @deprecated we will not support this mechanism anymore.
+//         */
+//        @Deprecated
+//        public Builder setCustomMonoFont(@NonNull final String monoFontPath, final Context context) {
+//            this.monoFontPath = monoFontPath;
+//            setCustomFont(context, FontCache.CUSTOM_MONO_FONT, this.monoFontPath);
+//            return this;
+//        }
 
-        @SuppressWarnings("unused")
-        public Builder addPaymentMethodPlugin(@NonNull final PaymentMethodPlugin paymentMethodPlugin,
-            @NonNull final PaymentProcessor paymentProcessor) {
-            paymentMethodPluginList.add(paymentMethodPlugin);
-            paymentPlugins.put(paymentMethodPlugin.getId(), paymentProcessor);
-            return this;
-        }
-
-        @SuppressWarnings("unused")
-        public Builder setPaymentProcessor(@NonNull final PaymentProcessor paymentProcessor) {
-            paymentPlugins.put(PAYMENT_PROCESSOR_KEY, paymentProcessor);
-            return this;
-        }
-
-        @SuppressWarnings("unused")
-        public Builder setDataInitializationTask(@NonNull final DataInitializationTask dataInitializationTask) {
-            this.dataInitializationTask = dataInitializationTask;
-            return this;
-        }
-
-        @SuppressWarnings("unused")
-        public Builder setCustomLightFont(String lightFontPath, Context context) {
-            this.lightFontPath = lightFontPath;
-            if (lightFontPath != null) {
-                setCustomFont(context, FontCache.CUSTOM_LIGHT_FONT, this.lightFontPath);
-            }
-            return this;
-        }
-
-        @SuppressWarnings("unused")
-        public Builder setCustomRegularFont(String regularFontPath, Context context) {
-            this.regularFontPath = regularFontPath;
-            if (regularFontPath != null) {
-                setCustomFont(context, FontCache.CUSTOM_REGULAR_FONT, this.regularFontPath);
-            }
-            return this;
-        }
-
-        @SuppressWarnings("unused")
-        public Builder setCustomMonoFont(String monoFontPath, Context context) {
-            this.monoFontPath = monoFontPath;
-            if (monoFontPath != null) {
-                setCustomFont(context, FontCache.CUSTOM_MONO_FONT, this.monoFontPath);
-            }
-            return this;
-        }
-
-        private void setCustomFont(Context context, String fontType, String fontPath) {
-            Typeface typeFace;
-            if (!FontCache.hasTypeface(fontType)) {
-                typeFace = Typeface.createFromAsset(context.getAssets(), fontPath);
-                FontCache.setTypeface(fontType, typeFace);
-            }
-        }
-
-        private boolean hasPaymentDataDiscount() {
-            return paymentData != null && paymentData.getDiscount() != null;
-        }
-
-        private boolean hasPaymentResultDiscount() {
-            return paymentResult != null && paymentResult.getPaymentData() != null &&
-                paymentResult.getPaymentData().getDiscount() != null;
-        }
-
-        private boolean hasTwoDiscountsSet() {
-            return (hasPaymentDataDiscount() || hasPaymentResultDiscount()) && discount != null;
-        }
-
+        /**
+         * @return {@link MercadoPagoCheckout} instance
+         */
         public MercadoPagoCheckout build() {
-            if (hasTwoDiscountsSet()) {
-                throw new IllegalStateException("payment data discount and discount set");
-            }
             return new MercadoPagoCheckout(this);
         }
     }

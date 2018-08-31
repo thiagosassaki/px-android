@@ -1,5 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+
+    <!-- Colors needed fot UILib V5 -->
+    <color name="ui_components_android_color_primary">#009EE3</color>
+    <color name="ui_components_android_color_primary_dark">#008AD6</color>
+    <color name="ui_components_success_color">#0db478</color>
+    <color name="ui_components_error_color">#ff6e6e</color>
+    <color name="ui_components_black_color">#333333</color>
+    <color name="ui_components_dark_grey_color">#666666</color>
+    <color name="ui_components_mid_grey_color">#CCCCCC</color>
+    <color name="ui_components_light_grey_color">#EEEEEE</color>
+    <color name="ui_components_white_color">#FFFFFF</color>
+
+    <color name="ui_components_primary_color">@color/ui_components_android_color_primary</color>
+    <color name="ui_components_spinner_primary_color">@color/ui_components_primary_color</color>
+    <color name="ui_components_spinner_secondary_color">@color/ui_components_primary_color</color>
+    <color name="ui_components_primary_color_pressed">#157FAE</color>
+
+    <!-- Colors needed fot UILib unused at the moment -->
+    <color name="ui_components_grey_color" tools:ignore="UnusedResources">#999999</color>
+    <color name="ui_components_melidialog_background" tools:ignore="UnusedResources">#cc000000</color>
+    <color name="ui_components_melidialog_tint" tools:ignore="UnusedResources">@color/ui_components_white_color</color>
+    <color name="ui_second_action_button_pressed" tools:ignore="UnusedResources">#1e009ee3</color>
+    <color name="ui_components_android_color_accent">@color/ui_components_android_color_primary</color>
+
+    <color name="ui_components_primary_color_disabled">@color/ui_components_mid_grey_color</color>
+    <color name="ui_components_actionModeBackground" tools:ignore="UnusedResources">
+        @color/ui_components_android_color_primary
+    </color>
+    <color name="ui_components_primary_color_text_disabled" tools:ignore="UnusedResources">
+        @color/ui_components_mid_grey_color
+    </color>
+    <color name="ui_components_secondary_color" tools:ignore="UnusedResources">
+        @color/ui_components_android_color_primary
+    </color>
+    <color name="ui_components_secondary_color_pressed" tools:ignore="UnusedResources">#157FAE</color>
+    <color name="ui_components_secondary_color_disabled" tools:ignore="UnusedResources">
+        @color/ui_components_mid_grey_color
+    </color>
+    <color name="ui_components_secondary_color_text_disabled" tools:ignore="UnusedResources">
+        @color/ui_components_mid_grey_color
+    </color>
+
 
     <color name="px_real_black">#000000</color>
     <color name="px_comment_color">#999</color>
@@ -89,13 +132,9 @@
     <color name="px_font_bapropagos">#B3333333</color>
     <color name="px_font_cargavirtual">#B3333333</color>
 
-    <!-- Revamp 2.0 -->
-
-    <color name="px_summary_top_color">#EEEEEE</color>
-
-    <color name="px_background_blue">#009EE3</color>
+    <color name="px_summary_top_color">@color/ui_components_light_grey_color</color>
+    <color name="px_background_blue">@color/ui_components_android_color_primary</color>
     <color name="px_color_payer_costs">#999999</color>
-    <color name="px_blue_button">#009FDE</color>
     <color name="px_review_gray_background">#F7F7F7</color>
     <color name="px_color_unlock_card_text">#A1924C</color>
     <color name="px_color_unlock_card_link">#118BDC</color>
@@ -106,58 +145,52 @@
     <color name="px_default_disclaimer">#777777</color>
 
     <!-- Payment Result components -->
-
-    <color name="px_med_light_gray">#EEEEEE</color>
     <color name="px_light_gray">#F7F7F7</color>
-    <color name="px_white">#FFFFFF</color>
-    <color name="px_blue_MP">#009CEE</color>
-    <color name="px_blue_status_MP">#008CD6</color>
-    <color name="px_green_status_MP">#00B26B</color>
-    <color name="px_red_status_MP">#E5464C</color>
-    <color name="px_orange_status_MP">#E5953D</color>
+    <color name="px_blue_status_bar">#008CD6</color>
+    <color name="px_green_status_bar">#00B26B</color>
+    <color name="px_red_status_bar">#E5464C</color>
+    <color name="px_orange_status_bar">#E5953D</color>
 
-    <!-- Discounts -->
+    <color name="px_white">@color/ui_components_white_color</color>
+    <color name="px_med_light_gray">@color/ui_components_light_grey_color</color>
+
+    <!-- Discounts Same color - Buttons / link -->
     <color name="px_discount_coupon">@color/ui_components_primary_color</color>
 
-    <!-- One tap -->
-    <color name="px_discount_one_tap">#64c574</color>
 
     <!-- Customized colors -->
 
-    <!-- Main Color -->
-    <color name="px_original_main_color">#009EE3</color>
-    <color name="px_main_color">#009EE3</color>
-
     <!-- Toolbar and status bar default -->
-    <color name="px_background">@color/px_main_color</color>
-    <color name="px_colorPrimary">#009EE3</color>
+    <color name="px_colorPrimary">@color/ui_components_android_color_primary</color>
     <color name="px_colorPrimaryDark">@color/ui_components_android_color_primary_dark</color>
-    <color name="ui_components_android_color_primary_dark">#008CD6</color>
-    <color name="px_toolbar_text">#FFFFFF</color>
+    <color name="px_colorAccent">@color/ui_components_android_color_accent</color>
+    <color name="px_background">@color/px_colorPrimary</color>
+    <color name="px_toolbar_text">@color/ui_components_white_color</color>
 
     <!-- Discount modal and discount description -->
     <color name="px_discount_summary_background">#474747</color>
-    <color name="px_discount_description">#39b54a</color>
+    <color name="px_discount_description">#64c574</color>
 
     <!-- Inputs -->
-    <color name="px_input">@color/px_main_color</color>
+    <color name="px_input">@color/px_colorPrimary</color>
 
     <!-- R&C toolbar -->
-    <color name="px_review_background">#FFFFFF</color>
-    <color name="px_review_toolbar_text">@color/px_main_color</color>
+    <color name="px_review_background">@color/ui_components_white_color</color>
+    <color name="px_review_toolbar_text">@color/px_colorPrimary</color>
 
     <!-- R&C summary -->
     <color name="px_review_summary_background">@color/px_white</color>
-    <color name="px_summary_text_color">#666666</color>
-    <color name="px_summary_separator_color">#DEDEDE</color>
+    <color name="px_summary_text_color">@color/ui_components_dark_grey_color</color>
+    <color name="px_summary_separator_color">@color/px_separator</color>
 
     <!-- R&C components -->
-    <color name="px_detailed_background">@color/px_light_gray</color>
-    <color name="px_review_payment_method_background">@color/px_detailed_background</color>
-    <color name="px_review_item_background">@color/px_detailed_background</color>
+    <color name="px_review_payment_method_background">@color/px_light_gray</color>
+    <color name="px_review_item_background">@color/px_light_gray</color>
 
     <!-- Spinner -->
-    <color name="px_background_loading">#FFFFFF</color>
-    <color name="px_tint_loading">@color/px_main_color</color>
+    <color name="px_background_loading">@color/ui_components_white_color</color>
+    <color name="px_tint_loading">@color/px_colorPrimary</color>
+
+    <color name="px_paymentMethodTint">@color/px_colorPrimary</color>
 
 </resources>

@@ -10,6 +10,7 @@ import okhttp3.OkHttpClient;
  * An {@link IdlingResource) for {@link OkHttpClient}.
  */
 public final class OkHttp3IdlingResource implements IdlingResource {
+
     /**
      * Create a new {@link IdlingResource} from {@code client} as {@code name}. You must register
      * this instance using {@code Espresso.registerIdlingResources}.

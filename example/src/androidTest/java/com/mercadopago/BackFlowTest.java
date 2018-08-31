@@ -34,7 +34,7 @@ public class BackFlowTest {
         MercadoPagoCheckout.Builder builder =
             new MercadoPagoCheckout.Builder("APP_USR-648a260d-6fd9-4ad7-9284-90f22262c18d",
                 "243966003-d0be0be0-6fd8-4769-bf2f-7f2d979655f5");
-        builder.build().startForPayment(activityRule.getActivity());
+        builder.build().startPayment(activityRule.getActivity(), 1);
     }
 
     @Test

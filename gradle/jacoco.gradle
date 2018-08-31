@@ -1,6 +1,6 @@
-apply plugin: 'jacoco-android'
+apply plugin: 'jacoco'
 
-task jacocoCheckoutTestReport(type: JacocoReport, dependsOn: ['jacocoTestReport', 'createDebugCoverageReport']) {
+task jacocoCheckoutTestReport(type: JacocoReport, dependsOn: ['createDebugCoverageReport', 'testDebugUnitTest']) {
 
     reports {
         html.enabled = true
@@ -8,12 +8,22 @@ task jacocoCheckoutTestReport(type: JacocoReport, dependsOn: ['jacocoTestReport'
         csv.enabled = false
     }
 
-    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
-    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
-    def mainSrc = "${project.projectDir}/src/main/java"
+    classDirectories = fileTree(
+        dir:"${buildDir}/intermediates/classes/debug",
+        excludes:['**/R*.class',
+                  '**/BuildConfig.*',
+                  '**/Manifest*.*',
+                  '**/model/*.*',
+                  '**/model/**',
+                  '**/models/*.*',
+                  '**/models/**',
+                  '**/viewmodel/*.*',
+                  '**/viewmodel/**',
+                  '**/*Test*.*'
+        ])
 
+    def mainSrc = "${project.projectDir}/src/main/java"
     sourceDirectories = files([mainSrc])
-    classDirectories = files([debugTree])
     executionData = fileTree(dir: "$buildDir", includes: [
             "jacoco/testDebugUnitTest.exec", "outputs/code-coverage/connected/flavors/DEV/*coverage.ec"
     ])

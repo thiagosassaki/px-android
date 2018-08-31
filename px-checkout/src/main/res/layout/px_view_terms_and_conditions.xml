@@ -13,7 +13,7 @@
     android:paddingBottom="@dimen/px_s_margin"
     android:paddingTop="@dimen/px_s_margin">
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/terms_and_conditions_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
         android:textSize="@dimen/ui_fontsize_xxsmall"
         tools:text="Terms and conditions Message"/>
 
-    <com.mercadopago.android.px.customviews.MPTextView
+    <com.mercadopago.android.px.internal.view.MPTextView
         android:id="@+id/terms_and_conditions_link"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
