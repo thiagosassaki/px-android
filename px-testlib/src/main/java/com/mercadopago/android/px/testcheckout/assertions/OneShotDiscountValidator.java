@@ -17,7 +17,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVi
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
-public class OneShotDiscountValidator extends DefaultValidator {
+public class OneShotDiscountValidator extends DiscountValidator {
 
     @Nonnull private final Campaign campaign;
 
@@ -37,21 +37,5 @@ public class OneShotDiscountValidator extends DefaultValidator {
         final String maxCouponAmountSubtitle =
             getInstrumentation().getTargetContext().getString(R.string.px_max_coupon_amount, maxCouponAmount);
         onView(subtitle).check(matches(withText(maxCouponAmountSubtitle)));
-    }
-
-    @Override
-    public void validate(@NonNull final PaymentMethodPage paymentMethodPage) {
-        super.validate(paymentMethodPage);
-
-        //TODO VALIDAR QUE SE VEA TOPE DE DESCUENTO
-        final Matcher<View> amountDescription = withId(com.mercadopago.android.px.R.id.amount_description);
-        final Matcher<View> maxCouponAmount = withId(com.mercadopago.android.px.R.id.max_coupon_amount);
-        final Matcher<View> amountBeforeDiscount = withId(com.mercadopago.android.px.R.id.amount_before_discount);
-        final Matcher<View> finalAmount = withId(com.mercadopago.android.px.R.id.final_amount);
-
-        onView(amountDescription).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
-        onView(maxCouponAmount).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
-        onView(amountBeforeDiscount).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
-        onView(finalAmount).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
     }
 }
