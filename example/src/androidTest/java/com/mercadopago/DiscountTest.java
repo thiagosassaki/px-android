@@ -30,6 +30,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -214,20 +215,11 @@ public class DiscountTest {
         assertNotNull(congratsPage);
     }
 
+    //TODO
+    @Ignore
     @Test
-    public void whenMerchantDiscountIsAppliedAndHasNotPaymentProcessorThenNotShowDiscountAndGetCongrats() {
-        final PaymentConfiguration paymentConfiguration = new PaymentConfiguration.Builder(paymentProcessor)
-            .setDiscountConfiguration(DiscountConfiguration.withDiscount(discount, campaign))
-            .build();
+    public void codeDiscountTests(){
 
-        final MercadoPagoCheckout.Builder builder =
-            new MercadoPagoCheckout.Builder(MERCHANT_PUBLIC_KEY, PREFERENCE_ID, paymentConfiguration);
-
-        discountTestFlow = new DiscountTestFlow(builder.build(), activityRule.getActivity());
-
-        final CongratsPage congratsPage =
-            discountTestFlow.runCreditCardPaymentFlowWithoutPaymentProcessorWithMerchantDiscountApplied(card, 1);
-        assertNotNull(congratsPage);
     }
 
     @Test

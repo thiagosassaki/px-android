@@ -3,7 +3,6 @@ package com.mercadopago.android.px.testcheckout.assertions;
 import android.support.annotation.NonNull;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.view.View;
-import com.mercadopago.android.px.internal.datasource.DiscountServiceImp;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.testcheckout.pages.InstallmentsPage;
@@ -19,7 +18,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVi
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
-public class DiscountValidator extends DefaultValidator {
+public abstract class DiscountValidator extends DefaultValidator {
 
     @Nonnull protected final Campaign campaign;
     @Nonnull protected final Discount discount;
@@ -31,19 +30,16 @@ public class DiscountValidator extends DefaultValidator {
 
     @Override
     public void validate(@NonNull final PaymentMethodPage paymentMethodPage) {
-        super.validate(paymentMethodPage);
         validateDiscountRow();
     }
 
     @Override
     public void validate(@NonNull final InstallmentsPage installmentsPage) {
-        super.validate(installmentsPage);
         validateDiscountRow();
     }
 
     @Override
     public void validate(@NonNull final OneTapPage oneTapPage) {
-        super.validate(oneTapPage);
         final Matcher<View> amountWithDiscount = withId(com.mercadopago.android.px.R.id.amount_with_discount);
         final Matcher<View> discountMessage = withId(com.mercadopago.android.px.R.id.discount_message);
         final Matcher<View> discountMaxLabel = withId(com.mercadopago.android.px.R.id.discount_max_label);
