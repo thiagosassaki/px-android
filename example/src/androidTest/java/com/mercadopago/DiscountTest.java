@@ -75,7 +75,6 @@ public class DiscountTest {
         new ActivityTestRule<>(CheckoutExampleActivity.class);
 
     private DiscountTestFlow discountTestFlow;
-    private BusinessPayment businessPayment;
     private PaymentProcessor paymentProcessor;
     private Discount discount;
     private Campaign campaign;
@@ -88,7 +87,7 @@ public class DiscountTest {
             new MercadoPagoCheckout.Builder(DIRECT_DISCOUNT_PUBLIC_KEY, DIRECT_DISCOUNT_PREFERENCE_ID);
         discountTestFlow = new DiscountTestFlow(builder.build(), activityRule.getActivity());
 
-        businessPayment = new BusinessPayment.Builder(BusinessPayment.Decorator.APPROVED,
+        final BusinessPayment businessPayment = new BusinessPayment.Builder(BusinessPayment.Decorator.APPROVED,
             Payment.StatusCodes.STATUS_APPROVED,
             Payment.StatusDetail.STATUS_DETAIL_ACCREDITED,
             BUSINESS_PAYMENT_IMAGE_URL,
@@ -108,13 +107,13 @@ public class DiscountTest {
         card = new Visa(FakeCard.CardState.APRO, Country.ARGENTINA);
 
         final List<Item> items = new ArrayList<>();
-        final Item item = new Item.Builder(ITEM_TITLE, 1,new BigDecimal(120))
+        final Item item = new Item.Builder(ITEM_TITLE, 1, new BigDecimal(120))
             .setId(ITEM_ID)
             .setDescription(ITEM_DESCRIPTION).build();
 
         items.add(item);
 
-        checkoutPreferenceWithPayerEmail = new CheckoutPreference.Builder( Sites.ARGENTINA,
+        checkoutPreferenceWithPayerEmail = new CheckoutPreference.Builder(Sites.ARGENTINA,
             PAYER_EMAIL_DUMMY, items)
             .build();
     }
@@ -124,7 +123,7 @@ public class DiscountTest {
 
         final PaymentConfiguration paymentConfiguration = new PaymentConfiguration.Builder(paymentProcessor)
             .addPaymentMethodPlugin(new SamplePaymentMethodPlugin())
-            .setDiscountConfiguration(DiscountConfiguration.withDiscount(discount,campaign))
+            .setDiscountConfiguration(DiscountConfiguration.withDiscount(discount, campaign))
             .build();
 
         final MercadoPagoCheckout.Builder builder =
@@ -147,11 +146,12 @@ public class DiscountTest {
 
         final PaymentConfiguration paymentConfiguration = new PaymentConfiguration.Builder(paymentProcessor)
             .addPaymentMethodPlugin(new SamplePaymentMethodPlugin())
-            .setDiscountConfiguration(DiscountConfiguration.withDiscount(discount,campaign))
+            .setDiscountConfiguration(DiscountConfiguration.withDiscount(discount, campaign))
             .build();
 
         final MercadoPagoCheckout.Builder builder =
-            new MercadoPagoCheckout.Builder(ONE_TAP_MERCHANT_PUBLIC_KEY, checkoutPreferenceWithPayerEmail, paymentConfiguration)
+            new MercadoPagoCheckout.Builder(ONE_TAP_MERCHANT_PUBLIC_KEY, checkoutPreferenceWithPayerEmail,
+                paymentConfiguration)
                 .setPrivateKey(ONE_TAP_PAYER_3_ACCESS_TOKEN);
 
         campaign =
@@ -168,6 +168,31 @@ public class DiscountTest {
     }
 
     @Test
+    public void whenMerchantDiscountIsOneShotAndHasPaymentProcessorAndPayerHasOneTapThenShowMerchantDiscountAndGetCongrats() {
+        campaign =
+            new Campaign.Builder(MERCHANT_DISCOUNT_ID).setMaxCouponAmount(new BigDecimal(200)).setMaxRedeemPerUser(1)
+                .build();
+
+        final PaymentConfiguration paymentConfiguration = new PaymentConfiguration.Builder(paymentProcessor)
+            .addPaymentMethodPlugin(new SamplePaymentMethodPlugin())
+            .setDiscountConfiguration(DiscountConfiguration.withDiscount(discount, campaign))
+            .build();
+
+        final MercadoPagoCheckout.Builder builder =
+            new MercadoPagoCheckout.Builder(ONE_TAP_MERCHANT_PUBLIC_KEY, checkoutPreferenceWithPayerEmail,
+                paymentConfiguration)
+                .setPrivateKey(ONE_TAP_PAYER_3_ACCESS_TOKEN);
+
+        discountTestFlow = new DiscountTestFlow(builder.build(), activityRule.getActivity());
+
+        final CongratsPage congratsPage =
+            discountTestFlow
+                .runCreditCardWithOneTapWithoutESCPaymentFlowWithMerchantDiscountApplied(card,
+                    new OneShotDiscountValidator(campaign));
+        assertNotNull(congratsPage);
+    }
+
+    @Test
     public void whenMerchantDiscountIsOneShotAndHasPaymentProcessorThenShowMerchantDiscountAndGetCongrats() {
         campaign =
             new Campaign.Builder(MERCHANT_DISCOUNT_ID).setMaxCouponAmount(new BigDecimal(200)).setMaxRedeemPerUser(1)
@@ -175,7 +200,7 @@ public class DiscountTest {
 
         final PaymentConfiguration paymentConfiguration = new PaymentConfiguration.Builder(paymentProcessor)
             .addPaymentMethodPlugin(new SamplePaymentMethodPlugin())
-            .setDiscountConfiguration(DiscountConfiguration.withDiscount(discount,campaign))
+            .setDiscountConfiguration(DiscountConfiguration.withDiscount(discount, campaign))
             .build();
 
         final MercadoPagoCheckout.Builder builder =
@@ -193,7 +218,7 @@ public class DiscountTest {
     public void whenMerchantDiscountIsAppliedAndHasNotPaymentProcessorThenNotShowDiscountAndGetCongrats() {
 
         final PaymentConfiguration paymentConfiguration = new PaymentConfiguration.Builder(paymentProcessor)
-            .setDiscountConfiguration(DiscountConfiguration.withDiscount(discount,campaign))
+            .setDiscountConfiguration(DiscountConfiguration.withDiscount(discount, campaign))
             .build();
 
         final MercadoPagoCheckout.Builder builder =
