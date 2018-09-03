@@ -1,11 +1,10 @@
 package com.mercadopago.android.px.testcheckout.assertions;
 
 import android.support.annotation.NonNull;
-import android.support.test.espresso.matcher.ViewMatchers;
 import android.view.View;
 import com.mercadopago.android.px.model.Campaign;
+import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.testcheckout.pages.DiscountDetailPage;
-import com.mercadopago.android.px.testcheckout.pages.PaymentMethodPage;
 import javax.annotation.Nonnull;
 import org.hamcrest.Matcher;
 import com.mercadopago.android.px.R;
@@ -13,16 +12,13 @@ import com.mercadopago.android.px.R;
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 public class OneShotDiscountValidator extends DiscountValidator {
 
-    @Nonnull private final Campaign campaign;
-
-    public OneShotDiscountValidator(@Nonnull final Campaign campaign) {
-        this.campaign = campaign;
+    public OneShotDiscountValidator(@Nonnull final Campaign campaign, @NonNull final Discount discount) {
+        super(campaign, discount);
     }
 
     @Override

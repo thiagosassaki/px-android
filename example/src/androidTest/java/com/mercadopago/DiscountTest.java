@@ -137,7 +137,7 @@ public class DiscountTest {
 
         final CongratsPage congratsPage =
             discountTestFlow
-                .runCreditCardPaymentFlowWithMerchantDiscountApplied(card, 1, new AlwaysOnDiscountValidator(campaign));
+                .runCreditCardPaymentFlowWithMerchantDiscountApplied(card, 1, new AlwaysOnDiscountValidator(campaign, discount));
         assertNotNull(congratsPage);
     }
 
@@ -163,7 +163,7 @@ public class DiscountTest {
         final CongratsPage congratsPage =
             discountTestFlow
                 .runCreditCardWithOneTapWithoutESCPaymentFlowWithMerchantDiscountApplied(card,
-                    new AlwaysOnDiscountValidator(campaign));
+                    new AlwaysOnDiscountValidator(campaign, discount));
         assertNotNull(congratsPage);
     }
 
@@ -188,7 +188,7 @@ public class DiscountTest {
         final CongratsPage congratsPage =
             discountTestFlow
                 .runCreditCardWithOneTapWithoutESCPaymentFlowWithMerchantDiscountApplied(card,
-                    new OneShotDiscountValidator(campaign));
+                    new OneShotDiscountValidator(campaign, discount));
         assertNotNull(congratsPage);
     }
 
@@ -210,13 +210,12 @@ public class DiscountTest {
 
         final CongratsPage congratsPage =
             discountTestFlow
-                .runCreditCardPaymentFlowWithMerchantDiscountApplied(card, 1, new OneShotDiscountValidator(campaign));
+                .runCreditCardPaymentFlowWithMerchantDiscountApplied(card, 1, new OneShotDiscountValidator(campaign, discount));
         assertNotNull(congratsPage);
     }
 
     @Test
     public void whenMerchantDiscountIsAppliedAndHasNotPaymentProcessorThenNotShowDiscountAndGetCongrats() {
-
         final PaymentConfiguration paymentConfiguration = new PaymentConfiguration.Builder(paymentProcessor)
             .setDiscountConfiguration(DiscountConfiguration.withDiscount(discount, campaign))
             .build();

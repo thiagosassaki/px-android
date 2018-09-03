@@ -3,6 +3,7 @@ package com.mercadopago.android.px.testcheckout.assertions;
 import android.support.annotation.NonNull;
 import android.view.View;
 import com.mercadopago.android.px.model.Campaign;
+import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.testcheckout.pages.DiscountDetailPage;
 import javax.annotation.Nonnull;
 import org.hamcrest.Matcher;
@@ -16,10 +17,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 public class AlwaysOnDiscountValidator extends DiscountValidator {
 
-    @Nonnull private final Campaign campaign;
-
-    public AlwaysOnDiscountValidator(@Nonnull final Campaign campaign) {
-        this.campaign = campaign;
+    public AlwaysOnDiscountValidator(@Nonnull final Campaign campaign, @NonNull final Discount discount) {
+        super(campaign, discount);
     }
 
     @Override
