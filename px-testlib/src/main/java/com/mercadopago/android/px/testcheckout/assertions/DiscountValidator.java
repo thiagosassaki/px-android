@@ -13,7 +13,7 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
-public class DiscountValidator extends DefaultValidator{
+public class DiscountValidator extends DefaultValidator {
 
     @Override
     public void validate(@NonNull final PaymentMethodPage paymentMethodPage) {
@@ -28,7 +28,7 @@ public class DiscountValidator extends DefaultValidator{
     }
 
     @Override
-    public void validate(@NonNull final OneTapPage oneTapPage){
+    public void validate(@NonNull final OneTapPage oneTapPage) {
         super.validate(oneTapPage);
         final Matcher<View> amountWithDiscount = withId(com.mercadopago.android.px.R.id.amount_with_discount);
         final Matcher<View> discountMessage = withId(com.mercadopago.android.px.R.id.discount_message);

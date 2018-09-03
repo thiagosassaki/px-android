@@ -36,6 +36,4 @@ public class AlwaysOnDiscountValidator extends DiscountValidator {
             .getString(R.string.px_max_coupon_amount, maxCouponAmount);
         onView(subtitle).check(matches(withText(maxCouponAmountSubtitle)));
     }
-
-
 }
