@@ -185,6 +185,7 @@ public class OneTapView extends LinearLayout {
 
         final Button button = new ButtonPrimary(new Button.Props(confirm), buttonActions);
         final View view = button.render(this);
+        view.setId(R.id.px_confirm_button);
         final int resMargin = discount != null ? R.dimen.px_zero_height : R.dimen.px_m_margin;
         ViewUtils.setMarginTopInView(view, getContext().getResources().getDimensionPixelSize(resMargin));
         addView(view);

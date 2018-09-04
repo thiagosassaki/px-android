@@ -3,4 +3,5 @@
     <item name="px_fragment_container_top" type="id"/>
     <item name="px_fragment_container_bottom" type="id"/>
     <item name="px_main_container" type="id"/>
+    <item name="px_confirm_button" type="id"/>
 </resources>
