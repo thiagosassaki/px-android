@@ -30,7 +30,7 @@ public class OneTapPage extends PageObject<CheckoutValidator> {
     }
 
     public PaymentMethodPage changePaymentMethod() {
-        onView(withId(R.id.main_payment_method_container)).perform(click());
+        onView(withId(R.id.px_main_payment_method_container)).perform(click());
         return new PaymentMethodPage(validator);
     }
 }
