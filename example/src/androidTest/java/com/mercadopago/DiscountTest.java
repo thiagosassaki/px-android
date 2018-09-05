@@ -19,6 +19,7 @@ import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.testcheckout.assertions.AlwaysOnDiscountValidator;
 import com.mercadopago.android.px.testcheckout.assertions.OneShotDiscountValidator;
+import com.mercadopago.android.px.testcheckout.assertions.UsedUpDiscountValidator;
 import com.mercadopago.android.px.testcheckout.flows.DiscountTestFlow;
 import com.mercadopago.android.px.testcheckout.idleresources.CheckoutResource;
 import com.mercadopago.android.px.testcheckout.input.Country;
@@ -43,9 +44,12 @@ public class DiscountTest {
 
     private static final String DIRECT_DISCOUNT_PUBLIC_KEY = "APP_USR-b8925182-e1bf-4c0e-bc38-1d893a19ab45";
     private static final String CODE_DISCOUNT_PUBLIC_KEY = "APP_USR-2e257493-3b80-4b71-8547-c841d035e8f2";
+    private static final String DIRECT_DISCOUNT_MAX_REDEEM_PER_USER_3_PUBLIC_KEY =
+        "APP_USR-9c40068d-d3ca-4f24-93bb-0c1f28138204";
 
     private static final String DIRECT_DISCOUNT_PREFERENCE_ID = "241261700-459d4126-903c-4bad-bc05-82e5f13fa7d3";
     private static final String CODE_DISCOUNT_PREFERENCE_ID = "241261708-cd353b1b-940f-493b-b960-10106a24203c";
+    private static final String USED_UP_DISCOUNT_PREFERENCE_ID = "336429666-d11db9cd-61a0-49ef-a4a7-3b6f15c8cb93";
 
     private static final String MERCHANT_PUBLIC_KEY = "TEST-c6d9b1f9-71ff-4e05-9327-3c62468a23ee";
     private static final String PREFERENCE_ID = "243962506-0bb62e22-5c7b-425e-a0a6-c22d0f4758a9";
@@ -138,7 +142,8 @@ public class DiscountTest {
 
         final CongratsPage congratsPage =
             discountTestFlow
-                .runCreditCardPaymentFlowWithMerchantDiscountApplied(card, 1, new AlwaysOnDiscountValidator(campaign, discount));
+                .runCreditCardPaymentFlowWithMerchantDiscountApplied(card, 1,
+                    new AlwaysOnDiscountValidator(campaign, discount));
         assertNotNull(congratsPage);
     }
 
@@ -211,15 +216,33 @@ public class DiscountTest {
 
         final CongratsPage congratsPage =
             discountTestFlow
-                .runCreditCardPaymentFlowWithMerchantDiscountApplied(card, 1, new OneShotDiscountValidator(campaign, discount));
+                .runCreditCardPaymentFlowWithMerchantDiscountApplied(card, 1,
+                    new OneShotDiscountValidator(campaign, discount));
         assertNotNull(congratsPage);
     }
 
     //TODO
     @Ignore
     @Test
-    public void codeDiscountTests(){
+    public void codeDiscountTests() {
 
+    }
+
+    @Test
+    public void whenUsedUpDiscountThenInformUserAndGetCongratsWithoutDiscount() {
+        final MercadoPagoCheckout.Builder builder =
+            new MercadoPagoCheckout.Builder(DIRECT_DISCOUNT_MAX_REDEEM_PER_USER_3_PUBLIC_KEY,
+                USED_UP_DISCOUNT_PREFERENCE_ID,
+                new PaymentConfiguration.Builder(paymentProcessor).setDiscountConfiguration(
+                    DiscountConfiguration.forNotAvailableDiscount()).build());
+
+        discountTestFlow = new DiscountTestFlow(builder.build(), activityRule.getActivity());
+
+        final CongratsPage congratsPage =
+            discountTestFlow
+                .runCreditCardPaymentFlowWithMerchantDiscountApplied(card, 1,
+                    new UsedUpDiscountValidator());
+        assertNotNull(congratsPage);
     }
 
     @Test
