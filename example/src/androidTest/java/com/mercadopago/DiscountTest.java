@@ -246,6 +246,24 @@ public class DiscountTest {
     }
 
     @Test
+    public void whenUsedUpDiscountAndPayerHasOneTapThenInformUserAndGetCongratsWithoutDiscount() {
+        final MercadoPagoCheckout.Builder builder =
+            new MercadoPagoCheckout.Builder(ONE_TAP_MERCHANT_PUBLIC_KEY,
+                checkoutPreferenceWithPayerEmail,
+                new PaymentConfiguration.Builder(paymentProcessor).setDiscountConfiguration(
+                    DiscountConfiguration.forNotAvailableDiscount()).build())
+                .setPrivateKey(ONE_TAP_PAYER_3_ACCESS_TOKEN);
+
+        discountTestFlow = new DiscountTestFlow(builder.build(), activityRule.getActivity());
+
+        final CongratsPage congratsPage =
+            discountTestFlow.runCreditCardWithOneTapWithoutESCPaymentFlowWithMerchantDiscountApplied(card,
+                new UsedUpDiscountValidator());
+
+        assertNotNull(congratsPage);
+    }
+
+    @Test
     public void whenDirectDiscountIsAppliedAndPaidWithCreditCardThenShowDiscountAndGetCongrats() {
         final MercadoPagoCheckout.Builder builder =
             new MercadoPagoCheckout.Builder(DIRECT_DISCOUNT_PUBLIC_KEY, DIRECT_DISCOUNT_PREFERENCE_ID);

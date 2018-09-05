@@ -5,6 +5,7 @@ import android.support.test.espresso.matcher.ViewMatchers;
 import android.view.View;
 import com.mercadopago.android.px.testcheckout.pages.DiscountDetailPage;
 import com.mercadopago.android.px.testcheckout.pages.InstallmentsPage;
+import com.mercadopago.android.px.testcheckout.pages.OneTapPage;
 import com.mercadopago.android.px.testcheckout.pages.PaymentMethodPage;
 import org.hamcrest.Matcher;
 import com.mercadopago.android.px.R;
@@ -39,6 +40,18 @@ public class UsedUpDiscountValidator extends DefaultValidator {
     @Override
     public void validate(@NonNull final InstallmentsPage installmentsPage) {
         validateAmountView();
+    }
+
+    @Override
+    public void validate(@NonNull final OneTapPage oneTapPage) {
+        final Matcher<View> amountWithDiscount = withId(com.mercadopago.android.px.R.id.amount_with_discount);
+        final Matcher<View> discountMessage = withId(com.mercadopago.android.px.R.id.discount_message);
+        final Matcher<View> discountMaxLabel = withId(com.mercadopago.android.px.R.id.discount_max_label);
+
+        onView(amountWithDiscount).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
+        onView(discountMessage).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
+        onView(discountMaxLabel).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
+        onView(discountMessage).check(matches(withText(R.string.px_used_up_discount_row)));
     }
 
     private void validateAmountView() {
