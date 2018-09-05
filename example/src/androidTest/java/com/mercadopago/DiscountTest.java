@@ -263,6 +263,7 @@ public class DiscountTest {
         assertNotNull(congratsPage);
     }
 
+    //TODO direct discount validator
     @Test
     public void whenDirectDiscountIsAppliedAndPaidWithCreditCardThenShowDiscountAndGetCongrats() {
         final MercadoPagoCheckout.Builder builder =
@@ -274,6 +275,7 @@ public class DiscountTest {
         assertNotNull(congratsPage);
     }
 
+    //TODO direct discount validator
     @Test
     public void whenDirectDiscountIsAppliedAndPaidWithCashThenShowDiscountAndGetCongrats() {
         final MercadoPagoCheckout.Builder builder =
@@ -281,6 +283,21 @@ public class DiscountTest {
         discountTestFlow = new DiscountTestFlow(builder.build(), activityRule.getActivity());
 
         final CongratsPage congratsPage = discountTestFlow.runCashPaymentFlowWithDiscountApplied();
+        assertNotNull(congratsPage);
+    }
+
+    //TODO direct discount validator
+    @Test
+    public void whenDirectDiscountIsAppliedAndPaidWithCardAndOneTapThenShowDiscountAndGetCongrats() {
+        final MercadoPagoCheckout.Builder builder =
+            new MercadoPagoCheckout.Builder(ONE_TAP_DIRECT_DISCOUNT_MERCHANT_PUBLIC_KEY,
+                checkoutPreferenceWithPayerEmail,
+                new PaymentConfiguration.Builder(paymentProcessor).build())
+                .setPrivateKey(ONE_TAP_PAYER_3_ACCESS_TOKEN);
+
+        discountTestFlow = new DiscountTestFlow(builder.build(), activityRule.getActivity());
+
+        final CongratsPage congratsPage = discountTestFlow.runCreditCardWithOneTapWithoutESCPaymentFlowWithMerchantDiscountApplied(card);
         assertNotNull(congratsPage);
     }
 }
