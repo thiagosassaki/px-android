@@ -21,10 +21,6 @@ import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.CardTokenException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 
-/**
- * Created by vaserber on 10/26/16.
- */
-
 public class SecurityCodePresenter extends MvpPresenter<SecurityCodeActivityView, SecurityCodeProvider> {
 
     @NonNull private final PaymentSettingRepository paymentSettingRepository;
@@ -67,16 +63,16 @@ public class SecurityCodePresenter extends MvpPresenter<SecurityCodeActivityView
         mPaymentRecovery = paymentRecovery;
     }
 
+    public PaymentRecovery getPaymentRecovery() {
+        return mPaymentRecovery;
+    }
+
     public CardInfo getCardInfo() {
         return mCardInfo;
     }
 
     private void setFailureRecovery(FailureRecovery failureRecovery) {
         mFailureRecovery = failureRecovery;
-    }
-
-    public boolean isCardInfoAvailable() {
-        return mCardInfo != null && mPaymentMethod != null;
     }
 
     public PaymentMethod getPaymentMethod() {

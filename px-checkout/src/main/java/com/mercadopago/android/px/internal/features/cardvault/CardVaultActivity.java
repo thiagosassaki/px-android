@@ -38,8 +38,6 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
     private PaymentSettingRepository paymentSettingRepository;
 
     private void configure() {
-        final Intent intent = getIntent();
-        final Card card = JsonUtil.getInstance().fromJson(intent.getStringExtra(EXTRA_CARD), Card.class);
         final Session session = Session.getSession(this);
         paymentSettingRepository = session.getConfigurationModule().getPaymentSettings();
         presenter = new CardVaultPresenter(session.getAmountRepository(),
@@ -48,6 +46,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
         presenter.attachResourcesProvider(
             new CardVaultProviderImpl(getApplicationContext()));
         presenter.attachView(this);
+        final Card card = session.getConfigurationModule().getUserSelectionRepository().getCard();
         presenter.setCard(card);
     }
 

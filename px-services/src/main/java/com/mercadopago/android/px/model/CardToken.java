@@ -33,10 +33,8 @@ public class CardToken {
         cardholder.setIdentification(identification);
     }
 
-    public static boolean validateSecurityCode(String securityCode) {
-
-        return securityCode == null ||
-            (!TextUtils.isEmpty(securityCode) && securityCode.length() >= 3 && securityCode.length() <= 4);
+    public static boolean validateSecurityCode(final String securityCode) {
+        return (!TextUtils.isEmpty(securityCode) && securityCode.length() >= 3 && securityCode.length() <= 4);
     }
 
     public static void validateSecurityCode(String securityCode, PaymentMethod paymentMethod, String bin)

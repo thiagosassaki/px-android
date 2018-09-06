@@ -197,7 +197,7 @@ public class CheckoutPresenterTest {
     @Test
     public void whenAPaymentMethodIsSelectedThenShowReviewAndConfirm() {
         final CheckoutPresenter presenter = getPresenter();
-        presenter.onPaymentMethodSelectionResponse(null, null);
+        presenter.onPaymentMethodSelectionResponse();
         verify(checkoutView).showReviewAndConfirm(false);
         verifyNoMoreInteractions(checkoutView);
     }
@@ -393,7 +393,7 @@ public class CheckoutPresenterTest {
         presenter.initialize();
         assertTrue(stubView.showingPaymentMethodSelection);
 
-        presenter.onPaymentMethodSelectionResponse(null, null);
+        presenter.onPaymentMethodSelectionResponse();
         assertTrue(stubView.showingReviewAndConfirm);
 
         presenter.onChangePaymentMethodFromReviewAndConfirm();

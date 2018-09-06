@@ -35,6 +35,7 @@ import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
+import com.mercadopago.android.px.model.SecurityCode;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.CheckoutPreferenceException;
@@ -222,10 +223,6 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
         return paymentSettingRepository.getAdvancedConfiguration().isEscEnabled();
     }
 
-    public Card getSelectedCard() {
-        return state.selectedCard;
-    }
-
     private void retrieveCheckoutPreference(final String checkoutPreferenceId) {
         getResourcesProvider().getCheckoutPreference(checkoutPreferenceId,
             new TaggedCallback<CheckoutPreference>(ApiUtil.RequestOrigin.GET_PREFERENCE) {
@@ -275,12 +272,7 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
         return identificationInvalid;
     }
 
-    public void onPaymentMethodSelectionResponse(
-        final Token token,
-        final Card card) {
-        state.createdToken = token;
-        state.selectedCard = card;
-
+    public void onPaymentMethodSelectionResponse() {
         onPaymentMethodSelected();
     }
 
