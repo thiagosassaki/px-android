@@ -3,7 +3,7 @@ package com.mercadopago.android.px.model;
 import android.support.annotation.NonNull;
 import com.google.gson.annotations.SerializedName;
 
-public class SavedESCCardToken extends SavedCardToken {
+public final class SavedESCCardToken extends SavedCardToken {
 
     // used in network call
     @SuppressWarnings("unused")
@@ -12,19 +12,32 @@ public class SavedESCCardToken extends SavedCardToken {
 
     // used in network call
     @SuppressWarnings("unused")
-    private String esc;
+    private final String esc;
 
-    private SavedESCCardToken(String cardId, String securityCode, String esc) {
+    private SavedESCCardToken(@NonNull final String cardId, @NonNull final String securityCode,
+        @NonNull final String esc) {
         super(cardId, securityCode);
         this.requireEsc = true;
         this.esc = esc;
     }
 
-    public static SavedESCCardToken createWithSecurityCode(@NonNull String cardId, @NonNull final String securityCode) {
+    private SavedESCCardToken(@NonNull final String cardId, @NonNull final String securityCode,
+        @NonNull final String esc, @NonNull final Device device) {
+        this(cardId, securityCode, esc);
+        setDevice(device);
+    }
+
+    public static SavedESCCardToken createWithSecurityCode(@NonNull final String cardId,
+        @NonNull final String securityCode) {
         return new SavedESCCardToken(cardId, securityCode, "");
     }
 
     public static SavedESCCardToken createWithEsc(@NonNull final String cardId, @NonNull final String esc) {
         return new SavedESCCardToken(cardId, "", esc);
+    }
+
+    public static SavedESCCardToken createWithEsc(@NonNull final String cardId, @NonNull final String esc,
+        @NonNull final Device device) {
+        return new SavedESCCardToken(cardId, "", esc, device);
     }
 }

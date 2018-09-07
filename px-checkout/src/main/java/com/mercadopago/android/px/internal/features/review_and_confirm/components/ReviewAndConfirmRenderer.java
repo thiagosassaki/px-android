@@ -38,7 +38,7 @@ public class ReviewAndConfirmRenderer extends Renderer<ReviewAndConfirmContainer
 
         if (component.props.preferences.hasCustomTopView()) {
             FragmentUtil.addFragmentInside(linearLayout,
-                R.id.px_fragmen_container_top,
+                R.id.px_fragment_container_top,
                 component.props.preferences.getTopFragment());
         }
 
@@ -46,7 +46,7 @@ public class ReviewAndConfirmRenderer extends Renderer<ReviewAndConfirmContainer
 
         if (component.props.preferences.hasCustomBottomView()) {
             FragmentUtil.addFragmentInside(linearLayout,
-                R.id.px_fragmen_container_bottom,
+                R.id.px_fragment_container_bottom,
                 component.props.preferences.getBottomFragment());
         }
 

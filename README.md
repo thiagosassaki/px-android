@@ -37,7 +37,7 @@ The MercadoPago Android Payment Experience makes it easy to collect your user's 
 
 Add this line to your app's `build.gradle` inside the `dependencies` section:
 
-    implementation 'com.mercadopago.android:px-checkout:4.0.0'
+    implementation 'com.mercadopago.android:px:checkout:4.0.2'
     
 
 ## 🐒 How to use?

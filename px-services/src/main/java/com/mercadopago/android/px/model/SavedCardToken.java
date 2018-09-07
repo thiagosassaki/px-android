@@ -1,6 +1,7 @@
 package com.mercadopago.android.px.model;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import com.mercadopago.android.px.model.exceptions.CardTokenException;
 
@@ -21,6 +22,10 @@ public class SavedCardToken {
 
     public void setDevice(Context context) {
         device = new Device(context);
+    }
+
+    public void setDevice(@NonNull final Device device) {
+        this.device = device;
     }
 
     public String getCardId() {

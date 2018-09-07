@@ -34,6 +34,7 @@ import com.mercadopago.android.px.internal.services.CheckoutService;
 import com.mercadopago.android.px.internal.services.GatewayService;
 import com.mercadopago.android.px.internal.util.LocaleUtil;
 import com.mercadopago.android.px.internal.util.TextUtil;
+import com.mercadopago.android.px.model.Device;
 
 public final class Session extends ApplicationModule
     implements AmountComponent {
@@ -133,6 +134,11 @@ public final class Session extends ApplicationModule
     }
 
     @NonNull
+    public Device getDevice() {
+        return new Device(getContext());
+    }
+
+    @NonNull
     public MercadoPagoServicesAdapter getMercadoPagoServiceAdapter() {
         final PaymentSettingRepository paymentSettings = getConfigurationModule().getPaymentSettings();
         return new MercadoPagoServicesAdapter(getContext(), paymentSettings.getPublicKey(),
@@ -216,6 +222,6 @@ public final class Session extends ApplicationModule
     private TokenRepository getTokenRepository() {
         return new TokenizeService(getRetrofitClient().create(GatewayService.class),
             getConfigurationModule().getPaymentSettings(),
-            getMercadoPagoESC());
+            getMercadoPagoESC(), getDevice());
     }
 }

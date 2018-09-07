@@ -33,6 +33,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 public class DefaultValidator implements CheckoutValidator {
+
     @Override
     public void validate(@NonNull final IssuerPage issuerPage) {
         //TODO implement default PX Validations

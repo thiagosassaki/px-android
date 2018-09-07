@@ -29,6 +29,8 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.services.Callback;
 
+import static com.mercadopago.android.px.internal.util.TextUtil.isEmpty;
+
 public class PaymentService implements PaymentRepository {
 
     @NonNull private final UserSelectionRepository userSelectionRepository;
@@ -152,7 +154,6 @@ public class PaymentService implements PaymentRepository {
                     paymentServiceHandler.onCvvRequired(card);
                 }
             });
-
         } else {
             //Saved card has no ESC saved - CVV is requiered.
             paymentServiceHandler.onCvvRequired(card);
@@ -197,6 +198,8 @@ public class PaymentService implements PaymentRepository {
         paymentData.setIssuer(userSelectionRepository.getIssuer());
         paymentData.setToken(paymentSettingRepository.getToken());
         paymentData.setDiscount(discountRepository.getDiscount());
+        paymentData
+            .setCouponCode(isEmpty(discountRepository.getDiscountCode()) ? null : discountRepository.getDiscountCode());
         paymentData.setTransactionAmount(amountRepository.getAmountToPay());
         //se agrego payer info a la pref - BOLBRADESCO
         paymentData.setPayer(paymentSettingRepository.getCheckoutPreference().getPayer());

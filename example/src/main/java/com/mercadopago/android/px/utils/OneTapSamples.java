@@ -53,11 +53,10 @@ public final class OneTapSamples {
     }
 
     public static void addAll(final Collection<Pair<String, MercadoPagoCheckout.Builder>> options) {
-        options.add(
-            new Pair<>("1 - One tap - Should suggest account money (no cards)", startOneTapWithAccountMoneyNoCards()));
-        options
-            .add(new Pair<>("2 - One tap - Should suggest account money (debit and credit cards)",
-                startOneTapWithAccountMoneyAndCardsDebitCredit()));
+        options.add(new Pair<>("1 - One tap - Should suggest account money (no cards)",
+            startOneTapWithAccountMoneyNoCards()));
+        options.add(new Pair<>("2 - One tap - Should suggest account money (debit and credit cards)",
+            startOneTapWithAccountMoneyAndCardsDebitCredit()));
         options.add(new Pair<>("3 - One tap - Should suggest debit card (excluded account money)",
             startOneTapWithAccountMoneyAndCardsDebitCreditAndExcludedAccountMoney()));
         options.add(new Pair<>("4 - One tap - Should suggest credit card (excluded account money and debit)",
@@ -91,6 +90,8 @@ public final class OneTapSamples {
         options
             .add(new Pair<>("18 - One tap - Should suggest credit card (no account money) with not available discount",
                 startOneTapNoAccountMoneyWithCreditCardAndNoAvailableDiscount()));
+        options.add(new Pair<>("19 - One tap - Should suggest credit card and get call for authorize result",
+            startOneTapWithCreditCardAndShowCallForAuthorize()));
     }
 
     // It should suggest one tap with account money
@@ -293,6 +294,22 @@ public final class OneTapSamples {
         return new MercadoPagoCheckout.Builder(ONE_TAP_CODE_DISCOUNT_MERCHANT_PUBLIC_KEY, preference,
             PaymentConfigurationUtils.create())
             .setPrivateKey(ONE_TAP_PAYER_3_ACCESS_TOKEN);
+    }
+
+    // It should suggest one tap with credit card, call for authorize
+    private static MercadoPagoCheckout.Builder startOneTapWithCreditCardAndShowCallForAuthorize() {
+        final GenericPayment payment = new GenericPayment(123L, Payment.StatusCodes.STATUS_REJECTED,
+            Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_CALL_FOR_AUTHORIZE);
+        final PaymentProcessor samplePaymentProcessor = new SamplePaymentProcessorNoView(payment);
+        final Collection<String> excludedPaymentTypes = new ArrayList<>();
+        excludedPaymentTypes.add("account_money");
+        excludedPaymentTypes.add("debit_card");
+        final CheckoutPreference checkoutPreferenceWithPayerEmail =
+            getCheckoutPreferenceWithPayerEmail(excludedPaymentTypes, 120);
+        return new MercadoPagoCheckout.Builder(ONE_TAP_MERCHANT_PUBLIC_KEY, checkoutPreferenceWithPayerEmail,
+            PaymentConfigurationUtils.createWithPlugin(samplePaymentProcessor))
+            .setAdvancedConfiguration(new AdvancedConfiguration.Builder().setEscEnabled(true).build())
+            .setPrivateKey(ONE_TAP_PAYER_2_ACCESS_TOKEN);
     }
 
     private static CheckoutPreference getCheckoutPreferenceWithPayerEmail(final int amount) {

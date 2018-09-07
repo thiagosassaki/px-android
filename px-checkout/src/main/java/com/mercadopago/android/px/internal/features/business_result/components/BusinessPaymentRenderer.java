@@ -51,7 +51,7 @@ public class BusinessPaymentRenderer extends Renderer<BusinessPaymentContainer> 
 
         if (component.props.payment.hasTopFragment()) {
             FragmentUtil.addFragmentInside(mainContentContainer,
-                R.id.px_fragmen_container_top,
+                R.id.px_fragment_container_top,
                 component.props.payment.getTopFragment());
         }
 
@@ -61,7 +61,7 @@ public class BusinessPaymentRenderer extends Renderer<BusinessPaymentContainer> 
 
         if (component.props.payment.hasBottomFragment()) {
             FragmentUtil.addFragmentInside(mainContentContainer,
-                R.id.px_fragmen_container_bottom,
+                R.id.px_fragment_container_bottom,
                 component.props.payment.getBottomFragment());
         }
 

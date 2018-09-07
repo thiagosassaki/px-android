@@ -31,7 +31,7 @@ public class BodyRenderer extends Renderer<Body> {
 
             if (component.hasTopCustomComponent()) {
                 FragmentUtil.addFragmentInside(bodyViewGroup,
-                    R.id.px_fragmen_container_top,
+                    R.id.px_fragment_container_top,
                     component.topFragment());
             }
 
@@ -41,7 +41,7 @@ public class BodyRenderer extends Renderer<Body> {
 
             if (component.hasBottomCustomComponent()) {
                 FragmentUtil.addFragmentInside(bodyViewGroup,
-                    R.id.px_fragmen_container_bottom,
+                    R.id.px_fragment_container_bottom,
                     component.bottomFragment());
             }
         }

@@ -7,6 +7,7 @@ import com.mercadopago.android.px.internal.repository.TokenRepository;
 import com.mercadopago.android.px.internal.services.GatewayService;
 import com.mercadopago.android.px.internal.util.EscUtil;
 import com.mercadopago.android.px.model.Card;
+import com.mercadopago.android.px.model.Device;
 import com.mercadopago.android.px.model.SavedESCCardToken;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.ApiException;
@@ -17,13 +18,16 @@ public class TokenizeService implements TokenRepository {
     @NonNull private final GatewayService gatewayService;
     @NonNull private final PaymentSettingRepository paymentSettingRepository;
     @NonNull private final MercadoPagoESC mercadoPagoESC;
+    @NonNull private final Device device;
 
     public TokenizeService(@NonNull final GatewayService gatewayService,
         @NonNull final PaymentSettingRepository paymentSettingRepository,
-        @NonNull final MercadoPagoESC mercadoPagoESC) {
+        @NonNull final MercadoPagoESC mercadoPagoESC,
+        @NonNull final Device device) {
         this.gatewayService = gatewayService;
         this.paymentSettingRepository = paymentSettingRepository;
         this.mercadoPagoESC = mercadoPagoESC;
+        this.device = device;
     }
 
     @Override
@@ -68,6 +72,6 @@ public class TokenizeService implements TokenRepository {
     /* default */ MPCall<Token> serviceCallWrapp(@NonNull final String cardId, @NonNull final String esc) {
         return gatewayService.getToken(paymentSettingRepository.getPublicKey(),
             paymentSettingRepository.getPrivateKey(),
-            SavedESCCardToken.createWithEsc(cardId, esc));
+            SavedESCCardToken.createWithEsc(cardId, esc, device));
     }
 }

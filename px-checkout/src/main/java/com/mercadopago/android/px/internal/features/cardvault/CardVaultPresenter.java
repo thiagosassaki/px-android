@@ -5,6 +5,7 @@ import com.mercadopago.android.px.internal.base.MvpPresenter;
 import com.mercadopago.android.px.internal.callbacks.FailureRecovery;
 import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
 import com.mercadopago.android.px.internal.controllers.PaymentMethodGuessingController;
+import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.features.providers.CardVaultProvider;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
@@ -404,7 +405,7 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
 
     private void createESCToken() {
         if (savedCardAvailable() && !isESCEmpty()) {
-
+            
             final SavedESCCardToken escCardToken = SavedESCCardToken.createWithEsc(card.getId(), esc);
 
             getResourcesProvider()
