@@ -8,6 +8,7 @@ import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.testcheckout.pages.InstallmentsPage;
 import com.mercadopago.android.px.testcheckout.pages.OneTapPage;
 import com.mercadopago.android.px.testcheckout.pages.PaymentMethodPage;
+import com.mercadopago.android.px.testcheckout.pages.ReviewAndConfirmPage;
 import javax.annotation.Nonnull;
 import org.hamcrest.Matcher;
 import com.mercadopago.android.px.R;
@@ -38,6 +39,11 @@ public abstract class DiscountValidator extends DefaultValidator {
     @Override
     public void validate(@NonNull final InstallmentsPage installmentsPage) {
         validateDiscountRow();
+    }
+
+    @Override
+    public void validate(@NonNull final ReviewAndConfirmPage reviewAndConfirmPage) {
+
     }
 
     @Override
