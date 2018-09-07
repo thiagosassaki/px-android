@@ -126,6 +126,7 @@ public class DiscountTestFlow extends TestFlow {
         startCheckout();
 
         return new PaymentMethodPage(validator).pressOnDiscountCodeInput()
+            .focusInputCode()
             .enterDiscountCode()
             .pressContinueToPaymentMethod()
             .selectCard()

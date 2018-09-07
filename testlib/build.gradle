@@ -22,4 +22,5 @@ dependencies {
     api "com.android.support.test.espresso:espresso-intents:$espresso"
     api "com.squareup.okhttp3:okhttp:$okhttp"
     api "com.android.support.test.espresso:espresso-idling-resource:$espresso"
+    implementation "com.mercadolibre.android:ui:$meli_ui_lib"
 }

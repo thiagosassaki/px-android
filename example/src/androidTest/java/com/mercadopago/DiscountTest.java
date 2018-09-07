@@ -31,7 +31,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -221,11 +220,18 @@ public class DiscountTest {
         assertNotNull(congratsPage);
     }
 
-    //TODO
-    @Ignore
     @Test
-    public void codeDiscountTests() {
+    public void whenMerchantDiscountIsCodeDiscountAndHasPaymentProcessorThenShowMerchantDiscountAndGetCongrats() {
 
+        final MercadoPagoCheckout.Builder builder =
+            new MercadoPagoCheckout.Builder(CODE_DISCOUNT_PUBLIC_KEY, CODE_DISCOUNT_PREFERENCE_ID);
+
+        discountTestFlow = new DiscountTestFlow(builder.build(), activityRule.getActivity());
+
+        final CongratsPage congratsPage =
+            discountTestFlow
+                .runCreditCardPaymentFlowWithCodeDiscount(card, 1);
+        assertNotNull(congratsPage);
     }
 
     @Test
@@ -297,7 +303,55 @@ public class DiscountTest {
 
         discountTestFlow = new DiscountTestFlow(builder.build(), activityRule.getActivity());
 
-        final CongratsPage congratsPage = discountTestFlow.runCreditCardWithOneTapWithoutESCPaymentFlowWithMerchantDiscountApplied(card);
+        final CongratsPage congratsPage =
+            discountTestFlow.runCreditCardWithOneTapWithoutESCPaymentFlowWithMerchantDiscountApplied(card);
         assertNotNull(congratsPage);
+    }
+
+    private MercadoPagoCheckout.Builder getMercadoPagoBuilderWithAlwaysOnDiscountWithPercentOff(
+        final String publicKey,
+        final String prefId) {
+        campaign =
+            new Campaign.Builder(MERCHANT_DISCOUNT_ID).setMaxCouponAmount(new BigDecimal(200)).setMaxRedeemPerUser(5)
+                .build();
+
+        final DiscountConfiguration discountConfiguration = DiscountConfiguration.withDiscount(discount, campaign);
+        final PaymentConfiguration paymentConfiguration = new PaymentConfiguration.Builder(paymentProcessor)
+            .setDiscountConfiguration(discountConfiguration)
+            .build();
+
+        return new MercadoPagoCheckout.Builder(publicKey, prefId, paymentConfiguration);
+    }
+
+    private MercadoPagoCheckout.Builder getMercadoPagoBuilderWithAlwaysOnDiscountWithAmountOff(
+        final String publicKey,
+        final String prefId) {
+        discount =
+            new Discount.Builder(MERCHANT_DISCOUNT_ID, MERCHANT_DISCOUNT_CURRENCY, new BigDecimal(50))
+                .setAmountOff(new BigDecimal(50)).build();
+        campaign =
+            new Campaign.Builder(MERCHANT_DISCOUNT_ID).setMaxCouponAmount(new BigDecimal(200)).setMaxRedeemPerUser(5)
+                .build();
+
+        final DiscountConfiguration discountConfiguration = DiscountConfiguration.withDiscount(discount, campaign);
+        final PaymentConfiguration paymentConfiguration = new PaymentConfiguration.Builder(paymentProcessor)
+            .setDiscountConfiguration(discountConfiguration)
+            .build();
+
+        return new MercadoPagoCheckout.Builder(publicKey, prefId, paymentConfiguration);
+    }
+
+    private MercadoPagoCheckout.Builder getMercadoPagoBuilderWithOneShotDiscount(final String publicKey,
+        final String prefId) {
+        campaign =
+            new Campaign.Builder(MERCHANT_DISCOUNT_ID).setMaxCouponAmount(new BigDecimal(200)).setMaxRedeemPerUser(1)
+                .build();
+
+        final DiscountConfiguration discountConfiguration = DiscountConfiguration.withDiscount(discount, campaign);
+        final PaymentConfiguration paymentConfiguration = new PaymentConfiguration.Builder(paymentProcessor)
+            .setDiscountConfiguration(discountConfiguration)
+            .build();
+
+        return new MercadoPagoCheckout.Builder(publicKey, prefId, paymentConfiguration);
     }
 }
