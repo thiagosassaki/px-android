@@ -14,10 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.mercadopago.android.px.internal.util.TextUtil;
 
-/**
- * Created by vaserber on 10/20/17.
- */
-
 public abstract class Renderer<T extends Component> {
 
     private T component;

@@ -35,7 +35,6 @@ import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
-import com.mercadopago.android.px.model.SecurityCode;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.CheckoutPreferenceException;
@@ -308,7 +307,8 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
                         .setPaymentStatusDetail(Payment.StatusDetail.STATUS_DETAIL_PENDING_CONTINGENCY)
                         .build();
                 getView()
-                    .showPaymentResult(paymentResult, amountRepository.getAmountToPay(), discountRepository.getDiscount());
+                    .showPaymentResult(paymentResult, amountRepository.getAmountToPay(),
+                        discountRepository.getDiscount());
             } else if (mercadoPagoError.isInternalServerError()) {
                 resolveInternalServerError(mercadoPagoError);
             } else if (mercadoPagoError.isBadRequestError()) {
@@ -319,10 +319,7 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
         } else {
             getView().showError(mercadoPagoError);
         }
-
     }
-
-
 
     private void resolveInternalServerError(final MercadoPagoError mercadoPagoError) {
         getView().showError(mercadoPagoError);
@@ -377,14 +374,23 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
         getView().cancelCheckout(mercadoPagoError);
     }
 
-    public void onPaymentResultCancel(final String nextAction) {
+    public void onPaymentResultCancel(final String nextAction, final boolean exitOnPaymentMethodChange) {
         if (!TextUtil.isEmpty(nextAction)) {
             if (nextAction.equals(PaymentResult.SELECT_OTHER_PAYMENT_METHOD)) {
-                state.paymentMethodEdited = true;
-                getView().showPaymentMethodSelection();
+                resolvePaymentMethodChange(exitOnPaymentMethodChange);
             } else if (nextAction.equals(PaymentResult.RECOVER_PAYMENT)) {
                 recoverPayment();
             }
+        }
+    }
+
+    private void resolvePaymentMethodChange(final boolean exitOnPaymentMethodChange) {
+        if (exitOnPaymentMethodChange) {
+            getView()
+                .finishWithPaymentResult(CheckoutActivity.RESULT_CHANGE_PAYMENT_METHOD, (Payment) state.createdPayment);
+        } else {
+            state.paymentMethodEdited = true;
+            getView().showPaymentMethodSelection();
         }
     }
 
@@ -597,9 +603,13 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
         getView().exitCheckout(resCode);
     }
 
-    public void onChangePaymentMethodFromReviewAndConfirm() {
+    public void onChangePaymentMethodFromReviewAndConfirm(final boolean exitOnPaymentMethodChange) {
         //TODO remove when navigation is corrected and works with stack.
-        onChangePaymentMethod(true);
+        if (exitOnPaymentMethodChange) {
+            getView().finishWithPaymentResult(CheckoutActivity.RESULT_CHANGE_PAYMENT_METHOD);
+        } else {
+            onChangePaymentMethod(true);
+        }
     }
 
     public void onChangePaymentMethod() {

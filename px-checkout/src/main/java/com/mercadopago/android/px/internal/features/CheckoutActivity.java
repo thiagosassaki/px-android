@@ -37,7 +37,6 @@ import com.mercadopago.android.px.model.GenericPayment;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
-import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.tracking.internal.MPTracker;
@@ -53,6 +52,8 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
 
     private static final int REQ_CODE_BUSINESS = 400;
     private static final int REQ_CODE_PAYMENT_PROCESSOR = 0x223;
+
+    public static final int RESULT_CHANGE_PAYMENT_METHOD = 3;
 
     private static final String EXTRA_PAYMENT_METHOD_CHANGED = "paymentMethodChanged";
     private static final String EXTRA_NEXT_ACTION = "nextAction";
@@ -285,7 +286,9 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
         if (resultCode == RESULT_OK) {
             presenter.onPaymentConfirmation();
         } else if (resultCode == ReviewAndConfirmActivity.RESULT_CHANGE_PAYMENT_METHOD) {
-            presenter.onChangePaymentMethodFromReviewAndConfirm();
+            presenter.onChangePaymentMethodFromReviewAndConfirm(
+                Session.getSession(this).getConfigurationModule().getPaymentSettings().getAdvancedConfiguration()
+                    .shouldExitOnPaymentMethodChange());
         } else if (resultCode == ReviewAndConfirmActivity.RESULT_CANCEL_PAYMENT) {
             resolveCancelReviewAndConfirm(data);
         } else if (resultCode == RESULT_CANCELED) {
@@ -334,9 +337,7 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
 
     private void resolvePaymentVaultRequest(final int resultCode, final Intent data) {
         if (resultCode == RESULT_OK) {
-
             presenter.onPaymentMethodSelectionResponse();
-
         } else if (isErrorResult(data)) {
             final MercadoPagoError mercadoPagoError =
                 JsonUtil.getInstance().fromJson(data.getStringExtra(EXTRA_ERROR), MercadoPagoError.class);
@@ -407,11 +408,13 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
     }
 
     private void resolvePaymentResultRequest(final int resultCode, final Intent data) {
+        boolean exitOnPaymentMethodChange =
+            Session.getSession(this).getConfigurationModule().getPaymentSettings().getAdvancedConfiguration()
+                .shouldExitOnPaymentMethodChange();
         if (resultCode == RESULT_CANCELED && data != null) {
             final String nextAction = data.getStringExtra(EXTRA_NEXT_ACTION);
-            presenter.onPaymentResultCancel(nextAction);
+            presenter.onPaymentResultCancel(nextAction, exitOnPaymentMethodChange);
         } else {
-
             if (data != null && data.hasExtra(EXTRA_RESULT_CODE)) {
                 final Integer finalResultCode = data.getIntExtra(EXTRA_RESULT_CODE, PAYMENT_RESULT_CODE);
                 customDataBundle = data;

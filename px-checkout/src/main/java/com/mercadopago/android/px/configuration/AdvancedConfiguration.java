@@ -15,6 +15,7 @@ public class AdvancedConfiguration implements Serializable {
      */
     private final boolean bankDealsEnabled;
     private final boolean escEnabled;
+    private boolean exitOnPaymentMethodChange;
     @NonNull private final PaymentResultScreenConfiguration paymentResultScreenConfiguration;
     @NonNull private final ReviewAndConfirmConfiguration reviewAndConfirmConfiguration;
 
@@ -23,6 +24,7 @@ public class AdvancedConfiguration implements Serializable {
         escEnabled = builder.escEnabled;
         paymentResultScreenConfiguration = builder.paymentResultScreenConfiguration;
         reviewAndConfirmConfiguration = builder.reviewAndConfirmConfiguration;
+        exitOnPaymentMethodChange = builder.exitOnPaymentMethodChange;
     }
 
     public boolean isBankDealsEnabled() {
@@ -31,6 +33,10 @@ public class AdvancedConfiguration implements Serializable {
 
     public boolean isEscEnabled() {
         return escEnabled;
+    }
+
+    public boolean shouldExitOnPaymentMethodChange() {
+        return exitOnPaymentMethodChange;
     }
 
     @NonNull
@@ -47,6 +53,7 @@ public class AdvancedConfiguration implements Serializable {
     public static class Builder {
         /* default */ boolean bankDealsEnabled = true;
         /* default */ boolean escEnabled = false;
+        /* default */ boolean exitOnPaymentMethodChange = false;
         /* default */ @NonNull PaymentResultScreenConfiguration paymentResultScreenConfiguration =
             new PaymentResultScreenConfiguration.Builder().build();
         /* default */ @NonNull ReviewAndConfirmConfiguration reviewAndConfirmConfiguration =
@@ -102,6 +109,17 @@ public class AdvancedConfiguration implements Serializable {
         public Builder setReviewAndConfirmConfiguration(
             @NonNull final ReviewAndConfirmConfiguration reviewAndConfirmConfiguration) {
             this.reviewAndConfirmConfiguration = reviewAndConfirmConfiguration;
+            return this;
+        }
+
+        /**
+         * Enable to do not show payment method selection when
+         * payment method is changed
+         *
+         * @return builder to keep operating
+         */
+        public Builder exitOnPaymentMethodChange() {
+            exitOnPaymentMethodChange = true;
             return this;
         }
 
