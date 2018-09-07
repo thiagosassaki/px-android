@@ -43,7 +43,8 @@ public abstract class DiscountValidator extends DefaultValidator {
 
     @Override
     public void validate(@NonNull final ReviewAndConfirmPage reviewAndConfirmPage) {
-
+        final Matcher<View> discountDescription = withText(R.string.px_review_summary_discount);
+        onView(discountDescription).check(matches(hasTextColor(R.color.px_discount_description)));
     }
 
     @Override
