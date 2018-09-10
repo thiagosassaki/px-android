@@ -7,4 +7,6 @@
     <color name="button_disabled">#CCCCCC</color>
     <color name="examples_green">#5bcc55</color>
 
+    <color name="ui_components_primary_color">#009cee</color>
+
 </resources>

@@ -12,14 +12,14 @@
     <com.mercadopago.android.px.internal.view.MPTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/px_xl_margin"
+        android:layout_marginBottom="@dimen/px_xxxl_margin"
         android:text="@string/px_enter_coupon_code_title"
         android:textSize="@dimen/px_xl_text"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/px_s_margin"
+        android:layout_marginBottom="@dimen/px_xl_margin"
         android:orientation="horizontal"
         android:weightSum="1">
 
@@ -29,8 +29,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:focusable="true"
             android:clickable="true"
+            android:focusable="true"
+            android:inputType="textCapCharacters"
             custom:ui_textFieldMaxLines="1"/>
 
         <com.mercadolibre.android.ui.widgets.MeliSpinner

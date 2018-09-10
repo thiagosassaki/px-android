@@ -170,6 +170,7 @@
     <!-- Discount modal and discount description -->
     <color name="px_discount_summary_background">#474747</color>
     <color name="px_discount_description">#64c574</color>
+    <color name="px_discount_arrow">#3483FA</color>
 
     <!-- Inputs -->
     <color name="px_input">@color/px_colorPrimary</color>
