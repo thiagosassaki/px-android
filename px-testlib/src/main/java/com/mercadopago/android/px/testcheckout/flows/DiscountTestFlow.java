@@ -11,6 +11,9 @@ import com.mercadopago.android.px.testcheckout.pages.PaymentMethodPage;
 
 public class DiscountTestFlow extends TestFlow {
 
+    private static String DISCOUNT_CODE = "prueba";
+    private static String PAYMENT_METHOD_NAME = "Pago Fácil";
+
     public DiscountTestFlow() {
         // This constructor is intentionally empty. Nothing special is needed here.
     }
@@ -85,7 +88,7 @@ public class DiscountTestFlow extends TestFlow {
         return new PaymentMethodPage(validator).pressOnDiscountDetail()
             .pressCloseToPaymentMethod()
             .selectCash()
-            .selectMethod("Pago Fácil")
+            .selectMethod(PAYMENT_METHOD_NAME)
             .pressConfirmButton();
     }
 
@@ -127,7 +130,7 @@ public class DiscountTestFlow extends TestFlow {
 
         return new PaymentMethodPage(validator).pressOnDiscountCodeInput()
             .focusInputCode()
-            .enterDiscountCode()
+            .enterDiscountCode(DISCOUNT_CODE)
             .pressContinueToPaymentMethod()
             .selectCard()
             .selectCreditCard()

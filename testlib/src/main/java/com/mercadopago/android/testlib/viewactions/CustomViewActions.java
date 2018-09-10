@@ -20,4 +20,3 @@ public final class CustomViewActions {
         return actionWithAssertions(new TextFieldViewAction(text));
     }
 }
-

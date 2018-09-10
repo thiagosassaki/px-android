@@ -51,11 +51,6 @@ public class DiscountTest {
     private static final String MERCHANT_PUBLIC_KEY = "TEST-c6d9b1f9-71ff-4e05-9327-3c62468a23ee";
     private static final String PREFERENCE_ID = "243962506-0bb62e22-5c7b-425e-a0a6-c22d0f4758a9";
 
-    private static final String BUSINESS_PAYMENT_IMAGE_URL =
-        "https://www.jqueryscript.net/images/Simplest-Responsive-jQuery-Image-Lightbox-Plugin-simple-lightbox.jpg";
-    private static final String BUSINESS_PAYMENT_TITLE = "Title";
-    private static final String BUSINESS_PAYMENT_BUTTON_NAME = "ButtonSecondaryName";
-
     private static final String MERCHANT_DISCOUNT_ID = "77";
     private static final String MERCHANT_DISCOUNT_CURRENCY = "ARS";
 

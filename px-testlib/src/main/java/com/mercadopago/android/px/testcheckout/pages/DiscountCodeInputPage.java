@@ -1,5 +1,6 @@
 package com.mercadopago.android.px.testcheckout.pages;
 
+import android.support.annotation.NonNull;
 import android.view.View;
 import com.mercadopago.android.px.testcheckout.assertions.CheckoutValidator;
 import com.mercadopago.android.testlib.pages.PageObject;
@@ -13,8 +14,6 @@ import static com.mercadopago.android.testlib.viewactions.CustomViewActions.type
 
 public class DiscountCodeInputPage extends PageObject<CheckoutValidator> {
 
-    private static String DISCOUNT_CODE = "prueba";
-
     public DiscountCodeInputPage(final CheckoutValidator validator) {
         super(validator);
     }
@@ -25,11 +24,11 @@ public class DiscountCodeInputPage extends PageObject<CheckoutValidator> {
         return new DiscountCodeInputPage(validator);
     }
 
-    public DiscountCongratsPage enterDiscountCode() {
+    public DiscountCongratsPage enterDiscountCode(@NonNull final String discountCode) {
         final Matcher<View> codeInput = withId(R.id.text_field);
         final Matcher<View> confirmButton = withId(R.id.confirm_button);
 
-        onView(codeInput).perform(typeTextIntoTextField(DISCOUNT_CODE));
+        onView(codeInput).perform(typeTextIntoTextField(discountCode));
 
         onView(confirmButton).perform(click());
 
