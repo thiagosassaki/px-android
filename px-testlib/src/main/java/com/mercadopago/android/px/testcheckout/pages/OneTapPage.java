@@ -23,7 +23,7 @@ public class OneTapPage extends PageObject<CheckoutValidator>{
     }
 
     public SecurityCodeToCongratsPage pressConfirmButton() {
-        onView(withId(R.id.px_button)).perform(click());
+        onView(withId(R.id.px_button_primary)).perform(click());
         return new SecurityCodeToCongratsPage(validator);
     }
 
