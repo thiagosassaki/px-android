@@ -69,7 +69,7 @@ public class AmountView extends LinearLayoutCompat {
         } else if (discountRepository.hasValidDiscount()) {
             show(discount, campaign, totalAmount, site);
         } else if (discountRepository.hasCodeCampaign()) {
-            showCouponInput(totalAmount, site);
+            showDiscountCodeInput(totalAmount, site);
         } else {
             show(totalAmount, site);
         }
@@ -107,23 +107,17 @@ public class AmountView extends LinearLayoutCompat {
         showEffectiveAmount(totalAmount.subtract(discount.getCouponAmount()), site);
     }
 
-    private void showCouponInput(final BigDecimal totalAmount, final Site site) {
-        show(totalAmount, site);
-        configureDiscountCouponAmountDescription();
-        configureViewsVisibilityDefault();
-        mainContainer.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                if (callback != null) {
-                    callback.onInputRequestClicked();
-                }
-            }
-        });
+    private void showDiscountCodeInput(final BigDecimal totalAmount, final Site site) {
+        configureDiscountCodeAmountDescription();
+        configureViewsVisibilityWhenNotSettedDiscount();
+        configureOnInputRequestClickedEvent();
+        showEffectiveAmount(totalAmount, site);
     }
 
     private void showNotAvailableDiscount(@NonNull final BigDecimal totalAmount,
         @NonNull final Site site) {
-        configureViewsVisibilityWhenNotAvailableDiscount();
+        configureViewsVisibilityWhenNotSettedDiscount();
+        configureOnOnDetailClickedEvent();
         amountDescription.setText(R.string.px_used_up_discount_row);
         amountDescription.setTextColor(getResources().getColor(R.color.px_form_text));
         showEffectiveAmount(totalAmount, site);
@@ -136,11 +130,10 @@ public class AmountView extends LinearLayoutCompat {
         showEffectiveAmount(totalAmount, site);
     }
 
-    private void configureViewsVisibilityWhenNotAvailableDiscount() {
+    private void configureViewsVisibilityWhenNotSettedDiscount() {
         amountBeforeDiscount.setVisibility(GONE);
         maxCouponAmount.setVisibility(GONE);
         arrow.setVisibility(VISIBLE);
-        configureOnOnDetailClickedEvent();
     }
 
     private void configureViewsVisibilityDefault() {
@@ -158,7 +151,7 @@ public class AmountView extends LinearLayoutCompat {
         arrow.setVisibility(GONE);
     }
 
-    private void configureDiscountCouponAmountDescription() {
+    private void configureDiscountCodeAmountDescription() {
         amountDescription.setVisibility(VISIBLE);
         amountDescription.setText(R.string.px_enter_coupon_code);
         amountDescription.setTextColor(getResources().getColor(R.color.px_discount_coupon));
@@ -181,6 +174,17 @@ public class AmountView extends LinearLayoutCompat {
             public void onClick(final View v) {
                 if (callback != null) {
                     callback.onDetailClicked();
+                }
+            }
+        });
+    }
+
+    private void configureOnInputRequestClickedEvent() {
+        mainContainer.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                if (callback != null) {
+                    callback.onInputRequestClicked();
                 }
             }
         });
