@@ -5,7 +5,10 @@ import javax.annotation.Nonnull;
 
 import static android.support.test.espresso.action.ViewActions.actionWithAssertions;
 
-public class CustomViewActions {
+public final class CustomViewActions {
+
+    private CustomViewActions() {
+    }
 
     /**
      * Custom ViewAction to type text into MeliUI's TextField.
