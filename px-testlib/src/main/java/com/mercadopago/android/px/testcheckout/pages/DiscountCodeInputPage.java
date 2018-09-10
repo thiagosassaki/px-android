@@ -9,8 +9,8 @@ import com.mercadopago.android.px.R;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static com.mercadopago.android.testlib.viewactions.CustomViewActions.typeTextIntoTextField;
 
 public class DiscountCodeInputPage extends PageObject<CheckoutValidator> {
 
@@ -25,10 +25,10 @@ public class DiscountCodeInputPage extends PageObject<CheckoutValidator> {
     }
 
     public DiscountCongratsPage enterDiscountCode(@NonNull final String discountCode) {
-        final Matcher<View> codeInput = withId(R.id.text_field);
+        final Matcher<View> codeInput = withId(R.id.ui_text_field_input);
         final Matcher<View> confirmButton = withId(R.id.confirm_button);
 
-        onView(codeInput).perform(typeTextIntoTextField(discountCode));
+        onView(codeInput).perform(typeText(discountCode));
 
         onView(confirmButton).perform(click());
 
