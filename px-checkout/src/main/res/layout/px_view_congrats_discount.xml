@@ -23,7 +23,7 @@
         android:layout_gravity="center"
         android:layout_marginBottom="@dimen/px_xs_margin"
         android:gravity="center"
-        android:textAppearance="@style/MLFont.Regular"
+        android:textAppearance="@style/MLFont.Light"
         android:textColor="@color/ui_meli_black"
         android:textSize="@dimen/px_xl_text"
         tools:text="¡Excelente!"/>
@@ -36,7 +36,7 @@
         android:layout_marginBottom="@dimen/px_xxxl_margin"
         android:gravity="center"
         android:textAppearance="@style/MLFont.Light"
-        android:textColor="@color/ui_meli_grey"
+        android:textColor="@color/ui_meli_dark_grey"
         android:textSize="@dimen/px_s_text"
         app:font_style="light"
         tools:text="Ahora paga tu compra y obtén 10% de descuento"/>
