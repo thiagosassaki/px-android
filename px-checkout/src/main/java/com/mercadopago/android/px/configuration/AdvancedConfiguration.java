@@ -7,6 +7,7 @@ import java.io.Serializable;
  * Advanced configuration provides you support for custom checkout functionality/configure special behaviour
  * when checkout is running.
  */
+@SuppressWarnings("unused")
 public class AdvancedConfiguration implements Serializable {
 
     /**
@@ -15,16 +16,17 @@ public class AdvancedConfiguration implements Serializable {
      */
     private final boolean bankDealsEnabled;
     private final boolean escEnabled;
-    private boolean exitOnPaymentMethodChange;
+
     @NonNull private final PaymentResultScreenConfiguration paymentResultScreenConfiguration;
     @NonNull private final ReviewAndConfirmConfiguration reviewAndConfirmConfiguration;
+    private final boolean binaryModeForced;
 
     /* default */ AdvancedConfiguration(final Builder builder) {
         bankDealsEnabled = builder.bankDealsEnabled;
         escEnabled = builder.escEnabled;
         paymentResultScreenConfiguration = builder.paymentResultScreenConfiguration;
         reviewAndConfirmConfiguration = builder.reviewAndConfirmConfiguration;
-        exitOnPaymentMethodChange = builder.exitOnPaymentMethodChange;
+        binaryModeForced = builder.binaryModeForced;
     }
 
     public boolean isBankDealsEnabled() {
@@ -33,10 +35,6 @@ public class AdvancedConfiguration implements Serializable {
 
     public boolean isEscEnabled() {
         return escEnabled;
-    }
-
-    public boolean shouldExitOnPaymentMethodChange() {
-        return exitOnPaymentMethodChange;
     }
 
     @NonNull
@@ -49,11 +47,15 @@ public class AdvancedConfiguration implements Serializable {
         return reviewAndConfirmConfiguration;
     }
 
+    public boolean isBinaryModeForced() {
+        return binaryModeForced;
+    }
+
     @SuppressWarnings("unused")
     public static class Builder {
         /* default */ boolean bankDealsEnabled = true;
         /* default */ boolean escEnabled = false;
-        /* default */ boolean exitOnPaymentMethodChange = false;
+        /* default */ boolean binaryModeForced = false;
         /* default */ @NonNull PaymentResultScreenConfiguration paymentResultScreenConfiguration =
             new PaymentResultScreenConfiguration.Builder().build();
         /* default */ @NonNull ReviewAndConfirmConfiguration reviewAndConfirmConfiguration =
@@ -113,13 +115,17 @@ public class AdvancedConfiguration implements Serializable {
         }
 
         /**
-         * Enable to do not show payment method selection when
-         * payment method is changed
+         * If forceBinaryMode is called, processed payment can only be APPROVED or REJECTED.
+         * Default value is false.
+         * <p>
+         * Non compatible with PaymentProcessor.
+         * <p>
+         * Non compatible with off payments methods
          *
          * @return builder to keep operating
          */
-        public Builder exitOnPaymentMethodChange() {
-            exitOnPaymentMethodChange = true;
+        public Builder forceBinaryMode() {
+            binaryModeForced = true;
             return this;
         }
 

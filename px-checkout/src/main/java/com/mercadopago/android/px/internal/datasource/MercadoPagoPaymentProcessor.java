@@ -52,7 +52,14 @@ public class MercadoPagoPaymentProcessor implements PaymentProcessor {
 
         final PaymentBody paymentBody =
             new PaymentBody(paymentSettings.getTransactionId(), data.paymentData, data.checkoutPreference);
+
         paymentBody.setBinaryMode(data.checkoutPreference.isBinaryMode());
+        final boolean isBinaryModeForced =
+            session.getConfigurationModule().getPaymentSettings().getAdvancedConfiguration().isBinaryModeForced();
+        if (isBinaryModeForced) {
+            paymentBody.setBinaryMode(true);
+        }
+
         paymentBody.setPublicKey(publicKey);
         paymentBody.setCouponCode(data.paymentData.getCouponCode());
 
