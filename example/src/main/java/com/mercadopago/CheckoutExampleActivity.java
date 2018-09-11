@@ -6,8 +6,6 @@ import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ProgressBar;
-import com.mercadopago.android.px.internal.configuration.InternalConfiguration;
-import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.tracking.internal.Settings;
 import com.mercadopago.android.px.tracking.internal.TrackingEnvironments;
 import com.mercadopago.android.px.internal.view.MPButton;
