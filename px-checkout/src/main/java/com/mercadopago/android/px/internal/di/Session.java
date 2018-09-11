@@ -237,6 +237,6 @@ public final class Session extends ApplicationModule
     }
 
     public InternalConfiguration getInternalConfiguration() {
-        return internalConfiguration == null ? new InternalConfiguration(false) : internalConfiguration;
+        return internalConfiguration;
     }
 }
