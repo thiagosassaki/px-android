@@ -114,6 +114,7 @@ public final class Session extends ApplicationModule
         paymentRepository = null;
         groupsCache = null;
         pluginRepository = null;
+        internalConfiguration = null;
     }
 
     public GroupsRepository getGroupsRepository() {
@@ -227,11 +228,15 @@ public final class Session extends ApplicationModule
             getMercadoPagoESC(), getDevice());
     }
 
+    /**
+     * Set internal configuration after build MercadoPagoCheckout.
+     */
+    @SuppressWarnings("unused")
     public void setInternalConfiguration(final InternalConfiguration internalConfiguration) {
         this.internalConfiguration = internalConfiguration;
     }
 
     public InternalConfiguration getInternalConfiguration() {
-        return internalConfiguration == null ? new InternalConfiguration.Builder().build() : internalConfiguration;
+        return internalConfiguration == null ? new InternalConfiguration(false) : internalConfiguration;
     }
 }

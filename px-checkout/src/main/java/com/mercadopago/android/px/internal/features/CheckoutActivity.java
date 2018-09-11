@@ -287,8 +287,7 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
             presenter.onPaymentConfirmation();
         } else if (resultCode == ReviewAndConfirmActivity.RESULT_CHANGE_PAYMENT_METHOD) {
             presenter.onChangePaymentMethodFromReviewAndConfirm(
-                Session.getSession(this).getInternalConfiguration()
-                    .shouldExitOnPaymentMethodChange());
+                Session.getSession(this).getInternalConfiguration().shouldExitOnPaymentMethodChange());
         } else if (resultCode == ReviewAndConfirmActivity.RESULT_CANCEL_PAYMENT) {
             resolveCancelReviewAndConfirm(data);
         } else if (resultCode == RESULT_CANCELED) {
