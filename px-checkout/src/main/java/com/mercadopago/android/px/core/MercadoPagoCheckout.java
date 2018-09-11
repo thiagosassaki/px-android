@@ -10,7 +10,6 @@ import com.mercadolibre.android.ui.font.Font;
 import com.mercadopago.android.px.configuration.AdvancedConfiguration;
 import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import com.mercadopago.android.px.internal.callbacks.CallbackHolder;
-import com.mercadopago.android.px.internal.configuration.InternalConfiguration;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoPaymentConfiguration;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.features.CheckoutActivity;
@@ -36,9 +35,6 @@ public class MercadoPagoCheckout {
 
     @NonNull
     private final AdvancedConfiguration advancedConfiguration;
-
-    @Nullable
-    private InternalConfiguration internalConfiguration;
 
     @Nullable
     private final String preferenceId;
@@ -118,7 +114,6 @@ public class MercadoPagoCheckout {
         }
     }
 
-
     @NonNull
     public AdvancedConfiguration getAdvancedConfiguration() {
         return advancedConfiguration;
@@ -162,7 +157,6 @@ public class MercadoPagoCheckout {
             new AdvancedConfiguration.Builder().build();
 
         /* default */ @NonNull PaymentConfiguration paymentConfiguration = new MercadoPagoPaymentConfiguration();
-
 
         /* default */ @Nullable String privateKey;
 
@@ -211,6 +205,7 @@ public class MercadoPagoCheckout {
          * For more information check the following links
          * {@see <a href="https://www.mercadopago.com/mla/account/credentials">credentials</a>}
          * {@see <a href="https://www.mercadopago.com.ar/developers/es/reference/preferences/_preferences/post/">create preference</a>}
+         *
          * @param publicKey merchant public key / collector public key
          * @param preferenceId the preference id that represents the payment information.
          */
