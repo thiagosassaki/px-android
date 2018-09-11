@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.core.PaymentProcessor;
+import com.mercadopago.android.px.internal.configuration.InternalConfiguration;
 import com.mercadopago.android.px.internal.datasource.AmountService;
 import com.mercadopago.android.px.internal.datasource.DiscountApiService;
 import com.mercadopago.android.px.internal.datasource.DiscountServiceImp;
@@ -53,6 +54,7 @@ public final class Session extends ApplicationModule
     private PaymentRepository paymentRepository;
     private GroupsCache groupsCache;
     private PluginService pluginRepository;
+    private InternalConfiguration internalConfiguration;
 
     private Session(@NonNull final Context context) {
         super(context.getApplicationContext());
@@ -223,5 +225,13 @@ public final class Session extends ApplicationModule
         return new TokenizeService(getRetrofitClient().create(GatewayService.class),
             getConfigurationModule().getPaymentSettings(),
             getMercadoPagoESC(), getDevice());
+    }
+
+    public void setInternalConfiguration(final InternalConfiguration internalConfiguration) {
+        this.internalConfiguration = internalConfiguration;
+    }
+
+    public InternalConfiguration getInternalConfiguration() {
+        return internalConfiguration == null ? new InternalConfiguration.Builder().build() : internalConfiguration;
     }
 }

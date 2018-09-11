@@ -287,7 +287,7 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
             presenter.onPaymentConfirmation();
         } else if (resultCode == ReviewAndConfirmActivity.RESULT_CHANGE_PAYMENT_METHOD) {
             presenter.onChangePaymentMethodFromReviewAndConfirm(
-                Session.getSession(this).getConfigurationModule().getPaymentSettings().getAdvancedConfiguration()
+                Session.getSession(this).getInternalConfiguration()
                     .shouldExitOnPaymentMethodChange());
         } else if (resultCode == ReviewAndConfirmActivity.RESULT_CANCEL_PAYMENT) {
             resolveCancelReviewAndConfirm(data);
@@ -408,8 +408,8 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
     }
 
     private void resolvePaymentResultRequest(final int resultCode, final Intent data) {
-        boolean exitOnPaymentMethodChange =
-            Session.getSession(this).getConfigurationModule().getPaymentSettings().getAdvancedConfiguration()
+        final boolean exitOnPaymentMethodChange =
+            Session.getSession(this).getInternalConfiguration()
                 .shouldExitOnPaymentMethodChange();
         if (resultCode == RESULT_CANCELED && data != null) {
             final String nextAction = data.getStringExtra(EXTRA_NEXT_ACTION);

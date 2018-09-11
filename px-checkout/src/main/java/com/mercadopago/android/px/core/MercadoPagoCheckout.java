@@ -10,6 +10,7 @@ import com.mercadolibre.android.ui.font.Font;
 import com.mercadopago.android.px.configuration.AdvancedConfiguration;
 import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import com.mercadopago.android.px.internal.callbacks.CallbackHolder;
+import com.mercadopago.android.px.internal.configuration.InternalConfiguration;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoPaymentConfiguration;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.features.CheckoutActivity;
@@ -35,6 +36,9 @@ public class MercadoPagoCheckout {
 
     @NonNull
     private final AdvancedConfiguration advancedConfiguration;
+
+    @Nullable
+    private InternalConfiguration internalConfiguration;
 
     @Nullable
     private final String preferenceId;

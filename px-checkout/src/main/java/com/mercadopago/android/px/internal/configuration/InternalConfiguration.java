@@ -3,9 +3,10 @@ package com.mercadopago.android.px.internal.configuration;
 import java.io.Serializable;
 
 /**
- * Internal configuration provides support for custom checkout functionality/configure special behaviour
+ * Internal configuration provides support to money in for custom checkout functionality/configure special behaviour
  * when checkout is running.
  */
+@SuppressWarnings("unused")
 public class InternalConfiguration implements Serializable {
 
     private final boolean exitOnPaymentMethodChange;
@@ -33,6 +34,7 @@ public class InternalConfiguration implements Serializable {
         }
 
         public InternalConfiguration build() {
+
             return new InternalConfiguration(this);
         }
     }
